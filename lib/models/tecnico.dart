@@ -1,26 +1,27 @@
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 List<Tecnico> tecnicoFromJson(String str) => List<Tecnico>.from(json.decode(str));
 
 String tecnicoToJson(Tecnico data) => json.encode(data.toJson());
 
 class Tecnico{
-    int id;
-    String nome;
-    String sobrenome;
-    String telefoneFixo;
-    String telefoneCelular;
-    String situacao;
-    List<Especialidade> especialidades;
+    int? id;
+    String? nome;
+    String? sobrenome;
+    String? telefoneFixo;
+    String? telefoneCelular;
+    String? situacao;
+    List<Especialidade>? especialidades;
 
     Tecnico({
-        required this.id,
-        required this.nome,
-        required this.sobrenome,
-        required this.telefoneFixo,
-        required this.telefoneCelular,
-        required this.situacao,
-        required this.especialidades,
+        this.id,
+        this.nome,
+        this.sobrenome,
+        this.telefoneFixo,
+        this.telefoneCelular,
+        this.situacao,
+        this.especialidades,
     });
 
     factory Tecnico.fromJson(Map<String, dynamic> json) => Tecnico(
@@ -40,8 +41,15 @@ class Tecnico{
         "telefoneFixo": telefoneFixo,
         "telefoneCelular": telefoneCelular,
         "situacao": situacao,
-        "especialidades": List<dynamic>.from(especialidades.map((x) => x.toJson())),
+        "especialidades": List<dynamic>.from(especialidades!.map((x) => x.toJson())),
     };
+
+    static Future<List<Tecnico>> getPosts() async {
+        var url = Uri.parse("https://10.0.2.2/tecnico");
+        final response = await http.get(url, headers: {"Content-Type": "application/json"});
+        final List body = json.decode(response.body);
+        return body.map((e) => Tecnico.fromJson(e)).toList();
+    }
 }
 
 class Especialidade {

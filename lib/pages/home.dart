@@ -13,19 +13,6 @@ class _HomeState extends State<Home> {
   int indexAtual = 0;
   Widget paginaAtual = const HomePage();
 
-  List<BottomNavigationBarItem> putingItensInNav(){
-    return const [
-      BottomNavigationBarItem(
-        icon: Icon(Icons.home),
-        label: "Home",
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.attribution),
-        label: "Técnico"
-      ),
-      ];
-  }
-
   void changePage(int index){
     setState(() {
       indexAtual = index;
@@ -40,15 +27,28 @@ class _HomeState extends State<Home> {
 	Widget build(BuildContext context) {
 		return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: true,
-        title: Text('ServOeste'),
-        actions: [],
+        title: ClipRRect(
+          borderRadius: BorderRadius.circular(6),
+          child: Image.asset(
+            'images/servOeste.png',
+            fit: BoxFit.cover,
+            alignment: const Alignment(0, 0),
+          ),
+        ),
         centerTitle: true,
-        elevation: 4,
       ),
 			body: paginaAtual,
       bottomNavigationBar: BottomNavigationBar(
-        items: putingItensInNav(),
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: "Home",
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.attribution),
+              label: "Técnico"
+          ),
+        ],
         currentIndex: indexAtual,
         onTap: (index) => changePage(index),
       ),
