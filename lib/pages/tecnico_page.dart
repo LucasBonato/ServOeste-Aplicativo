@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/models/ListTileTecnico.dart';
-import 'package:serv_oeste/models/tecnico.dart';
+import 'package:serv_oeste/service/tecnico_service.dart';
+
+import '../models/tecnico.dart';
 
 class TecnicoPage extends StatefulWidget {
   const TecnicoPage({super.key});
@@ -10,25 +11,33 @@ class TecnicoPage extends StatefulWidget {
 }
 
 class _TecnicoPageState extends State<TecnicoPage> {
+  final TecnicoService tecnicoService = TecnicoService();
+  List<Tecnico>? tecnicos;
+  bool isLoaded = false;
 
-  List tecnicoList = [1, 2, 3];
+  @override
+  void initState() {
+    super.initState();
 
-  List<ListTileTecnico> populando(){
-    List<Tecnico> tecnicos = ;
-    for(int i = 0; i < getLenghtTecnico().; i++){
-
-    }
+    carregarTecnicos();
   }
 
-  static Future<int> getLenghtTecnico() async{
-    await Tecnico.getPosts().then((value) { return value.length;});
-    return 0;
-  }
-
-  void addNewTecnico(){
+  Future<void> carregarTecnicos() async {
+    tecnicos = await tecnicoService.getAllTecnico();
     setState(() {
-
+      isLoaded = true;
     });
+  }
+
+  List<ListTile> getTecnicoTiles(){
+    List<ListTile> tecnicoTiles = [];
+    for(Tecnico tecnico in tecnicos!){
+      tecnicoTiles.add(ListTile(
+        leading: Text("${tecnico.id}"),
+        title: Text("${tecnico.nome}"),
+      ));
+    }
+    return tecnicoTiles;
   }
 
   @override
@@ -37,7 +46,7 @@ class _TecnicoPageState extends State<TecnicoPage> {
       floatingActionButton: FloatingActionButton(
         shape: const CircleBorder(eccentricity: 0),
         child: const Icon(Icons.add),
-        onPressed: () => addNewTecnico(),
+        onPressed: () => {},
       ),
       body: Column(
         children: [
@@ -71,19 +80,16 @@ class _TecnicoPageState extends State<TecnicoPage> {
               ),
             ),
           ),
-          Expanded(
-              child: ListView.builder(
-                itemCount: tecnicoList.length,
-                itemBuilder: (context, index) {
-                  return ListTileTecnico(
-                    id: 1,
-                    nome: "Lucas",
-                    sobrenome: "Bonato",
-                    situacao: "ativo",
-                  );
-                },
+          isLoaded ? Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  children: getTecnicoTiles(),
+                ),
               ),
-          ),
+            ),
+          ) : const Center(child: CircularProgressIndicator(),),
         ],
       ),
     );
