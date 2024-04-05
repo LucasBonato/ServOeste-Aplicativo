@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 
 List<Tecnico> tecnicoFromJson(String str) => List<Tecnico>.from(json.decode(str));
 
@@ -41,16 +40,10 @@ class Tecnico{
         "telefoneFixo": telefoneFixo,
         "telefoneCelular": telefoneCelular,
         "situacao": situacao,
-        "especialidades": List<dynamic>.from(especialidades!.map((x) => x.toJson())),
+        "especialidades": List<Especialidade>.from(especialidades!.map((x) => x.toJson())),
     };
-
-    static Future<List<Tecnico>> getPosts() async {
-        var url = Uri.parse("https://10.0.2.2/tecnico");
-        final response = await http.get(url, headers: {"Content-Type": "application/json"});
-        final List body = json.decode(response.body);
-        return body.map((e) => Tecnico.fromJson(e)).toList();
-    }
 }
+
 
 class Especialidade {
     int id;
