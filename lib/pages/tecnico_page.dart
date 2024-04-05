@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/service/tecnico_service.dart';
-
 import '../models/tecnico.dart';
 
 class TecnicoPage extends StatefulWidget {
@@ -18,7 +17,6 @@ class _TecnicoPageState extends State<TecnicoPage> {
   @override
   void initState() {
     super.initState();
-
     carregarTecnicos();
   }
 
@@ -27,17 +25,6 @@ class _TecnicoPageState extends State<TecnicoPage> {
     setState(() {
       isLoaded = true;
     });
-  }
-
-  List<ListTile> getTecnicoTiles(){
-    List<ListTile> tecnicoTiles = [];
-    for(Tecnico tecnico in tecnicos!){
-      tecnicoTiles.add(ListTile(
-        leading: Text("${tecnico.id}"),
-        title: Text("${tecnico.nome}"),
-      ));
-    }
-    return tecnicoTiles;
   }
 
   @override
@@ -49,6 +36,7 @@ class _TecnicoPageState extends State<TecnicoPage> {
         onPressed: () => {},
       ),
       body: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
             padding: EdgeInsetsDirectional.fromSTEB(16, 4, 16, 0),
@@ -80,16 +68,42 @@ class _TecnicoPageState extends State<TecnicoPage> {
               ),
             ),
           ),
-          isLoaded ? Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: Column(
-                  children: getTecnicoTiles(),
+          isLoaded ? Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Flexible(
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Row(
+                      children: [
+                        Expanded(child: Text("Id", textAlign: TextAlign.center), flex: 1,),
+                        Expanded(child: Text("Nome", textAlign: TextAlign.center), flex: 1,),
+                        Expanded(child: Text("Situação", textAlign: TextAlign.center), flex: 1,),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ) : const Center(child: CircularProgressIndicator(),),
+              Flexible(
+                child: Padding(
+                  padding: EdgeInsets.all(8),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    itemCount: tecnicos!.length,
+                    itemBuilder: (context, index) => ListTile(
+                      leading: Text("${tecnicos?[index].id}"),
+                      title: Text("${tecnicos?[index].nome} ${tecnicos?[index].sobrenome}", textAlign: TextAlign.center),
+                      trailing: Text("${tecnicos?[index].situacao}"),
+                    ),
+                  ),
+                )
+              )
+            ],
+          ) : const Flexible(child: Center(child: CircularProgressIndicator()),
+          ),
         ],
       ),
     );
