@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:serv_oeste/pages/create_tecnico_page.dart';
 import 'package:serv_oeste/pages/home_page.dart';
 import 'package:serv_oeste/pages/tecnico_page.dart';
 
@@ -17,9 +18,16 @@ class _HomeState extends State<Home> {
     setState(() {
       indexAtual = index;
       switch(index){
-        case 0: paginaAtual = const HomePage();
-        case 1: paginaAtual = const TecnicoPage();
+        case 0: paginaAtual = const HomePage(); break;
+        case 1: paginaAtual = TecnicoPage(
+            onFabPressed: () {changePageWithoutIndex();}
+        ); break;
       }
+    });
+  }
+  void changePageWithoutIndex(){
+    setState(() {
+      paginaAtual = CreateTecnico(onIconPressed: () {changePage(1);});
     });
   }
 

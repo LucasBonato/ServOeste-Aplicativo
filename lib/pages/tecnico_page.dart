@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:serv_oeste/pages/create_tecnico_page.dart';
+import 'package:serv_oeste/pages/home.dart';
 import 'package:serv_oeste/service/tecnico_service.dart';
 import '../models/tecnico.dart';
 
 class TecnicoPage extends StatefulWidget {
-  const TecnicoPage({super.key});
+  final VoidCallback onFabPressed;
+
+  const TecnicoPage({super.key, required this.onFabPressed});
 
   @override
   State<TecnicoPage> createState() => _TecnicoPageState();
@@ -61,7 +65,7 @@ class _TecnicoPageState extends State<TecnicoPage> {
       floatingActionButton: FloatingActionButton(
         shape: const CircleBorder(eccentricity: 0),
         child: const Icon(Icons.add),
-        onPressed: () => {},
+        onPressed: widget.onFabPressed,
       ),
       body: Column(
         mainAxisSize: MainAxisSize.min,
