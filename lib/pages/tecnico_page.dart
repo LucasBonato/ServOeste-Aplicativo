@@ -123,8 +123,8 @@ class _TecnicoPageState extends State<TecnicoPage> {
                     scrollDirection: Axis.vertical,
                     itemCount: tecnicos!.length,
                     itemBuilder: (context, index) => ListTile(
-                      leading:Text("${tecnicos?[index].id}", style: const TextStyle(fontSize: 20)),
-                      title: Text("${tecnicos?[index].nome} ${tecnicos?[index].sobrenome}"),
+                      leading:Text("${tecnicos?[index].id}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                      title: Text("${tecnicos?[index].nome} ${tecnicos?[index].sobrenome}", style: const TextStyle(fontWeight: FontWeight.bold)),
                       subtitle: Text("Telefone: ${(verifyTelefone(tecnicos?[index]))}"),
                       trailing: Text("${tecnicos?[index].situacao}"),
                     ),
