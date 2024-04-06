@@ -27,6 +27,34 @@ class _TecnicoPageState extends State<TecnicoPage> {
     });
   }
 
+  Future<void> findByName(String nome) async{
+    if(nome.isNotEmpty){
+      isLoaded = false;
+      tecnicos = await tecnicoService.getByNome(nome);
+      setState(() {
+        isLoaded = true;
+      });
+      return;
+    }
+    carregarTecnicos();
+  }
+
+  String? verifyTelefone(Tecnico? tecnico){
+    var telefone = tecnico?.telefoneCelular;
+    return (telefone != null) ? formatTelefone(telefone) : formatTelefone(tecnico!.telefoneFixo);
+  }
+
+  String formatTelefone(String? telefone){
+    List<String> caracteresTelefone = telefone!.split("");
+    String telefoneFormatado = "(";
+    for(int i = 0; i < caracteresTelefone.length; i++){
+      if(i == 2){telefoneFormatado += ") ";}
+      if(i == 7){telefoneFormatado += "-";}
+      telefoneFormatado += caracteresTelefone[i];
+    }
+    return telefoneFormatado;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,33 +67,34 @@ class _TecnicoPageState extends State<TecnicoPage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(16, 4, 16, 0),
+            padding: const EdgeInsetsDirectional.fromSTEB(16, 4, 16, 0),
             child: TextFormField(
               obscureText: false,
               decoration: InputDecoration(
+                prefixIcon: const Icon(
+                  Icons.search_outlined,
+                  color: Color(0xFF57636C),
+                ),
                 isDense: false,
                 labelText: 'Procure por Técnicos...',
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
+                  borderSide: const BorderSide(
                     color: Color(0xFFF1F4F8),
                     width: 2,
                   ),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
+                  borderSide: const BorderSide(
                     color: Color(0xFF4B39EF),
                     width: 2,
                   ),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 filled: true,
-                fillColor: Color(0xFFF1F4F8),
-                prefixIcon: Icon(
-                  Icons.search_outlined,
-                  color: Color(0xFF57636C),
-                ),
+                fillColor: const Color(0xFFF1F4F8),
               ),
+              onChanged: (value) => setState(() {findByName(value);}),
             ),
           ),
           isLoaded ? Column(
@@ -73,14 +102,14 @@ class _TecnicoPageState extends State<TecnicoPage> {
             children: [
               const Flexible(
                 child: Padding(
-                  padding: EdgeInsets.all(8.0),
+                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
                   child: SizedBox(
                     width: double.infinity,
                     child: Row(
                       children: [
-                        Expanded(child: Text("Id", textAlign: TextAlign.center), flex: 1,),
-                        Expanded(child: Text("Nome", textAlign: TextAlign.center), flex: 1,),
-                        Expanded(child: Text("Situação", textAlign: TextAlign.center), flex: 1,),
+                        Expanded(flex: 1, child: Text("Id", textAlign: TextAlign.start, style: TextStyle(fontSize: 20))),
+                        Expanded(flex: 3, child: Text("Nome", textAlign: TextAlign.start, style: TextStyle(fontSize: 20))),
+                        Expanded(flex: 2, child: Text("Situação", textAlign: TextAlign.end, style: TextStyle(fontSize: 20))),
                       ],
                     ),
                   ),
@@ -88,21 +117,21 @@ class _TecnicoPageState extends State<TecnicoPage> {
               ),
               Flexible(
                 child: Padding(
-                  padding: EdgeInsets.all(8),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 32, 0),
                   child: ListView.builder(
                     shrinkWrap: true,
                     scrollDirection: Axis.vertical,
                     itemCount: tecnicos!.length,
                     itemBuilder: (context, index) => ListTile(
-                      leading: Text("${tecnicos?[index].id}"),
-                      title: Text("${tecnicos?[index].nome} ${tecnicos?[index].sobrenome}", textAlign: TextAlign.center),
+                      leading:Text("${tecnicos?[index].id}", style: const TextStyle(fontSize: 20)),
+                      title: Text("${tecnicos?[index].nome} ${tecnicos?[index].sobrenome}"),
+                      subtitle: Text("Telefone: ${(verifyTelefone(tecnicos?[index]))}"),
                       trailing: Text("${tecnicos?[index].situacao}"),
                     ),
                   ),
                 )
               )
-            ],
-          ) : const Flexible(child: Center(child: CircularProgressIndicator()),
+            ]) : const Flexible(child: Center(child: CircularProgressIndicator()),
           ),
         ],
       ),
