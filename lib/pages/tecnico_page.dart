@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/pages/create_tecnico_page.dart';
-import 'package:serv_oeste/pages/home.dart';
 import 'package:serv_oeste/service/tecnico_service.dart';
 import '../models/tecnico.dart';
 
