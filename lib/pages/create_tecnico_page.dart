@@ -14,7 +14,18 @@ class _CreateTecnicoState extends State<CreateTecnico> {
   late TextEditingController nomeController;
   late TextEditingController telefoneCelularController;
   late TextEditingController telefoneFixoController;
-  bool isChecked = false;
+  bool isCheckedAdega = false;
+  bool isCheckedCooler = false;
+  bool isCheckedLavaLouca = false;
+  bool isCheckedPurificador = false;
+  bool isCheckedBebedouro = false;
+  bool isCheckedFrigobar = false;
+  bool isCheckedLavaRoupa = false;
+  bool isCheckedSecadora = false;
+  bool isCheckedClimatizador = false;
+  bool isCheckedGeladeira = false;
+  bool isCheckedMicroondas = false;
+  bool isCheckedOutros = false;
 
   @override
   void initState() {
@@ -29,12 +40,6 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     telefoneCelularController.dispose();
     telefoneFixoController.dispose();
     super.dispose();
-  }
-
-  void changeValueCheckBox(bool? value){
-    setState(() {
-      value = !value!;
-    });
   }
 
   String transformarMask(String telefone){
@@ -169,6 +174,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Text('Selecione os conhecimentos do Técnico:'),
                       Row(
@@ -179,7 +185,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                             children: [
                               Row(
                                 children: [
-                                  Text('Adega'),
+                                  const Text('Adega'),
                                   Padding(
                                     padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                                     child: Theme(
@@ -192,13 +198,17 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                                         ),
                                       ),
                                       child: Checkbox(
-                                          value: isChecked,
-                                          activeColor: Colors.blue,
-                                          side: const BorderSide(
-                                            width: 2,
-                                            color: Colors.blueAccent,
-                                          ),
-                                          onChanged: (value) => changeValueCheckBox(isChecked)
+                                        value: isCheckedAdega,
+                                        activeColor: Colors.blue,
+                                        side: const BorderSide(
+                                          width: 2,
+                                          color: Colors.blueAccent,
+                                        ),
+                                        onChanged: (value) => {
+                                          setState(() {
+                                            isCheckedAdega = !isCheckedAdega;
+                                          })
+                                        },
                                       ),
                                     ),
                                   )
@@ -206,7 +216,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                               ),
                               Row(
                                 children: [
-                                  Text('Cooler'),
+                                  const Text('Cooler'),
                                   Padding(
                                     padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                                     child: Theme(
@@ -219,13 +229,17 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                                         ),
                                       ),
                                       child: Checkbox(
-                                          value: isChecked,
-                                          activeColor: Colors.blue,
-                                          side: const BorderSide(
-                                            width: 2,
-                                            color: Colors.blueAccent,
-                                          ),
-                                          onChanged: (value) => changeValueCheckBox(isChecked)
+                                        value: isCheckedCooler,
+                                        activeColor: Colors.blue,
+                                        side: const BorderSide(
+                                          width: 2,
+                                          color: Colors.blueAccent,
+                                        ),
+                                        onChanged: (value) => {
+                                          setState(() {
+                                            isCheckedCooler = !isCheckedCooler;
+                                          })
+                                        }
                                       ),
                                     ),
                                   )
@@ -233,7 +247,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                               ),
                               Row(
                                 children: [
-                                  Text('Lava Louça'),
+                                  const Text('Lava Louça'),
                                   Padding(
                                     padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                                     child: Theme(
@@ -246,13 +260,17 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                                         ),
                                       ),
                                       child: Checkbox(
-                                          value: isChecked,
+                                          value: isCheckedLavaLouca,
                                           activeColor: Colors.blue,
                                           side: const BorderSide(
                                             width: 2,
                                             color: Colors.blueAccent,
                                           ),
-                                          onChanged: (value) => changeValueCheckBox(isChecked)
+                                          onChanged: (value) => {
+                                            setState(() {
+                                              isCheckedLavaLouca = !isCheckedLavaLouca;
+                                            })
+                                          }
                                       ),
                                     ),
                                   )
@@ -260,7 +278,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                               ),
                               Row(
                                 children: [
-                                  Text('Purificador'),
+                                  const Text('Purificador'),
                                   Padding(
                                     padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                                     child: Theme(
@@ -273,13 +291,17 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                                         ),
                                       ),
                                       child: Checkbox(
-                                          value: isChecked,
+                                          value: isCheckedPurificador,
                                           activeColor: Colors.blue,
                                           side: const BorderSide(
                                             width: 2,
                                             color: Colors.blueAccent,
                                           ),
-                                          onChanged: (value) => changeValueCheckBox(isChecked)
+                                          onChanged: (value) => {
+                                            setState(() {
+                                              isCheckedPurificador = !isCheckedPurificador;
+                                            })
+                                          }
                                       ),
                                     ),
                                   )
@@ -292,7 +314,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                             children: [
                               Row(
                                 children: [
-                                  Text('Bebedouro'),
+                                  const Text('Bebedouro'),
                                   Padding(
                                     padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                                     child: Theme(
@@ -305,13 +327,17 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                                         ),
                                       ),
                                       child: Checkbox(
-                                          value: isChecked,
+                                          value: isCheckedBebedouro,
                                           activeColor: Colors.blue,
                                           side: const BorderSide(
                                             width: 2,
                                             color: Colors.blueAccent,
                                           ),
-                                          onChanged: (value) => changeValueCheckBox(isChecked)
+                                          onChanged: (value) => {
+                                            setState(() {
+                                              isCheckedBebedouro = !isCheckedBebedouro;
+                                            })
+                                          }
                                       ),
                                     ),
                                   )
@@ -319,7 +345,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                               ),
                               Row(
                                 children: [
-                                  Text('Frigobar'),
+                                  const Text('Frigobar'),
                                   Padding(
                                     padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                                     child: Theme(
@@ -332,13 +358,17 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                                         ),
                                       ),
                                       child: Checkbox(
-                                          value: isChecked,
+                                          value: isCheckedFrigobar,
                                           activeColor: Colors.blue,
                                           side: const BorderSide(
                                             width: 2,
                                             color: Colors.blueAccent,
                                           ),
-                                          onChanged: (value) => changeValueCheckBox(isChecked)
+                                          onChanged: (value) => {
+                                            setState(() {
+                                              isCheckedFrigobar = !isCheckedFrigobar;
+                                            })
+                                          }
                                       ),
                                     ),
                                   )
@@ -346,7 +376,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                               ),
                               Row(
                                 children: [
-                                  Text('Lava Roupa'),
+                                  const Text('Lava Roupa'),
                                   Padding(
                                     padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                                     child: Theme(
@@ -359,13 +389,17 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                                         ),
                                       ),
                                       child: Checkbox(
-                                          value: isChecked,
+                                          value: isCheckedLavaRoupa,
                                           activeColor: Colors.blue,
                                           side: const BorderSide(
                                             width: 2,
                                             color: Colors.blueAccent,
                                           ),
-                                          onChanged: (value) => changeValueCheckBox(isChecked)
+                                          onChanged: (value) => {
+                                            setState(() {
+                                              isCheckedLavaRoupa = !isCheckedLavaRoupa;
+                                            })
+                                          }
                                       ),
                                     ),
                                   )
@@ -373,7 +407,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                               ),
                               Row(
                                 children: [
-                                  Text('Secadora'),
+                                  const Text('Secadora'),
                                   Padding(
                                     padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                                     child: Theme(
@@ -386,13 +420,17 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                                         ),
                                       ),
                                       child: Checkbox(
-                                          value: isChecked,
+                                          value: isCheckedSecadora,
                                           activeColor: Colors.blue,
                                           side: const BorderSide(
                                             width: 2,
                                             color: Colors.blueAccent,
                                           ),
-                                          onChanged: (value) => changeValueCheckBox(isChecked)
+                                          onChanged: (value) => {
+                                            setState(() {
+                                              isCheckedSecadora = !isCheckedSecadora;
+                                            })
+                                          }
                                       ),
                                     ),
                                   )
@@ -405,7 +443,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                             children: [
                               Row(
                                 children: [
-                                  Text('Climatizador'),
+                                  const Text('Climatizador'),
                                   Padding(
                                     padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                                     child: Theme(
@@ -418,13 +456,17 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                                         ),
                                       ),
                                       child: Checkbox(
-                                          value: isChecked,
+                                          value: isCheckedClimatizador,
                                           activeColor: Colors.blue,
                                           side: const BorderSide(
                                             width: 2,
                                             color: Colors.blueAccent,
                                           ),
-                                          onChanged: (value) => changeValueCheckBox(isChecked)
+                                          onChanged: (value) => {
+                                            setState(() {
+                                              isCheckedClimatizador = !isCheckedClimatizador;
+                                            })
+                                          }
                                       ),
                                     ),
                                   )
@@ -432,7 +474,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                               ),
                               Row(
                                 children: [
-                                  Text('Geladeira'),
+                                  const Text('Geladeira'),
                                   Padding(
                                     padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                                     child: Theme(
@@ -445,13 +487,17 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                                         ),
                                       ),
                                       child: Checkbox(
-                                          value: isChecked,
+                                          value: isCheckedGeladeira,
                                           activeColor: Colors.blue,
                                           side: const BorderSide(
                                             width: 2,
                                             color: Colors.blueAccent,
                                           ),
-                                          onChanged: (value) => changeValueCheckBox(isChecked)
+                                          onChanged: (value) => {
+                                            setState(() {
+                                              isCheckedGeladeira = !isCheckedGeladeira;
+                                            })
+                                          }
                                       ),
                                     ),
                                   )
@@ -459,7 +505,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                               ),
                               Row(
                                 children: [
-                                  Text('Microondas'),
+                                  const Text('Microondas'),
                                   Padding(
                                     padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                                     child: Theme(
@@ -472,13 +518,17 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                                         ),
                                       ),
                                       child: Checkbox(
-                                          value: isChecked,
+                                          value: isCheckedMicroondas,
                                           activeColor: Colors.blue,
                                           side: const BorderSide(
                                             width: 2,
                                             color: Colors.blueAccent,
                                           ),
-                                          onChanged: (value) => changeValueCheckBox(isChecked)
+                                          onChanged: (value) => {
+                                            setState(() {
+                                              isCheckedMicroondas = !isCheckedMicroondas;
+                                            })
+                                          }
                                       ),
                                     ),
                                   )
@@ -486,7 +536,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                               ),
                               Row(
                                 children: [
-                                  Text('Outros'),
+                                  const Text('Outros'),
                                   Padding(
                                     padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                                     child: Theme(
@@ -499,13 +549,17 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                                         ),
                                       ),
                                       child: Checkbox(
-                                          value: isChecked,
+                                          value: isCheckedOutros,
                                           activeColor: Colors.blue,
                                           side: const BorderSide(
                                             width: 2,
                                             color: Colors.blueAccent,
                                           ),
-                                          onChanged: (value) => changeValueCheckBox(isChecked)
+                                          onChanged: (value) => {
+                                            setState(() {
+                                              isCheckedOutros = !isCheckedOutros;
+                                            })
+                                          }
                                       ),
                                     ),
                                   )
