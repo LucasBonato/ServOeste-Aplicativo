@@ -31,4 +31,24 @@ class ServOesteApi{
     }
     return null;
   }
+  
+  Future<bool> postTecnico(Tecnico tecnico) async{
+    var response = await client.post(
+      Uri.parse(baseUri),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({
+        "nome": tecnico.nome,
+        "sobrenome": tecnico.sobrenome,
+        "telefoneFixo": tecnico.telefoneFixo,
+        "telefoneCelular": tecnico.telefoneCelular,
+        "especialidades_Ids": tecnico.especialidadesIds,
+      }),
+    );
+    if(response.statusCode == 201){
+      return true;
+    }
+    return false;
+  }
 }

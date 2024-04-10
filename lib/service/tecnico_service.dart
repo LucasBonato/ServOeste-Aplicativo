@@ -12,4 +12,8 @@ class TecnicoService{
   Future<List<Tecnico>?> getByNome(String nome) async{
     return api.getByNome(nome);
   }
+
+  Future<bool> create(Tecnico tecnico) async{
+    return api.postTecnico(tecnico);
+  }
 }
