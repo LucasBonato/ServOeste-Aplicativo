@@ -186,15 +186,6 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     );
   }
 
-  Future<void> adicionarNovoTecnico() async {
-    if(verifyCampoNome() && verifyCamposTelefones() && verifyCamposCheck()){
-      TecnicoService tecnicoService = TecnicoService();
-      Tecnico tecnico = includeData();
-      if(await tecnicoService.create(tecnico)){
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -396,17 +387,17 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                                         ),
                                       ),
                                       child: Checkbox(
-                                        value: isCheckedCooler,
-                                        activeColor: Colors.blue,
-                                        side: const BorderSide(
-                                          width: 2,
-                                          color: Colors.blueAccent,
-                                        ),
-                                        onChanged: (value) => {
-                                          setState(() {
-                                            isCheckedCooler = !isCheckedCooler;
-                                          })
-                                        }
+                                          value: isCheckedCooler,
+                                          activeColor: Colors.blue,
+                                          side: const BorderSide(
+                                            width: 2,
+                                            color: Colors.blueAccent,
+                                          ),
+                                          onChanged: (value) => {
+                                            setState(() {
+                                              isCheckedCooler = !isCheckedCooler;
+                                            })
+                                          }
                                       ),
                                     ),
                                   )

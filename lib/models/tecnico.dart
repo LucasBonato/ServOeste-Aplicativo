@@ -2,8 +2,6 @@ import 'dart:convert';
 
 List<Tecnico> tecnicoFromJson(String str) => List<Tecnico>.from(json.decode(str));
 
-String tecnicoToJson(Tecnico data) => json.encode(data.toJson());
-
 class Tecnico{
     int? id;
     String? nome;
@@ -34,14 +32,6 @@ class Tecnico{
         situacao: json["situacao"],
         especialidades: List<Especialidade>.from(json["especialidades"].map((x) => Especialidade.fromJson(x))),
     );
-
-    Map<String, dynamic> toJson() => {
-        "nome": nome,
-        "sobrenome": sobrenome,
-        "telefoneFixo": telefoneFixo,
-        "telefoneCelular": telefoneCelular,
-        "especialidades_Ids": especialidadesIds,
-    };
 }
 
 
@@ -58,9 +48,4 @@ class Especialidade {
         id: json["id"],
         conhecimento: json["conhecimento"],
     );
-
-    Map<String, dynamic> toJson() => {
-        "id": id,
-        "conhecimento": conhecimento,
-    };
 }
