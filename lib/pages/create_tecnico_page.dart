@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:masked_text/masked_text.dart';
-import 'package:logger/logger.dart';
+import 'package:serv_oeste/models/tecnico.dart';
+import 'package:serv_oeste/service/tecnico_service.dart';
 
 class CreateTecnico extends StatefulWidget {
   final VoidCallback onIconPressed;
@@ -161,9 +162,36 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     ];
   }
 
-  void adicionarNovoTecnico(){
+  Tecnico includeData() {
+    List<String> nomes = nomeController.text.split(" ");
+    String nome = nomes.first;
+    String sobrenome = "";
+    for(int i = 1; i < nomes.length; i++){
+      sobrenome += "${nomes[i]} ";
+    }
+    sobrenome = sobrenome.trim();
+
+    List<int> especialidadesIds = [];
+    for(int i = 0; i < addCheckerInAList().length; i++){
+      if(addCheckerInAList()[i] == false) continue;
+      especialidadesIds.add(++i);
+    }
+
+    return Tecnico(
+      nome: nome,
+      sobrenome: sobrenome,
+      telefoneCelular: _telefoneCelular,
+      telefoneFixo: _telefoneFixo,
+      especialidadesIds: especialidadesIds
+    );
+  }
+
+  Future<void> adicionarNovoTecnico() async {
     if(verifyCampoNome() && verifyCamposTelefones() && verifyCamposCheck()){
-      Logger().i("Cadastrou");
+      TecnicoService tecnicoService = TecnicoService();
+      Tecnico tecnico = includeData();
+      if(await tecnicoService.create(tecnico)){
+      }
     }
   }
 
@@ -717,7 +745,15 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                         padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
 
                         child: TextButton(
-                          onPressed: adicionarNovoTecnico,
+                          onPressed: () async {
+                            if(verifyCampoNome() && verifyCamposTelefones() && verifyCamposCheck()){
+                              TecnicoService tecnicoService = TecnicoService();
+                              Tecnico tecnico = includeData();
+                              if(await tecnicoService.create(tecnico)){
+                                widget.onIconPressed();
+                              }
+                            }
+                          },
                           style: TextButton.styleFrom(
                             backgroundColor: Colors.blue,
                             foregroundColor: Colors.white,

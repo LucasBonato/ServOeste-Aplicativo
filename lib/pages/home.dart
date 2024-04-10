@@ -4,13 +4,13 @@ import 'package:serv_oeste/pages/home_page.dart';
 import 'package:serv_oeste/pages/tecnico_page.dart';
 
 class Home extends StatefulWidget {
-	const Home({super.key});
+  const Home({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<Home> createState() => HomeState();
 }
 
-class _HomeState extends State<Home> {
+class HomeState extends State<Home> {
   int indexAtual = 0;
   Widget paginaAtual = const HomePage();
 

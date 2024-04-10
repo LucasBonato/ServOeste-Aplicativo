@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:serv_oeste/service/tecnico_service.dart';
 import '../models/tecnico.dart';
 
@@ -42,8 +44,9 @@ class _TecnicoPageState extends State<TecnicoPage> {
   }
 
   String? verifyTelefone(Tecnico? tecnico){
-    var telefone = tecnico?.telefoneCelular;
-    return (telefone != null) ? formatTelefone(telefone) : formatTelefone(tecnico!.telefoneFixo);
+    var telefoneC = tecnico?.telefoneCelular;
+    var telefoneF = tecnico?.telefoneFixo;
+    return (telefoneC != "") ? formatTelefone(telefoneC) : formatTelefone(telefoneF);
   }
 
   String formatTelefone(String? telefone){
@@ -117,21 +120,28 @@ class _TecnicoPageState extends State<TecnicoPage> {
                   ),
                 ),
               ),
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 32, 0),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    itemCount: tecnicos!.length,
-                    itemBuilder: (context, index) => ListTile(
-                      leading:Text("${tecnicos?[index].id}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                      title: Text("${tecnicos?[index].nome} ${tecnicos?[index].sobrenome}", style: const TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: Text("Telefone: ${(verifyTelefone(tecnicos?[index]))}"),
-                      trailing: Text("${tecnicos?[index].situacao}"),
+              SingleChildScrollView(
+                child: Column(
+                  children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 32, 0),
+                    child: SizedBox(
+                      height: 696,
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.vertical,
+                        itemCount: tecnicos!.length,
+                        itemBuilder: (context, index) => ListTile(
+                          leading:Text("${tecnicos?[index].id}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                          title: Text("${tecnicos?[index].nome} ${tecnicos?[index].sobrenome}", style: const TextStyle(fontWeight: FontWeight.bold)),
+                          subtitle: Text("Telefone: ${(verifyTelefone(tecnicos?[index]))}"),
+                          trailing: Text("${tecnicos?[index].situacao}"),
+                        ),
+                        separatorBuilder: (context, index) => const Divider(),
+                      ),
                     ),
-                  ),
-                )
+                  )]
+                ),
               )
             ]) : const Flexible(child: Center(child: CircularProgressIndicator()),
           ),

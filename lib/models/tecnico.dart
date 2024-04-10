@@ -12,6 +12,7 @@ class Tecnico{
     String? telefoneCelular;
     String? situacao;
     List<Especialidade>? especialidades;
+    List<int>? especialidadesIds;
 
     Tecnico({
         this.id,
@@ -21,6 +22,7 @@ class Tecnico{
         this.telefoneCelular,
         this.situacao,
         this.especialidades,
+        this.especialidadesIds
     });
 
     factory Tecnico.fromJson(Map<String, dynamic> json) => Tecnico(
@@ -34,13 +36,11 @@ class Tecnico{
     );
 
     Map<String, dynamic> toJson() => {
-        "id": id,
         "nome": nome,
         "sobrenome": sobrenome,
         "telefoneFixo": telefoneFixo,
         "telefoneCelular": telefoneCelular,
-        "situacao": situacao,
-        "especialidades": List<Especialidade>.from(especialidades!.map((x) => x.toJson())),
+        "especialidades_Ids": especialidadesIds,
     };
 }
 
