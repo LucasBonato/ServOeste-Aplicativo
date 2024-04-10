@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:masked_text/masked_text.dart';
+import 'package:logger/logger.dart';
 
 class CreateTecnico extends StatefulWidget {
   final VoidCallback onIconPressed;
@@ -11,21 +12,31 @@ class CreateTecnico extends StatefulWidget {
 }
 
 class _CreateTecnicoState extends State<CreateTecnico> {
-  late TextEditingController nomeController;
-  late TextEditingController telefoneCelularController;
-  late TextEditingController telefoneFixoController;
-  bool isCheckedAdega = false;
-  bool isCheckedCooler = false;
-  bool isCheckedLavaLouca = false;
-  bool isCheckedPurificador = false;
-  bool isCheckedBebedouro = false;
-  bool isCheckedFrigobar = false;
-  bool isCheckedLavaRoupa = false;
-  bool isCheckedSecadora = false;
-  bool isCheckedClimatizador = false;
-  bool isCheckedGeladeira = false;
-  bool isCheckedMicroondas = false;
-  bool isCheckedOutros = false;
+  late TextEditingController nomeController,
+      telefoneCelularController,
+      telefoneFixoController;
+
+  bool validationNome = false,
+      validationTelefoneCelular = false,
+      validationTelefoneFixo = false,
+      validationCheckBoxes = false;
+
+  String _errorMessage = "",
+    _telefoneCelular = "",
+    _telefoneFixo = "";
+
+  bool isCheckedAdega = false,
+      isCheckedCooler = false,
+      isCheckedLavaLouca = false,
+      isCheckedPurificador = false,
+      isCheckedBebedouro = false,
+      isCheckedFrigobar = false,
+      isCheckedLavaRoupa = false,
+      isCheckedSecadora = false,
+      isCheckedClimatizador = false,
+      isCheckedGeladeira = false,
+      isCheckedMicroondas = false,
+      isCheckedOutros = false;
 
   @override
   void initState() {
@@ -55,16 +66,104 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     return telefoneFormatado;
   }
 
-  void adicionarNovoTecnico(){
-    if(telefoneCelularController.text.length != 15 && telefoneFixoController.text.length != 15) return;
+  void setErrorNome(String errorMessage){
+    setState(() {
+      _errorMessage = errorMessage;
+      validationNome = true;
+    });
+  }
+  void setErrorTelefoneCelular(String errorMessage){
+    setState(() {
+      _errorMessage = errorMessage;
+      validationTelefoneCelular = true;
+    });
+  }
+  void setErrorTelefoneFixo(String errorMessage){
+    setState(() {
+      _errorMessage = errorMessage;
+      validationTelefoneFixo = true;
+    });
+  }
+  void setErrorCheckBox(String errorMessage){
+    setState(() {
+      validationTelefoneCelular = false;
+      validationTelefoneFixo = false;
+      _errorMessage = errorMessage;
+      validationCheckBoxes = true;
+    });
+  }
+
+  bool verifyCampoNome(){
+    if(nomeController.text == "") {
+      setErrorNome("O campo nome não pode ser vazio!");
+      return false;
+    }
+
+    List<String> nomeSobrenome = nomeController.text.split(" ");
+
+    if(nomeSobrenome.length <= 1) {
+      setErrorNome("Digite Nome e Sobrenome!");
+      return false;
+    }
+    for(String nome in nomeSobrenome){
+      if(nome.length <= 2) {
+        setErrorNome("Nome o Sobrenome precisa ter no mínimo 2 caracteres!");
+        return false;
+      }
+    }
+    return true;
+  }
+  bool verifyCamposTelefones(){
     String telefoneCelular = transformarMask(telefoneCelularController.text);
     String telefoneFixo = transformarMask(telefoneFixoController.text);
+    if(telefoneCelular.length != 11 && telefoneFixo.length != 11) {
+      setErrorTelefoneCelular("Insira um Telefone válido!");
+      setErrorTelefoneFixo("Insira um Telefone válido!");
+      return false;
+    }
     if(telefoneCelular.length == 11 && telefoneFixo.length == 11){
-      print("Dois Telefones");
+      _telefoneCelular = telefoneCelular;
+      _telefoneFixo = telefoneFixo;
     } else if(telefoneCelular.length == 11 && telefoneFixo.length != 11){
-      print("Só o Celular");
-    }else if(telefoneCelular.length != 11 && telefoneFixo.length == 11){
-      print("Só o Fixo");
+      _telefoneCelular = telefoneCelular;
+    } else if(telefoneCelular.length != 11 && telefoneFixo.length == 11){
+      _telefoneFixo = telefoneFixo;
+    }
+    return true;
+  }
+  bool verifyCamposCheck(){
+    List<bool> checkers = addCheckerInAList();
+
+    if(checkers.where((element) => element == true).isEmpty) {
+      setErrorCheckBox("Todos falsos");
+      return false;
+    }
+    setState(() {
+      validationCheckBoxes = false;
+    });
+    return true;
+  }
+
+  List<bool> addCheckerInAList() {
+    return [
+      isCheckedAdega,
+      isCheckedBebedouro,
+      isCheckedClimatizador,
+      isCheckedCooler,
+      isCheckedFrigobar,
+      isCheckedGeladeira,
+      isCheckedLavaLouca,
+      isCheckedLavaRoupa,
+      isCheckedMicroondas,
+      isCheckedPurificador,
+      isCheckedSecadora,
+      isCheckedOutros
+    ];
+  }
+
+  void adicionarNovoTecnico(){
+    if(verifyCampoNome() && verifyCamposTelefones() && verifyCamposCheck()){
+      Logger().i("Cadastrou");
     }
   }
 
@@ -93,24 +192,36 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                       controller: nomeController,
                       maxLength: 40,
                       keyboardType: TextInputType.name,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+                        errorText: (validationNome) ? _errorMessage : null,
                         hintText: "Nome...",
                         labelText: "Nome",
                         isDense: true,
-                        fillColor: Color(0xFFF1F4F8),
-                        enabledBorder: OutlineInputBorder(
+                        fillColor: const Color(0xFFF1F4F8),
+                        enabledBorder: const OutlineInputBorder(
                           borderSide: BorderSide(
                             color: Colors.blue,
                             width: 2,
                           ),
                         ),
-                        focusedBorder: OutlineInputBorder(
+                        focusedBorder: const OutlineInputBorder(
                           borderSide: BorderSide(
                             color: Colors.blueAccent,
                             width: 2,
                           ),
                         ),
+                        errorBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.red,
+                            width: 2,
+                          ),
+                        ),
                       ),
+                      onTap: () => {
+                        setState(() {
+                          validationNome = false;
+                        })
+                      },
                     ),
                   ),
                   Padding(
@@ -120,24 +231,36 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                       mask: "(##) #####-####",
                       maxLength: 15,
                       keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+                        errorText: (validationTelefoneCelular) ? _errorMessage : null,
                         hintText: "(99) 99999-9999",
                         labelText: "Telefone Celular",
                         isDense: true,
-                        fillColor: Color(0xFFF1F4F8),
-                        enabledBorder: OutlineInputBorder(
+                        fillColor: const Color(0xFFF1F4F8),
+                        enabledBorder: const OutlineInputBorder(
                           borderSide: BorderSide(
                             color: Colors.blue,
                             width: 2,
                           ),
                         ),
-                        focusedBorder: OutlineInputBorder(
+                        focusedBorder: const OutlineInputBorder(
                           borderSide: BorderSide(
                             color: Colors.blueAccent,
                             width: 2,
                           ),
                         ),
+                        errorBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.red,
+                            width: 2,
+                          ),
+                        ),
                       ),
+                      onTap: () => {
+                        setState(() {
+                          validationTelefoneCelular = false;
+                        })
+                      },
                     ),
                   ),
                   Padding(
@@ -147,24 +270,36 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                       mask: "(##) #####-####",
                       maxLength: 15,
                       keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+                        errorText: (validationTelefoneFixo) ? _errorMessage : null,
                         hintText: "(99) 99999-9999",
                         labelText: "Telefone Fixo",
                         isDense: true,
-                        fillColor: Color(0xFFF1F4F8),
-                        enabledBorder: OutlineInputBorder(
+                        fillColor: const Color(0xFFF1F4F8),
+                        enabledBorder: const OutlineInputBorder(
                           borderSide: BorderSide(
                             color: Colors.blue,
                             width: 2,
                           ),
                         ),
-                        focusedBorder: OutlineInputBorder(
+                        focusedBorder: const OutlineInputBorder(
                           borderSide: BorderSide(
                             color: Colors.blueAccent,
                             width: 2,
                           ),
                         ),
+                        errorBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.red,
+                            width: 2,
+                          ),
+                        ),
                       ),
+                      onTap: () => {
+                        setState(() {
+                          validationTelefoneFixo = false;
+                        })
+                      },
                     ),
                   ),
                 ],
@@ -176,7 +311,11 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('Selecione os conhecimentos do Técnico:'),
+                      const Column(
+                        children: [
+                          Text('Selecione os conhecimentos do Técnico:', style: TextStyle(fontSize: 20)),
+                        ],
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -569,6 +708,11 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                           ),
                         ],
                       ),
+                      Column(
+                        children: [
+                          Text(validationCheckBoxes ? _errorMessage : "", style: const TextStyle(color: Colors.red))
+                        ],
+                      ),
                       Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
 
@@ -592,4 +736,3 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     );
   }
 }
-

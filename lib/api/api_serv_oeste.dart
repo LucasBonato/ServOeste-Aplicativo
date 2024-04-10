@@ -15,7 +15,6 @@ class ServOesteApi{
       List<dynamic> jsonResponse = json.decode(responseBodyUtf8);
       List<Tecnico> tecnicos = jsonResponse.map((json) => Tecnico.fromJson(json)).toList();
       return tecnicos;
-      //return tecnicoFromJson(const Utf8Decoder().convert(response.bodyBytes));
     }
     return null;
   }
