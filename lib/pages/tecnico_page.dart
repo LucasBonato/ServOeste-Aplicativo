@@ -138,7 +138,10 @@ class _TecnicoPageState extends State<TecnicoPage> {
                     ),
                   )]
                 )
-              ]) : const Flexible(child: Center(child: CircularProgressIndicator()),
+              ]) : const Flexible(child: Center(child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 320),
+                child: CircularProgressIndicator(),
+              )),
             ),
           ],
         ),
