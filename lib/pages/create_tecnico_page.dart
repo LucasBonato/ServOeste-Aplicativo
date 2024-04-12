@@ -26,18 +26,22 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     _telefoneCelular = "",
     _telefoneFixo = "";
 
-  bool isCheckedAdega = false,
-      isCheckedCooler = false,
-      isCheckedLavaLouca = false,
-      isCheckedPurificador = false,
-      isCheckedBebedouro = false,
-      isCheckedFrigobar = false,
-      isCheckedLavaRoupa = false,
-      isCheckedSecadora = false,
-      isCheckedClimatizador = false,
-      isCheckedGeladeira = false,
-      isCheckedMicroondas = false,
-      isCheckedOutros = false;
+  List<bool> isCheckedList = List.filled(12, false);
+
+  List<String> checkersLabel = [
+    "Adega",
+    "Cooler",
+    "Lava Louca",
+    "Purificador",
+    "Bebedouro",
+    "Frigobar",
+    "Lava Roupa",
+    "Secadora",
+    "Climatizador",
+    "Geladeira",
+    "Microondas",
+    "Outros"
+  ];
 
   @override
   void initState() {
@@ -133,9 +137,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     return true;
   }
   bool verifyCamposCheck(){
-    List<bool> checkers = addCheckerInAList();
-
-    if(checkers.where((element) => element == true).isEmpty) {
+    if(isCheckedList.where((element) => element == true).isEmpty) {
       setErrorCheckBox("Todos falsos");
       return false;
     }
@@ -143,23 +145,6 @@ class _CreateTecnicoState extends State<CreateTecnico> {
       validationCheckBoxes = false;
     });
     return true;
-  }
-
-  List<bool> addCheckerInAList() {
-    return [
-      isCheckedAdega,
-      isCheckedBebedouro,
-      isCheckedClimatizador,
-      isCheckedCooler,
-      isCheckedFrigobar,
-      isCheckedGeladeira,
-      isCheckedLavaLouca,
-      isCheckedLavaRoupa,
-      isCheckedMicroondas,
-      isCheckedPurificador,
-      isCheckedSecadora,
-      isCheckedOutros
-    ];
   }
 
   Tecnico includeData() {
@@ -172,8 +157,8 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     sobrenome = sobrenome.trim();
 
     List<int> especialidadesIds = [];
-    for(int i = 0; i < addCheckerInAList().length; i++){
-      if(addCheckerInAList()[i] == false) continue;
+    for(int i = 0; i < isCheckedList.length; i++){
+      if(isCheckedList[i] == false) continue;
       especialidadesIds.add(++i);
     }
 
@@ -183,6 +168,67 @@ class _CreateTecnicoState extends State<CreateTecnico> {
       telefoneCelular: _telefoneCelular,
       telefoneFixo: _telefoneFixo,
       especialidadesIds: especialidadesIds
+    );
+  }
+
+  Widget rowCheckers() {
+    List<Row> rows = [];
+    List<Column> columns = [];
+    for(int i = 0; i < checkersLabel.length; i++){
+      if(i % 4 == 0 && i != 0) {
+        columns.add(
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: rows,
+          )
+        );
+        rows = [];
+      }
+      rows.add(
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(checkersLabel[i]),
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                child: Theme(
+                  data: ThemeData(
+                    unselectedWidgetColor: Colors.blueAccent,
+                    checkboxTheme: const CheckboxThemeData(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                      ),
+                    ),
+                  ),
+                  child: Checkbox(
+                    value: isCheckedList[i],
+                    activeColor: Colors.blue,
+                    side: const BorderSide(
+                      width: 2,
+                      color: Colors.blueAccent,
+                    ),
+                    onChanged: (value) => {
+                      setState(() {
+                        isCheckedList[i] = value!;
+                      })
+                    },
+                  ),
+                ),
+              )
+            ],
+          )
+      );
+    }
+    columns.add(
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: rows,
+      )
+    );
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: columns,
     );
   }
 
@@ -335,398 +381,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                           Text('Selecione os conhecimentos do Técnico:', style: TextStyle(fontSize: 20)),
                         ],
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Row(
-                                children: [
-                                  const Text('Adega'),
-                                  Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                                    child: Theme(
-                                      data: ThemeData(
-                                        unselectedWidgetColor: Colors.blueAccent,
-                                        checkboxTheme: const CheckboxThemeData(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                                          ),
-                                        ),
-                                      ),
-                                      child: Checkbox(
-                                        value: isCheckedAdega,
-                                        activeColor: Colors.blue,
-                                        side: const BorderSide(
-                                          width: 2,
-                                          color: Colors.blueAccent,
-                                        ),
-                                        onChanged: (value) => {
-                                          setState(() {
-                                            isCheckedAdega = !isCheckedAdega;
-                                          })
-                                        },
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  const Text('Cooler'),
-                                  Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                                    child: Theme(
-                                      data: ThemeData(
-                                        unselectedWidgetColor: Colors.blueAccent,
-                                        checkboxTheme: const CheckboxThemeData(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                                          ),
-                                        ),
-                                      ),
-                                      child: Checkbox(
-                                          value: isCheckedCooler,
-                                          activeColor: Colors.blue,
-                                          side: const BorderSide(
-                                            width: 2,
-                                            color: Colors.blueAccent,
-                                          ),
-                                          onChanged: (value) => {
-                                            setState(() {
-                                              isCheckedCooler = !isCheckedCooler;
-                                            })
-                                          }
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  const Text('Lava Louça'),
-                                  Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                                    child: Theme(
-                                      data: ThemeData(
-                                        unselectedWidgetColor: Colors.blueAccent,
-                                        checkboxTheme: const CheckboxThemeData(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                                          ),
-                                        ),
-                                      ),
-                                      child: Checkbox(
-                                          value: isCheckedLavaLouca,
-                                          activeColor: Colors.blue,
-                                          side: const BorderSide(
-                                            width: 2,
-                                            color: Colors.blueAccent,
-                                          ),
-                                          onChanged: (value) => {
-                                            setState(() {
-                                              isCheckedLavaLouca = !isCheckedLavaLouca;
-                                            })
-                                          }
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  const Text('Purificador'),
-                                  Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                                    child: Theme(
-                                      data: ThemeData(
-                                        unselectedWidgetColor: Colors.blueAccent,
-                                        checkboxTheme: const CheckboxThemeData(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                                          ),
-                                        ),
-                                      ),
-                                      child: Checkbox(
-                                          value: isCheckedPurificador,
-                                          activeColor: Colors.blue,
-                                          side: const BorderSide(
-                                            width: 2,
-                                            color: Colors.blueAccent,
-                                          ),
-                                          onChanged: (value) => {
-                                            setState(() {
-                                              isCheckedPurificador = !isCheckedPurificador;
-                                            })
-                                          }
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Row(
-                                children: [
-                                  const Text('Bebedouro'),
-                                  Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                                    child: Theme(
-                                      data: ThemeData(
-                                        unselectedWidgetColor: Colors.blueAccent,
-                                        checkboxTheme: const CheckboxThemeData(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                                          ),
-                                        ),
-                                      ),
-                                      child: Checkbox(
-                                          value: isCheckedBebedouro,
-                                          activeColor: Colors.blue,
-                                          side: const BorderSide(
-                                            width: 2,
-                                            color: Colors.blueAccent,
-                                          ),
-                                          onChanged: (value) => {
-                                            setState(() {
-                                              isCheckedBebedouro = !isCheckedBebedouro;
-                                            })
-                                          }
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  const Text('Frigobar'),
-                                  Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                                    child: Theme(
-                                      data: ThemeData(
-                                        unselectedWidgetColor: Colors.blueAccent,
-                                        checkboxTheme: const CheckboxThemeData(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                                          ),
-                                        ),
-                                      ),
-                                      child: Checkbox(
-                                          value: isCheckedFrigobar,
-                                          activeColor: Colors.blue,
-                                          side: const BorderSide(
-                                            width: 2,
-                                            color: Colors.blueAccent,
-                                          ),
-                                          onChanged: (value) => {
-                                            setState(() {
-                                              isCheckedFrigobar = !isCheckedFrigobar;
-                                            })
-                                          }
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  const Text('Lava Roupa'),
-                                  Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                                    child: Theme(
-                                      data: ThemeData(
-                                        unselectedWidgetColor: Colors.blueAccent,
-                                        checkboxTheme: const CheckboxThemeData(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                                          ),
-                                        ),
-                                      ),
-                                      child: Checkbox(
-                                          value: isCheckedLavaRoupa,
-                                          activeColor: Colors.blue,
-                                          side: const BorderSide(
-                                            width: 2,
-                                            color: Colors.blueAccent,
-                                          ),
-                                          onChanged: (value) => {
-                                            setState(() {
-                                              isCheckedLavaRoupa = !isCheckedLavaRoupa;
-                                            })
-                                          }
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  const Text('Secadora'),
-                                  Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                                    child: Theme(
-                                      data: ThemeData(
-                                        unselectedWidgetColor: Colors.blueAccent,
-                                        checkboxTheme: const CheckboxThemeData(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                                          ),
-                                        ),
-                                      ),
-                                      child: Checkbox(
-                                          value: isCheckedSecadora,
-                                          activeColor: Colors.blue,
-                                          side: const BorderSide(
-                                            width: 2,
-                                            color: Colors.blueAccent,
-                                          ),
-                                          onChanged: (value) => {
-                                            setState(() {
-                                              isCheckedSecadora = !isCheckedSecadora;
-                                            })
-                                          }
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Row(
-                                children: [
-                                  const Text('Climatizador'),
-                                  Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                                    child: Theme(
-                                      data: ThemeData(
-                                        unselectedWidgetColor: Colors.blueAccent,
-                                        checkboxTheme: const CheckboxThemeData(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                                          ),
-                                        ),
-                                      ),
-                                      child: Checkbox(
-                                          value: isCheckedClimatizador,
-                                          activeColor: Colors.blue,
-                                          side: const BorderSide(
-                                            width: 2,
-                                            color: Colors.blueAccent,
-                                          ),
-                                          onChanged: (value) => {
-                                            setState(() {
-                                              isCheckedClimatizador = !isCheckedClimatizador;
-                                            })
-                                          }
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  const Text('Geladeira'),
-                                  Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                                    child: Theme(
-                                      data: ThemeData(
-                                        unselectedWidgetColor: Colors.blueAccent,
-                                        checkboxTheme: const CheckboxThemeData(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                                          ),
-                                        ),
-                                      ),
-                                      child: Checkbox(
-                                          value: isCheckedGeladeira,
-                                          activeColor: Colors.blue,
-                                          side: const BorderSide(
-                                            width: 2,
-                                            color: Colors.blueAccent,
-                                          ),
-                                          onChanged: (value) => {
-                                            setState(() {
-                                              isCheckedGeladeira = !isCheckedGeladeira;
-                                            })
-                                          }
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  const Text('Microondas'),
-                                  Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                                    child: Theme(
-                                      data: ThemeData(
-                                        unselectedWidgetColor: Colors.blueAccent,
-                                        checkboxTheme: const CheckboxThemeData(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                                          ),
-                                        ),
-                                      ),
-                                      child: Checkbox(
-                                          value: isCheckedMicroondas,
-                                          activeColor: Colors.blue,
-                                          side: const BorderSide(
-                                            width: 2,
-                                            color: Colors.blueAccent,
-                                          ),
-                                          onChanged: (value) => {
-                                            setState(() {
-                                              isCheckedMicroondas = !isCheckedMicroondas;
-                                            })
-                                          }
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  const Text('Outros'),
-                                  Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                                    child: Theme(
-                                      data: ThemeData(
-                                        unselectedWidgetColor: Colors.blueAccent,
-                                        checkboxTheme: const CheckboxThemeData(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                                          ),
-                                        ),
-                                      ),
-                                      child: Checkbox(
-                                          value: isCheckedOutros,
-                                          activeColor: Colors.blue,
-                                          side: const BorderSide(
-                                            width: 2,
-                                            color: Colors.blueAccent,
-                                          ),
-                                          onChanged: (value) => {
-                                            setState(() {
-                                              isCheckedOutros = !isCheckedOutros;
-                                            })
-                                          }
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
+                      rowCheckers(),
                       Column(
                         children: [
                           Text(validationCheckBoxes ? _errorMessage : "", style: const TextStyle(color: Colors.red))
