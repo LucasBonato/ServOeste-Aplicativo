@@ -10,29 +10,23 @@ class ServOesteApi{
     var uri = Uri.parse(baseUri);
     var response = await client.get(uri);
 
-    if(response.statusCode == 200){
-      var responseBodyUtf8 = utf8.decode(response.body.runes.toList());
-      List<dynamic> jsonResponse = json.decode(responseBodyUtf8);
-      List<Tecnico> tecnicos = jsonResponse.map((json) => Tecnico.fromJson(json)).toList();
-      return tecnicos;
-    }
-    return null;
+    var responseBodyUtf8 = utf8.decode(response.body.runes.toList());
+    List<dynamic> jsonResponse = json.decode(responseBodyUtf8);
+    List<Tecnico> tecnicos = jsonResponse.map((json) => Tecnico.fromJson(json)).toList();
+    return tecnicos;
   }
 
   Future<List<Tecnico>?> getByNome(String nome) async{
     var uri = Uri.parse("$baseUri/nome?n=$nome");
     var response = await client.get(uri);
 
-    if(response.statusCode == 200){
-      var responseBodyUtf8 = utf8.decode(response.body.runes.toList());
-      List<dynamic> jsonResponse = json.decode(responseBodyUtf8);
-      List<Tecnico> tecnicos = jsonResponse.map((json) => Tecnico.fromJson(json)).toList();
-      return tecnicos;
-    }
-    return null;
+    var responseBodyUtf8 = utf8.decode(response.body.runes.toList());
+    List<dynamic> jsonResponse = json.decode(responseBodyUtf8);
+    List<Tecnico> tecnicos = jsonResponse.map((json) => Tecnico.fromJson(json)).toList();
+    return tecnicos;
   }
   
-  Future<bool> postTecnico(Tecnico tecnico) async{
+  Future<dynamic> postTecnico(Tecnico tecnico) async{
     var response = await client.post(
       Uri.parse(baseUri),
       headers: <String, String>{
@@ -46,9 +40,10 @@ class ServOesteApi{
         "especialidades_Ids": tecnico.especialidadesIds,
       }),
     );
-    if(response.statusCode == 201){
-      return true;
+    if(response.statusCode != 201){
+      dynamic body = jsonDecode(utf8.decode(response.body.runes.toList()));
+      return body;
     }
-    return false;
+    return null;
   }
 }

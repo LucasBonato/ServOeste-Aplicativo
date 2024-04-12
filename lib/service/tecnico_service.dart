@@ -13,7 +13,7 @@ class TecnicoService{
     return api.getByNome(nome);
   }
 
-  Future<bool> create(Tecnico tecnico) async{
+  Future<dynamic> create(Tecnico tecnico) async{
     return api.postTecnico(tecnico);
   }
 }
