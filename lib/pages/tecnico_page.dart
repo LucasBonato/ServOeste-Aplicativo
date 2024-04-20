@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:serv_oeste/components/search_field.dart';
 import 'package:serv_oeste/service/tecnico_service.dart';
+import '../components/dialog_box.dart';
 import '../models/tecnico.dart';
 
 class TecnicoPage extends StatefulWidget {
@@ -30,6 +31,7 @@ class _TecnicoPageState extends State<TecnicoPage> {
     tecnicos = await tecnicoService.getAllTecnico();
     setState(() {
       isLoaded = true;
+      isSelected = false;
     });
   }
 
@@ -78,8 +80,9 @@ class _TecnicoPageState extends State<TecnicoPage> {
     return;
   }
 
-  void desativarTecnicos(){
-    Logger().i("Desativados: $_selectedItems");
+  void desativarTecnicos() async{
+    await tecnicoService.disableList(_selectedItems);
+    carregarTecnicos();
   }
 
   @override
@@ -89,7 +92,7 @@ class _TecnicoPageState extends State<TecnicoPage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: (!isSelected) ? null : Colors.red,
         shape: const CircleBorder(eccentricity: 0),
-        onPressed: (!isSelected) ? widget.onFabPressed : desativarTecnicos,
+        onPressed: (!isSelected) ? widget.onFabPressed : () =>  DialogUtils.showConfirmationDialog(context, "Desativar Técnicos selecionados?", "", "Sim", "Não", desativarTecnicos),
         child: (!isSelected) ? const Icon(Icons.add) : const Icon(Icons.remove, color: Colors.white,),
       ),
       body: SingleChildScrollView(

@@ -16,4 +16,8 @@ class TecnicoService{
   Future<dynamic> create(Tecnico tecnico) async{
     return api.postTecnico(tecnico);
   }
+
+  Future<dynamic> disableList(List<int> selectedItems) {
+    return api.disableList(selectedItems);
+  }
 }

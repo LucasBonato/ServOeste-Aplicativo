@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:logger/logger.dart';
 import 'package:serv_oeste/models/tecnico.dart';
 import 'package:http/http.dart' as http;
 
@@ -45,5 +46,19 @@ class ServOesteApi{
       return body;
     }
     return null;
+  }
+
+  Future<dynamic> disableList(List<int> selectedItems) async{
+    var response = await client.delete(
+      Uri.parse(baseUri),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(selectedItems)
+    );
+    if(response.statusCode != 200){
+      Logger().e("Vai ver a API");
+    }
+    return;
   }
 }
