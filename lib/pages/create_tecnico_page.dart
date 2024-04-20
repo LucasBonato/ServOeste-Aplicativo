@@ -76,7 +76,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text(checkersLabel[i]),
+              Text(checkersLabel[i], style: const TextStyle(fontSize: 16),),
               Theme(
                 data: ThemeData(
                   unselectedWidgetColor: Colors.blueAccent,
