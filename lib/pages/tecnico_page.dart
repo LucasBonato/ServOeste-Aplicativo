@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
+import 'package:serv_oeste/components/search_field.dart';
 import 'package:serv_oeste/service/tecnico_service.dart';
 import '../models/tecnico.dart';
 
@@ -14,7 +16,9 @@ class TecnicoPage extends StatefulWidget {
 class _TecnicoPageState extends State<TecnicoPage> {
   final TecnicoService tecnicoService = TecnicoService();
   List<Tecnico>? tecnicos;
-  bool isLoaded = false;
+  bool isLoaded = false,
+      isSelected = false;
+  final List<int> _selectedItems = [];
 
   @override
   void initState() {
@@ -54,50 +58,45 @@ class _TecnicoPageState extends State<TecnicoPage> {
     return telefoneFormatado;
   }
 
+  void selectItens(int id) {
+    if(!_selectedItems.contains(id)){
+      setState(() {
+        _selectedItems.add(id);
+        if(!isSelected){
+          isSelected = true;
+        }
+      });
+    }
+  }
+
+  void removeItens(int id) {
+    if(_selectedItems.contains(id)){
+      _selectedItems.removeWhere((value) => value == id);
+      return;
+    }
+    selectItens(id);
+    return;
+  }
+
+  void desativarTecnicos(){
+    Logger().i("Desativados: $_selectedItems");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       floatingActionButton: FloatingActionButton(
+        backgroundColor: (!isSelected) ? null : Colors.red,
         shape: const CircleBorder(eccentricity: 0),
-        onPressed: widget.onFabPressed,
-        child: const Icon(Icons.add),
+        onPressed: (!isSelected) ? widget.onFabPressed : desativarTecnicos,
+        child: (!isSelected) ? const Icon(Icons.add) : const Icon(Icons.remove, color: Colors.white,),
       ),
       body: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(16, 4, 16, 0),
-              child: TextFormField(
-                obscureText: false,
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(
-                    Icons.search_outlined,
-                    color: Color(0xFF57636C),
-                  ),
-                  isDense: false,
-                  labelText: 'Procure por Técnicos...',
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFFF1F4F8),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFF4B39EF),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  filled: true,
-                  fillColor: const Color(0xFFF1F4F8),
-                ),
-                onChanged: (value) => setState(() {findByName(value);}),
-              ),
-            ),
+            SearchTextField(hint: "Procure por Técnicos...", onChangedAction: (String nome) => findByName(nome)),
             isLoaded ? Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -128,10 +127,22 @@ class _TecnicoPageState extends State<TecnicoPage> {
                         scrollDirection: Axis.vertical,
                         itemCount: tecnicos!.length,
                         itemBuilder: (context, index) => ListTile(
+                          tileColor: (_selectedItems.contains(tecnicos![index].id!)) ? Colors.blue.withOpacity(.5) : Colors.transparent,
                           leading:Text("${tecnicos?[index].id}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                           title: Text("${tecnicos?[index].nome} ${tecnicos?[index].sobrenome}", style: const TextStyle(fontWeight: FontWeight.bold)),
                           subtitle: Text("Telefone: ${(verifyTelefone(tecnicos?[index]))}"),
                           trailing: Text("${tecnicos?[index].situacao}"),
+                          onLongPress: () => selectItens(tecnicos![index].id!),
+                          onTap: () {
+                            setState(() {
+                              if(_selectedItems.isNotEmpty){
+                                removeItens(tecnicos![index].id!);
+                              }
+                              if(_selectedItems.isEmpty){
+                                isSelected = false;
+                              }
+                            });
+                          },
                         ),
                         separatorBuilder: (context, index) => const Divider(),
                       ),
