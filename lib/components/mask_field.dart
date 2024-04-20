@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:masked_text/masked_text.dart';
 
+//ignore: must_be_immutable
 class CustomMaskField extends StatefulWidget {
   final String hint;
   final String label;

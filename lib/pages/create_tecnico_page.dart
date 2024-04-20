@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:masked_text/masked_text.dart';
 import 'package:serv_oeste/components/mask_field.dart';
 import 'package:serv_oeste/models/tecnico.dart';
 import 'package:serv_oeste/service/tecnico_service.dart';
@@ -27,22 +26,71 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     _telefoneCelular = "",
     _telefoneFixo = "";
 
-  List<bool> isCheckedList = List.filled(12, false);
+  Map<String, bool> checkersMap = {
+    "Adega": false,
+    "Cooler": false,
+    "Lava Louca": false,
+    "Purificador": false,
+    "Bebedouro": false,
+    "Frigobar": false,
+    "Lava Roupa": false,
+    "Secadora": false,
+    "Climatizador": false,
+    "Geladeira": false,
+    "Microondas": false,
+    "Outros": false
+  };
 
-  List<String> checkersLabel = [
-    "Adega",
-    "Cooler",
-    "Lava Louca",
-    "Purificador",
-    "Bebedouro",
-    "Frigobar",
-    "Lava Roupa",
-    "Secadora",
-    "Climatizador",
-    "Geladeira",
-    "Microondas",
-    "Outros"
-  ];
+  Widget rowCheckersMap() {
+    List<Row> rows = [];
+    List<Column> columns = [];
+    checkersMap.forEach((label, isChecked) {
+      rows.add(
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text(label, style: const TextStyle(fontSize: 16)),
+            Theme(
+              data: ThemeData(
+                unselectedWidgetColor: Colors.blueAccent,
+                checkboxTheme: const CheckboxThemeData(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                  ),
+                ),
+              ),
+              child: Checkbox(
+                value: isChecked,
+                activeColor: Colors.blue,
+                side: const BorderSide(
+                  width: 2,
+                  color: Colors.blueAccent,
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    checkersMap[label] = value!;
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
+      );
+    });
+    for (int i = 0; i < rows.length; i += 4) {
+      columns.add(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: rows.sublist(i, i + 4),
+        ),
+      );
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: columns,
+    );
+  }
 
   @override
   void initState() {
@@ -57,64 +105,6 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     telefoneCelularController.dispose();
     telefoneFixoController.dispose();
     super.dispose();
-  }
-
-  Widget rowCheckers() {
-    List<Row> rows = [];
-    List<Column> columns = [];
-    for(int i = 0; i < checkersLabel.length; i++){
-      if(i % 4 == 0 && i != 0) {
-        columns.add(
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: rows,
-            )
-        );
-        rows = [];
-      }
-      rows.add(
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(checkersLabel[i], style: const TextStyle(fontSize: 16),),
-              Theme(
-                data: ThemeData(
-                  unselectedWidgetColor: Colors.blueAccent,
-                  checkboxTheme: const CheckboxThemeData(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                    ),
-                  ),
-                ),
-                child: Checkbox(
-                  value: isCheckedList[i],
-                  activeColor: Colors.blue,
-                  side: const BorderSide(
-                    width: 2,
-                    color: Colors.blueAccent,
-                  ),
-                  onChanged: (value) => {
-                    setState(() {
-                      isCheckedList[i] = value!;
-                    })
-                  },
-                ),
-              ),
-            ],
-          )
-      );
-    }
-    columns.add(
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: rows,
-        )
-    );
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: columns,
-    );
   }
 
   String transformarMask(String telefone){
@@ -187,10 +177,11 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     _telefoneFixo = transformarMask(telefoneFixoController.text);
 
     List<int> especialidadesIds = [];
-    for(int i = 0; i < isCheckedList.length; i++){
-      if(isCheckedList[i] == false) continue;
-      especialidadesIds.add(++i);
-    }
+    checkersMap.forEach((label, isChecked) {
+      if(isChecked){
+        especialidadesIds.add(checkersMap.keys.toList().indexOf(label) + 1);
+      }
+    });
 
     return Tecnico(
       nome: nome,
@@ -273,7 +264,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text('Selecione os conhecimentos do Técnico:', textAlign: TextAlign.center, style: TextStyle(fontSize: 20)),
-                    rowCheckers(),
+                    rowCheckersMap(),
                     Text(validationCheckBoxes ? _errorMessage : "", textAlign: TextAlign.center, style: const TextStyle(color: Colors.red)),
                     Padding(
                       padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
