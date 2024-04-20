@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:serv_oeste/components/search_field.dart';
 import 'package:serv_oeste/service/tecnico_service.dart';
 import '../components/dialog_box.dart';
@@ -152,9 +151,12 @@ class _TecnicoPageState extends State<TecnicoPage> {
                     ),
                   )]
                 )
-              ]) : const Flexible(child: Center(child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 320),
-                child: CircularProgressIndicator(),
+              ]
+            ) : const Flexible(
+              child: Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 320),
+                  child: CircularProgressIndicator(),
               )),
             ),
           ],

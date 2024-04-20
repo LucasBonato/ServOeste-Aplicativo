@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:masked_text/masked_text.dart';
+import 'package:serv_oeste/components/mask_field.dart';
 import 'package:serv_oeste/models/tecnico.dart';
 import 'package:serv_oeste/service/tecnico_service.dart';
 
@@ -201,18 +202,16 @@ class _CreateTecnicoState extends State<CreateTecnico> {
   }
 
   void adicionarTecnico() async {
-    if(true){
-      TecnicoService tecnicoService = TecnicoService();
-      Tecnico tecnico = includeData();
-      dynamic body = await tecnicoService.create(tecnico);
+    TecnicoService tecnicoService = TecnicoService();
+    Tecnico tecnico = includeData();
+    dynamic body = await tecnicoService.create(tecnico);
 
-      if(body == null) {
-        widget.onIconPressed();
-        return;
-      }
-
-      setError(body["idError"], body["message"]);
+    if(body == null) {
+      widget.onIconPressed();
+      return;
     }
+
+    setError(body["idError"], body["message"]);
   }
 
   @override
@@ -234,158 +233,63 @@ class _CreateTecnicoState extends State<CreateTecnico> {
             children: [
               Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(16, 4, 16, 0),
-                    child: MaskedTextField(
-                      controller: nomeController,
-                      maxLength: 40,
-                      keyboardType: TextInputType.name,
-                      decoration: InputDecoration(
-                        errorText: (validationNome) ? _errorMessage : null,
-                        hintText: "Nome...",
-                        labelText: "Nome",
-                        isDense: true,
-                        fillColor: const Color(0xFFF1F4F8),
-                        enabledBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.blue,
-                            width: 2,
-                          ),
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.blueAccent,
-                            width: 2,
-                          ),
-                        ),
-                        errorBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.red,
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                      onTap: () => {
-                        setState(() {
-                          validationNome = false;
-                        })
-                      },
-                    ),
+                  CustomMaskField(
+                    hint: "Nome...",
+                    label: "Nome",
+                    mask: null,
+                    errorMessage: _errorMessage,
+                    maxLength: 40,
+                    controller: nomeController,
+                    validation: validationNome,
+                    type: TextInputType.name,
                   ),
-                  Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(16, 4, 16, 0),
-                    child: MaskedTextField(
-                      controller: telefoneCelularController,
-                      mask: "(##) #####-####",
-                      maxLength: 15,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        errorText: (validationTelefoneCelular) ? _errorMessage : null,
-                        hintText: "(99) 99999-9999",
-                        labelText: "Telefone Celular",
-                        isDense: true,
-                        fillColor: const Color(0xFFF1F4F8),
-                        enabledBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.blue,
-                            width: 2,
-                          ),
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.blueAccent,
-                            width: 2,
-                          ),
-                        ),
-                        errorBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.red,
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                      onTap: () => {
-                        setState(() {
-                          validationTelefoneCelular = false;
-                        })
-                      },
-                    ),
+                  CustomMaskField(
+                    hint: "(99) 99999-9999",
+                    label: "Telefone Celular",
+                    mask: "(##) #####-####",
+                    errorMessage: _errorMessage,
+                    maxLength: 15,
+                    controller: telefoneCelularController,
+                    validation: validationTelefoneCelular,
+                    type: TextInputType.phone,
                   ),
-                  Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(16, 4, 16, 0),
-                    child: MaskedTextField(
-                      controller: telefoneFixoController,
-                      mask: "(##) #####-####",
-                      maxLength: 15,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        errorText: (validationTelefoneFixo) ? _errorMessage : null,
-                        hintText: "(99) 99999-9999",
-                        labelText: "Telefone Fixo",
-                        isDense: true,
-                        fillColor: const Color(0xFFF1F4F8),
-                        enabledBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.blue,
-                            width: 2,
-                          ),
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.blueAccent,
-                            width: 2,
-                          ),
-                        ),
-                        errorBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.red,
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                      onTap: () => {
-                        setState(() {
-                          validationTelefoneFixo = false;
-                        })
-                      },
-                    ),
+                  CustomMaskField(
+                    hint: "(99) 99999-9999",
+                    label: "Telefone Fixo",
+                    mask: "(##) #####-####",
+                    errorMessage: _errorMessage,
+                    maxLength: 15,
+                    controller: telefoneFixoController,
+                    validation: validationTelefoneFixo,
+                    type: TextInputType.phone,
                   ),
                 ],
               ),
               Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(0, 32, 0, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Column(
-                        children: [
-                          Text('Selecione os conhecimentos do Técnico:', style: TextStyle(fontSize: 20)),
-                        ],
-                      ),
-                      rowCheckers(),
-                      Column(
-                        children: [
-                          Text(validationCheckBoxes ? _errorMessage : "", style: const TextStyle(color: Colors.red))
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
-
-                        child: TextButton(
-                          onPressed: adicionarTecnico,
-                          style: TextButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            foregroundColor: Colors.white,
-                            textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
-                          ),
-                          child: const Text("Adicionar"),
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 32, 0, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Selecione os conhecimentos do Técnico:', textAlign: TextAlign.center, style: TextStyle(fontSize: 20)),
+                    rowCheckers(),
+                    Text(validationCheckBoxes ? _errorMessage : "", textAlign: TextAlign.center, style: const TextStyle(color: Colors.red)),
+                    Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
+                      child: TextButton(
+                        onPressed: adicionarTecnico,
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                          textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
                         ),
+                        child: const Text("Adicionar"),
                       ),
-                    ],
-                  ),
-                )
+                    ),
+                  ],
+                ),
+              )
             ]
           ),
         )
