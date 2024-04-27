@@ -6,8 +6,9 @@ import '../models/tecnico.dart';
 
 class TecnicoPage extends StatefulWidget {
   final VoidCallback onFabPressed;
+  final Function(int) onEditPressed;
 
-  const TecnicoPage({super.key, required this.onFabPressed});
+  const TecnicoPage({super.key, required this.onFabPressed, required this.onEditPressed});
 
   @override
   State<TecnicoPage> createState() => _TecnicoPageState();
@@ -76,7 +77,6 @@ class _TecnicoPageState extends State<TecnicoPage> {
       return;
     }
     selectItens(id);
-    return;
   }
 
   void desativarTecnicos() async{
@@ -128,24 +128,35 @@ class _TecnicoPageState extends State<TecnicoPage> {
                         reverse: false,
                         scrollDirection: Axis.vertical,
                         itemCount: tecnicos!.length,
-                        itemBuilder: (context, index) => ListTile(
-                          tileColor: (_selectedItems.contains(tecnicos![index].id!)) ? Colors.blue.withOpacity(.5) : Colors.transparent,
-                          leading:Text("${tecnicos?[index].id}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                          title: Text("${tecnicos?[index].nome} ${tecnicos?[index].sobrenome}", style: const TextStyle(fontWeight: FontWeight.bold)),
-                          subtitle: Text("Telefone: ${(verifyTelefone(tecnicos?[index]))}"),
-                          trailing: Text("${tecnicos?[index].situacao}"),
-                          onLongPress: () => selectItens(tecnicos![index].id!),
-                          onTap: () {
-                            setState(() {
-                              if(_selectedItems.isNotEmpty){
-                                removeItens(tecnicos![index].id!);
-                              }
-                              if(_selectedItems.isEmpty){
-                                isSelected = false;
-                              }
-                            });
-                          },
-                        ),
+                        itemBuilder: (context, index) {
+                          final tecnico = tecnicos![index];
+                          return ListTile(
+                            tileColor: (_selectedItems.contains(tecnico.id!)) ? Colors.blue.withOpacity(.5) : Colors.transparent,
+                            leading: Text("${tecnico.id}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                            title: Text("${tecnico.nome} ${tecnico.sobrenome}", style: const TextStyle(fontWeight: FontWeight.bold)),
+                            subtitle: Text("Telefone: ${(verifyTelefone(tecnico))}"),
+                            trailing: (isSelected && _selectedItems.length == 1 && _selectedItems.contains(tecnico.id)) ?
+                              IconButton(
+                                onPressed: () => widget.onEditPressed(tecnico.id!),
+                                icon: const Icon(Icons.edit, color: Colors.white,),
+                                style: const ButtonStyle(
+                                  backgroundColor: MaterialStatePropertyAll<Color>(Colors.blue)
+                                ),
+                              ) :
+                              Text("${tecnico.situacao}"),
+                            onLongPress: () => selectItens(tecnico.id!),
+                            onTap: () {
+                              setState(() {
+                                if (_selectedItems.isNotEmpty) {
+                                  removeItens(tecnico.id!);
+                                }
+                                if (_selectedItems.isEmpty) {
+                                  isSelected = false;
+                                }
+                              });
+                            },
+                          );
+                        },
                         separatorBuilder: (context, index) => const Divider(),
                       ),
                     ),

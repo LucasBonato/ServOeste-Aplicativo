@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:serv_oeste/pages/create_tecnico_page.dart';
 import 'package:serv_oeste/pages/home_page.dart';
 import 'package:serv_oeste/pages/tecnico_page.dart';
+import 'package:serv_oeste/pages/update_tecnico_page.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -20,14 +21,20 @@ class HomeState extends State<Home> {
       switch(index){
         case 0: paginaAtual = const HomePage(); break;
         case 1: paginaAtual = TecnicoPage(
-            onFabPressed: () {changePageWithoutIndex();}
-        ); break;
+            onFabPressed: () {changeInternalPage(1);},
+            onEditPressed: (idUpdate) {changeInternalPage(2, id: idUpdate);}
+          );
+        break;
       }
     });
   }
-  void changePageWithoutIndex(){
+  void changeInternalPage(int index, {int? id}){
     setState(() {
-      paginaAtual = CreateTecnico(onIconPressed: () {changePage(1);});
+      if(index == 1){
+        paginaAtual = CreateTecnico(onIconPressed: () {changePage(1);});
+        return;
+      }
+      paginaAtual = UpdateTecnico(onIconPressed: () {changePage(1);}, id: id!,);
     });
   }
 
