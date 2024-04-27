@@ -28,16 +28,16 @@ class _CreateTecnicoState extends State<CreateTecnico> {
 
   Map<String, bool> checkersMap = {
     "Adega": false,
-    "Cooler": false,
-    "Lava Louca": false,
-    "Purificador": false,
     "Bebedouro": false,
-    "Frigobar": false,
-    "Lava Roupa": false,
-    "Secadora": false,
     "Climatizador": false,
+    "Cooler": false,
+    "Frigobar": false,
     "Geladeira": false,
+    "Lava Louça": false,
+    "Lava Roupa": false,
     "Microondas": false,
+    "Purificador": false,
+    "Secadora": false,
     "Outros": false
   };
 
@@ -146,20 +146,14 @@ class _CreateTecnicoState extends State<CreateTecnico> {
       validationTelefoneCelular = false;
       validationTelefoneFixo = false;
       validationCheckBoxes = false;
+      _errorMessage = "";
 
       switch(erro){
-        case 1: setErrorNome(errorMessage);
-        break;
-        case 2: setErrorTelefoneCelular(errorMessage);
-        break;
-        case 3: setErrorTelefoneFixo(errorMessage);
-        break;
-        case 4: setErrorTelefones(errorMessage);
-        break;
-        case 5: setErrorCheckBox(errorMessage);
-        break;
-        default:
-          break;
+        case 1: setErrorNome(errorMessage); break;
+        case 2: setErrorTelefoneCelular(errorMessage); break;
+        case 3: setErrorTelefoneFixo(errorMessage); break;
+        case 4: setErrorTelefones(errorMessage); break;
+        case 5: setErrorCheckBox(errorMessage); break;
       }
     });
   }

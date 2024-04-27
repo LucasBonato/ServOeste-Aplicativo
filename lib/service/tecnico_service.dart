@@ -13,8 +13,16 @@ class TecnicoService{
     return api.getByNome(nome);
   }
 
+  Future<Tecnico?> getById(int id) async{
+    return api.getById(id);
+  }
+
   Future<dynamic> create(Tecnico tecnico) async{
     return api.postTecnico(tecnico);
+  }
+
+  Future<dynamic> update(Tecnico tecnico) async{
+    return api.update(tecnico);
   }
 
   Future<dynamic> disableList(List<int> selectedItems) {

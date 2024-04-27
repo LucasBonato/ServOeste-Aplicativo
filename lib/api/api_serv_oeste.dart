@@ -26,7 +26,17 @@ class ServOesteApi{
     List<Tecnico> tecnicos = jsonResponse.map((json) => Tecnico.fromJson(json)).toList();
     return tecnicos;
   }
-  
+
+  Future<Tecnico?> getById(int id) async{
+    var uri = Uri.parse("$baseUri/$id");
+    var response = await client.get(uri);
+
+    var responseBodyUtf8 = utf8.decode(response.body.runes.toList());
+    dynamic jsonResponse = json.decode(responseBodyUtf8);
+    Tecnico tecnico = Tecnico.fromJson(jsonResponse);
+    return tecnico;
+  }
+
   Future<dynamic> postTecnico(Tecnico tecnico) async{
     var response = await client.post(
       Uri.parse(baseUri),
@@ -60,5 +70,27 @@ class ServOesteApi{
       Logger().e("Vai ver a API");
     }
     return;
+  }
+
+  Future<dynamic> update(Tecnico tecnico) async{
+    var response = await client.put(
+      Uri.parse("$baseUri/${tecnico.id}"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({
+        "nome": tecnico.nome,
+        "sobrenome": tecnico.sobrenome,
+        "telefoneFixo": tecnico.telefoneFixo,
+        "telefoneCelular": tecnico.telefoneCelular,
+        "situacao": tecnico.situacao,
+        "especialidades_Ids": tecnico.especialidadesIds,
+      }),
+    );
+    if(response.statusCode != 200){
+      dynamic body = jsonDecode(utf8.decode(response.body.runes.toList()));
+      return body;
+    }
+    return null;
   }
 }
