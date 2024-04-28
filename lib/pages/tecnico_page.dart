@@ -4,7 +4,7 @@ import 'package:serv_oeste/service/tecnico_service.dart';
 import '../components/dialog_box.dart';
 import '../models/tecnico.dart';
 
-const List<String> list = <String>['Ativo', 'Licença', 'Desativado'];
+List<String> list = <String>['Ativo', 'Licença', 'Desativado'];
 
 class TecnicoPage extends StatefulWidget {
   final VoidCallback onFabPressed;
@@ -18,17 +18,17 @@ class TecnicoPage extends StatefulWidget {
 
 class _TecnicoPageState extends State<TecnicoPage> {
   final TecnicoService tecnicoService = TecnicoService();
-  final List<int> _selectedItems = [];
-  List<Tecnico>? tecnicos;
+  final List<int> _selectedItens = [];
+  late List<Tecnico>? tecnicos;
+  final TextEditingController _idController = TextEditingController(),
+      _nomeController = TextEditingController(),
+      _situacaoController = TextEditingController();
   String _dropDownValue = list.first;
   bool isLoaded = false,
       isSelected = false;
   int? _id;
-  final TextEditingController _idController = TextEditingController();
-  String? _nome;
-  final TextEditingController _nomeController = TextEditingController();
-  String? _situacao;
-  final TextEditingController _situacaoController = TextEditingController();
+  String? _nome,
+      _situacao;
 
   @override
   void initState() {
@@ -53,62 +53,48 @@ class _TecnicoPageState extends State<TecnicoPage> {
     return;
   }
 
-  Future<void> findBy({int? id, String? nome, String? situacao}) async{
-    if(id != null) {
-      _id = id;
-    }
-    if(_idController.text.isEmpty){
+  void findBy({int? id, String? nome, String? situacao}) {
+    _id = id;
+    _nome = nome;
+    _situacao = situacao?.toLowerCase();
+
+    if (_idController.text.isEmpty) {
       _id = null;
     }
-    if(nome != null && nome.isNotEmpty) {
-      _nome = nome;
-    }
-    if(_nomeController.text.isEmpty){
+    if (_nomeController.text.isEmpty) {
       _nome = null;
     }
-    if(situacao != null) {
-      _situacao = situacao.toLowerCase();
-    }
-    if(_situacaoController.text.isEmpty){
+    if (_situacaoController.text.isEmpty) {
       _situacao = null;
     }
     carregarTecnicos();
   }
 
-  String? verifyTelefone(Tecnico? tecnico){
-    var telefoneC = tecnico?.telefoneCelular;
-    var telefoneF = tecnico?.telefoneFixo;
-    List<String> caracteresTelefone = (telefoneC != "") ? telefoneC!.split("") : telefoneF!.split("");
-    String telefoneFormatado = "(";
-    for(int i = 0; i < caracteresTelefone.length; i++){
-      if(i == 2){telefoneFormatado += ") ";}
-      if(i == 7){telefoneFormatado += "-";}
-      telefoneFormatado += caracteresTelefone[i];
-    }
+  String transformTelefone(Tecnico? tecnico){
+    var telefoneC = tecnico?.telefoneCelular ?? "";
+    var telefoneF = tecnico?.telefoneFixo ?? "";
+    String telefone = (telefoneC.isNotEmpty) ? telefoneC : telefoneF;
+    String telefoneFormatado = "(${telefone.substring(0, 2)}) ${telefone.substring(2, 7)}-${telefone.substring(7)}";
     return telefoneFormatado;
   }
 
   void selectItens(int id) {
-    if(!_selectedItems.contains(id)){
+    if(_selectedItens.contains(id)){
       setState(() {
-        _selectedItems.add(id);
-        if(!isSelected){
-          isSelected = true;
-        }
+        _selectedItens.removeWhere((value) => value == id);
       });
-    }
-  }
-
-  void removeItens(int id) {
-    if(_selectedItems.contains(id)){
-      _selectedItems.removeWhere((value) => value == id);
       return;
     }
-    selectItens(id);
+    _selectedItens.add(id);
+    setState(() {
+      if(!isSelected){
+        isSelected = true;
+      }
+    });
   }
 
   void desativarTecnicos() async{
-    await tecnicoService.disableList(_selectedItems);
+    await tecnicoService.disableList(_selectedItens);
     carregarTecnicos();
   }
 
@@ -226,30 +212,28 @@ class _TecnicoPageState extends State<TecnicoPage> {
                           itemBuilder: (context, index) {
                             final tecnico = tecnicos![index];
                             return ListTile(
-                                tileColor: (_selectedItems.contains(tecnico.id!)) ? Colors.blue.withOpacity(.5) : Colors.transparent,
-                                leading: Text("${tecnico.id}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                                title: Text("${tecnico.nome} ${tecnico.sobrenome}", style: const TextStyle(fontWeight: FontWeight.bold)),
-                                subtitle: Text("Telefone: ${(verifyTelefone(tecnico))}"),
-                                trailing: (isSelected && _selectedItems.length == 1 && _selectedItems.contains(tecnico.id)) ?
-                                IconButton(
+                              tileColor: (_selectedItens.contains(tecnico.id!)) ? Colors.blue.withOpacity(.5) : Colors.transparent,
+                              leading: Text("${tecnico.id}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                              title: Text("${tecnico.nome} ${tecnico.sobrenome}", style: const TextStyle(fontWeight: FontWeight.bold)),
+                              subtitle: Text("Telefone: ${(transformTelefone(tecnico))}"),
+                              trailing: (isSelected && _selectedItens.length == 1 && _selectedItens.contains(tecnico.id))
+                                ? IconButton(
                                   onPressed: () => widget.onEditPressed(tecnico.id!),
                                   icon: const Icon(Icons.edit, color: Colors.white,),
                                   style: const ButtonStyle(
                                       backgroundColor: MaterialStatePropertyAll<Color>(Colors.blue)
                                   ),
-                                ) :
-                                Text("${tecnico.situacao}"),
-                                onLongPress: () => selectItens(tecnico.id!),
-                                onTap: () {
-                                  setState(() {
-                                    if (_selectedItems.isNotEmpty) {
-                                      removeItens(tecnico.id!);
-                                    }
-                                    if (_selectedItems.isEmpty) {
-                                      isSelected = false;
-                                    }
-                                  });
+                                )
+                                : Text("${tecnico.situacao}"),
+                              onLongPress: () => selectItens(tecnico.id!),
+                              onTap: () {
+                                if (_selectedItens.isNotEmpty) {
+                                  selectItens(tecnico.id!);
                                 }
+                                if (_selectedItens.isEmpty) {
+                                  isSelected = false;
+                                }
+                              }
                             );
                           },
                         ),
@@ -259,7 +243,7 @@ class _TecnicoPageState extends State<TecnicoPage> {
                 ],
               ),
             ),
-          )  : const Flexible(
+          ) : const Flexible(
             child: Center(
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 320),

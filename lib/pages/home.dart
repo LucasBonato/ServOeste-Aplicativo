@@ -15,27 +15,34 @@ class HomeState extends State<Home> {
   int indexAtual = 0;
   Widget paginaAtual = const HomePage();
 
-  void changePage(int index){
-    setState(() {
-      indexAtual = index;
-      switch(index){
-        case 0: paginaAtual = const HomePage(); break;
-        case 1: paginaAtual = TecnicoPage(
-            onFabPressed: () {changeInternalPage(1);},
-            onEditPressed: (idUpdate) {changeInternalPage(2, id: idUpdate);}
-          );
+  void changePage(int index, {int? id}){
+    if(index == indexAtual) return;
+    indexAtual = (index > 1) ? indexAtual : index;
+    switch(index){
+      case 0:
+        setState(() {
+          paginaAtual = const HomePage();
+        });
         break;
-      }
-    });
-  }
-  void changeInternalPage(int index, {int? id}){
-    setState(() {
-      if(index == 1){
-        paginaAtual = CreateTecnico(onIconPressed: () {changePage(1);});
-        return;
-      }
-      paginaAtual = UpdateTecnico(onIconPressed: () {changePage(1);}, id: id!,);
-    });
+      case 1:
+        setState(() {
+          paginaAtual = TecnicoPage(
+              onFabPressed: () {changePage(2);},
+              onEditPressed: (idUpdate) {changePage(3, id: idUpdate);}
+          );
+        });
+        break;
+      case 2:
+        setState(() {
+          paginaAtual = CreateTecnico(onIconPressed: () {changePage(1);});
+        });
+        break;
+      case 3:
+        setState(() {
+          paginaAtual = UpdateTecnico(onIconPressed: () {changePage(1);}, id: id!);
+        });
+        break;
+    }
   }
 
 	@override
