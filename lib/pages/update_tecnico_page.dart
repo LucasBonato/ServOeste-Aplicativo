@@ -78,8 +78,9 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                   color: Colors.blueAccent,
                 ),
                 onChanged: (value) {
+                  if(value == null) return;
                   setState(() {
-                    checkersMap[label] = value!;
+                    checkersMap[label] = value;
                   });
                 },
               ),
@@ -131,26 +132,15 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
   }
 
   String transformarMask(String telefone){
-    List<String> charsDeTelefone = telefone.split("");
-    String telefoneFormatado = "";
-    for(int i = 0; i < charsDeTelefone.length; i++){
-      if(i == 0) continue;
-      if(i == 3) continue;
-      if(i == 4) continue;
-      if(i == 10) continue;
-      telefoneFormatado += charsDeTelefone[i];
+    if(telefone != ""){
+      String telefoneFormatado = "${telefone.substring(1, 3)}${telefone.substring(5, 10)}${telefone.substring(11)}";
+      return telefoneFormatado;
     }
-    return telefoneFormatado;
+    return "";
   }
-  String deTransformarMask(String telefone) {
-    List<String> charsDeTelefone = telefone.split("");
-    String telefoneDesFormatado = "(";
-    for(int i = 0; i < charsDeTelefone.length; i++){
-      if(i == 2) telefoneDesFormatado += ") ";
-      if(i == 7) telefoneDesFormatado += "-";
-      telefoneDesFormatado += charsDeTelefone[i];
-    }
-    return telefoneDesFormatado;
+  String deTransformarMask(String telefone){
+    String telefoneFormatado = "(${telefone.substring(0, 2)}) ${telefone.substring(2, 7)}-${telefone.substring(7)}";
+    return telefoneFormatado;
   }
 
   void setError(int erro, String errorMessage){
@@ -242,16 +232,11 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
           icon: const Icon(Icons.arrow_back),
           onPressed: widget.onIconPressed,
         ),
-        title: Text("Atualize o Técnico: ${tecnico?.nome}"),
+        title: const Text("Atualize o Técnico: "),
         centerTitle: true,
       ),
-      body: (isLoading) ? const Flexible(
-        child: Center(
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 320),
-            child: CircularProgressIndicator(),
-          )
-        ),
+      body: (isLoading) ? const Center(
+          child: CircularProgressIndicator(),
       ) : buildTecnicoUpdatePage(tecnico)
     );
   }
