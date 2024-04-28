@@ -176,53 +176,56 @@ class _TecnicoPageState extends State<TecnicoPage> {
           ),
           isLoaded ? Flexible(
             flex: 1,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Flexible(
-                  flex: 1,
-                  child: SingleChildScrollView(
-                    child: SizedBox(
-                      height: 649,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        reverse: false,
-                        scrollDirection: Axis.vertical,
-                        itemCount: tecnicos!.length,
-                        itemBuilder: (context, index) {
-                          final tecnico = tecnicos![index];
-                          return ListTile(
-                              tileColor: (_selectedItems.contains(tecnico.id!)) ? Colors.blue.withOpacity(.5) : Colors.transparent,
-                              leading: Text("${tecnico.id}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                              title: Text("${tecnico.nome} ${tecnico.sobrenome}", style: const TextStyle(fontWeight: FontWeight.bold)),
-                              subtitle: Text("Telefone: ${(verifyTelefone(tecnico))}"),
-                              trailing: (isSelected && _selectedItems.length == 1 && _selectedItems.contains(tecnico.id)) ?
-                              IconButton(
-                                onPressed: () => widget.onEditPressed(tecnico.id!),
-                                icon: const Icon(Icons.edit, color: Colors.white,),
-                                style: const ButtonStyle(
-                                    backgroundColor: MaterialStatePropertyAll<Color>(Colors.blue)
-                                ),
-                              ) :
-                              Text("${tecnico.situacao}"),
-                              onLongPress: () => selectItens(tecnico.id!),
-                              onTap: () {
-                                setState(() {
-                                  if (_selectedItems.isNotEmpty) {
-                                    removeItens(tecnico.id!);
-                                  }
-                                  if (_selectedItems.isEmpty) {
-                                    isSelected = false;
-                                  }
-                                });
-                              }
-                          );
-                        },
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    flex: 1,
+                    child: SingleChildScrollView(
+                      child: SizedBox(
+                        height: 649,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          reverse: false,
+                          scrollDirection: Axis.vertical,
+                          itemCount: tecnicos!.length,
+                          itemBuilder: (context, index) {
+                            final tecnico = tecnicos![index];
+                            return ListTile(
+                                tileColor: (_selectedItems.contains(tecnico.id!)) ? Colors.blue.withOpacity(.5) : Colors.transparent,
+                                leading: Text("${tecnico.id}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                                title: Text("${tecnico.nome} ${tecnico.sobrenome}", style: const TextStyle(fontWeight: FontWeight.bold)),
+                                subtitle: Text("Telefone: ${(verifyTelefone(tecnico))}"),
+                                trailing: (isSelected && _selectedItems.length == 1 && _selectedItems.contains(tecnico.id)) ?
+                                IconButton(
+                                  onPressed: () => widget.onEditPressed(tecnico.id!),
+                                  icon: const Icon(Icons.edit, color: Colors.white,),
+                                  style: const ButtonStyle(
+                                      backgroundColor: MaterialStatePropertyAll<Color>(Colors.blue)
+                                  ),
+                                ) :
+                                Text("${tecnico.situacao}"),
+                                onLongPress: () => selectItens(tecnico.id!),
+                                onTap: () {
+                                  setState(() {
+                                    if (_selectedItems.isNotEmpty) {
+                                      removeItens(tecnico.id!);
+                                    }
+                                    if (_selectedItems.isEmpty) {
+                                      isSelected = false;
+                                    }
+                                  });
+                                }
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           )  : const Flexible(
             child: Center(
