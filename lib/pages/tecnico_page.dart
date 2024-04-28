@@ -53,29 +53,21 @@ class _TecnicoPageState extends State<TecnicoPage> {
     return;
   }
 
-  void findBy({int? id, String? nome, String? situacao}) {
-    _id = id;
-    _nome = nome;
-    _situacao = situacao?.toLowerCase();
-
-    if (_idController.text.isEmpty) {
-      _id = null;
-    }
-    if (_nomeController.text.isEmpty) {
-      _nome = null;
-    }
-    if (_situacaoController.text.isEmpty) {
-      _situacao = null;
-    }
+  void desativarTecnicos() async{
+    await tecnicoService.disableList(_selectedItens);
     carregarTecnicos();
   }
 
-  String transformTelefone(Tecnico? tecnico){
-    var telefoneC = tecnico?.telefoneCelular ?? "";
-    var telefoneF = tecnico?.telefoneFixo ?? "";
-    String telefone = (telefoneC.isNotEmpty) ? telefoneC : telefoneF;
-    String telefoneFormatado = "(${telefone.substring(0, 2)}) ${telefone.substring(2, 7)}-${telefone.substring(7)}";
-    return telefoneFormatado;
+  void findBy({int? id, String? nome, String? situacao}) {
+    if(id != null) _id = id;
+    if(nome != null && nome.isNotEmpty) _nome = nome;
+    if(situacao != null) _situacao = situacao.toLowerCase();
+
+    if (_idController.text.isEmpty) _id = null;
+    if (_nomeController.text.isEmpty) _nome = null;
+    if (_situacaoController.text.isEmpty) _situacao = null;
+
+    carregarTecnicos();
   }
 
   void selectItens(int id) {
@@ -87,26 +79,32 @@ class _TecnicoPageState extends State<TecnicoPage> {
     }
     _selectedItens.add(id);
     setState(() {
-      if(!isSelected){
-        isSelected = true;
-      }
+      if(!isSelected) isSelected = true;
     });
   }
 
-  void desativarTecnicos() async{
-    await tecnicoService.disableList(_selectedItens);
-    carregarTecnicos();
+  String transformTelefone(Tecnico? tecnico){
+    var telefoneC = tecnico?.telefoneCelular ?? "";
+    var telefoneF = tecnico?.telefoneFixo ?? "";
+    String telefone = (telefoneC.isNotEmpty) ? telefoneC : telefoneF;
+    String telefoneFormatado = "(${telefone.substring(0, 2)}) ${telefone.substring(2, 7)}-${telefone.substring(7)}";
+    return telefoneFormatado;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: (!isSelected) ? null : Colors.red,
+      floatingActionButton: (!isSelected) ? FloatingActionButton(
+        backgroundColor: null,
         shape: const CircleBorder(eccentricity: 0),
-        onPressed: (!isSelected) ? widget.onFabPressed : () =>  DialogUtils.showConfirmationDialog(context, "Desativar Técnicos selecionados?", "", "Sim", "Não", desativarTecnicos),
-        child: (!isSelected) ? const Icon(Icons.add) : const Icon(Icons.remove, color: Colors.white,),
+        onPressed: widget.onFabPressed,
+        child: const Icon(Icons.add),
+      ) : FloatingActionButton(
+        backgroundColor: Colors.red,
+        shape: const CircleBorder(eccentricity: 0),
+        onPressed: () =>  DialogUtils.showConfirmationDialog(context, "Desativar Técnicos selecionados?", "", "Sim", "Não", desativarTecnicos),
+        child: const Icon(Icons.remove, color: Colors.white),
       ),
       body: Column(
         children: [
@@ -123,32 +121,28 @@ class _TecnicoPageState extends State<TecnicoPage> {
               children: [
                 Expanded(
                   flex: 1,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                    child: TextField(
-                      keyboardType: TextInputType.number,
-                      controller: _idController,
-                      onChanged: (value) => findBy(id: int.tryParse(value)),
-                      decoration: InputDecoration(
-                        isDense: true,
-                        labelText: "Id",
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                            color: Color(0xFFF1F4F8),
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
+                  child: TextField(
+                    keyboardType: TextInputType.number,
+                    controller: _idController,
+                    onChanged: (value) => findBy(id: int.tryParse(value)),
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: const Color(0xFFF1F4F8),
+                      isDense: true,
+                      labelText: "Id",
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                          color: Color(0xFFF1F4F8),
+                          width: 2,
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                            color: Color(0xFF4B39EF),
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                          color: Color(0xFF4B39EF),
+                          width: 2,
                         ),
-                        filled: true,
-                        fillColor: const Color(0xFFF1F4F8),
-
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
                   ),
@@ -158,21 +152,20 @@ class _TecnicoPageState extends State<TecnicoPage> {
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
                     child: DropdownButton<String>(
-                      alignment: AlignmentDirectional.center,
-                      value: _dropDownValue,
-                      items: list.map<DropdownMenuItem<String>>((String value) =>
-                          DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          )
-                      ).toList(),
-                      onChanged: (valorSelecionado) {
-                        setState(() {
+                        alignment: AlignmentDirectional.center,
+                        value: _dropDownValue,
+                        items: list.map<DropdownMenuItem<String>>((String value) =>
+                            DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            )).toList(),
+                        onChanged: (valorSelecionado) {
+                          setState(() {
+                            _dropDownValue = valorSelecionado!;
+                          });
                           _situacaoController.text = valorSelecionado!;
-                          _dropDownValue = valorSelecionado;
                           findBy(situacao: _dropDownValue);
-                        });
-                      }
+                        }
                     ),
                   ),
                 ),
@@ -192,63 +185,42 @@ class _TecnicoPageState extends State<TecnicoPage> {
               ),
             ),
           ),
-          isLoaded ? Flexible(
+          Flexible(
             flex: 1,
-            child: Padding(
+            child: isLoaded ? ListView.builder(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Flexible(
-                    flex: 1,
-                    child: SingleChildScrollView(
-                      child: SizedBox(
-                        height: 649,
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          reverse: false,
-                          scrollDirection: Axis.vertical,
-                          itemCount: tecnicos!.length,
-                          itemBuilder: (context, index) {
-                            final tecnico = tecnicos![index];
-                            return ListTile(
-                              tileColor: (_selectedItens.contains(tecnico.id!)) ? Colors.blue.withOpacity(.5) : Colors.transparent,
-                              leading: Text("${tecnico.id}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                              title: Text("${tecnico.nome} ${tecnico.sobrenome}", style: const TextStyle(fontWeight: FontWeight.bold)),
-                              subtitle: Text("Telefone: ${(transformTelefone(tecnico))}"),
-                              trailing: (isSelected && _selectedItens.length == 1 && _selectedItens.contains(tecnico.id))
-                                ? IconButton(
-                                  onPressed: () => widget.onEditPressed(tecnico.id!),
-                                  icon: const Icon(Icons.edit, color: Colors.white,),
-                                  style: const ButtonStyle(
-                                      backgroundColor: MaterialStatePropertyAll<Color>(Colors.blue)
-                                  ),
-                                )
-                                : Text("${tecnico.situacao}"),
-                              onLongPress: () => selectItens(tecnico.id!),
-                              onTap: () {
-                                if (_selectedItens.isNotEmpty) {
-                                  selectItens(tecnico.id!);
-                                }
-                                if (_selectedItens.isEmpty) {
-                                  isSelected = false;
-                                }
-                              }
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ) : const Flexible(
-            child: Center(
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 320),
-                child: CircularProgressIndicator(),
-              )
+              scrollDirection: Axis.vertical,
+              itemCount: tecnicos!.length,
+              itemBuilder: (context, index) {
+                final Tecnico tecnico = tecnicos![index];
+                final int id = tecnico.id!;
+                final String nomeCompleto = "${tecnico.nome} ${tecnico.sobrenome}",
+                    telefone = transformTelefone(tecnico),
+                    situacao = tecnico.situacao.toString();
+                final bool editable = (isSelected && _selectedItens.length == 1 && _selectedItens.contains(id));
+                return ListTile(
+                    tileColor: (_selectedItens.contains(id)) ? Colors.blue.withOpacity(.5) : null,
+                    leading: Text("$id", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    title: Text(nomeCompleto, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: Text("Telefone: $telefone"),
+                    trailing: (editable) ? IconButton(
+                      onPressed: () => widget.onEditPressed(id),
+                      icon: const Icon(Icons.edit, color: Colors.white),
+                      style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll<Color>(Colors.blue)),
+                    ) : Text(situacao),
+                    onLongPress: () => selectItens(id),
+                    onTap: () {
+                      if (_selectedItens.isNotEmpty) {
+                        selectItens(id);
+                      }
+                      if (_selectedItens.isEmpty) {
+                        isSelected = false;
+                      }
+                    }
+                );
+              },
+            ) : const Center(
+              child: CircularProgressIndicator(),
             ),
           ),
         ]

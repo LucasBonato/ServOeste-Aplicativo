@@ -16,7 +16,6 @@ class HomeState extends State<Home> {
   Widget paginaAtual = const HomePage();
 
   void changePage(int index, {int? id}){
-    if(index == indexAtual) return;
     indexAtual = (index > 1) ? indexAtual : index;
     switch(index){
       case 0:
