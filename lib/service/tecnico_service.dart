@@ -5,27 +5,31 @@ import '../models/tecnico.dart';
 class TecnicoService{
   var api = ServOesteApi();
 
-  Future<List<Tecnico>?> getAllTecnico() async{
+  Future<List<Tecnico>?> getAllTecnico() {
     return api.getAllTecnicos();
   }
 
-  Future<List<Tecnico>?> getByNome(String nome) async{
+  Future<List<Tecnico>?> getByNome(String nome) {
     return api.getByNome(nome);
   }
 
-  Future<Tecnico?> getById(int id) async{
+  Future<List<Tecnico>?> getByIdNomesituacao(int? id, String? nome, String? situacao) {
+    return api.getByIdNomesituacao(id, nome, situacao);
+  }
+
+  Future<Tecnico?> getById(int id) {
     return api.getById(id);
   }
 
-  Future<dynamic> create(Tecnico tecnico) async{
+  dynamic create(Tecnico tecnico) {
     return api.postTecnico(tecnico);
   }
 
-  Future<dynamic> update(Tecnico tecnico) async{
+  dynamic update(Tecnico tecnico) {
     return api.update(tecnico);
   }
 
-  Future<dynamic> disableList(List<int> selectedItems) {
+  dynamic disableList(List<int> selectedItems) {
     return api.disableList(selectedItems);
   }
 }

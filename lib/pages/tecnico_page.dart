@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:serv_oeste/components/search_field.dart';
 import 'package:serv_oeste/service/tecnico_service.dart';
 import '../components/dialog_box.dart';
@@ -24,6 +23,12 @@ class _TecnicoPageState extends State<TecnicoPage> {
   String _dropDownValue = list.first;
   bool isLoaded = false,
       isSelected = false;
+  int? _id;
+  final TextEditingController _idController = TextEditingController();
+  String? _nome;
+  final TextEditingController _nomeController = TextEditingController();
+  String? _situacao;
+  final TextEditingController _situacaoController = TextEditingController();
 
   @override
   void initState() {
@@ -31,22 +36,41 @@ class _TecnicoPageState extends State<TecnicoPage> {
     carregarTecnicos();
   }
 
+  @override
+  void dispose() {
+    _idController.dispose();
+    _nomeController.dispose();
+    _situacaoController.dispose();
+    super.dispose();
+  }
+
   Future<void> carregarTecnicos() async {
-    tecnicos = await tecnicoService.getAllTecnico();
+    tecnicos = await tecnicoService.getByIdNomesituacao(_id, _nome, _situacao);
     setState(() {
       isLoaded = true;
       isSelected = false;
     });
+    return;
   }
 
   Future<void> findBy({int? id, String? nome, String? situacao}) async{
-    if(nome != null && nome.isNotEmpty){
-      isLoaded = false;
-      tecnicos = await tecnicoService.getByNome(nome);
-      setState(() {
-        isLoaded = true;
-      });
-      return;
+    if(id != null) {
+      _id = id;
+    }
+    if(_idController.text.isEmpty){
+      _id = null;
+    }
+    if(nome != null && nome.isNotEmpty) {
+      _nome = nome;
+    }
+    if(_nomeController.text.isEmpty){
+      _nome = null;
+    }
+    if(situacao != null) {
+      _situacao = situacao.toLowerCase();
+    }
+    if(_situacaoController.text.isEmpty){
+      _situacao = null;
     }
     carregarTecnicos();
   }
@@ -102,7 +126,10 @@ class _TecnicoPageState extends State<TecnicoPage> {
         children: [
           SearchTextField(
             hint: "Procure por Técnicos...",
-            onChangedAction: (String nome) => findBy(nome: nome)
+            onChangedAction: (String nome) {
+              _nomeController.text = nome;
+              findBy(nome: nome);
+            }
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
@@ -114,6 +141,7 @@ class _TecnicoPageState extends State<TecnicoPage> {
                     padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                     child: TextField(
                       keyboardType: TextInputType.number,
+                      controller: _idController,
                       onChanged: (value) => findBy(id: int.tryParse(value)),
                       decoration: InputDecoration(
                         isDense: true,
@@ -141,21 +169,25 @@ class _TecnicoPageState extends State<TecnicoPage> {
                 ),
                 Expanded(
                   flex: 3,
-                  child: DropdownButton<String>(
-                    alignment: AlignmentDirectional.center,
-                    value: _dropDownValue,
-                    items: list.map<DropdownMenuItem<String>>((String value) =>
-                        DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        )
-                    ).toList(),
-                    onChanged: (valorSelecionado) {
-                      setState(() {
-                        _dropDownValue = valorSelecionado!;
-                        findBy(situacao: _dropDownValue);
-                      });
-                    }
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+                    child: DropdownButton<String>(
+                      alignment: AlignmentDirectional.center,
+                      value: _dropDownValue,
+                      items: list.map<DropdownMenuItem<String>>((String value) =>
+                          DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          )
+                      ).toList(),
+                      onChanged: (valorSelecionado) {
+                        setState(() {
+                          _situacaoController.text = valorSelecionado!;
+                          _dropDownValue = valorSelecionado;
+                          findBy(situacao: _dropDownValue);
+                        });
+                      }
+                    ),
                   ),
                 ),
               ],

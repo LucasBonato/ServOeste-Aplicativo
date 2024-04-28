@@ -27,6 +27,16 @@ class ServOesteApi{
     return tecnicos;
   }
 
+  Future<List<Tecnico>?> getByIdNomesituacao(int? id, String? nome, String? situacao) async{
+    var uri = Uri.parse("$baseUri/findBy?id=$id&n=$nome&s=$situacao");
+    var response = await client.get(uri);
+
+    var responseBodyUtf8 = utf8.decode(response.body.runes.toList());
+    List<dynamic> jsonResponse = json.decode(responseBodyUtf8);
+    List<Tecnico> tecnicos = jsonResponse.map((json) => Tecnico.fromJson(json)).toList();
+    return tecnicos;
+  }
+
   Future<Tecnico?> getById(int id) async{
     var uri = Uri.parse("$baseUri/$id");
     var response = await client.get(uri);
