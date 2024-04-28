@@ -49,6 +49,7 @@ class _TecnicoPageState extends State<TecnicoPage> {
     setState(() {
       isLoaded = true;
       isSelected = false;
+      _selectedItens.clear();
     });
     return;
   }
