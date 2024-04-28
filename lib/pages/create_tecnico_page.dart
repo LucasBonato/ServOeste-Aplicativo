@@ -68,8 +68,9 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                   color: Colors.blueAccent,
                 ),
                 onChanged: (value) {
+                  if(value == null) return;
                   setState(() {
-                    checkersMap[label] = value!;
+                    checkersMap[label] = value;
                   });
                 },
               ),

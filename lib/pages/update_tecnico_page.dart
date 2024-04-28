@@ -34,7 +34,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
   String _errorMessage = "",
       _telefoneCelular = "",
       _telefoneFixo = "",
-      _dropDownValue = list.first;
+      _dropDownValue = "";
 
   Map<String, bool> checkersMap = {
     "Adega": false,
@@ -243,7 +243,12 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
 
   Widget buildTecnicoUpdatePage(Tecnico? tecnico){
     if(!isCheckersAndNameLoaded) {
-      nomeController = TextEditingController(text: "${tecnico!.nome} ${tecnico.sobrenome}");
+
+      if(tecnico!.situacao!.toLowerCase().startsWith("a")) _dropDownValue = list[0];
+      if(tecnico.situacao!.toLowerCase().startsWith("l")) _dropDownValue = list[1];
+      if(tecnico.situacao!.toLowerCase().startsWith("d")) _dropDownValue = list[2];
+
+      nomeController = TextEditingController(text: "${tecnico.nome} ${tecnico.sobrenome}");
       telefoneCelularController = TextEditingController(text: (tecnico.telefoneCelular == null || tecnico.telefoneCelular == "") ? "" : deTransformarMask(tecnico.telefoneCelular!));
       telefoneFixoController = TextEditingController(text: (tecnico.telefoneFixo == null || tecnico.telefoneFixo == "") ? "" : deTransformarMask(tecnico.telefoneFixo!));
 
