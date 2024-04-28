@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:serv_oeste/components/search_field.dart';
 import 'package:serv_oeste/service/tecnico_service.dart';
 import '../components/dialog_box.dart';
 import '../models/tecnico.dart';
+
+const List<String> list = <String>['Ativo', 'Licença', 'Desativado'];
 
 class TecnicoPage extends StatefulWidget {
   final VoidCallback onFabPressed;
@@ -16,10 +19,11 @@ class TecnicoPage extends StatefulWidget {
 
 class _TecnicoPageState extends State<TecnicoPage> {
   final TecnicoService tecnicoService = TecnicoService();
+  final List<int> _selectedItems = [];
   List<Tecnico>? tecnicos;
+  String _dropDownValue = list.first;
   bool isLoaded = false,
       isSelected = false;
-  final List<int> _selectedItems = [];
 
   @override
   void initState() {
@@ -35,8 +39,8 @@ class _TecnicoPageState extends State<TecnicoPage> {
     });
   }
 
-  Future<void> findByName(String nome) async{
-    if(nome.isNotEmpty){
+  Future<void> findBy({int? id, String? nome, String? situacao}) async{
+    if(nome != null && nome.isNotEmpty){
       isLoaded = false;
       tecnicos = await tecnicoService.getByNome(nome);
       setState(() {
@@ -94,36 +98,93 @@ class _TecnicoPageState extends State<TecnicoPage> {
         onPressed: (!isSelected) ? widget.onFabPressed : () =>  DialogUtils.showConfirmationDialog(context, "Desativar Técnicos selecionados?", "", "Sim", "Não", desativarTecnicos),
         child: (!isSelected) ? const Icon(Icons.add) : const Icon(Icons.remove, color: Colors.white,),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SearchTextField(hint: "Procure por Técnicos...", onChangedAction: (String nome) => findByName(nome)),
-            isLoaded ? Column(
-              mainAxisSize: MainAxisSize.min,
+      body: Column(
+        children: [
+          SearchTextField(
+            hint: "Procure por Técnicos...",
+            onChangedAction: (String nome) => findBy(nome: nome)
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+            child: Row(
               children: [
-                const Flexible(
+                Expanded(
+                  flex: 1,
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: Row(
-                        children: [
-                          Expanded(flex: 1, child: Text("Id", textAlign: TextAlign.start, style: TextStyle(fontSize: 20))),
-                          Expanded(flex: 3, child: Text("Nome", textAlign: TextAlign.start, style: TextStyle(fontSize: 20))),
-                          Expanded(flex: 2, child: Text("Situação", textAlign: TextAlign.end, style: TextStyle(fontSize: 20))),
-                        ],
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    child: TextField(
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) => findBy(id: int.tryParse(value)),
+                      decoration: InputDecoration(
+                        isDense: true,
+                        labelText: "Id",
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                            color: Color(0xFFF1F4F8),
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                            color: Color(0xFF4B39EF),
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        filled: true,
+                        fillColor: const Color(0xFFF1F4F8),
+
                       ),
                     ),
                   ),
                 ),
-                Column(
-                  children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 32, 0),
+                Expanded(
+                  flex: 3,
+                  child: DropdownButton<String>(
+                    alignment: AlignmentDirectional.center,
+                    value: _dropDownValue,
+                    items: list.map<DropdownMenuItem<String>>((String value) =>
+                        DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        )
+                    ).toList(),
+                    onChanged: (valorSelecionado) {
+                      setState(() {
+                        _dropDownValue = valorSelecionado!;
+                        findBy(situacao: _dropDownValue);
+                      });
+                    }
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+            child: SizedBox(
+              width: double.infinity,
+              child: Row(
+                children: [
+                  Expanded(flex: 1, child: Text("Id", textAlign: TextAlign.start, style: TextStyle(fontSize: 20))),
+                  Expanded(flex: 3, child: Text("Nome", textAlign: TextAlign.start, style: TextStyle(fontSize: 20))),
+                  Expanded(flex: 2, child: Text("Situação", textAlign: TextAlign.end, style: TextStyle(fontSize: 20))),
+                ],
+              ),
+            ),
+          ),
+          isLoaded ? Flexible(
+            flex: 1,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: SingleChildScrollView(
                     child: SizedBox(
-                      height: 696,
-                      child: ListView.separated(
+                      height: 649,
+                      child: ListView.builder(
                         shrinkWrap: true,
                         reverse: false,
                         scrollDirection: Axis.vertical,
@@ -131,48 +192,48 @@ class _TecnicoPageState extends State<TecnicoPage> {
                         itemBuilder: (context, index) {
                           final tecnico = tecnicos![index];
                           return ListTile(
-                            tileColor: (_selectedItems.contains(tecnico.id!)) ? Colors.blue.withOpacity(.5) : Colors.transparent,
-                            leading: Text("${tecnico.id}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                            title: Text("${tecnico.nome} ${tecnico.sobrenome}", style: const TextStyle(fontWeight: FontWeight.bold)),
-                            subtitle: Text("Telefone: ${(verifyTelefone(tecnico))}"),
-                            trailing: (isSelected && _selectedItems.length == 1 && _selectedItems.contains(tecnico.id)) ?
+                              tileColor: (_selectedItems.contains(tecnico.id!)) ? Colors.blue.withOpacity(.5) : Colors.transparent,
+                              leading: Text("${tecnico.id}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                              title: Text("${tecnico.nome} ${tecnico.sobrenome}", style: const TextStyle(fontWeight: FontWeight.bold)),
+                              subtitle: Text("Telefone: ${(verifyTelefone(tecnico))}"),
+                              trailing: (isSelected && _selectedItems.length == 1 && _selectedItems.contains(tecnico.id)) ?
                               IconButton(
                                 onPressed: () => widget.onEditPressed(tecnico.id!),
                                 icon: const Icon(Icons.edit, color: Colors.white,),
                                 style: const ButtonStyle(
-                                  backgroundColor: MaterialStatePropertyAll<Color>(Colors.blue)
+                                    backgroundColor: MaterialStatePropertyAll<Color>(Colors.blue)
                                 ),
                               ) :
                               Text("${tecnico.situacao}"),
-                            onLongPress: () => selectItens(tecnico.id!),
-                            onTap: () {
-                              setState(() {
-                                if (_selectedItems.isNotEmpty) {
-                                  removeItens(tecnico.id!);
-                                }
-                                if (_selectedItems.isEmpty) {
-                                  isSelected = false;
-                                }
-                              });
-                            },
+                              onLongPress: () => selectItens(tecnico.id!),
+                              onTap: () {
+                                setState(() {
+                                  if (_selectedItems.isNotEmpty) {
+                                    removeItens(tecnico.id!);
+                                  }
+                                  if (_selectedItems.isEmpty) {
+                                    isSelected = false;
+                                  }
+                                });
+                              }
                           );
                         },
-                        separatorBuilder: (context, index) => const Divider(),
                       ),
                     ),
-                  )]
-                )
-              ]
-            ) : const Flexible(
-              child: Center(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 320),
-                  child: CircularProgressIndicator(),
-              )),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          )  : const Flexible(
+            child: Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 320),
+                child: CircularProgressIndicator(),
+              )
+            ),
+          ),
+        ]
+      )
     );
   }
 }
