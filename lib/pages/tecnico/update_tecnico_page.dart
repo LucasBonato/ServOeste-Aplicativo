@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
-import '../components/mask_field.dart';
-import '../models/tecnico.dart';
-import '../service/tecnico_service.dart';
+import '../../components/mask_field.dart';
+import '../../models/tecnico.dart';
+import '../../service/tecnico_service.dart';
 
 const List<String> list = <String>['Ativo', 'Licença', 'Desativado'];
 

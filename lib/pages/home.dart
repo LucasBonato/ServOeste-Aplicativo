@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/pages/create_tecnico_page.dart';
+import 'package:serv_oeste/pages/tecnico/create_tecnico_page.dart';
 import 'package:serv_oeste/pages/home_page.dart';
-import 'package:serv_oeste/pages/tecnico_page.dart';
-import 'package:serv_oeste/pages/update_tecnico_page.dart';
+import 'package:serv_oeste/pages/tecnico/tecnico_page.dart';
+import 'package:serv_oeste/pages/tecnico/update_tecnico_page.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -16,7 +16,7 @@ class HomeState extends State<Home> {
   Widget paginaAtual = const HomePage();
 
   void changePage(int index, {int? id}){
-    indexAtual = (index > 1) ? indexAtual : index;
+    indexAtual = (index > 2) ? indexAtual : index;
     switch(index){
       case 0:
         setState(() {
