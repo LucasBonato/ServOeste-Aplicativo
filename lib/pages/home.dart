@@ -25,20 +25,25 @@ class HomeState extends State<Home> {
         break;
       case 1:
         setState(() {
-          paginaAtual = TecnicoPage(
-              onFabPressed: () {changePage(2);},
-              onEditPressed: (idUpdate) {changePage(3, id: idUpdate);}
-          );
+          paginaAtual = const HomePage();
         });
         break;
       case 2:
         setState(() {
-          paginaAtual = CreateTecnico(onIconPressed: () {changePage(1);});
+          paginaAtual = TecnicoPage(
+              onFabPressed: () {changePage(22);},
+              onEditPressed: (idUpdate) {changePage(23, id: idUpdate);}
+          );
         });
         break;
-      case 3:
+      case 22:
         setState(() {
-          paginaAtual = UpdateTecnico(onIconPressed: () {changePage(1);}, id: id!);
+          paginaAtual = CreateTecnico(onIconPressed: () {changePage(2);});
+        });
+        break;
+      case 23:
+        setState(() {
+          paginaAtual = UpdateTecnico(onIconPressed: () {changePage(2);}, id: id!);
         });
         break;
     }
@@ -61,6 +66,10 @@ class HomeState extends State<Home> {
 			body: paginaAtual,
       bottomNavigationBar: BottomNavigationBar(
         items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle_outlined),
+            label: "Cliente",
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: "Home",

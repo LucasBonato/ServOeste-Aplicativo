@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 class ServOesteApi{
   var client = http.Client();
-  String baseUri = "http://10.0.2.2:8080/tecnico";
+  String baseUri = "http://10.0.2.2:8080/api/v1/tecnico";
 
   Future<List<Tecnico>?> getAllTecnicos() async{
     var uri = Uri.parse(baseUri);
@@ -28,8 +28,18 @@ class ServOesteApi{
   }
 
   Future<List<Tecnico>?> getByIdNomesituacao(int? id, String? nome, String? situacao) async{
-    var uri = Uri.parse("$baseUri/findBy?id=$id&n=$nome&s=$situacao");
-    var response = await client.get(uri);
+    var uri = Uri.parse("$baseUri/find");
+    var response = await client.post(
+        uri,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({
+          "id": id,
+          "nome": nome,
+          "situacao": situacao
+        }
+    ));
 
     var responseBodyUtf8 = utf8.decode(response.body.runes.toList());
     List<dynamic> jsonResponse = json.decode(responseBodyUtf8);

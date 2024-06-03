@@ -44,8 +44,8 @@ class _TecnicoPageState extends State<TecnicoPage> {
     super.dispose();
   }
 
-  Future<void> carregarTecnicos() async {
-    tecnicos = await tecnicoService.getByIdNomesituacao(_id, _nome, _situacao);
+  Future<void> carregarTecnicos({String? situacao = "ativo"}) async {
+    tecnicos = await tecnicoService.getByIdNomesituacao(_id, _nome, situacao);
     setState(() {
       isLoaded = true;
       isSelected = false;
@@ -68,7 +68,7 @@ class _TecnicoPageState extends State<TecnicoPage> {
     if (_nomeController.text.isEmpty) _nome = null;
     if (_situacaoController.text.isEmpty) _situacao = null;
 
-    carregarTecnicos();
+    carregarTecnicos(situacao: _situacao);
   }
 
   void selectItens(int id) {
@@ -207,7 +207,7 @@ class _TecnicoPageState extends State<TecnicoPage> {
                     trailing: (editable) ? IconButton(
                       onPressed: () => widget.onEditPressed(id),
                       icon: const Icon(Icons.edit, color: Colors.white),
-                      style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll<Color>(Colors.blue)),
+                      style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
                     ) : Text(situacao),
                     onLongPress: () => selectItens(id),
                     onTap: () {
