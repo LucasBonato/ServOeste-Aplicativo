@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:serv_oeste/pages/cliente/cliente.dart';
 import 'package:serv_oeste/pages/tecnico/create_tecnico_page.dart';
 import 'package:serv_oeste/pages/home_page.dart';
 import 'package:serv_oeste/pages/tecnico/tecnico_page.dart';
@@ -20,7 +21,10 @@ class HomeState extends State<Home> {
     switch(index){
       case 0:
         setState(() {
-          paginaAtual = const HomePage();
+          paginaAtual = ClientePage(
+              onFabPressed: () {changePage(12);},
+              onEditPressed: (idUpdate) {changePage(13, id: idUpdate);}
+          );
         });
         break;
       case 1:
@@ -34,6 +38,16 @@ class HomeState extends State<Home> {
               onFabPressed: () {changePage(22);},
               onEditPressed: (idUpdate) {changePage(23, id: idUpdate);}
           );
+        });
+        break;
+      case 12:
+        setState(() {
+          paginaAtual = CreateTecnico(onIconPressed: () {changePage(2);});
+        });
+        break;
+      case 13:
+        setState(() {
+          paginaAtual = UpdateTecnico(onIconPressed: () {changePage(2);}, id: id!);
         });
         break;
       case 22:
