@@ -5,14 +5,6 @@ import '../models/tecnico.dart';
 class TecnicoService{
   var api = ServOesteApi();
 
-  Future<List<Tecnico>?> getAllTecnico() {
-    return api.getAllTecnicos();
-  }
-
-  Future<List<Tecnico>?> getByNome(String nome) {
-    return api.getByNome(nome);
-  }
-
   Future<List<Tecnico>?> getByIdNomesituacao(int? id, String? nome, String? situacao) {
     return api.getByIdNomesituacao(id, nome, situacao);
   }

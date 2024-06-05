@@ -7,26 +7,6 @@ class ServOesteApi{
   var client = http.Client();
   String baseUri = "http://10.0.2.2:8080/api/v1/tecnico";
 
-  Future<List<Tecnico>?> getAllTecnicos() async{
-    var uri = Uri.parse(baseUri);
-    var response = await client.get(uri);
-
-    var responseBodyUtf8 = utf8.decode(response.body.runes.toList());
-    List<dynamic> jsonResponse = json.decode(responseBodyUtf8);
-    List<Tecnico> tecnicos = jsonResponse.map((json) => Tecnico.fromJson(json)).toList();
-    return tecnicos;
-  }
-
-  Future<List<Tecnico>?> getByNome(String nome) async{
-    var uri = Uri.parse("$baseUri/nome?n=$nome");
-    var response = await client.get(uri);
-
-    var responseBodyUtf8 = utf8.decode(response.body.runes.toList());
-    List<dynamic> jsonResponse = json.decode(responseBodyUtf8);
-    List<Tecnico> tecnicos = jsonResponse.map((json) => Tecnico.fromJson(json)).toList();
-    return tecnicos;
-  }
-
   Future<List<Tecnico>?> getByIdNomesituacao(int? id, String? nome, String? situacao) async{
     var uri = Uri.parse("$baseUri/find");
     var response = await client.post(
