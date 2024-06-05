@@ -51,55 +51,52 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
     "Outros": false
   };
 
-  Widget rowCheckersMap() {
-    List<Row> rows = [];
-    List<Column> columns = [];
-    checkersMap.forEach((label, isChecked) {
-      rows.add(
-        Row(
+  Widget gridCheckersMap() {
+    return GridView.count(
+      shrinkWrap: true,
+      crossAxisCount: 3,
+      crossAxisSpacing: 0,
+      childAspectRatio: 3,
+      children: checkersMap.keys.map((label) {
+        bool isChecked = checkersMap[label] ?? false; // Valor booleano associado a essa label
+        return Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Text(label, style: const TextStyle(fontSize: 16)),
-            Theme(
-              data: ThemeData(
-                unselectedWidgetColor: Colors.blueAccent,
-                checkboxTheme: const CheckboxThemeData(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(5)),
+            Expanded(
+              flex: 1,
+              child: Text(label, style: const TextStyle(fontSize: 12)),
+            ),
+            Expanded(
+              flex: 1,
+              child: Theme(
+                data: ThemeData(
+                  unselectedWidgetColor: Colors.blueAccent,
+                  checkboxTheme: const CheckboxThemeData(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                    ),
                   ),
                 ),
-              ),
-              child: Checkbox(
-                value: isChecked,
-                activeColor: Colors.blue,
-                side: const BorderSide(
-                  width: 2,
-                  color: Colors.blueAccent,
+                child: Checkbox(
+                  value: isChecked,
+                  activeColor: Colors.blue,
+                  side: const BorderSide(
+                    width: 2,
+                    color: Colors.blueAccent,
+                  ),
+                  onChanged: (value) {
+                    if (value == null) return;
+                    setState(() {
+                      checkersMap[label] = value;
+                    });
+                  },
                 ),
-                onChanged: (value) {
-                  if(value == null) return;
-                  setState(() {
-                    checkersMap[label] = value;
-                  });
-                },
               ),
-            ),
+            )
           ],
-        ),
-      );
-    });
-    for (int i = 0; i < rows.length; i += 4) {
-      columns.add(
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: rows.sublist(i, i + 4),
-        ),
-      );
-    }
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: columns,
+        );
+      }).toList(),
     );
   }
 
@@ -325,7 +322,9 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text('Selecione os conhecimentos do Técnico:', textAlign: TextAlign.center, style: TextStyle(fontSize: 20)),
-                  rowCheckersMap(),
+                  Container(
+                      child: gridCheckersMap()
+                  ),
                   Text(validationCheckBoxes ? _errorMessage : "", textAlign: TextAlign.center, style: const TextStyle(color: Colors.red)),
                   Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),

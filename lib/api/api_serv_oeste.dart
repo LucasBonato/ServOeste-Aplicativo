@@ -8,7 +8,8 @@ import '../models/endereco.dart';
 
 class ServOesteApi{
   var client = http.Client();
-  String baseUri = "http://10.0.2.2:8080/api/v1";
+  //String baseUri = "http://10.0.2.2:8080/api/v1";
+  String baseUri = "http://localhost:8080/api/v1";
 
   Future<List<Tecnico>?> getTecnicos(int? id, String? nome, String? situacao) async{
     var uri = Uri.parse("$baseUri/tecnico/find");
@@ -102,8 +103,8 @@ class ServOesteApi{
     Cliente cliente = Cliente.fromJson(jsonResponse);
     return cliente;
   }
-  Future<List<Cliente>?> getClientes(String? nome, String? telefoneFixo, String? telefoneCelular, String? endereco) async{
-    var uri = Uri.parse("${baseUri}/cliente/find");
+  Future<List<Cliente>?> getClientes(String? nome, String? telefone, String? endereco) async{
+    var uri = Uri.parse("$baseUri/cliente/find");
     var response = await client.post(
         uri,
         headers: <String, String>{
@@ -111,8 +112,7 @@ class ServOesteApi{
         },
         body: jsonEncode({
           "nome": nome,
-          "telefoneFixo": telefoneFixo,
-          "telefoneCelular": telefoneCelular,
+          "telefone": telefone,
           "endereco": endereco
         }
         ));
@@ -124,7 +124,7 @@ class ServOesteApi{
   }
   Future<dynamic> registerCliente(Cliente cliente, String sobrenome) async{
     var response = await client.post(
-      Uri.parse("${baseUri}/cliente"),
+      Uri.parse("$baseUri/cliente"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -168,7 +168,7 @@ class ServOesteApi{
   }
   Future<dynamic> deletarClientes(List<int> idClientes) async{
     var response = await client.delete(
-        Uri.parse("${baseUri}/cliente"),
+        Uri.parse("$baseUri/cliente"),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
