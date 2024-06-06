@@ -18,13 +18,13 @@ class _CreateTecnicoState extends State<CreateTecnico> {
       telefoneFixoController;
 
   bool validationNome = false,
-      validationTelefoneCelular = false,
-      validationTelefoneFixo = false,
-      validationCheckBoxes = false;
+       validationTelefoneCelular = false,
+       validationTelefoneFixo = false,
+       validationCheckBoxes = false;
 
   String _errorMessage = "",
-    _telefoneCelular = "",
-    _telefoneFixo = "";
+        _telefoneCelular = "",
+        _telefoneFixo = "";
 
   final Map<String, bool> checkersMap = {
     "Adega": false,

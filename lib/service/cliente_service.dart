@@ -20,7 +20,7 @@ class ClienteService{
   }
 
   dynamic create(Cliente cliente, String sobrenome) async{
-    await api.registerCliente(cliente, sobrenome);
+    return await api.registerCliente(cliente, sobrenome);
   }
 
   dynamic update(Cliente cliente, String sobrenome) async{

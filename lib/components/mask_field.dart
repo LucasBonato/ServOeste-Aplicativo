@@ -11,6 +11,8 @@ class CustomMaskField extends StatefulWidget {
   final String errorMessage;
   final TextInputType type;
   bool validation;
+  Function(String?)? onChanged;
+  bool hide;
 
 
   CustomMaskField({
@@ -22,7 +24,9 @@ class CustomMaskField extends StatefulWidget {
     required this.maxLength,
     required this.controller,
     required this.type,
-    required this.validation
+    required this.validation,
+    this.hide = false,
+    this.onChanged
   });
 
   @override
@@ -33,13 +37,14 @@ class _CustomMaskFieldState extends State<CustomMaskField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(16, 4, 16, 0),
+      padding: EdgeInsetsDirectional.fromSTEB(16, 4, 16, widget.hide ? 16 : 0),
       child: MaskedTextField(
         controller: widget.controller,
         mask: widget.mask,
         maxLength: widget.maxLength,
         keyboardType: widget.type,
         decoration: InputDecoration(
+          counterText: widget.hide ? "" : null,
           errorText: (widget.validation) ? widget.errorMessage : null,
           hintText: widget.hint,
           labelText: widget.label,
@@ -64,6 +69,7 @@ class _CustomMaskFieldState extends State<CustomMaskField> {
             ),
           ),
         ),
+        onChanged: widget.onChanged,
         onTap: () => {
           setState(() {
             widget.validation = false;
