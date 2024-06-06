@@ -56,6 +56,18 @@ class _CreateClienteState extends State<CreateCliente> {
       _errorMessage = errorMessage;
       validationCep = true;
     }
+    setErrorEndereco(String errorMessage){
+      _errorMessage = errorMessage;
+      validationEndereco = true;
+    }
+    setErrorBairro(String errorMessage){
+      _errorMessage = errorMessage;
+      validationBairro = true;
+    }
+    setErrorMunicipio(String errorMessage){
+      _errorMessage = errorMessage;
+      validationMunicipio = true;
+    }
     setState(() {
       validationNome = false;
       validationTelefoneCelular = false;
@@ -72,6 +84,9 @@ class _CreateClienteState extends State<CreateCliente> {
         case 3: setErrorTelefoneFixo(errorMessage); break;
         case 4: setErrorTelefones(errorMessage); break;
         case 5: setErrorCep(errorMessage); break;
+        case 6: setErrorEndereco(errorMessage); break;
+        case 7: setErrorBairro(errorMessage); break;
+        case 8: setErrorMunicipio(errorMessage); break;
       }
     });
   }
