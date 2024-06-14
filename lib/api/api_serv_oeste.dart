@@ -8,8 +8,8 @@ import '../models/endereco.dart';
 
 class ServOesteApi{
   var client = http.Client();
-  //String baseUri = "http://10.0.2.2:8080/api/v1";
-  String baseUri = "http://localhost:8080/api/v1";
+  String baseUri = "http://10.0.2.2:8080/api/v1";
+  //String baseUri = "http://localhost:8080/api/v1";
 
   Future<List<Tecnico>?> getTecnicos(int? id, String? nome, String? situacao) async{
     var uri = Uri.parse("$baseUri/tecnico/find");
@@ -181,8 +181,9 @@ class ServOesteApi{
   }
 
   Future<String?> getEndereco(String cep) async{
-    var uri = Uri.parse("$baseUri?cep=$cep");
+    var uri = Uri.parse("$baseUri/endereco?cep=$cep");
     var response = await client.get(uri);
+
 
     var responseBodyUtf8 = utf8.decode(response.body.runes.toList());
     dynamic jsonResponse = json.decode(responseBodyUtf8);

@@ -13,22 +13,19 @@ class ClienteService{
   }
 
   Future<Cliente?> getById(int id) async{
-    Cliente? response;
-    api.getClienteById(id)
-        .then((cliente) => response = cliente);
-    return response;
+    return api.getClienteById(id);
   }
 
-  dynamic create(Cliente cliente, String sobrenome) async{
-    return await api.registerCliente(cliente, sobrenome);
+  dynamic create(Cliente cliente, String sobrenome) {
+    return api.registerCliente(cliente, sobrenome);
   }
 
-  dynamic update(Cliente cliente, String sobrenome) async{
-    await api.updateCliente(cliente, sobrenome);
+  dynamic update(Cliente cliente, String sobrenome) {
+    return api.updateCliente(cliente, sobrenome);
   }
 
-  dynamic disableList(List<int> idClientes) async{
-    await api.deletarClientes(idClientes);
+  dynamic disableList(List<int> idClientes) {
+    return api.deletarClientes(idClientes);
   }
 
   Future<String?> getEndereco(String cep) async{

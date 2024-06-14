@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/pages/cliente/cliente.dart';
 import 'package:serv_oeste/pages/cliente/create_cliente.dart';
+import 'package:serv_oeste/pages/cliente/update_cliente.dart';
 import 'package:serv_oeste/pages/tecnico/create_tecnico.dart';
 import 'package:serv_oeste/pages/home_page.dart';
 import 'package:serv_oeste/pages/tecnico/tecnico.dart';
@@ -48,7 +49,7 @@ class HomeState extends State<Home> {
         break;
       case 13:
         setState(() {
-          paginaAtual = UpdateTecnico(onIconPressed: () {changePage(1);}, id: id!);
+          paginaAtual = UpdateCliente(onIconPressed: () {changePage(0);}, id: id!);
         });
         break;
       case 22:

@@ -105,16 +105,8 @@ class _CreateTecnicoState extends State<CreateTecnico> {
   }
 
   String transformarMask(String telefone){
-    List<String> charsDeTelefone = telefone.split("");
-    String telefoneFormatado = "";
-    for(int i = 0; i < charsDeTelefone.length; i++){
-      if(i == 0) continue;
-      if(i == 3) continue;
-      if(i == 4) continue;
-      if(i == 10) continue;
-      telefoneFormatado += charsDeTelefone[i];
-    }
-    return telefoneFormatado;
+    if(telefone.length != 15) return "";
+    return telefone.substring(1, 3) + telefone.substring(5, 10) + telefone.substring(11);
   }
 
   void setError(int erro, String errorMessage){

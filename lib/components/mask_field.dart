@@ -10,6 +10,8 @@ class CustomMaskField extends StatefulWidget {
   final TextEditingController controller;
   final String errorMessage;
   final TextInputType type;
+  final double? rightPadding;
+  final double? leftPadding;
   bool validation;
   Function(String?)? onChanged;
   bool hide;
@@ -26,7 +28,9 @@ class CustomMaskField extends StatefulWidget {
     required this.type,
     required this.validation,
     this.hide = false,
-    this.onChanged
+    this.onChanged,
+    this.leftPadding,
+    this.rightPadding
   });
 
   @override
@@ -37,7 +41,7 @@ class _CustomMaskFieldState extends State<CustomMaskField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(16, 4, 16, widget.hide ? 16 : 0),
+      padding: EdgeInsetsDirectional.fromSTEB(widget.leftPadding != null ? widget.leftPadding! : 16, 4, widget.rightPadding != null ? widget.rightPadding! : 16, widget.hide ? 16 : 0),
       child: MaskedTextField(
         controller: widget.controller,
         mask: widget.mask,
@@ -45,11 +49,17 @@ class _CustomMaskFieldState extends State<CustomMaskField> {
         keyboardType: widget.type,
         decoration: InputDecoration(
           counterText: widget.hide ? "" : null,
-          errorText: (widget.validation) ? widget.errorMessage : null,
+          error: (widget.validation) ? Text(widget.errorMessage, textAlign: TextAlign.center, style: const TextStyle(color: Colors.red),) : null,
           hintText: widget.hint,
           labelText: widget.label,
           isDense: true,
           fillColor: const Color(0xFFF1F4F8),
+          border: const OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Colors.blueAccent,
+                  width: 2
+              )
+          ),
           enabledBorder: const OutlineInputBorder(
             borderSide: BorderSide(
               color: Colors.blue,
