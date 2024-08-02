@@ -8,8 +8,8 @@ import '../models/endereco.dart';
 
 class ServOesteApi{
   var client = http.Client();
-  String baseUri = "http://10.0.2.2:8080/api/v1";
-  //String baseUri = "http://localhost:8080/api/v1";
+  //String baseUri = "http://10.0.2.2:8080/api/v1";
+  String baseUri = "http://localhost:8080/api/v1";
 
   Future<List<Tecnico>?> getTecnicos(int? id, String? nome, String? situacao) async{
     var uri = Uri.parse("$baseUri/tecnico/find");

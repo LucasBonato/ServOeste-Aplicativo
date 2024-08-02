@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/components/mask_field.dart';
+import 'package:serv_oeste/widgets/mask_field.dart';
 import 'package:serv_oeste/models/tecnico.dart';
-import 'package:serv_oeste/service/tecnico_service.dart';
+import 'package:serv_oeste/api/service/tecnico_service.dart';
 
 class CreateTecnico extends StatefulWidget {
   final VoidCallback onIconPressed;

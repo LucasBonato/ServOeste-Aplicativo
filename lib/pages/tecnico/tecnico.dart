@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/components/search_field.dart';
-import 'package:serv_oeste/service/tecnico_service.dart';
-import '../../components/dialog_box.dart';
+import 'package:serv_oeste/widgets/search_field.dart';
+import 'package:serv_oeste/api/service/tecnico_service.dart';
+import '../../widgets/dialog_box.dart';
 import '../../models/tecnico.dart';
 
 List<String> list = <String>['Ativo', 'Licença', 'Desativado'];

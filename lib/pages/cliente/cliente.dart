@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/service/cliente_service.dart';
-import '../../components/dialog_box.dart';
-import '../../components/search_field.dart';
+import 'package:serv_oeste/api/service/cliente_service.dart';
+import '../../widgets/dialog_box.dart';
+import '../../widgets/search_field.dart';
 import '../../models/cliente.dart';
 
 class ClientePage extends StatefulWidget {
@@ -185,6 +185,7 @@ class _ClientePageState extends State<ClientePage> {
               child: CircularProgressIndicator(),
             ),
           ),
+          const Padding(padding: EdgeInsets.only(top: 0))
         ]
       )
     );

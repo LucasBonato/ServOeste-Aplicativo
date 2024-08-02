@@ -1,11 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/pages/cliente/cliente.dart';
+import 'package:serv_oeste/pages/tecnico/tecnico.dart';
 import 'package:serv_oeste/pages/cliente/create_cliente.dart';
 import 'package:serv_oeste/pages/cliente/update_cliente.dart';
 import 'package:serv_oeste/pages/tecnico/create_tecnico.dart';
-import 'package:serv_oeste/pages/home_page.dart';
-import 'package:serv_oeste/pages/tecnico/tecnico.dart';
 import 'package:serv_oeste/pages/tecnico/update_tecnico.dart';
+
+Widget home = Column(
+  mainAxisSize: MainAxisSize.max,
+  children: [
+    Expanded(
+      child: Align(
+        alignment: const AlignmentDirectional(0, 0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(6),
+          child: Image.asset(
+            'images/servOeste.png',
+            fit: BoxFit.cover,
+            alignment: const Alignment(0, 0),
+          ),
+        ),
+      ),
+    ),
+  ],
+);
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -15,54 +33,66 @@ class Home extends StatefulWidget {
 }
 
 class HomeState extends State<Home> {
-  int indexAtual = 1;
-  Widget paginaAtual = const HomePage();
+  int indexAtual = 0;
+  int _idUpdate = 0;
+  late List<Widget> paginas;
+  late Widget clientePage;
+  late Widget tecnicoPage;
 
-  void changePage(int index, {int? id}){
-    indexAtual = (index > 2) ? indexAtual : index;
-    switch(index){
-      case 0:
+  @override
+  void initState() {
+    super.initState();
+    clientePage = ClientePage(
+      onFabPressed: () {
         setState(() {
-          paginaAtual = ClientePage(
-              onFabPressed: () {changePage(12);},
-              onEditPressed: (idUpdate) {changePage(13, id: idUpdate);}
-          );
+          indexAtual = 3;
         });
-        break;
-      case 1:
+      },
+      onEditPressed: (idUpdate) {
         setState(() {
-          paginaAtual = const HomePage();
+          indexAtual = 4;
+          _idUpdate = idUpdate;
         });
-        break;
-      case 2:
+      },
+    );
+    tecnicoPage = TecnicoPage(
+      onFabPressed: () {
         setState(() {
-          paginaAtual = TecnicoPage(
-              onFabPressed: () {changePage(22);},
-              onEditPressed: (idUpdate) {changePage(23, id: idUpdate);}
-          );
+          indexAtual = 5;
         });
-        break;
-      case 12:
+      },
+      onEditPressed: (idUpdate) {
         setState(() {
-          paginaAtual = CreateCliente(onIconPressed: () {changePage(0);});
+          indexAtual = 6;
+          _idUpdate = idUpdate;
         });
-        break;
-      case 13:
+      },
+    );
+    paginas = [
+      clientePage,
+      home,
+      tecnicoPage,
+      CreateCliente(onIconPressed: () {
         setState(() {
-          paginaAtual = UpdateCliente(onIconPressed: () {changePage(0);}, id: id!);
+          indexAtual = 0;
         });
-        break;
-      case 22:
+      }),
+      UpdateCliente(onIconPressed: () {
         setState(() {
-          paginaAtual = CreateTecnico(onIconPressed: () {changePage(2);});
+          indexAtual = 0;
         });
-        break;
-      case 23:
+      }, id: _idUpdate),
+      CreateTecnico(onIconPressed: () {
         setState(() {
-          paginaAtual = UpdateTecnico(onIconPressed: () {changePage(2);}, id: id!);
+          indexAtual = 2;
         });
-        break;
-    }
+      }),
+      UpdateTecnico(onIconPressed: () {
+        setState(() {
+          indexAtual = 2;
+        });
+      }, id: _idUpdate),
+    ];
   }
 
 	@override
@@ -79,7 +109,10 @@ class HomeState extends State<Home> {
         ),
         centerTitle: true,
       ),
-			body: paginaAtual,
+			body: IndexedStack(
+        index: indexAtual,
+        children: paginas,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
@@ -96,7 +129,7 @@ class HomeState extends State<Home> {
           ),
         ],
         currentIndex: indexAtual,
-        onTap: (index) => changePage(index),
+        onTap: (index) => indexAtual = index,
       ),
 		);
 	}

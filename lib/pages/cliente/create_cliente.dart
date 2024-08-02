@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/components/search_dropdown_field.dart';
-import 'package:serv_oeste/service/cliente_service.dart';
-import '../../components/dropdown_field.dart';
-import '../../components/mask_field.dart';
+import 'package:serv_oeste/widgets/search_dropdown_field.dart';
+import 'package:serv_oeste/api/service/cliente_service.dart';
+import '../../widgets/dropdown_field.dart';
+import '../../widgets/mask_field.dart';
 import '../../models/cliente.dart';
 
 class CreateCliente extends StatefulWidget {
