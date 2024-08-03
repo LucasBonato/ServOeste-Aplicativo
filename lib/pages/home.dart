@@ -40,7 +40,7 @@ class HomeState extends State<Home> {
   ];
   List<PersistentBottomNavBarItem> _navBarItens() => [
     PersistentBottomNavBarItem(
-      icon: const Icon(Icons.account_circle_outlined, size: 40),
+      icon: const Icon(Icons.account_circle_outlined, size: 35),
       title: "Clientes",
       textStyle: const TextStyle(fontSize: 15),
       activeColorPrimary: Colors.blue,
@@ -48,14 +48,14 @@ class HomeState extends State<Home> {
       scrollController: _scrollControllers.first
     ),
     PersistentBottomNavBarItem(
-      icon: const Icon(Icons.home_outlined, size: 45),
+      icon: const Icon(Icons.home_outlined, size: 40),
       title: "Home",
       textStyle: const TextStyle(fontSize: 15),
       activeColorPrimary: Colors.blue,
       inactiveColorPrimary: Colors.black,
     ),
     PersistentBottomNavBarItem(
-      icon: const Icon(Icons.attribution, size: 40),
+      icon: const Icon(Icons.attribution, size: 35),
       title: "Técnicos",
         textStyle: const TextStyle(fontSize: 15),
       activeColorPrimary: Colors.blue,
@@ -91,10 +91,11 @@ class HomeState extends State<Home> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: const Color.fromRGBO(253, 253, 253, 100),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
-            bottomRight: Radius.circular(20)
+            bottomRight: Radius.circular(20),
+            bottomLeft: Radius.circular(20)
           )
         ),
       ),
@@ -104,7 +105,7 @@ class HomeState extends State<Home> {
         hideNavigationBarWhenKeyboardAppears: true,
         screens: _paginas(),
         items: _navBarItens(),
-        navBarStyle: NavBarStyle.simple,
+        navBarStyle: NavBarStyle.style8,
         navBarHeight: 65,
         bottomScreenMargin: 65,
         animationSettings: const NavBarAnimationSettings(

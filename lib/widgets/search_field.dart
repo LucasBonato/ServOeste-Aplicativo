@@ -2,9 +2,17 @@ import 'package:flutter/material.dart';
 
 class SearchTextField extends StatefulWidget {
   final String hint;
+  final TextInputType? keyboardType;
+  final TextEditingController controller;
   final Function(String) onChangedAction;
 
-  const SearchTextField({super.key, required this.hint, required this.onChangedAction});
+  const SearchTextField({
+    super.key,
+    required this.hint,
+    required this.onChangedAction,
+    required this.controller,
+    this.keyboardType,
+  });
 
   @override
   State<SearchTextField> createState() => _SearchTextFieldState();
@@ -17,6 +25,8 @@ class _SearchTextFieldState extends State<SearchTextField> {
       padding: const EdgeInsetsDirectional.fromSTEB(16, 4, 16, 0),
       child: TextFormField(
         obscureText: false,
+        controller: widget.controller,
+        keyboardType: widget.keyboardType?? TextInputType.text,
         decoration: InputDecoration(
           prefixIcon: const Icon(
             Icons.search_outlined,

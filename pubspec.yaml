@@ -17,6 +17,7 @@ dependencies:
   logger: ^2.2.0
   drop_down_search_field: ^1.0.4
   persistent_bottom_nav_bar: ^6.2.1
+  super_sliver_list: ^0.4.1
 
 dev_dependencies:
   flutter_test:

@@ -4,9 +4,7 @@ import 'package:serv_oeste/models/tecnico.dart';
 import 'package:serv_oeste/api/service/tecnico_service.dart';
 
 class CreateTecnico extends StatefulWidget {
-  final VoidCallback onIconPressed;
-
-  const CreateTecnico({super.key, required this.onIconPressed});
+  const CreateTecnico({super.key});
 
   @override
   State<CreateTecnico> createState() => _CreateTecnicoState();
@@ -181,7 +179,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     dynamic body = await tecnicoService.create(tecnico);
 
     if(body == null) {
-      widget.onIconPressed();
+      Navigator.pop(context);
       return;
     }
 
@@ -194,7 +192,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
       appBar: AppBar(
         leading: IconButton(
              icon: const Icon(Icons.arrow_back),
-              onPressed: widget.onIconPressed,
+              onPressed: () => Navigator.pop(context),
           ),
         title: const Text("Novo Técnico"),
         centerTitle: true,

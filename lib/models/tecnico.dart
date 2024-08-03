@@ -2,7 +2,7 @@ import 'dart:convert';
 
 List<Tecnico> tecnicoFromJson(String str) => List<Tecnico>.from(json.decode(str));
 
-class Tecnico{
+class Tecnico {
     int? id;
     String? nome;
     String? sobrenome;

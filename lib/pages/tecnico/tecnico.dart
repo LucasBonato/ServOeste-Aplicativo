@@ -1,13 +1,15 @@
+import 'package:drop_down_search_field/drop_down_search_field.dart';
 import 'package:flutter/material.dart';
+import 'package:serv_oeste/pages/tecnico/create_tecnico.dart';
 import 'package:serv_oeste/widgets/search_field.dart';
 import 'package:serv_oeste/api/service/tecnico_service.dart';
 import '../../widgets/dialog_box.dart';
 import '../../models/tecnico.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 List<String> list = <String>['Ativo', 'Licença', 'Desativado'];
 
 class TecnicoPage extends StatefulWidget {
-
   const TecnicoPage({super.key});
 
   @override
@@ -18,19 +20,17 @@ class _TecnicoPageState extends State<TecnicoPage> {
   final TecnicoService tecnicoService = TecnicoService();
   final List<int> _selectedItens = [];
   late List<Tecnico>? tecnicos;
-  final TextEditingController _idController = TextEditingController(),
-      _nomeController = TextEditingController(),
-      _situacaoController = TextEditingController();
-  String _dropDownValue = list.first;
-  bool isLoaded = false,
-      isSelected = false;
+  late TextEditingController _idController, _nomeController, _situacaoController;
+  bool isLoaded = false, isSelected = false, isDropDown = false;
   int? _id;
-  String? _nome,
-      _situacao;
+  String? _nome, _situacao;
 
   @override
   void initState() {
     super.initState();
+    _idController = TextEditingController();
+    _nomeController = TextEditingController();
+    _situacaoController = TextEditingController();
     carregarTecnicos();
   }
 
@@ -97,7 +97,7 @@ class _TecnicoPageState extends State<TecnicoPage> {
       floatingActionButton: (!isSelected) ? FloatingActionButton(
         backgroundColor: null,
         shape: const CircleBorder(eccentricity: 0),
-        onPressed: () => {},
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateTecnico())),
         child: const Icon(Icons.add),
       ) : FloatingActionButton(
         backgroundColor: Colors.red,
@@ -109,68 +109,70 @@ class _TecnicoPageState extends State<TecnicoPage> {
         children: [
           SearchTextField(
             hint: "Procure por Técnicos...",
-            onChangedAction: (String nome) {
-              _nomeController.text = nome;
-              findBy(nome: nome);
-            }
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-            child: Row(
+            controller: _nomeController,
+            onChangedAction: (String nome) => findBy(nome: nome)
+          ), // Nome Técnicos
+          Row(
               children: [
                 Expanded(
-                  flex: 1,
-                  child: TextField(
+                  flex: 3,
+                  child: SearchTextField(
+                    hint: 'Id',
                     keyboardType: TextInputType.number,
                     controller: _idController,
-                    onChanged: (value) => findBy(id: int.tryParse(value)),
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: const Color(0xFFF1F4F8),
-                      isDense: true,
-                      labelText: "Id",
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          color: Color(0xFFF1F4F8),
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          color: Color(0xFF4B39EF),
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
+                    onChangedAction: (value) => findBy(id: int.tryParse(value))
                   ),
-                ),
+                ), // Id Técnicos
                 Expanded(
-                  flex: 3,
+                  flex: 5,
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
-                    child: DropdownButton<String>(
-                        alignment: AlignmentDirectional.center,
-                        value: _dropDownValue,
-                        items: list.map<DropdownMenuItem<String>>((String value) =>
-                            DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            )).toList(),
-                        onChanged: (valorSelecionado) {
-                          setState(() {
-                            _dropDownValue = valorSelecionado!;
-                          });
-                          _situacaoController.text = valorSelecionado!;
-                          findBy(situacao: _dropDownValue);
-                        }
+                    padding: const EdgeInsets.fromLTRB(0, 5, 16, 0),
+                    child: DropDownSearchField(
+                      hideKeyboard: true,
+                      displayAllSuggestionWhenTap: true,
+                      suggestionsCallback: (String pattern) => list,
+                      itemBuilder: (BuildContext context, String suggestion) {
+                        return ListTile(
+                          title: Text(suggestion)
+                        );
+                      },
+                      onSuggestionSelected: (String suggestion) {
+                        _situacaoController.text = suggestion;
+                        findBy(situacao: _situacaoController.text);
+                      },
+                      textFieldConfiguration: TextFieldConfiguration(
+                        controller: _situacaoController,
+                        keyboardType: TextInputType.none,
+                        decoration: InputDecoration(
+                          label: const Text("Situação"),
+                          suffixIcon: const Icon(
+                            Icons.arrow_drop_down_outlined,
+                            color: Color(0xFF57636C),
+                          ),
+                          isDense: false,
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color(0xFFF1F4F8),
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color(0xFF4B39EF),
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          filled: true,
+                          fillColor: const Color(0xFFF1F4F8),
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                ), // Situação Técnicos
               ],
             ),
-          ),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
             child: SizedBox(
@@ -186,16 +188,16 @@ class _TecnicoPageState extends State<TecnicoPage> {
           ),
           Flexible(
             flex: 1,
-            child: isLoaded ? ListView.builder(
+            child: isLoaded ? SuperListView.builder(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
               scrollDirection: Axis.vertical,
               itemCount: tecnicos!.length,
               itemBuilder: (context, index) {
                 final Tecnico tecnico = tecnicos![index];
                 final int id = tecnico.id!;
-                final String nomeCompleto = "${tecnico.nome} ${tecnico.sobrenome}",
-                    telefone = transformTelefone(tecnico),
-                    situacao = tecnico.situacao.toString();
+                final String nomeCompleto = "${tecnico.nome} ${tecnico.sobrenome}";
+                final String telefone = transformTelefone(tecnico);
+                final String situacao = tecnico.situacao.toString();
                 final bool editable = (isSelected && _selectedItens.length == 1 && _selectedItens.contains(id));
                 return ListTile(
                     tileColor: (_selectedItens.contains(id)) ? Colors.blue.withOpacity(.5) : null,

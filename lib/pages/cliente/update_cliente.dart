@@ -7,10 +7,9 @@ import '../../widgets/mask_field.dart';
 import '../../models/cliente.dart';
 
 class UpdateCliente extends StatefulWidget {
-  final VoidCallback onIconPressed;
   final int id;
 
-  const UpdateCliente({super.key, required this.onIconPressed, required this.id});
+  const UpdateCliente({super.key, required this.id});
 
   @override
   State<UpdateCliente> createState() => _UpdateClienteState();
@@ -177,7 +176,6 @@ class _UpdateClienteState extends State<UpdateCliente> {
     dynamic body = await ClienteService().update(cliente, _sobrenome);
 
     if(body == null && mounted) {
-      widget.onIconPressed();
       return;
     }
 
@@ -223,7 +221,7 @@ class _UpdateClienteState extends State<UpdateCliente> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: widget.onIconPressed,
+          onPressed: () => {},
         ),
         title: const Text("Atualizar Cliente"),
         centerTitle: true,

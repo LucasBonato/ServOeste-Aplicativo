@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:serv_oeste/pages/tecnico/create_tecnico.dart';
 
 import 'pages/home.dart';
 
@@ -18,7 +19,11 @@ class MyApp extends StatelessWidget {
 				colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
 				useMaterial3: true,
 			),
-			home: const Home(),
+			initialRoute: "/",
+			routes: {
+				"/": (context) => const Home(),
+				"/createTecnico": (context) => const CreateTecnico()
+			},
 		);
 	}
 }

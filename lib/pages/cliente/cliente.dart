@@ -114,24 +114,18 @@ class _ClientePageState extends State<ClientePage> {
         children: [
           SearchTextField(
             hint: "Procure por Clientes...",
-            onChangedAction: (String nome) {
-              _nomeController.text = nome;
-              findBy(nome: nome);
-            }
+            controller: _nomeController,
+            onChangedAction: (String nome) => findBy(nome: nome)
           ),
           SearchTextField(
             hint: "Procure por telefone...",
-            onChangedAction: (String telefone) {
-              _telefoneController.text = telefone;
-              findBy(telefone: telefone);
-            }
+            controller: _telefoneController,
+            onChangedAction: (String telefone) => findBy(telefone: telefone)
           ),
           SearchTextField(
-              hint: "Procure pelo endereço...",
-              onChangedAction: (String endereco) {
-                _enderecoController.text = endereco;
-                findBy(endereco: endereco);
-              }
+            hint: "Procure pelo endereço...",
+            controller: _enderecoController,
+            onChangedAction: (String endereco) => findBy(endereco: endereco)
           ),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
