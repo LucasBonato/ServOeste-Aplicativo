@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:serv_oeste/pages/account.dart';
 import 'package:serv_oeste/pages/cliente/cliente.dart';
+import 'package:serv_oeste/pages/servico/servico.dart';
 import 'package:serv_oeste/pages/tecnico/tecnico.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
@@ -17,6 +19,7 @@ class HomeState extends State<Home> {
     ScrollController()
   ];
   List<Widget> _paginas() => [
+    const Servico(),
     const ClientePage(),
     Column(
       mainAxisSize: MainAxisSize.max,
@@ -36,16 +39,24 @@ class HomeState extends State<Home> {
         ),
       ],
     ), // Home
-    const TecnicoPage()
+    const TecnicoPage(),
+    const Account()
   ];
   List<PersistentBottomNavBarItem> _navBarItens() => [
+    PersistentBottomNavBarItem(
+      icon: const Icon(Icons.content_paste, size: 35),
+      title: "Serviços",
+      textStyle: const TextStyle(fontSize: 15),
+      activeColorPrimary: Colors.blue,
+      inactiveColorPrimary: Colors.black,
+      scrollController: _scrollControllers.first
+    ),
     PersistentBottomNavBarItem(
       icon: const Icon(Icons.account_circle_outlined, size: 35),
       title: "Clientes",
       textStyle: const TextStyle(fontSize: 15),
       activeColorPrimary: Colors.blue,
       inactiveColorPrimary: Colors.black,
-      scrollController: _scrollControllers.first
     ),
     PersistentBottomNavBarItem(
       icon: const Icon(Icons.home_outlined, size: 40),
@@ -55,12 +66,19 @@ class HomeState extends State<Home> {
       inactiveColorPrimary: Colors.black,
     ),
     PersistentBottomNavBarItem(
-      icon: const Icon(Icons.attribution, size: 35),
+      icon: const Icon(Icons.build, size: 35),
       title: "Técnicos",
-        textStyle: const TextStyle(fontSize: 15),
+      textStyle: const TextStyle(fontSize: 15),
       activeColorPrimary: Colors.blue,
-      inactiveColorPrimary: Colors.black,
-      scrollController: _scrollControllers.last
+      inactiveColorPrimary: Colors.black
+    ),
+    PersistentBottomNavBarItem(
+        icon: const Icon(Icons.attribution, size: 35),
+        title: "Conta",
+        textStyle: const TextStyle(fontSize: 15),
+        activeColorPrimary: Colors.blue,
+        inactiveColorPrimary: Colors.black,
+        scrollController: _scrollControllers.last
     ),
   ];
 
@@ -115,7 +133,7 @@ class HomeState extends State<Home> {
             screenTransitionAnimationType: ScreenTransitionAnimationType.slide
           )
         ),
-        padding: const EdgeInsets.only(bottom: 5),
+        padding: const EdgeInsets.symmetric(vertical: 5),
         decoration: const NavBarDecoration(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20),
