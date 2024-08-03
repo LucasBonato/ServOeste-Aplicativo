@@ -5,10 +5,7 @@ import '../../widgets/search_field.dart';
 import '../../models/cliente.dart';
 
 class ClientePage extends StatefulWidget {
-  final VoidCallback onFabPressed;
-  final Function(int) onEditPressed;
-
-  const ClientePage({super.key, required this.onFabPressed, required this.onEditPressed});
+  const ClientePage({super.key});
 
   @override
   State<ClientePage> createState() => _ClientePageState();
@@ -105,7 +102,7 @@ class _ClientePageState extends State<ClientePage> {
       floatingActionButton: (!isSelected) ? FloatingActionButton(
         backgroundColor: null,
         shape: const CircleBorder(eccentricity: 0),
-        onPressed: widget.onFabPressed,
+        onPressed: () => {},
         child: const Icon(Icons.add),
       ) : FloatingActionButton(
         backgroundColor: Colors.red,
@@ -166,7 +163,7 @@ class _ClientePageState extends State<ClientePage> {
                     title: Text(nome, style: const TextStyle(fontWeight: FontWeight.bold)),
                     subtitle: Text(showTelefones(cliente)),
                     trailing: (editable) ? IconButton(
-                      onPressed: () => widget.onEditPressed(id),
+                      onPressed: () => {},
                       icon: const Icon(Icons.edit, color: Colors.white),
                       style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
                     ) : Text(cliente.municipio != null ? cliente.municipio! : "UF"),

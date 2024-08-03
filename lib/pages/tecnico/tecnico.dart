@@ -7,10 +7,8 @@ import '../../models/tecnico.dart';
 List<String> list = <String>['Ativo', 'Licença', 'Desativado'];
 
 class TecnicoPage extends StatefulWidget {
-  final VoidCallback onFabPressed;
-  final Function(int) onEditPressed;
 
-  const TecnicoPage({super.key, required this.onFabPressed, required this.onEditPressed});
+  const TecnicoPage({super.key});
 
   @override
   State<TecnicoPage> createState() => _TecnicoPageState();
@@ -99,7 +97,7 @@ class _TecnicoPageState extends State<TecnicoPage> {
       floatingActionButton: (!isSelected) ? FloatingActionButton(
         backgroundColor: null,
         shape: const CircleBorder(eccentricity: 0),
-        onPressed: widget.onFabPressed,
+        onPressed: () => {},
         child: const Icon(Icons.add),
       ) : FloatingActionButton(
         backgroundColor: Colors.red,
@@ -205,7 +203,7 @@ class _TecnicoPageState extends State<TecnicoPage> {
                     title: Text(nomeCompleto, style: const TextStyle(fontWeight: FontWeight.bold)),
                     subtitle: Text("Telefone: $telefone"),
                     trailing: (editable) ? IconButton(
-                      onPressed: () => widget.onEditPressed(id),
+                      onPressed: () => {},
                       icon: const Icon(Icons.edit, color: Colors.white),
                       style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
                     ) : Text(situacao),
