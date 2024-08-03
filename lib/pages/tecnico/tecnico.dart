@@ -1,7 +1,4 @@
-import 'dart:ffi';
-
 import 'package:drop_down_search_field/drop_down_search_field.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/pages/tecnico/create_tecnico.dart';
 import 'package:serv_oeste/pages/tecnico/update_tecnico.dart';
@@ -117,66 +114,66 @@ class _TecnicoPageState extends State<TecnicoPage> {
             onChangedAction: (String nome) => findBy(nome: nome)
           ), // Nome Técnicos
           Row(
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: SearchTextField(
-                    hint: 'Id',
-                    keyboardType: TextInputType.number,
-                    controller: _idController,
-                    onChangedAction: (value) => findBy(id: int.tryParse(value))
-                  ),
-                ), // Id Técnicos
-                Expanded(
-                  flex: 5,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 5, 16, 0),
-                    child: DropDownSearchField(
-                      hideKeyboard: true,
-                      displayAllSuggestionWhenTap: true,
-                      suggestionsCallback: (String pattern) => list,
-                      itemBuilder: (BuildContext context, String suggestion) {
-                        return ListTile(
-                          title: Text(suggestion)
-                        );
-                      },
-                      onSuggestionSelected: (String suggestion) {
-                        _situacaoController.text = suggestion;
-                        findBy(situacao: _situacaoController.text);
-                      },
-                      textFieldConfiguration: TextFieldConfiguration(
-                        controller: _situacaoController,
-                        keyboardType: TextInputType.none,
-                        decoration: InputDecoration(
-                          label: const Text("Situação"),
-                          suffixIcon: const Icon(
-                            Icons.arrow_drop_down_outlined,
-                            color: Color(0xFF57636C),
-                          ),
-                          isDense: false,
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Color(0xFFF1F4F8),
-                              width: 2,
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Color(0xFF4B39EF),
-                              width: 2,
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          filled: true,
-                          fillColor: const Color(0xFFF1F4F8),
+            children: [
+              Expanded(
+                flex: 3,
+                child: SearchTextField(
+                  hint: 'Id',
+                  keyboardType: TextInputType.number,
+                  controller: _idController,
+                  onChangedAction: (value) => findBy(id: int.tryParse(value))
+                ),
+              ), // Id Técnicos
+              Expanded(
+                flex: 5,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 5, 16, 0),
+                  child: DropDownSearchField(
+                    hideKeyboard: true,
+                    displayAllSuggestionWhenTap: true,
+                    suggestionsCallback: (String pattern) => list,
+                    itemBuilder: (BuildContext context, String suggestion) {
+                      return ListTile(
+                        title: Text(suggestion)
+                      );
+                    },
+                    onSuggestionSelected: (String suggestion) {
+                      _situacaoController.text = suggestion;
+                      findBy(situacao: _situacaoController.text);
+                    },
+                    textFieldConfiguration: TextFieldConfiguration(
+                      controller: _situacaoController,
+                      keyboardType: TextInputType.none,
+                      decoration: InputDecoration(
+                        label: const Text("Situação"),
+                        suffixIcon: const Icon(
+                          Icons.arrow_drop_down_outlined,
+                          color: Color(0xFF57636C),
                         ),
+                        isDense: false,
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                            color: Color(0xFFF1F4F8),
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                            color: Color(0xFF4B39EF),
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        filled: true,
+                        fillColor: const Color(0xFFF1F4F8),
                       ),
                     ),
                   ),
-                ), // Situação Técnicos
-              ],
-            ),
+                ),
+              ), // Situação Técnicos
+            ],
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Container(

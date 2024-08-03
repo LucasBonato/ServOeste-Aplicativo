@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/api/service/cliente_service.dart';
+import 'package:serv_oeste/pages/cliente/create_cliente.dart';
+import 'package:serv_oeste/pages/cliente/update_cliente.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 import '../../widgets/dialog_box.dart';
 import '../../widgets/search_field.dart';
 import '../../models/cliente.dart';
@@ -102,7 +105,7 @@ class _ClientePageState extends State<ClientePage> {
       floatingActionButton: (!isSelected) ? FloatingActionButton(
         backgroundColor: null,
         shape: const CircleBorder(eccentricity: 0),
-        onPressed: () => {},
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateCliente())),
         child: const Icon(Icons.add),
       ) : FloatingActionButton(
         backgroundColor: Colors.red,
@@ -117,47 +120,67 @@ class _ClientePageState extends State<ClientePage> {
             controller: _nomeController,
             onChangedAction: (String nome) => findBy(nome: nome)
           ),
-          SearchTextField(
-            hint: "Procure por telefone...",
-            controller: _telefoneController,
-            onChangedAction: (String telefone) => findBy(telefone: telefone)
+          Row(
+            children: [
+              Expanded(
+                flex: 4,
+                child: SearchTextField(
+                  hint: "Telefone...",
+                  controller: _telefoneController,
+                  keyboardType: TextInputType.phone,
+                  rightPadding: 0,
+                  onChangedAction: (String telefone) => findBy(telefone: telefone)
+                ),
+              ),
+              Expanded(
+                flex: 5,
+                child: SearchTextField(
+                  hint: "Endereço...",
+                  controller: _enderecoController,
+                  leftPadding: 8,
+                  onChangedAction: (String endereco) => findBy(endereco: endereco)
+                ),
+              )
+            ],
           ),
-          SearchTextField(
-            hint: "Procure pelo endereço...",
-            controller: _enderecoController,
-            onChangedAction: (String endereco) => findBy(endereco: endereco)
-          ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-            child: SizedBox(
-              width: double.infinity,
-              child: Row(
-                children: [
-                  Expanded(flex: 1, child: Text("Id", textAlign: TextAlign.start, style: TextStyle(fontSize: 20))),
-                  Expanded(flex: 3, child: Text("Nome", textAlign: TextAlign.start, style: TextStyle(fontSize: 20))),
-                  Expanded(flex: 2, child: Text("Município", textAlign: TextAlign.end, style: TextStyle(fontSize: 20))),
-                ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Container(
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                color: Color.fromRGBO(21, 72, 169, 1)
+              ),
+              child: const SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: Row(
+                  children: [
+                    Expanded(flex: 1, child: Text("Id", textAlign: TextAlign.center, style: TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold))),
+                    Expanded(flex: 3, child: Text("Nome", textAlign: TextAlign.start, style: TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold))),
+                    Expanded(flex: 2, child: Text("Município", textAlign: TextAlign.center, style: TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold))),
+                  ],
+                ),
               ),
             ),
           ),
           Flexible(
             flex: 1,
-            child: isLoaded ? ListView.builder(
+            child: isLoaded ? SuperListView.builder(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
               scrollDirection: Axis.vertical,
               itemCount: clientes!.length,
               itemBuilder: (context, index) {
                 final Cliente cliente = clientes![index];
                 final int id = cliente.id!;
-                final String nome = cliente.nome!;
                 final bool editable = (isSelected && _selectedItens.length == 1 && _selectedItens.contains(id));
-                return ListTile(
-                    tileColor: (_selectedItens.contains(id)) ? Colors.blue.withOpacity(.5) : null,
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 5, 8, 0),
+                  child: ListTile(
                     leading: Text("$id", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                    title: Text(nome, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    title: Text(cliente.nome!, style: const TextStyle(fontWeight: FontWeight.bold)),
                     subtitle: Text(showTelefones(cliente)),
                     trailing: (editable) ? IconButton(
-                      onPressed: () => {},
+                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateCliente(id: id))),
                       icon: const Icon(Icons.edit, color: Colors.white),
                       style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
                     ) : Text(cliente.municipio != null ? cliente.municipio! : "UF"),
@@ -169,14 +192,20 @@ class _ClientePageState extends State<ClientePage> {
                       if (_selectedItens.isEmpty) {
                         isSelected = false;
                       }
-                    }
+                    },
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)
+                    ),
+                    tileColor: const Color.fromRGBO(239, 239, 239, 100),
+                    selectedTileColor: Colors.blue.withOpacity(.5),
+                    selected: _selectedItens.contains(id),
+                  ),
                 );
               },
             ) : const Center(
               child: CircularProgressIndicator(),
             ),
-          ),
-          const Padding(padding: EdgeInsets.only(top: 0))
+          )
         ]
       )
     );

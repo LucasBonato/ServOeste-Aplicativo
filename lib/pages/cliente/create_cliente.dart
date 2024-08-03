@@ -6,9 +6,7 @@ import '../../widgets/mask_field.dart';
 import '../../models/cliente.dart';
 
 class CreateCliente extends StatefulWidget {
-  final VoidCallback onIconPressed;
-
-  const CreateCliente({super.key, required this.onIconPressed});
+  const CreateCliente({super.key});
 
   @override
   State<CreateCliente> createState() => _CreateClienteState();
@@ -126,7 +124,7 @@ class _CreateClienteState extends State<CreateCliente> {
     dynamic body = await clienteService.create(cliente, _sobrenome);
 
     if(body == null) {
-      widget.onIconPressed();
+      Navigator.pop(context);
       return;
     }
 
@@ -190,7 +188,7 @@ class _CreateClienteState extends State<CreateCliente> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: widget.onIconPressed,
+          onPressed: () => Navigator.pop(context),
         ),
         title: const Text("Novo Cliente"),
         centerTitle: true,

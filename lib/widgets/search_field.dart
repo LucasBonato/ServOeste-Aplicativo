@@ -5,13 +5,17 @@ class SearchTextField extends StatefulWidget {
   final TextInputType? keyboardType;
   final TextEditingController controller;
   final Function(String) onChangedAction;
+  double? leftPadding;
+  double? rightPadding;
 
-  const SearchTextField({
+  SearchTextField({
     super.key,
     required this.hint,
     required this.onChangedAction,
     required this.controller,
     this.keyboardType,
+    this.leftPadding,
+    this.rightPadding
   });
 
   @override
@@ -22,7 +26,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(16, 4, 16, 0),
+      padding: EdgeInsets.fromLTRB(widget.leftPadding?? 16, 4, widget.rightPadding?? 16, 0),
       child: TextFormField(
         obscureText: false,
         controller: widget.controller,

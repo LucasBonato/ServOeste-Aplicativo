@@ -221,7 +221,7 @@ class _UpdateClienteState extends State<UpdateCliente> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => {},
+          onPressed: () => Navigator.pop(context),
         ),
         title: const Text("Atualizar Cliente"),
         centerTitle: true,
