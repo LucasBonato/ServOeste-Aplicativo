@@ -1,11 +1,15 @@
+import 'dart:ffi';
+
 import 'package:drop_down_search_field/drop_down_search_field.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/pages/tecnico/create_tecnico.dart';
+import 'package:serv_oeste/pages/tecnico/update_tecnico.dart';
 import 'package:serv_oeste/widgets/search_field.dart';
 import 'package:serv_oeste/api/service/tecnico_service.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 import '../../widgets/dialog_box.dart';
 import '../../models/tecnico.dart';
-import 'package:super_sliver_list/super_sliver_list.dart';
 
 List<String> list = <String>['Ativo', 'Licença', 'Desativado'];
 
@@ -173,42 +177,47 @@ class _TecnicoPageState extends State<TecnicoPage> {
                 ), // Situação Técnicos
               ],
             ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-            child: SizedBox(
-              width: double.infinity,
-              child: Row(
-                children: [
-                  Expanded(flex: 1, child: Text("Id", textAlign: TextAlign.start, style: TextStyle(fontSize: 20))),
-                  Expanded(flex: 3, child: Text("Nome", textAlign: TextAlign.start, style: TextStyle(fontSize: 20))),
-                  Expanded(flex: 2, child: Text("Situação", textAlign: TextAlign.end, style: TextStyle(fontSize: 20))),
-                ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Container(
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                color: Color.fromRGBO(21, 72, 169, 1)
+              ),
+              child: const SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: Row(
+                  children: [
+                    Expanded(flex: 1, child: Text("Id", textAlign: TextAlign.center, style: TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold))),
+                    Expanded(flex: 3, child: Text("Nome", textAlign: TextAlign.start, style: TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold))),
+                    Expanded(flex: 2, child: Text("Situação", textAlign: TextAlign.center, style: TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold))),
+                  ],
+                ),
               ),
             ),
           ),
           Flexible(
             flex: 1,
             child: isLoaded ? SuperListView.builder(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
               scrollDirection: Axis.vertical,
               itemCount: tecnicos!.length,
               itemBuilder: (context, index) {
                 final Tecnico tecnico = tecnicos![index];
                 final int id = tecnico.id!;
-                final String nomeCompleto = "${tecnico.nome} ${tecnico.sobrenome}";
-                final String telefone = transformTelefone(tecnico);
-                final String situacao = tecnico.situacao.toString();
                 final bool editable = (isSelected && _selectedItens.length == 1 && _selectedItens.contains(id));
-                return ListTile(
-                    tileColor: (_selectedItens.contains(id)) ? Colors.blue.withOpacity(.5) : null,
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 5, 8, 0),
+                  child: ListTile(
                     leading: Text("$id", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                    title: Text(nomeCompleto, style: const TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: Text("Telefone: $telefone"),
+                    title: Text("${tecnico.nome} ${tecnico.sobrenome}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    subtitle: Text("Telefone: ${transformTelefone(tecnico)}"),
                     trailing: (editable) ? IconButton(
-                      onPressed: () => {},
+                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateTecnico(id: id))),
                       icon: const Icon(Icons.edit, color: Colors.white),
                       style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
-                    ) : Text(situacao),
+                    ) : Text(tecnico.situacao.toString()),
                     onLongPress: () => selectItens(id),
                     onTap: () {
                       if (_selectedItens.isNotEmpty) {
@@ -217,13 +226,20 @@ class _TecnicoPageState extends State<TecnicoPage> {
                       if (_selectedItens.isEmpty) {
                         isSelected = false;
                       }
-                    }
+                    },
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)
+                    ),
+                    tileColor: const Color.fromRGBO(239, 239, 239, 100),
+                    selectedTileColor: Colors.blue.withOpacity(.5),
+                    selected: _selectedItens.contains(id),
+                  ),
                 );
               },
             ) : const Center(
               child: CircularProgressIndicator(),
             ),
-          ),
+          )
         ]
       )
     );

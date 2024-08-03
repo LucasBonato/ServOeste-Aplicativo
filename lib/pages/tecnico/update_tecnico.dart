@@ -8,10 +8,9 @@ import '../../api/service/tecnico_service.dart';
 const List<String> list = <String>['Ativo', 'Licença', 'Desativado'];
 
 class UpdateTecnico extends StatefulWidget {
-  final VoidCallback onIconPressed;
   final int id;
 
-  const UpdateTecnico({super.key, required this.onIconPressed, required this.id});
+  const UpdateTecnico({super.key, required this.id});
 
   @override
   State<UpdateTecnico> createState() => _UpdateTecnicoState();
@@ -214,7 +213,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
     dynamic body = await tecnicoService.update(tecnico);
 
     if(body == null) {
-      widget.onIconPressed();
+      Navigator.pop(context);
       return;
     }
 
@@ -227,7 +226,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: widget.onIconPressed,
+          onPressed: () => Navigator.pop(context),
         ),
         title: const Text("Atualize o Técnico: "),
         centerTitle: true,
