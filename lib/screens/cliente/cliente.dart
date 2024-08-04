@@ -2,6 +2,7 @@ import 'package:serv_oeste/screens/cliente/create_cliente.dart';
 import 'package:serv_oeste/screens/cliente/update_cliente.dart';
 import 'package:serv_oeste/api/service/cliente_service.dart';
 import 'package:serv_oeste/util/constants/constants.dart';
+import 'package:serv_oeste/widgets/expandable_fab.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import '../../widgets/search_field.dart';
 import 'package:flutter/material.dart';
@@ -82,11 +83,75 @@ class _ClientePageState extends State<ClientePage> {
     });
   }
 
+  ExpandableFab _buildFab(BuildContext context) {
+    return ExpandableFab(
+      distance: 100,
+      children: [
+        Column(
+          children: [
+            ActionButton(
+              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateCliente())),
+              icon: const Icon(Icons.person_add_alt_1)
+            ),
+            const Text("Cliente")
+          ],
+        ),
+        Column(
+          children: [
+            ActionButton(
+              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateCliente())),
+              icon: const Icon(Icons.content_paste)
+            ),
+            const Text("Serviço")
+          ],
+        )
+      ]
+    );
+  }
+
+  Widget _buildEditableSection(int id) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          onPressed: () {
+            setState(() {
+              isSelected = false;
+              _selectedItens.clear();
+            });
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => UpdateCliente(id: id))
+            );
+          },
+          icon: const Icon(Icons.edit, color: Colors.white),
+          style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
+        ),
+        const SizedBox(
+          width: 16,
+        ),
+        IconButton(
+          onPressed: () {
+            setState(() {
+              isSelected = false;
+              _selectedItens.clear();
+            });
+
+          },
+          icon: const Icon(Icons.content_paste, color: Colors.white),
+          style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
+        )
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      floatingActionButton: (!isSelected) ? Constants.buildFabAdd(context, const CreateCliente()) : Constants.buildFabRemove(context, deletarClientes),
+      floatingActionButton: (!isSelected) ? _buildFab(context) : Constants.buildFabRemove(context, deletarClientes),
       body: Column(
         children: [
           SearchTextField(
@@ -153,11 +218,7 @@ class _ClientePageState extends State<ClientePage> {
                     leading: Text("$id", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                     title: Text(cliente.nome!, style: const TextStyle(fontWeight: FontWeight.bold)),
                     subtitle: Text(Constants.transformTelefone(cliente: cliente)),
-                    trailing: (editable) ? IconButton(
-                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateCliente(id: id))),
-                      icon: const Icon(Icons.edit, color: Colors.white),
-                      style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
-                    ) : Text(cliente.municipio != null ? cliente.municipio! : "UF"),
+                    trailing: (editable) ? _buildEditableSection(id) : Text(cliente.municipio != null ? cliente.municipio! : "UF"),
                     onLongPress: () => selectItens(id),
                     onTap: () {
                       if (_selectedItens.isNotEmpty) {
