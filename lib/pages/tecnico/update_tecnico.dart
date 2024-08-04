@@ -207,12 +207,12 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
     );
   }
 
-  void updateTecnico() async {
+  void updateTecnico(BuildContext context) async {
     TecnicoService tecnicoService = TecnicoService();
     Tecnico tecnico = includeData();
     dynamic body = await tecnicoService.update(tecnico);
 
-    if(body == null) {
+    if(body == null && context.mounted) {
       Navigator.pop(context);
       return;
     }
@@ -328,7 +328,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                   Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
                     child: TextButton(
-                      onPressed: updateTecnico,
+                      onPressed: () => updateTecnico(context),
                       style: TextButton.styleFrom(
                           backgroundColor: Colors.blue,
                           foregroundColor: Colors.white,

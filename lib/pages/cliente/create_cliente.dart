@@ -118,12 +118,12 @@ class _CreateClienteState extends State<CreateCliente> {
     return telefone.substring(1, 3) + telefone.substring(5, 10) + telefone.substring(11);
   }
 
-  Future<void> adicionarCliente() async{
+  void adicionarCliente(BuildContext context) async{
     ClienteService clienteService = ClienteService();
     Cliente cliente = includeData();
     dynamic body = await clienteService.create(cliente, _sobrenome);
 
-    if(body == null) {
+    if(body == null && context.mounted) {
       Navigator.pop(context);
       return;
     }
@@ -289,11 +289,11 @@ class _CreateClienteState extends State<CreateCliente> {
                     Padding(
                       padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 128),
                       child: TextButton(
-                        onPressed: adicionarCliente,
+                        onPressed: () => adicionarCliente(context),
                         style: TextButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            foregroundColor: Colors.white,
-                            textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                          textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
                         ),
                         child: const Text("Adicionar"),
                       ),

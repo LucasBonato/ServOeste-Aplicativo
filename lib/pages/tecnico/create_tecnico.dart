@@ -173,12 +173,12 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     );
   }
 
-  void adicionarTecnico() async {
+  void adicionarTecnico(BuildContext context) async {
     TecnicoService tecnicoService = TecnicoService();
     Tecnico tecnico = includeData();
     dynamic body = await tecnicoService.create(tecnico);
 
-    if(body == null) {
+    if(body == null && context.mounted) {
       Navigator.pop(context);
       return;
     }
@@ -253,7 +253,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                     Padding(
                       padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
                       child: TextButton(
-                        onPressed: adicionarTecnico,
+                        onPressed: () => adicionarTecnico(context),
                         style: TextButton.styleFrom(
                           backgroundColor: Colors.blue,
                           foregroundColor: Colors.white,

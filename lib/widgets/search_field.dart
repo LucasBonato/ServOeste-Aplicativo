@@ -5,10 +5,10 @@ class SearchTextField extends StatefulWidget {
   final TextInputType? keyboardType;
   final TextEditingController controller;
   final Function(String) onChangedAction;
-  double? leftPadding;
-  double? rightPadding;
+  final double? leftPadding;
+  final double? rightPadding;
 
-  SearchTextField({
+  const SearchTextField({
     super.key,
     required this.hint,
     required this.onChangedAction,

@@ -171,11 +171,12 @@ class _UpdateClienteState extends State<UpdateCliente> {
     return telefone.substring(1, 3) + telefone.substring(5, 10) + telefone.substring(11);
   }
 
-  Future<void> atualizarCliente() async{
+  void atualizarCliente(BuildContext context) async{
     Cliente cliente = includeData();
     dynamic body = await ClienteService().update(cliente, _sobrenome);
 
-    if(body == null && mounted) {
+    if(body == null && context.mounted) {
+      Navigator.pop(context);
       return;
     }
 
@@ -343,7 +344,7 @@ class _UpdateClienteState extends State<UpdateCliente> {
                         foregroundColor: Colors.white,
                         textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
                       ),
-                      onPressed: atualizarCliente,
+                      onPressed: () => atualizarCliente(context),
                       child: const Text("Atualizar"),
                     ),
                   ),
