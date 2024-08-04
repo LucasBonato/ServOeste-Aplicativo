@@ -2,6 +2,7 @@ import 'package:drop_down_search_field/drop_down_search_field.dart';
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/screens/tecnico/create_tecnico.dart';
 import 'package:serv_oeste/screens/tecnico/update_tecnico.dart';
+import 'package:serv_oeste/util/constants/constants.dart';
 import 'package:serv_oeste/widgets/search_field.dart';
 import 'package:serv_oeste/api/service/tecnico_service.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
@@ -81,14 +82,6 @@ class _TecnicoPageState extends State<TecnicoPage> {
     setState(() {
       if(!isSelected) isSelected = true;
     });
-  }
-
-  String transformTelefone(Tecnico? tecnico){
-    var telefoneC = tecnico?.telefoneCelular ?? "";
-    var telefoneF = tecnico?.telefoneFixo ?? "";
-    String telefone = (telefoneC.isNotEmpty) ? telefoneC : telefoneF;
-    String telefoneFormatado = "(${telefone.substring(0, 2)}) ${telefone.substring(2, 7)}-${telefone.substring(7)}";
-    return telefoneFormatado;
   }
 
   @override
@@ -209,7 +202,7 @@ class _TecnicoPageState extends State<TecnicoPage> {
                   child: ListTile(
                     leading: Text("$id", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                     title: Text("${tecnico.nome} ${tecnico.sobrenome}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                    subtitle: Text("Telefone: ${transformTelefone(tecnico)}"),
+                    subtitle: Text(Constants.transformTelefone(tecnico: tecnico)),
                     trailing: (editable) ? IconButton(
                       onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateTecnico(id: id))),
                       icon: const Icon(Icons.edit, color: Colors.white),

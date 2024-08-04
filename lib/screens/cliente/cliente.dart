@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:serv_oeste/api/service/cliente_service.dart';
 import 'package:serv_oeste/screens/cliente/create_cliente.dart';
 import 'package:serv_oeste/screens/cliente/update_cliente.dart';
+import 'package:serv_oeste/util/constants/constants.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
-import '../../widgets/dialog_box.dart';
 import '../../widgets/search_field.dart';
 import '../../models/cliente.dart';
 
@@ -84,35 +84,11 @@ class _ClientePageState extends State<ClientePage> {
     });
   }
 
-  String showTelefones(Cliente cliente) {
-    var telefoneC = cliente.telefoneCelular ?? "";
-    var telefoneF = cliente.telefoneFixo ?? "";
-    if(telefoneF.isNotEmpty && telefoneC.isNotEmpty){
-      return "Telefone Celular: ${formatTelefone(telefoneC)}\nTelefone Fixo: ${formatTelefone(telefoneF)}";
-    } else if(telefoneF.isNotEmpty){
-      return "Telefone Fixo: ${formatTelefone(telefoneF)}";
-    }
-    return "Telefone Celular: ${formatTelefone(telefoneC)}";
-  }
-  String formatTelefone(String telefone) {
-    return "(${telefone.substring(0, 2)}) ${telefone.substring(2, 7)}-${telefone.substring(7)}";
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      floatingActionButton: (!isSelected) ? FloatingActionButton(
-        backgroundColor: null,
-        shape: const CircleBorder(eccentricity: 0),
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateCliente())),
-        child: const Icon(Icons.add),
-      ) : FloatingActionButton(
-        backgroundColor: Colors.red,
-        shape: const CircleBorder(eccentricity: 0),
-        onPressed: () =>  DialogUtils.showConfirmationDialog(context, "Deletar Clientes selecionados?", "", "Sim", "Não", deletarClientes),
-        child: const Icon(Icons.remove, color: Colors.white),
-      ),
+      floatingActionButton: (!isSelected) ? Constants.buildFabAdd(context, const CreateCliente()) : Constants.buildFabRemove(context, deletarClientes),
       body: Column(
         children: [
           SearchTextField(
@@ -178,7 +154,7 @@ class _ClientePageState extends State<ClientePage> {
                   child: ListTile(
                     leading: Text("$id", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                     title: Text(cliente.nome!, style: const TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: Text(showTelefones(cliente)),
+                    subtitle: Text(Constants.transformTelefone(cliente: cliente)),
                     trailing: (editable) ? IconButton(
                       onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateCliente(id: id))),
                       icon: const Icon(Icons.edit, color: Colors.white),

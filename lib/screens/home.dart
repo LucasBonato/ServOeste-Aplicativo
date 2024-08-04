@@ -52,7 +52,7 @@ class HomeState extends State<Home> {
       scrollController: _scrollControllers.first
     ),
     PersistentBottomNavBarItem(
-      icon: const Icon(Icons.account_circle_outlined, size: 35),
+      icon: const Icon(Icons.supervisor_account_rounded, size: 35),
       title: "Clientes",
       textStyle: const TextStyle(fontSize: 15),
       activeColorPrimary: Colors.blue,
