@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/api/service/cliente_service.dart';
-import 'package:serv_oeste/pages/cliente/create_cliente.dart';
-import 'package:serv_oeste/pages/cliente/update_cliente.dart';
+import 'package:serv_oeste/screens/cliente/create_cliente.dart';
+import 'package:serv_oeste/screens/cliente/update_cliente.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import '../../widgets/dialog_box.dart';
 import '../../widgets/search_field.dart';

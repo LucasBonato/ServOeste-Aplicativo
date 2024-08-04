@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/pages/tecnico/create_tecnico.dart';
+import 'package:serv_oeste/screens/tecnico/create_tecnico.dart';
 
-import 'pages/home.dart';
+import 'screens/home.dart';
 
 void main() {
   runApp(const MyApp());

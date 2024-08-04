@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/pages/account.dart';
-import 'package:serv_oeste/pages/cliente/cliente.dart';
-import 'package:serv_oeste/pages/servico/servico.dart';
-import 'package:serv_oeste/pages/tecnico/tecnico.dart';
+import 'package:serv_oeste/screens/account.dart';
+import 'package:serv_oeste/screens/cliente/cliente.dart';
+import 'package:serv_oeste/screens/servico/servico.dart';
+import 'package:serv_oeste/screens/tecnico/tecnico.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
 class Home extends StatefulWidget {
