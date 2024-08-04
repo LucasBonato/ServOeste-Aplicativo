@@ -6,7 +6,6 @@ import 'package:serv_oeste/util/constants/constants.dart';
 import 'package:serv_oeste/widgets/search_field.dart';
 import 'package:serv_oeste/api/service/tecnico_service.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
-import '../../widgets/dialog_box.dart';
 import '../../models/tecnico.dart';
 
 List<String> list = <String>['Ativo', 'Licença', 'Desativado'];
@@ -88,17 +87,7 @@ class _TecnicoPageState extends State<TecnicoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      floatingActionButton: (!isSelected) ? FloatingActionButton(
-        backgroundColor: null,
-        shape: const CircleBorder(eccentricity: 0),
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateTecnico())),
-        child: const Icon(Icons.add),
-      ) : FloatingActionButton(
-        backgroundColor: Colors.red,
-        shape: const CircleBorder(eccentricity: 0),
-        onPressed: () =>  DialogUtils.showConfirmationDialog(context, "Desativar Técnicos selecionados?", "", "Sim", "Não", desativarTecnicos),
-        child: const Icon(Icons.remove, color: Colors.white),
-      ),
+      floatingActionButton: (!isSelected) ? Constants.buildFabAdd(context, const CreateTecnico()) : Constants.buildFabRemove(context, desativarTecnicos),
       body: Column(
         children: [
           SearchTextField(
@@ -235,3 +224,4 @@ class _TecnicoPageState extends State<TecnicoPage> {
     );
   }
 }
+
