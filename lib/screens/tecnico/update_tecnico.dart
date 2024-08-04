@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:serv_oeste/util/constants/constants.dart';
 
 import '../../widgets/mask_field.dart';
 import '../../models/tecnico.dart';
 import '../../api/service/tecnico_service.dart';
-
-const List<String> list = <String>['Ativo', 'Licença', 'Desativado'];
 
 class UpdateTecnico extends StatefulWidget {
   final int id;
@@ -102,6 +101,9 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
   @override
   void initState() {
     super.initState();
+    nomeController = TextEditingController();
+    telefoneCelularController = TextEditingController();
+    telefoneFixoController = TextEditingController();
     loadTecnico();
   }
   @override
@@ -112,7 +114,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
     super.dispose();
   }
 
-  Future<void> loadTecnico() async {
+  void loadTecnico() async {
     try {
       Tecnico? tecnico = await TecnicoService().getById(widget.id);
       setState(() {
@@ -125,18 +127,6 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
         isLoading = false;
       });
     }
-  }
-
-  String transformarMask(String telefone){
-    if(telefone != ""){
-      String telefoneFormatado = "${telefone.substring(1, 3)}${telefone.substring(5, 10)}${telefone.substring(11)}";
-      return telefoneFormatado;
-    }
-    return "";
-  }
-  String deTransformarMask(String telefone){
-    String telefoneFormatado = "(${telefone.substring(0, 2)}) ${telefone.substring(2, 7)}-${telefone.substring(7)}";
-    return telefoneFormatado;
   }
 
   void setError(int erro, String errorMessage){
@@ -186,8 +176,8 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
     }
     sobrenome = sobrenome.trim();
 
-    _telefoneCelular = transformarMask(telefoneCelularController.text);
-    _telefoneFixo = transformarMask(telefoneFixoController.text);
+    _telefoneCelular = Constants.transformarMask(telefoneCelularController.text);
+    _telefoneFixo = Constants.transformarMask(telefoneFixoController.text);
 
     List<int> especialidadesIds = [];
     checkersMap.forEach((label, isChecked) {
@@ -208,9 +198,8 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
   }
 
   void updateTecnico(BuildContext context) async {
-    TecnicoService tecnicoService = TecnicoService();
     Tecnico tecnico = includeData();
-    dynamic body = await tecnicoService.update(tecnico);
+    dynamic body = await TecnicoService().update(tecnico);
 
     if(body == null && context.mounted) {
       Navigator.pop(context);
@@ -240,13 +229,13 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
   Widget buildTecnicoUpdatePage(Tecnico? tecnico){
     if(!isCheckersAndNameLoaded) {
 
-      if(tecnico!.situacao!.toLowerCase().startsWith("a")) _dropDownValue = list[0];
-      if(tecnico.situacao!.toLowerCase().startsWith("l")) _dropDownValue = list[1];
-      if(tecnico.situacao!.toLowerCase().startsWith("d")) _dropDownValue = list[2];
+      if(tecnico!.situacao!.toLowerCase().startsWith("a")) _dropDownValue = Constants.list[0];
+      if(tecnico.situacao!.toLowerCase().startsWith("l")) _dropDownValue = Constants.list[1];
+      if(tecnico.situacao!.toLowerCase().startsWith("d")) _dropDownValue = Constants.list[2];
 
       nomeController = TextEditingController(text: "${tecnico.nome} ${tecnico.sobrenome}");
-      telefoneCelularController = TextEditingController(text: (tecnico.telefoneCelular == null || tecnico.telefoneCelular == "") ? "" : deTransformarMask(tecnico.telefoneCelular!));
-      telefoneFixoController = TextEditingController(text: (tecnico.telefoneFixo == null || tecnico.telefoneFixo == "") ? "" : deTransformarMask(tecnico.telefoneFixo!));
+      telefoneCelularController = TextEditingController(text: (tecnico.telefoneCelular == null || tecnico.telefoneCelular == "") ? "" : Constants.deTransformarMask(tecnico.telefoneCelular!));
+      telefoneFixoController = TextEditingController(text: (tecnico.telefoneFixo == null || tecnico.telefoneFixo == "") ? "" : Constants.deTransformarMask(tecnico.telefoneFixo!));
 
       if (tecnico.especialidades != null) {
         for (Especialidade especialidade in tecnico.especialidades!) {
@@ -267,7 +256,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
           children: [
             DropdownButton<String>(
               value: _dropDownValue,
-              items: list.map<DropdownMenuItem<String>>((String value) =>
+              items: Constants.list.map<DropdownMenuItem<String>>((String value) =>
                   DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),

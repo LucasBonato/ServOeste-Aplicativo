@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:serv_oeste/api/service/cliente_service.dart';
 import 'package:serv_oeste/screens/cliente/create_cliente.dart';
 import 'package:serv_oeste/screens/cliente/update_cliente.dart';
+import 'package:serv_oeste/api/service/cliente_service.dart';
 import 'package:serv_oeste/util/constants/constants.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import '../../widgets/search_field.dart';
+import 'package:flutter/material.dart';
 import '../../models/cliente.dart';
 
 class ClientePage extends StatefulWidget {
@@ -15,22 +15,20 @@ class ClientePage extends StatefulWidget {
 }
 
 class _ClientePageState extends State<ClientePage> {
-  late List<Cliente>? clientes;
   final ClienteService clienteService = ClienteService();
   final List<int> _selectedItens = [];
-  final TextEditingController _nomeController = TextEditingController(),
-                              _telefoneController = TextEditingController(),
-                              _enderecoController = TextEditingController();
-  bool isLoaded = false,
-       isSelected = false;
-  String? _nome,
-          _telefone,
-          _endereco;
+  late List<Cliente>? clientes;
+  late TextEditingController _nomeController, _telefoneController, _enderecoController;
+  bool isLoaded = false, isSelected = false;
+  String? _nome, _telefone, _endereco;
 
   @override
   void initState() {
     super.initState();
-    carregarTecnicos();
+    _nomeController = TextEditingController();
+    _telefoneController = TextEditingController();
+    _enderecoController = TextEditingController();
+    carregarClientes();
   }
 
   @override
@@ -41,7 +39,7 @@ class _ClientePageState extends State<ClientePage> {
     super.dispose();
   }
 
-  Future<void> carregarTecnicos() async{
+  void carregarClientes() async{
     clientes = await clienteService.getAllCliente(
         _nome,
         _telefone,
@@ -54,12 +52,12 @@ class _ClientePageState extends State<ClientePage> {
     });
   }
 
-  Future<void> deletarClientes() async{
+  void deletarClientes() async{
     await clienteService.disableList(_selectedItens);
-    carregarTecnicos();
+    carregarClientes();
   }
 
-  findBy({String? nome, String? telefone, String? endereco}) {
+  void findBy({String? nome, String? telefone, String? endereco}) {
     if(nome != null && nome.isNotEmpty) _nome = nome;
     if(telefone != null && telefone.isNotEmpty) _telefone = telefone;
     if(endereco != null && endereco.isNotEmpty) _endereco = endereco;
@@ -68,10 +66,10 @@ class _ClientePageState extends State<ClientePage> {
     if (_telefoneController.text.isEmpty) _telefone = null;
     if (_enderecoController.text.isEmpty) _endereco = null;
 
-    carregarTecnicos();
+    carregarClientes();
   }
 
-  selectItens(int id) {
+  void selectItens(int id) {
     if(_selectedItens.contains(id)){
       setState(() {
         _selectedItens.removeWhere((value) => value == id);

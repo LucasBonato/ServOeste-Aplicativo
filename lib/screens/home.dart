@@ -52,7 +52,7 @@ class HomeState extends State<Home> {
       scrollController: _scrollControllers.first
     ),
     PersistentBottomNavBarItem(
-      icon: const Icon(Icons.supervisor_account_rounded, size: 35),
+      icon: const Icon(Icons.people_outline, size: 35),
       title: "Clientes",
       textStyle: const TextStyle(fontSize: 15),
       activeColorPrimary: Colors.blue,
@@ -66,15 +66,15 @@ class HomeState extends State<Home> {
       inactiveColorPrimary: Colors.black,
     ),
     PersistentBottomNavBarItem(
-      icon: const Icon(Icons.build, size: 35),
+      icon: const Icon(Icons.build_outlined, size: 35),
       title: "Técnicos",
       textStyle: const TextStyle(fontSize: 15),
       activeColorPrimary: Colors.blue,
       inactiveColorPrimary: Colors.black
     ),
     PersistentBottomNavBarItem(
-        icon: const Icon(Icons.attribution, size: 35),
-        title: "Conta",
+        icon: const Icon(Icons.brightness_low, size: 35),
+        title: "...",
         textStyle: const TextStyle(fontSize: 15),
         activeColorPrimary: Colors.blue,
         inactiveColorPrimary: Colors.black,

@@ -8,6 +8,18 @@ class Constants {
   static const String baseUri = "http://localhost:8080/api/v1";
   //static const String baseUri = "http://10.0.2.2:8080/api/v1";
 
+  static const List<String> list = <String>['Ativo', 'Licença', 'Desativado'];
+  static const List<String> dropdownValues = ['Osasco', 'Barueri', 'Cotia', 'São Paulo', 'Itapevi', 'Carapicuíba'];
+
+  static String deTransformarMask(String telefone) {
+    return "(${telefone.substring(0, 2)}) ${telefone.substring(2, 7)}-${telefone.substring(7)}";
+  }
+
+  static String transformarMask(String telefone){
+    if(telefone.length != 15) return "";
+    return telefone.substring(1, 3) + telefone.substring(5, 10) + telefone.substring(11);
+  }
+
   static FloatingActionButton buildFabRemove(BuildContext context, dynamic removeMethod) {
     return FloatingActionButton(
       backgroundColor: Colors.red,

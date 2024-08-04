@@ -1,14 +1,12 @@
 import 'package:drop_down_search_field/drop_down_search_field.dart';
-import 'package:flutter/material.dart';
 import 'package:serv_oeste/screens/tecnico/create_tecnico.dart';
 import 'package:serv_oeste/screens/tecnico/update_tecnico.dart';
-import 'package:serv_oeste/util/constants/constants.dart';
-import 'package:serv_oeste/widgets/search_field.dart';
 import 'package:serv_oeste/api/service/tecnico_service.dart';
+import 'package:serv_oeste/util/constants/constants.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
+import 'package:serv_oeste/widgets/search_field.dart';
+import 'package:flutter/material.dart';
 import '../../models/tecnico.dart';
-
-List<String> list = <String>['Ativo', 'Licença', 'Desativado'];
 
 class TecnicoPage extends StatefulWidget {
   const TecnicoPage({super.key});
@@ -23,8 +21,8 @@ class _TecnicoPageState extends State<TecnicoPage> {
   late List<Tecnico>? tecnicos;
   late TextEditingController _idController, _nomeController, _situacaoController;
   bool isLoaded = false, isSelected = false, isDropDown = false;
-  int? _id;
   String? _nome, _situacao;
+  int? _id;
 
   @override
   void initState() {
@@ -43,7 +41,7 @@ class _TecnicoPageState extends State<TecnicoPage> {
     super.dispose();
   }
 
-  Future<void> carregarTecnicos({String? situacao = "ativo"}) async {
+  void carregarTecnicos({String? situacao = "ativo"}) async {
     tecnicos = await tecnicoService.getByIdNomesituacao(_id, _nome, situacao);
     setState(() {
       isLoaded = true;
@@ -113,7 +111,7 @@ class _TecnicoPageState extends State<TecnicoPage> {
                   child: DropDownSearchField(
                     hideKeyboard: true,
                     displayAllSuggestionWhenTap: true,
-                    suggestionsCallback: (String pattern) => list,
+                    suggestionsCallback: (String pattern) => Constants.list,
                     itemBuilder: (BuildContext context, String suggestion) {
                       return ListTile(
                         title: Text(suggestion)
@@ -224,4 +222,3 @@ class _TecnicoPageState extends State<TecnicoPage> {
     );
   }
 }
-

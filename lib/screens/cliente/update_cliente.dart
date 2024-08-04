@@ -1,15 +1,19 @@
-import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:serv_oeste/widgets/search_dropdown_field.dart';
 import 'package:serv_oeste/api/service/cliente_service.dart';
+import '../../util/constants/constants.dart';
 import '../../widgets/dropdown_field.dart';
+import 'package:flutter/material.dart';
 import '../../widgets/mask_field.dart';
+import 'package:logger/logger.dart';
 import '../../models/cliente.dart';
 
 class UpdateCliente extends StatefulWidget {
   final int id;
 
-  const UpdateCliente({super.key, required this.id});
+  const UpdateCliente({
+    super.key,
+    required this.id
+  });
 
   @override
   State<UpdateCliente> createState() => _UpdateClienteState();
@@ -17,9 +21,7 @@ class UpdateCliente extends StatefulWidget {
 
 class _UpdateClienteState extends State<UpdateCliente> {
   Cliente? cliente;
-  bool _isLoading = true;
-  bool _fieldsLoaded = false;
-  final List<String> _dropdownValues = ['Osasco', 'Barueri', 'Cotia', 'São Paulo', 'Itapevi', 'Carapicuíba'];
+  bool _isLoading = true, _fieldsLoaded = false;
   List<String> _dropdownValuesNomes = [];
   late TextEditingController nomeController,
       telefoneFixoController,
@@ -32,8 +34,7 @@ class _UpdateClienteState extends State<UpdateCliente> {
       _telefoneCelular = "",
       _telefoneFixo = "",
       _sobrenome = "";
-  bool
-  validationNome = false,
+  bool validationNome = false,
       validationTelefoneCelular = false,
       validationTelefoneFixo = false,
       validationCep = false,
@@ -66,7 +67,7 @@ class _UpdateClienteState extends State<UpdateCliente> {
     super.dispose();
   }
 
-  Future<void> loadCliente() async {
+  void loadCliente() async {
     try {
       Cliente? cliente = await ClienteService().getById(widget.id);
       if(mounted){
@@ -76,7 +77,7 @@ class _UpdateClienteState extends State<UpdateCliente> {
         });
       }
     } catch (e) {
-      Logger().e("Erro ao carregar o técnico: $e");
+      Logger().e("Erro ao carregar o Cliente: $e");
       if(mounted) {
         setState(() {
           _isLoading = false;
@@ -152,8 +153,8 @@ class _UpdateClienteState extends State<UpdateCliente> {
     }
     _sobrenome = sobrenome.trim();
 
-    _telefoneCelular = transformarMask(telefoneCelularController.text);
-    _telefoneFixo = transformarMask(telefoneFixoController.text);
+    _telefoneCelular = Constants.transformarMask(telefoneCelularController.text);
+    _telefoneFixo = Constants.transformarMask(telefoneFixoController.text);
 
     return Cliente(
       id: widget.id,
@@ -164,11 +165,6 @@ class _UpdateClienteState extends State<UpdateCliente> {
       bairro: bairroController.text,
       municipio: municipioController.text
     );
-  }
-
-  String transformarMask(String telefone){
-    if(telefone.length != 15) return "";
-    return telefone.substring(1, 3) + telefone.substring(5, 10) + telefone.substring(11);
   }
 
   void atualizarCliente(BuildContext context) async{
@@ -212,10 +208,6 @@ class _UpdateClienteState extends State<UpdateCliente> {
     }
   }
 
-  deTransformarMask(String telefone) {
-    return "(${telefone.substring(0, 2)}) ${telefone.substring(2, 7)}-${telefone.substring(7)}";
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -236,8 +228,8 @@ class _UpdateClienteState extends State<UpdateCliente> {
   Widget buildClienteUpdatePage(Cliente? cliente) {
     if(!_fieldsLoaded && cliente != null) {
       nomeController.text = cliente.nome!;
-      telefoneCelularController.text = (cliente.telefoneCelular == null || cliente.telefoneCelular == "") ? "" : deTransformarMask(cliente.telefoneCelular!);
-      telefoneFixoController.text = (cliente.telefoneFixo == null || cliente.telefoneFixo == "") ? "" : deTransformarMask(cliente.telefoneFixo!);
+      telefoneCelularController.text = (cliente.telefoneCelular == null || cliente.telefoneCelular == "") ? "" : Constants.deTransformarMask(cliente.telefoneCelular!);
+      telefoneFixoController.text = (cliente.telefoneFixo == null || cliente.telefoneFixo == "") ? "" : Constants.deTransformarMask(cliente.telefoneFixo!);
       enderecoController.text = cliente.endereco!;
       municipioController.text = cliente.municipio!;
       bairroController.text = cliente.bairro!;
@@ -316,7 +308,7 @@ class _UpdateClienteState extends State<UpdateCliente> {
             CustomDropdownField(
               label: "Municipío",
               controller: municipioController,
-              dropdownValues: _dropdownValues,
+              dropdownValues: Constants.dropdownValues,
             ),
             CustomMaskField(
                 hint: "Bairro...",

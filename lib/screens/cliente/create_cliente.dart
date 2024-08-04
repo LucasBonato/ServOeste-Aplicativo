@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/widgets/search_dropdown_field.dart';
 import 'package:serv_oeste/api/service/cliente_service.dart';
+import '../../util/constants/constants.dart';
 import '../../widgets/dropdown_field.dart';
 import '../../widgets/mask_field.dart';
 import '../../models/cliente.dart';
@@ -13,7 +14,6 @@ class CreateCliente extends StatefulWidget {
 }
 
 class _CreateClienteState extends State<CreateCliente> {
-  final List<String> _dropdownValues = ['Osasco', 'Barueri', 'Cotia', 'São Paulo', 'Itapevi', 'Carapicuíba'];
   List<String> _dropdownValuesNomes = [];
   late TextEditingController nomeController,
       telefoneFixoController,
@@ -266,7 +266,7 @@ class _CreateClienteState extends State<CreateCliente> {
               CustomDropdownField(
                 label: "Municipío",
                 controller: municipioController,
-                dropdownValues: _dropdownValues,
+                dropdownValues: Constants.dropdownValues,
               ),
               CustomMaskField(
                 hint: "Bairro...",
