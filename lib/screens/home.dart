@@ -85,7 +85,7 @@ class HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    _persistentController = PersistentTabController(initialIndex: 1);
+    _persistentController = PersistentTabController(initialIndex: 2);
   }
 
   @override

@@ -8,8 +8,12 @@ class Constants {
   static const String baseUri = "http://localhost:8080/api/v1";
   //static const String baseUri = "http://10.0.2.2:8080/api/v1";
 
-  static const List<String> list = <String>['Ativo', 'Licença', 'Desativado'];
-  static const List<String> dropdownValues = ['Osasco', 'Barueri', 'Cotia', 'São Paulo', 'Itapevi', 'Carapicuíba'];
+  static const List<String> list = ['Ativo', 'Licença', 'Desativado'];
+  static const List<String> municipios = ['Osasco', 'Barueri', 'Cotia', 'São Paulo', 'Itapevi', 'Carapicuíba'];
+  static const List<String> equipamentos = ["Adega de Vinho", "Ar Condicionado", "Bebedouro", "Climatizador", "Cooler Elétrico", "Frigobar", "Geladeira", "Lava Louças", "Máquina de Lavar", "Microondas", "Putificador de Água", "Secadora"];
+  static const List<String> marcas = ["Brastemp", "Consul", "Electrolux", "Samsung"];
+  static const List<String> filiais = ["Osasco", "Carapicuíba"];
+  static const List<String> dataAtendimento = ["Manhã", "Tarde"];
 
   static String deTransformarMask(String telefone) {
     return "(${telefone.substring(0, 2)}) ${telefone.substring(2, 7)}-${telefone.substring(7)}";

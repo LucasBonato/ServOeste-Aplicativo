@@ -203,7 +203,7 @@ class _CreateClienteState extends State<CreateCliente> {
                 onChanged: (nome) => getNomesClientes(nome),
                 label: "Nome",
                 controller: nomeController,
-                maxLenght: 40,
+                maxLength: 40,
                 dropdownValues: _dropdownValuesNomes,
                 errorMessage: _errorMessage,
                 validation: validationNome
@@ -264,9 +264,9 @@ class _CreateClienteState extends State<CreateCliente> {
                 ],
               ),
               CustomDropdownField(
-                label: "Municipío",
-                controller: municipioController,
-                dropdownValues: Constants.dropdownValues,
+                label: "Município",
+                dropdownValues: Constants.municipios,
+                controller: municipioController
               ),
               CustomMaskField(
                 hint: "Bairro...",

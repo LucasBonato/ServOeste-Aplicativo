@@ -10,14 +10,16 @@ class CustomSearchDropDown extends StatefulWidget {
   final double? leftPadding;
   final Function(String) onChanged;
   final String errorMessage;
-  final int maxLenght;
+  final int maxLength;
+  final bool hide;
   bool validation;
 
   CustomSearchDropDown({
     super.key,
     this.rightPadding,
     this.leftPadding,
-    required this.maxLenght,
+    this.hide = false,
+    required this.maxLength,
     required this.validation,
     required this.errorMessage,
     required this.onChanged,
@@ -35,13 +37,14 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(widget.leftPadding != null ? widget.leftPadding! : 16, 4, widget.rightPadding != null ? widget.rightPadding! : 16, 0),
+      padding: EdgeInsetsDirectional.fromSTEB(widget.leftPadding != null ? widget.leftPadding! : 16, 4, widget.rightPadding != null ? widget.rightPadding! : 16, widget.hide ? 16 : 0),
       child: DropDownSearchField(
         displayAllSuggestionWhenTap: false,
         textFieldConfiguration: TextFieldConfiguration(
-          maxLength: widget.maxLenght,
+          maxLength: widget.maxLength,
           controller: widget.controller,
           decoration: InputDecoration(
+            counterText: widget.hide ? "" : null,
             labelText: widget.label,
             error: (widget.validation) ? Text(widget.errorMessage, textAlign: TextAlign.center, style: const TextStyle(color: Colors.red),) : null,
             isDense: true,

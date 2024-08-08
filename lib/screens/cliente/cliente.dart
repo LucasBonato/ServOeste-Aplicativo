@@ -7,6 +7,7 @@ import 'package:super_sliver_list/super_sliver_list.dart';
 import '../../widgets/search_field.dart';
 import 'package:flutter/material.dart';
 import '../../models/cliente.dart';
+import '../servico/create_servico.dart';
 
 class ClientePage extends StatefulWidget {
   const ClientePage({super.key});
@@ -99,7 +100,7 @@ class _ClientePageState extends State<ClientePage> {
         Column(
           children: [
             ActionButton(
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateCliente())),
+              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateServico())),
               icon: const Icon(Icons.content_paste)
             ),
             const Text("Serviço")
