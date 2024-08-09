@@ -1,5 +1,5 @@
-import 'package:serv_oeste/api/api_serv_oeste.dart';
-import 'package:serv_oeste/models/cliente.dart';
+import 'package:serv_oeste/src/models/cliente.dart';
+import 'api_serv_oeste.dart';
 
 class ClienteService{
   var api = ServOesteApi();

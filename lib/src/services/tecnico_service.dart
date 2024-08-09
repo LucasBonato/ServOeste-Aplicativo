@@ -1,6 +1,5 @@
-import 'package:serv_oeste/api/api_serv_oeste.dart';
-
-import '../../../models/tecnico.dart';
+import '../../../src/models/tecnico.dart';
+import 'api_serv_oeste.dart';
 
 class TecnicoService{
   var api = ServOesteApi();

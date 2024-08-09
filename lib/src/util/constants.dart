@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/models/tecnico.dart';
-
-import '../../models/cliente.dart';
-import '../../widgets/dialog_box.dart';
+import 'package:serv_oeste/src/models/tecnico.dart';
+import 'package:serv_oeste/src/models/cliente.dart';
+import 'package:serv_oeste/src/widgets/dialog_box.dart';
 
 class Constants {
-  static const String baseUri = "http://localhost:8080/api/v1";
-  //static const String baseUri = "http://10.0.2.2:8080/api/v1";
+  //static const String baseUri = "http://localhost:8080/api/v1";
+  static const String baseUri = "http://10.0.2.2:8080/api/v1";
 
   static const List<String> list = ['Ativo', 'Licença', 'Desativado'];
   static const List<String> municipios = ['Osasco', 'Barueri', 'Cotia', 'São Paulo', 'Itapevi', 'Carapicuíba'];

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/util/constants/constants.dart';
-import 'package:serv_oeste/widgets/dropdown_field.dart';
-import 'package:serv_oeste/widgets/mask_field.dart';
-import 'package:serv_oeste/widgets/search_dropdown_field.dart';
+import 'package:serv_oeste/src/util/constants.dart';
+import 'package:serv_oeste/src/widgets/dropdown_field.dart';
+import 'package:serv_oeste/src/widgets/mask_field.dart';
+import 'package:serv_oeste/src/widgets/search_dropdown_field.dart';
 
 class CreateServico extends StatefulWidget {
   const CreateServico({super.key});

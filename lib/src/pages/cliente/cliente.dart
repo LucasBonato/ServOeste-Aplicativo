@@ -1,8 +1,8 @@
-import 'package:serv_oeste/screens/cliente/create_cliente.dart';
-import 'package:serv_oeste/screens/cliente/update_cliente.dart';
-import 'package:serv_oeste/api/service/cliente_service.dart';
-import 'package:serv_oeste/util/constants/constants.dart';
-import 'package:serv_oeste/widgets/expandable_fab.dart';
+import 'package:serv_oeste/src/pages/cliente/create_cliente.dart';
+import 'package:serv_oeste/src/pages/cliente/update_cliente.dart';
+import 'package:serv_oeste/src/services/cliente_service.dart';
+import 'package:serv_oeste/src/util/constants.dart';
+import 'package:serv_oeste/src/widgets/expandable_fab.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import '../../widgets/search_field.dart';
 import 'package:flutter/material.dart';

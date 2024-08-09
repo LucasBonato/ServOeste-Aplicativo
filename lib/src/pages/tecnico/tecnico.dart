@@ -1,10 +1,10 @@
 import 'package:drop_down_search_field/drop_down_search_field.dart';
-import 'package:serv_oeste/screens/tecnico/create_tecnico.dart';
-import 'package:serv_oeste/screens/tecnico/update_tecnico.dart';
-import 'package:serv_oeste/api/service/tecnico_service.dart';
-import 'package:serv_oeste/util/constants/constants.dart';
+import 'package:serv_oeste/src/pages/tecnico/create_tecnico.dart';
+import 'package:serv_oeste/src/pages/tecnico/update_tecnico.dart';
+import 'package:serv_oeste/src/services/tecnico_service.dart';
+import 'package:serv_oeste/src/util/constants.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
-import 'package:serv_oeste/widgets/search_field.dart';
+import 'package:serv_oeste/src/widgets/search_field.dart';
 import 'package:flutter/material.dart';
 import '../../models/tecnico.dart';
 

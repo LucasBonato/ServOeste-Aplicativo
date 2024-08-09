@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:serv_oeste/util/constants/constants.dart';
+import 'package:serv_oeste/src/util/constants.dart';
+import 'package:serv_oeste/src/services/tecnico_service.dart';
 
 import '../../widgets/mask_field.dart';
 import '../../models/tecnico.dart';
-import '../../api/service/tecnico_service.dart';
 
 class UpdateTecnico extends StatefulWidget {
   final int id;

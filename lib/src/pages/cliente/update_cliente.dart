@@ -1,6 +1,6 @@
-import 'package:serv_oeste/widgets/search_dropdown_field.dart';
-import 'package:serv_oeste/api/service/cliente_service.dart';
-import '../../util/constants/constants.dart';
+import 'package:serv_oeste/src/widgets/search_dropdown_field.dart';
+import 'package:serv_oeste/src/services/cliente_service.dart';
+import '../../util/constants.dart';
 import '../../widgets/dropdown_field.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/mask_field.dart';

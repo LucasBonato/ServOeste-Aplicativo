@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'package:logger/logger.dart';
-import 'package:serv_oeste/models/tecnico.dart';
+import 'package:serv_oeste/src/models/tecnico.dart';
 import 'package:http/http.dart' as http;
-import 'package:serv_oeste/util/constants/constants.dart';
+import 'package:serv_oeste/src/util/constants.dart';
 
-import '../models/cliente.dart';
-import '../models/endereco.dart';
+import '../../src/models/cliente.dart';
+import '../../src/models/endereco.dart';
 
 class ServOesteApi{
   var client = http.Client();
