@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/src/util/constants.dart';
+import 'package:serv_oeste/src/widgets/date_picker.dart';
 import 'package:serv_oeste/src/widgets/dropdown_field.dart';
 import 'package:serv_oeste/src/widgets/mask_field.dart';
 import 'package:serv_oeste/src/widgets/search_dropdown_field.dart';
@@ -11,7 +12,7 @@ class CreateServico extends StatefulWidget {
   State<CreateServico> createState() => _CreateServicoState();
 }
 
-class _CreateServicoState extends State<CreateServico> {
+class _CreateServicoState extends State<CreateServico>{
   late TextEditingController _equipamentoController, _marcaController, _filialController, _dataAtendimentoPrevistaController, _horarioPrevistoController, _tecnicoController;
   bool equipamentoValidation = false, marcaValidation = false, filialValidation = false, dataAtendimentoPrevistaValidation = false, horarioPrevistoValidation = false, tecnicoValidation = false;
   String _errorMessage = "";
@@ -37,8 +38,6 @@ class _CreateServicoState extends State<CreateServico> {
     _tecnicoController.dispose();
     super.dispose();
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +79,7 @@ class _CreateServicoState extends State<CreateServico> {
             dropdownValues: Constants.filiais,
             controller: _filialController
           ),
-          CustomMaskField(
+          CustomDatePicker(
             label: "Data Atendimento Previsto",
             hint: "",
             mask: "##/##/####",
@@ -95,7 +94,7 @@ class _CreateServicoState extends State<CreateServico> {
           CustomDropdownField(
             label: "Horário Previsto",
             dropdownValues: Constants.dataAtendimento,
-            controller: _horarioPrevistoController
+            controller: _horarioPrevistoController,
           ),
           CustomSearchDropDown(
             label: "Técnico",

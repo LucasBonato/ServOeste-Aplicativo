@@ -1,13 +1,12 @@
-import 'package:serv_oeste/src/pages/cliente/create_cliente.dart';
 import 'package:serv_oeste/src/pages/cliente/update_cliente.dart';
 import 'package:serv_oeste/src/services/cliente_service.dart';
 import 'package:serv_oeste/src/util/constants.dart';
+import 'package:serv_oeste/src/util/buildwidgets.dart';
 import 'package:serv_oeste/src/widgets/expandable_fab.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import '../../widgets/search_field.dart';
 import 'package:flutter/material.dart';
 import '../../models/cliente.dart';
-import '../servico/create_servico.dart';
 
 class ClientePage extends StatefulWidget {
   const ClientePage({super.key});
@@ -91,7 +90,7 @@ class _ClientePageState extends State<ClientePage> {
         Column(
           children: [
             ActionButton(
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateCliente())),
+              onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed("/createCliente"),
               icon: const Icon(Icons.person_add_alt_1)
             ),
             const Text("Cliente")
@@ -100,7 +99,7 @@ class _ClientePageState extends State<ClientePage> {
         Column(
           children: [
             ActionButton(
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateServico())),
+              onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed("/createServico"),
               icon: const Icon(Icons.content_paste)
             ),
             const Text("Serviço")
@@ -152,7 +151,7 @@ class _ClientePageState extends State<ClientePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      floatingActionButton: (!isSelected) ? _buildFab(context) : Constants.buildFabRemove(context, deletarClientes),
+      floatingActionButton: (!isSelected) ? _buildFab(context) : BuildWidgets.buildFabRemove(context, deletarClientes),
       body: Column(
         children: [
           SearchTextField(

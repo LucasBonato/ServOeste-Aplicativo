@@ -56,14 +56,14 @@ class HomeState extends State<Home> {
       title: "Clientes",
       textStyle: const TextStyle(fontSize: 15),
       activeColorPrimary: Colors.blue,
-      inactiveColorPrimary: Colors.black,
+      inactiveColorPrimary: Colors.black
     ),
     PersistentBottomNavBarItem(
       icon: const Icon(Icons.home_outlined, size: 40),
       title: "Home",
       textStyle: const TextStyle(fontSize: 15),
       activeColorPrimary: Colors.blue,
-      inactiveColorPrimary: Colors.black,
+      inactiveColorPrimary: Colors.black
     ),
     PersistentBottomNavBarItem(
       icon: const Icon(Icons.build_outlined, size: 35),
@@ -121,6 +121,7 @@ class HomeState extends State<Home> {
         context,
         controller: _persistentController,
         hideNavigationBarWhenKeyboardAppears: true,
+        stateManagement: false,
         screens: _paginas(),
         items: _navBarItens(),
         navBarStyle: NavBarStyle.style8,

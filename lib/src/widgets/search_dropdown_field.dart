@@ -95,7 +95,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
         hideOnEmpty: true,
         debounceDuration: const Duration(milliseconds: 150),
         transitionBuilder: (context, suggestionBox, animationController) { return suggestionBox; },
-        suggestionsBoxVerticalOffset: -23,
+        suggestionsBoxVerticalOffset: 0,
       ),
     );
   }

@@ -16,7 +16,6 @@ class CustomMaskField extends StatefulWidget {
   Function(String?)? onChanged;
   bool hide;
 
-
   CustomMaskField({
     super.key,
     required this.hint,

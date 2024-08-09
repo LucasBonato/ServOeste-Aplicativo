@@ -1,11 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:serv_oeste/src/models/tecnico.dart';
 import 'package:serv_oeste/src/models/cliente.dart';
-import 'package:serv_oeste/src/widgets/dialog_box.dart';
 
 class Constants {
-  //static const String baseUri = "http://localhost:8080/api/v1";
-  static const String baseUri = "http://10.0.2.2:8080/api/v1";
+  static const String baseUri = "http://localhost:8080/api/v1";
+  //static const String baseUri = "http://10.0.2.2:8080/api/v1";
 
   static const List<String> list = ['Ativo', 'Licença', 'Desativado'];
   static const List<String> municipios = ['Osasco', 'Barueri', 'Cotia', 'São Paulo', 'Itapevi', 'Carapicuíba'];
@@ -21,24 +19,6 @@ class Constants {
   static String transformarMask(String telefone){
     if(telefone.length != 15) return "";
     return telefone.substring(1, 3) + telefone.substring(5, 10) + telefone.substring(11);
-  }
-
-  static FloatingActionButton buildFabRemove(BuildContext context, dynamic removeMethod) {
-    return FloatingActionButton(
-      backgroundColor: Colors.red,
-      shape: const CircleBorder(eccentricity: 0),
-      onPressed: () => DialogUtils.showConfirmationDialog(context, "Deletar itens selecionados?", "", "Sim", "Não", () => removeMethod()),
-      child: const Icon(Icons.delete, color: Colors.white),
-    );
-  }
-
-  static FloatingActionButton buildFabAdd(BuildContext context, Widget page) {
-    return FloatingActionButton(
-      backgroundColor: null,
-      shape: const CircleBorder(eccentricity: 0),
-      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => page)),
-      child: const Icon(Icons.add),
-    );
   }
 
   static String transformTelefone({Tecnico? tecnico, Cliente? cliente}){

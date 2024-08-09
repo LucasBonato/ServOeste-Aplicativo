@@ -3,6 +3,7 @@ import 'package:serv_oeste/src/pages/tecnico/create_tecnico.dart';
 import 'package:serv_oeste/src/pages/tecnico/update_tecnico.dart';
 import 'package:serv_oeste/src/services/tecnico_service.dart';
 import 'package:serv_oeste/src/util/constants.dart';
+import 'package:serv_oeste/src/util/buildwidgets.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:serv_oeste/src/widgets/search_field.dart';
 import 'package:flutter/material.dart';
@@ -85,7 +86,7 @@ class _TecnicoPageState extends State<TecnicoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      floatingActionButton: (!isSelected) ? Constants.buildFabAdd(context, const CreateTecnico()) : Constants.buildFabRemove(context, desativarTecnicos),
+      floatingActionButton: (!isSelected) ? BuildWidgets.buildFabAdd(context, const CreateTecnico()) : BuildWidgets.buildFabRemove(context, desativarTecnicos),
       body: Column(
         children: [
           SearchTextField(

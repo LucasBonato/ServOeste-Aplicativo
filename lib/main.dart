@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:serv_oeste/src/pages/cliente/create_cliente.dart';
+import 'package:serv_oeste/src/pages/servico/create_servico.dart';
 import 'package:serv_oeste/src/pages/tecnico/create_tecnico.dart';
 
 import 'src/pages/home.dart';
@@ -22,7 +24,9 @@ class MyApp extends StatelessWidget {
 			initialRoute: "/",
 			routes: {
 				"/": (context) => const Home(),
-				"/createTecnico": (context) => const CreateTecnico()
+				"/createTecnico": (context) => const CreateTecnico(),
+				"/createCliente": (context) => const CreateCliente(),
+				"/createServico": (context) => const CreateServico()
 			},
 		);
 	}
