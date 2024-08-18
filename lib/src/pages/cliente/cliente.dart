@@ -89,18 +89,24 @@ class _ClientePageState extends State<ClientePage> {
       children: [
         Column(
           children: [
-            ActionButton(
+            FloatingActionButton(
               onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed("/createCliente"),
-              icon: const Icon(Icons.person_add_alt_1)
+              heroTag: "cliente",
+              mini: true,
+              shape: const CircleBorder(eccentricity: 0),
+              child: const Icon(Icons.person_add_alt_1),
             ),
             const Text("Cliente")
           ],
         ),
         Column(
           children: [
-            ActionButton(
+            FloatingActionButton(
               onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed("/createServico"),
-              icon: const Icon(Icons.content_paste)
+              heroTag: "servico",
+              mini: true,
+              shape: const CircleBorder(eccentricity: 0),
+              child: const Icon(Icons.content_paste)
             ),
             const Text("Serviço")
           ],
@@ -138,7 +144,6 @@ class _ClientePageState extends State<ClientePage> {
               isSelected = false;
               _selectedItens.clear();
             });
-
           },
           icon: const Icon(Icons.content_paste, color: Colors.white),
           style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),

@@ -9,6 +9,7 @@ class CustomSearchDropDown extends StatefulWidget {
   final double? rightPadding;
   final double? leftPadding;
   final Function(String) onChanged;
+  final Function(String)? onSelected;
   final String errorMessage;
   final int maxLength;
   final bool hide;
@@ -19,6 +20,7 @@ class CustomSearchDropDown extends StatefulWidget {
     this.rightPadding,
     this.leftPadding,
     this.hide = false,
+    this.onSelected,
     required this.maxLength,
     required this.validation,
     required this.errorMessage,
@@ -86,6 +88,9 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
         },
         onSuggestionSelected: (String? suggestion) {
           widget.controller.text = suggestion!;
+          if(widget.onSelected != null) {
+            widget.onSelected!(suggestion);
+          }
         },
         itemBuilder: (context, suggestion) {
           return ListTile(

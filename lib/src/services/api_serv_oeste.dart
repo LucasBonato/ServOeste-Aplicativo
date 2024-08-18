@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:logger/logger.dart';
 import 'package:serv_oeste/src/models/tecnico.dart';
 import 'package:http/http.dart' as http;
+import 'package:serv_oeste/src/models/tecnico_disponivel.dart';
 import 'package:serv_oeste/src/util/constants.dart';
 
 import '../../src/models/cliente.dart';
@@ -189,5 +190,16 @@ class ServOesteApi{
     dynamic jsonResponse = json.decode(responseBodyUtf8);
     Endereco? endereco = Endereco.fromJson(jsonResponse);
     return endereco.endereco;
+  }
+
+  Future<List<TecnicoDisponivel>> getTecnicosDisponiveis(String conhecimento) async {
+    var uri = Uri.parse("$baseUri/servico/disponibilidade?c=$conhecimento");
+    var response = await client.get(uri);
+
+
+    var responseBodyUtf8 = utf8.decode(response.body.runes.toList());
+    List<dynamic> jsonResponse = json.decode(responseBodyUtf8);
+    List<TecnicoDisponivel> tecnicosDisponiveis = jsonResponse.map((json) => TecnicoDisponivel.fromJson(json)).toList();
+    return tecnicosDisponiveis;
   }
 }
