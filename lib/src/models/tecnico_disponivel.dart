@@ -3,27 +3,39 @@ import 'dart:convert';
 List<TecnicoDisponivel> tecnicoFromJson(String str) => List<TecnicoDisponivel>.from(json.decode(str));
 class TecnicoDisponivel {
   int? id;
-  String? data;
-  int? dia;
-  String? periodo;
   String? nome;
-  int? quantidade;
+  List<Disponibilidade>? disponibilidades;
 
   TecnicoDisponivel({
     this.id,
-    this.data,
-    this.dia,
-    this.periodo,
     this.nome,
-    this.quantidade
+    this.disponibilidades
   });
 
   factory TecnicoDisponivel.fromJson(Map<String, dynamic> json) => TecnicoDisponivel(
     id: json["id"],
-    data: json["data"],
-    dia: json["dia"],
-    periodo: json["periodo"],
     nome: json["nome"],
-    quantidade: json["quantidade"]
+    disponibilidades: List<Disponibilidade>.from(json["disponibilidades"].map((x) => Disponibilidade.fromJson(x))),
+  );
+}
+
+class Disponibilidade {
+  String? data;
+  int? dia;
+  String? periodo;
+  int? quantidade;
+
+  Disponibilidade({
+    this.data,
+    this.dia,
+    this.periodo,
+    this.quantidade
+  });
+
+  factory Disponibilidade.fromJson(Map<String, dynamic> json) => Disponibilidade(
+      data: json["data"],
+      dia: json["dia"],
+      periodo: json["periodo"],
+      quantidade: json["quantidade"]
   );
 }

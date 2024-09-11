@@ -7,7 +7,7 @@ class Constants {
 
   static const List<String> list = ['Ativo', 'Licença', 'Desativado'];
   static const List<String> municipios = ['Osasco', 'Barueri', 'Cotia', 'São Paulo', 'Itapevi', 'Carapicuíba'];
-  static const List<String> equipamentos = ["Adega de Vinho", "Ar Condicionado", "Bebedouro", "Climatizador", "Cooler Elétrico", "Frigobar", "Geladeira", "Lava Louças", "Máquina de Lavar", "Microondas", "Putificador de Água", "Secadora"];
+  static const List<String> equipamentos = ["Adega", "Bebedouro", "Climatizador", "Cooler", "Frigobar", "Geladeira", "Lava Louça", "Lava Roupa", "Microondas", "Putificador", "Secadora"];
   static const List<String> marcas = ["Brastemp", "Consul", "Electrolux", "Samsung"];
   static const List<String> filiais = ["Osasco", "Carapicuíba"];
   static const List<String> dataAtendimento = ["Manhã", "Tarde"];

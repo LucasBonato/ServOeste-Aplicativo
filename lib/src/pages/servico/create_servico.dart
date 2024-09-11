@@ -19,11 +19,13 @@ class _CreateServicoState extends State<CreateServico>{
   late TextEditingController _equipamentoController, _marcaController, _filialController, _dataAtendimentoPrevistaController, _horarioPrevistoController, _tecnicoController;
   bool equipamentoValidation = false, marcaValidation = false, filialValidation = false, dataAtendimentoPrevistaValidation = false, horarioPrevistoValidation = false, tecnicoValidation = false;
   bool isTecnicosLoading = true;
-  String _errorMessage = "";
+  final String _errorMessage = "";
   List<String> _dropdownValuesNomes = [];
   List<Tecnico>? _listTecnicos = [];
   List<TecnicoDisponivel> _tecnicos = [];
   int? _idTecnicoSelected;
+  String? _nomeEquipamento;
+  late int dayOfTheWeek;
 
   @override
   void initState() {
@@ -34,6 +36,8 @@ class _CreateServicoState extends State<CreateServico>{
     _dataAtendimentoPrevistaController = TextEditingController();
     _horarioPrevistoController = TextEditingController();
     _tecnicoController = TextEditingController();
+
+    dayOfTheWeek = DateTime.now().weekday;
   }
 
   @override
@@ -65,7 +69,7 @@ class _CreateServicoState extends State<CreateServico>{
 
   void getTecnicosDisponiveis() async {
     ServicoService servicoService = ServicoService();
-    List<TecnicoDisponivel> tecnicos = await servicoService.getTecnicosDisponiveis(_equipamentoController.text);
+    List<TecnicoDisponivel> tecnicos = await servicoService.getTecnicosDisponiveis(_nomeEquipamento?? "Outros");
     setState(() {
       _tecnicos = tecnicos;
       isTecnicosLoading = false;
@@ -79,6 +83,18 @@ class _CreateServicoState extends State<CreateServico>{
           _idTecnicoSelected = tecnico.id!;
         });
       }
+    }
+  }
+
+  void getNomeEquipamento(String equipamento) {
+    if(equipamento.isNotEmpty) {
+      setState(() {
+        _nomeEquipamento = (Constants.equipamentos.contains(equipamento)) ? equipamento : "Outros";
+      });
+    } else {
+      setState(() {
+        _nomeEquipamento = null;
+      });
     }
   }
   
@@ -103,7 +119,8 @@ class _CreateServicoState extends State<CreateServico>{
             hide: true,
             errorMessage: _errorMessage,
             dropdownValues: Constants.equipamentos,
-            onChanged: (value) {},
+            onChanged: (equipamento) => getNomeEquipamento(equipamento),
+            onSelected: (equipamento) => getNomeEquipamento(equipamento),
             validation: equipamentoValidation,
             controller: _equipamentoController
           ),
@@ -150,10 +167,10 @@ class _CreateServicoState extends State<CreateServico>{
             controller: _tecnicoController
           ),
           TextButton(
-            onPressed: (_idTecnicoSelected != null) ? () => _showDialog(context) : () => {},
+            onPressed: (_idTecnicoSelected != null && _nomeEquipamento != null) ? () => _showDialog(context) : () => {},
             style: TextButton.styleFrom(
-              backgroundColor: (_idTecnicoSelected != null) ? Colors.blueAccent : Colors.grey,
-              foregroundColor: (_idTecnicoSelected != null) ? Colors.white : Colors.black26,
+              backgroundColor: (_idTecnicoSelected != null && _nomeEquipamento != null) ? Colors.blueAccent : Colors.grey,
+              foregroundColor: (_idTecnicoSelected != null && _nomeEquipamento != null) ? Colors.white : Colors.black26,
               padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.175, vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5)
@@ -169,57 +186,141 @@ class _CreateServicoState extends State<CreateServico>{
 
   TextStyle textStyle = const TextStyle(
     fontSize: 18,
-    fontWeight: FontWeight.bold
+    fontWeight: FontWeight.bold,
   );
 
-  List<TableRow> _buildTableWithData()  {
+  String dayOfTheWeekString(int day) {
+    return switch (day) {
+      1 || 7 => "Segunda",
+      2 || 8 => "Terça",
+      3 || 9 => "Quarta",
+      4 => "Quinta",
+      5 => "Sexta",
+      6 => "Sábado",
+      _ => "Domingo"
+    };
+  }
+
+  Table _buildTableWithData()  {
     getTecnicosDisponiveis();
-    List<TableRow> rows = [
-      TableRow(
+
+    if(_tecnicos.isEmpty) {
+      return Table(
+        border: TableBorder.all(
+          style: BorderStyle.solid,
+          width: 2,
+          color: Colors.black
+        ),
         children: [
-          TableCell(
-            child: Text("Técnicos", textAlign: TextAlign.center, style: textStyle)
-          ),
-          TableCell(
-            child:  Text("M", style: textStyle),
-          ),
-          TableCell(
-            child:  Text("T", style: textStyle),
-          ),
-          TableCell(
-            child:  Text("M", style: textStyle),
-          ),
-          TableCell(
-            child:  Text("T", style: textStyle),
-          ),
-          TableCell(
-            child:  Text("M", style: textStyle),
-          ),
-          TableCell(
-            child:  Text("T", style: textStyle),
-          ),
-        ]
-      ),
-    ];
+          TableRow(
+            children: [
+              TableCell(child: Text("Nenhum técnico ocupado!", textAlign: TextAlign.center, style: textStyle))
+            ]
+          )
+        ],
+      );
+    }
+
+    Table tableWithData = Table(
+      columnWidths: const <int, TableColumnWidth> {
+        0: IntrinsicColumnWidth(flex: 2)
+      },
+    );
+
+    List<TableRow> tecnicosDisponiveis = [];
     for (TecnicoDisponivel tecnico in _tecnicos) {
-      rows.add(
+      tecnicosDisponiveis.add(
         TableRow(
           children: [
             TableCell(
               child: Text(tecnico.nome!, style: textStyle)
             ),
             TableCell(
-              child: Text()
+              child: Text("")
             ),
-            TableCell(child: child),
-            TableCell(child: child),
-            TableCell(child: child),
-            TableCell(child: child),
-            TableCell(child: child),
+            TableCell(
+              child: Text("")
+            ),
+            TableCell(
+              child: Text("")
+            ),
+            TableCell(
+              child: Text("")
+            ),
+            TableCell(
+              child: Text("")
+            ),
+            TableCell(
+              child: Text("")
+            ),
           ]
         )
       );
     }
+    return tableWithData;
+  }
+
+  String dataFormated(int daysToAdd) {
+    DateTime diaAtual = DateTime.now();
+    int addedDays = 0;
+
+    if(dayOfTheWeek == DateTime.sunday) {
+      diaAtual = diaAtual.add(const Duration(days: 1));
+    }
+
+    while (addedDays < daysToAdd) {
+      diaAtual = diaAtual.add(const Duration(days: 1));
+      if (diaAtual.weekday != DateTime.sunday) {
+        addedDays++;
+      }
+    }
+
+    String formattedDate = "${diaAtual.day.toString().padLeft(2, '0')}/${diaAtual.month.toString().padLeft(2, '0')}";
+    return formattedDate;
+  }
+
+  Table _tableDias() {
+    return Table(
+      border: TableBorder.all(
+        borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+        color: Colors.black,
+        width: 2
+      ),
+      children: [
+        TableRow(
+          children: [
+            TableCell(
+              verticalAlignment: TableCellVerticalAlignment.middle,
+              child: Text("Técnicos", textAlign: TextAlign.center, style: textStyle)
+            ),
+            TableCell(
+              child: Column(
+                children: [
+                  Text(dataFormated(0), style: textStyle),
+                  Text(dayOfTheWeekString(dayOfTheWeek), style: textStyle),
+                ],
+              )
+            ),
+            TableCell(
+              child: Column(
+                children: [
+                  Text(dataFormated(1), style: textStyle),
+                  Text(dayOfTheWeekString(dayOfTheWeek + 1), style: textStyle),
+                ],
+              )
+            ),
+            TableCell(
+              child: Column(
+                children: [
+                  Text(dataFormated(2), style: textStyle),
+                  Text(dayOfTheWeekString(dayOfTheWeek + 2), style: textStyle),
+                ],
+              )
+            ),
+          ]
+        ),
+      ],
+    );
   }
 
   Future _showDialog(BuildContext context) {
@@ -231,54 +332,44 @@ class _CreateServicoState extends State<CreateServico>{
           height: MediaQuery.of(context).size.height * .35,
           child: Column(
             children: [
+              _tableDias(),
               Table(
                 border: TableBorder.all(
-                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
                   color: Colors.black,
                   width: 2
                 ),
+                columnWidths: const <int, TableColumnWidth> {
+                  0: IntrinsicColumnWidth(flex: 2)
+                },
                 children: [
                   TableRow(
-                      children: [
-                        const  TableCell(
-                            child: Text("")
-                        ),
-                        TableCell(
-                            child: Column(
-                              children: [
-                                Text("17/08", style: textStyle),
-                                Text("Sábado", style: textStyle),
-                              ],
-                            )
-                        ),
-                        TableCell(
-                            child: Column(
-                              children: [
-                                Text("19/08", style: textStyle),
-                                Text("Segunda", style: textStyle),
-                              ],
-                            )
-                        ),
-                        TableCell(
-                            child: Column(
-                              children: [
-                                Text("20/08", style: textStyle),
-                                Text("Terça", style: textStyle),
-                              ],
-                            )
-                        ),
-                      ]
-                  ),
+                    children: [
+                      const TableCell(
+                        child: Text("")
+                      ),
+                      TableCell(
+                        child: Text("M", style: textStyle, textAlign: TextAlign.center)
+                      ),
+                      TableCell(
+                        child: Text("T", style: textStyle, textAlign: TextAlign.center)
+                      ),
+                      TableCell(
+                          child: Text("M", style: textStyle, textAlign: TextAlign.center)
+                      ),
+                      TableCell(
+                          child: Text("T", style: textStyle, textAlign: TextAlign.center)
+                      ),
+                      TableCell(
+                          child: Text("M", style: textStyle, textAlign: TextAlign.center)
+                      ),
+                      TableCell(
+                          child: Text("T", style: textStyle, textAlign: TextAlign.center)
+                      ),
+                    ]
+                  )
                 ],
               ),
-              Table(
-                border: TableBorder.all(
-                  borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
-                  color: Colors.black,
-                  width: 2
-                ),
-                children: _buildTableWithData(),
-              ),
+              _buildTableWithData(),
             ],
           ),
         ),
