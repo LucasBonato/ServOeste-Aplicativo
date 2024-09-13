@@ -5,7 +5,7 @@ import '../../widgets/dropdown_field.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/mask_field.dart';
 import 'package:logger/logger.dart';
-import '../../models/cliente.dart';
+import '../../models/cliente/cliente.dart';
 
 class UpdateCliente extends StatefulWidget {
   final int id;

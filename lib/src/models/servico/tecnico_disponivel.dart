@@ -20,7 +20,7 @@ class TecnicoDisponivel {
 }
 
 class Disponibilidade {
-  String? data;
+  DateTime? data;
   int? dia;
   String? periodo;
   int? quantidade;
@@ -33,7 +33,7 @@ class Disponibilidade {
   });
 
   factory Disponibilidade.fromJson(Map<String, dynamic> json) => Disponibilidade(
-      data: json["data"],
+      data: DateTime.tryParse(json["data"]),
       dia: json["dia"],
       periodo: json["periodo"],
       quantidade: json["quantidade"]

@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:serv_oeste/src/models/cliente/cliente_request.dart';
+import 'package:serv_oeste/src/models/servico/servico_request.dart';
 import 'package:serv_oeste/src/models/tecnico.dart';
-import 'package:serv_oeste/src/models/tecnico_disponivel.dart';
+import 'package:serv_oeste/src/models/servico/tecnico_disponivel.dart';
 import 'package:serv_oeste/src/services/servico_service.dart';
 import 'package:serv_oeste/src/services/tecnico_service.dart';
 import 'package:serv_oeste/src/util/constants.dart';
 import 'package:serv_oeste/src/widgets/date_picker.dart';
 import 'package:serv_oeste/src/widgets/dropdown_field.dart';
 import 'package:serv_oeste/src/widgets/search_dropdown_field.dart';
+
+import '../../models/cliente/cliente.dart';
+import '../../services/cliente_service.dart';
+import '../../widgets/mask_field.dart';
 
 class CreateServico extends StatefulWidget {
   const CreateServico({super.key});
@@ -16,60 +22,225 @@ class CreateServico extends StatefulWidget {
 }
 
 class _CreateServicoState extends State<CreateServico>{
-  late TextEditingController _equipamentoController, _marcaController, _filialController, _dataAtendimentoPrevistaController, _horarioPrevistoController, _tecnicoController;
-  bool equipamentoValidation = false, marcaValidation = false, filialValidation = false, dataAtendimentoPrevistaValidation = false, horarioPrevistoValidation = false, tecnicoValidation = false;
-  bool isTecnicosLoading = true;
-  final String _errorMessage = "";
   List<String> _dropdownValuesNomes = [];
+  late TextEditingController nomeController,
+      telefoneFixoController,
+      telefoneCelularController,
+      cepController,
+      enderecoController,
+      bairroController,
+      municipioController;
+  String _errorMessage = "",
+      _telefoneCelular = "",
+      _telefoneFixo = "",
+      _sobrenome = "";
+  bool
+  validationNome = false,
+      validationTelefoneCelular = false,
+      validationTelefoneFixo = false,
+      validationCep = false,
+      validationEndereco = false,
+      validationBairro = false,
+      validationMunicipio = false;
+
+  late TextEditingController _equipamentoController,
+      _marcaController,
+      _filialController,
+      _dataAtendimentoPrevistaController,
+      _horarioPrevistoController,
+      _tecnicoController,
+      _descricaoController;
+  late int dayOfTheWeek;
+  bool equipamentoValidation = false,
+      marcaValidation = false,
+      filialValidation = false,
+      dataAtendimentoPrevistaValidation = false,
+      horarioPrevistoValidation = false,
+      tecnicoValidation = false,
+      descricaoValidation = false;
+  bool isTecnicosLoading = true;
+  List<String> _dropdownValuesNames = [];
   List<Tecnico>? _listTecnicos = [];
   List<TecnicoDisponivel> _tecnicos = [];
   int? _idTecnicoSelected;
   String? _nomeEquipamento;
-  late int dayOfTheWeek;
+  TextStyle textStyle = const TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+  );
 
   @override
   void initState() {
     super.initState();
+    nomeController = TextEditingController();
+    telefoneFixoController = TextEditingController();
+    telefoneCelularController = TextEditingController();
+    cepController = TextEditingController();
+    enderecoController = TextEditingController();
+    bairroController = TextEditingController();
+    municipioController = TextEditingController();
     _equipamentoController = TextEditingController();
     _marcaController = TextEditingController();
     _filialController = TextEditingController();
     _dataAtendimentoPrevistaController = TextEditingController();
     _horarioPrevistoController = TextEditingController();
     _tecnicoController = TextEditingController();
+    _descricaoController = TextEditingController();
 
     dayOfTheWeek = DateTime.now().weekday;
   }
 
   @override
   void dispose() {
+    nomeController.dispose();
+    telefoneFixoController.dispose();
+    telefoneCelularController.dispose();
+    cepController.dispose();
+    enderecoController.dispose();
+    bairroController.dispose();
+    municipioController.dispose();
     _equipamentoController.dispose();
     _marcaController.dispose();
     _filialController.dispose();
     _dataAtendimentoPrevistaController.dispose();
     _horarioPrevistoController.dispose();
     _tecnicoController.dispose();
+    _descricaoController.dispose();
     super.dispose();
   }
 
+  void setError(int erro, String errorMessage){
+    setErrorNome(String errorMessage){
+      _errorMessage = errorMessage;
+      validationNome = true;
+    }
+    setErrorTelefoneCelular(String errorMessage){
+      _errorMessage = errorMessage;
+      validationTelefoneCelular = true;
+    }
+    setErrorTelefoneFixo(String errorMessage){
+      _errorMessage = errorMessage;
+      validationTelefoneFixo = true;
+    }
+    setErrorTelefones(String errorMessage){
+      setErrorTelefoneCelular(errorMessage);
+      setErrorTelefoneFixo(errorMessage);
+    }
+    setErrorCep(String errorMessage){
+      _errorMessage = errorMessage;
+      validationCep = true;
+    }
+    setErrorEndereco(String errorMessage){
+      _errorMessage = errorMessage;
+      validationEndereco = true;
+    }
+    setErrorBairro(String errorMessage){
+      _errorMessage = errorMessage;
+      validationBairro = true;
+    }
+    setErrorMunicipio(String errorMessage){
+      _errorMessage = errorMessage;
+      validationMunicipio = true;
+    }
+    setState(() {
+      validationNome = false;
+      validationTelefoneCelular = false;
+      validationTelefoneFixo = false;
+      validationCep = false;
+      validationEndereco = false;
+      validationBairro = false;
+      validationMunicipio = false;
+      _errorMessage = "";
+
+      switch(erro){
+        case 1: setErrorNome(errorMessage); break;
+        case 2: setErrorTelefoneCelular(errorMessage); break;
+        case 3: setErrorTelefoneFixo(errorMessage); break;
+        case 4: setErrorTelefones(errorMessage); break;
+        case 5: setErrorCep(errorMessage); break;
+        case 6: setErrorEndereco(errorMessage); break;
+        case 7: setErrorBairro(errorMessage); break;
+        case 8: setErrorMunicipio(errorMessage); break;
+      }
+    });
+  }
+
+  ClienteRequest includeDataCliente() {
+    List<String> nomes = nomeController.text.split(" ");
+    String nome = nomes.first;
+    String sobrenome = "";
+    for(int i = 1; i < nomes.length; i++){
+      sobrenome += "${nomes[i]} ";
+    }
+    _sobrenome = sobrenome.trim();
+
+    _telefoneCelular = transformarMask(telefoneCelularController.text);
+    _telefoneFixo = transformarMask(telefoneFixoController.text);
+
+    return ClienteRequest(
+        nome: nome,
+        sobrenome: _sobrenome,
+        telefoneCelular: _telefoneCelular,
+        telefoneFixo: _telefoneFixo,
+        endereco: enderecoController.text,
+        bairro: bairroController.text,
+        municipio: municipioController.text
+    );
+  }
+
+  String transformarMask(String telefone){
+    if(telefone.length != 15) return "";
+    return telefone.substring(1, 3) + telefone.substring(5, 10) + telefone.substring(11);
+  }
+
+  void getInformationsAboutCep(String? cep) async {
+    if(cep?.length != 9) return;
+    String? endereco = await ClienteService().getEndereco(cep!);
+    if(endereco != null) {
+      List<String> camposSobreEndereco = endereco.split("|");
+      enderecoController.text = camposSobreEndereco[0];
+      bairroController.text = camposSobreEndereco[1];
+      municipioController.text = camposSobreEndereco[2];
+      return;
+    }
+    setError(5, "Endereço não\n encontrado");
+  }
+
+  void getNomesClientes(String nome) async{
+    List<Cliente>? clientes = await ClienteService().getByNome(nome);
+    if(clientes == null) return;
+    List<String> nomes = [];
+    for (int i = 0; i < clientes.length && i < 5; i++) {
+      nomes.add(clientes[i].nome!);
+    }
+    if(_dropdownValuesNomes != nomes) {
+      setState(() {
+        _dropdownValuesNomes = nomes;
+      });
+    }
+  }
+
+
+
   void getNomesTecnicos(String nome) async{
     _idTecnicoSelected = null;
-    List<Tecnico>? tecnicos = await TecnicoService().getByIdNomesituacao(null, nome, null);
+    List<Tecnico>? tecnicos = await TecnicoService().getByIdNomesituacao(null, nome, "Ativo");
     if(tecnicos == null) return;
     List<String> nomes = [];
     for (int i = 0; i < tecnicos.length && i < 5; i++) {
       nomes.add("${tecnicos[i].nome!} ${tecnicos[i].sobrenome!}");
     }
-    if(_dropdownValuesNomes != nomes) {
+    if(_dropdownValuesNames != nomes) {
       setState(() {
         _listTecnicos = tecnicos;
-        _dropdownValuesNomes = nomes;
+        _dropdownValuesNames = nomes;
       });
     }
   }
 
   void getTecnicosDisponiveis() async {
     ServicoService servicoService = ServicoService();
-    List<TecnicoDisponivel> tecnicos = await servicoService.getTecnicosDisponiveis(_nomeEquipamento?? "Outros");
+    List<TecnicoDisponivel> tecnicos = await servicoService.getTecnicosDisponiveis();
     setState(() {
       _tecnicos = tecnicos;
       isTecnicosLoading = false;
@@ -97,97 +268,240 @@ class _CreateServicoState extends State<CreateServico>{
       });
     }
   }
+
+  void _cadastrarServico() async {
+
+    ServicoRequest servico = ServicoRequest(
+        idTecnico: _idTecnicoSelected!,
+        equipamento: _nomeEquipamento!,
+        marca: _marcaController.text,
+        filial: _filialController.text,
+        dataAtendimento: _dataAtendimentoPrevistaController.text,
+        horarioPrevisto: _horarioPrevistoController.text.toLowerCase().replaceAll("ã", "a"),
+        descricao: _descricaoController.text
+    );
+    ClienteRequest cliente = includeDataCliente();
+
+    dynamic body = await ServicoService().cadastrarServicoMaisCliente(servico, cliente);
+
+    if(body == null && context.mounted) {
+      Navigator.pop(context);
+      return;
+    }
+    setError(body["idError"], body["message"]);
+  }
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: const Text("Novo Serviço"),
+          centerTitle: true,
         ),
-        title: const Text("Novo Serviço"),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-          CustomSearchDropDown(
-            label: "Equipamento",
-            maxLength: 80,
-            hide: true,
-            errorMessage: _errorMessage,
-            dropdownValues: Constants.equipamentos,
-            onChanged: (equipamento) => getNomeEquipamento(equipamento),
-            onSelected: (equipamento) => getNomeEquipamento(equipamento),
-            validation: equipamentoValidation,
-            controller: _equipamentoController
+        body: SingleChildScrollView(
+          child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  CustomSearchDropDown(
+                      onChanged: (nome) => getNomesClientes(nome),
+                      label: "Nome",
+                      controller: nomeController,
+                      maxLength: 40,
+                      hide: true,
+                      dropdownValues: _dropdownValuesNomes,
+                      errorMessage: _errorMessage,
+                      validation: validationNome
+                  ),
+                  CustomMaskField(
+                    hint: "(99) 99999-9999",
+                    label: "Telefone Celular",
+                    mask: "(##) #####-####",
+                    errorMessage: _errorMessage,
+                    maxLength: 15,
+                    controller: telefoneCelularController,
+                    validation: validationTelefoneCelular,
+                    type: TextInputType.phone,
+                  ),  // Telefone Celular
+                  CustomMaskField(
+                    hint: "(99) 99999-9999",
+                    label: "Telefone Fixo",
+                    mask: "(##) #####-####",
+                    errorMessage: _errorMessage,
+                    maxLength: 15,
+                    controller: telefoneFixoController,
+                    validation: validationTelefoneFixo,
+                    type: TextInputType.phone,
+                  ),  // Telefone Fixo
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 5,
+                        child: CustomMaskField(
+                          hint: "00000-000",
+                          label: "CEP",
+                          mask: "#####-###",
+                          errorMessage: _errorMessage,
+                          maxLength: 9,
+                          hide: true,
+                          controller: cepController,
+                          validation: validationCep,
+                          type: TextInputType.number,
+                          rightPadding: 4,
+                          onChanged: (cep) => getInformationsAboutCep(cep),
+                        ),
+                      ),  // CEP
+                      Expanded(
+                        flex: 8,
+                        child: CustomMaskField(
+                          hint: "Rua...",
+                          label: "Endereço, Número e Complemento",
+                          mask: null,
+                          errorMessage: _errorMessage,
+                          maxLength: 255,
+                          hide: true,
+                          controller: enderecoController,
+                          validation: validationEndereco,
+                          type: TextInputType.text,
+                          leftPadding: 4,
+                        ),
+                      ),  // Endereço
+                    ],
+                  ),
+                  CustomDropdownField(
+                      label: "Município",
+                      dropdownValues: Constants.municipios,
+                      controller: municipioController
+                  ),
+                  CustomMaskField(
+                      hint: "Bairro...",
+                      label: "Bairro",
+                      mask: null,
+                      errorMessage: _errorMessage,
+                      maxLength: 255,
+                      hide: true,
+                      controller: bairroController,
+                      validation: validationBairro,
+                      type: TextInputType.text
+                  ),  // Bairro
+
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: MediaQuery.of(context).size.width * 0.032,
+                      right: MediaQuery.of(context).size.width * 0.032,
+                      bottom: 8
+                    ),
+                    child: const Divider(),
+                  ),
+
+                  CustomSearchDropDown(
+                      label: "Equipamento",
+                      maxLength: 80,
+                      hide: true,
+                      errorMessage: _errorMessage,
+                      dropdownValues: Constants.equipamentos,
+                      onChanged: (equipamento) => getNomeEquipamento(equipamento),
+                      onSelected: (equipamento) => getNomeEquipamento(equipamento),
+                      validation: equipamentoValidation,
+                      controller: _equipamentoController
+                  ),
+                  CustomSearchDropDown(
+                      label: "Marca",
+                      maxLength: 40,
+                      hide: true,
+                      errorMessage: _errorMessage,
+                      dropdownValues: Constants.marcas,
+                      onChanged: (value) {},
+                      validation: marcaValidation,
+                      controller: _marcaController
+                  ),
+                  CustomDropdownField(
+                      label: "Filial",
+                      dropdownValues: Constants.filiais,
+                      controller: _filialController
+                  ),
+                  CustomDatePicker(
+                      label: "Data Atendimento Previsto",
+                      hint: "",
+                      mask: "##/##/####",
+                      type: TextInputType.datetime,
+                      maxLength: 10,
+                      hide: true,
+                      errorMessage: _errorMessage,
+                      validation: dataAtendimentoPrevistaValidation,
+                      controller: _dataAtendimentoPrevistaController
+                  ),
+                  CustomDropdownField(
+                    label: "Horário Previsto",
+                    dropdownValues: Constants.dataAtendimento,
+                    controller: _horarioPrevistoController,
+                  ),
+                  CustomSearchDropDown(
+                      label: "Técnico",
+                      hide: true,
+                      errorMessage: _errorMessage,
+                      maxLength: 40,
+                      dropdownValues: _dropdownValuesNames,
+                      onChanged: (nome) => getNomesTecnicos(nome),
+                      onSelected: (nome) => getIdTecnico(nome),
+                      validation: tecnicoValidation,
+                      controller: _tecnicoController
+                  ),
+                  CustomMaskField(
+                      hint: "Descrição...",
+                      label: "Descrição",
+                      mask: null,
+                      errorMessage: _errorMessage,
+                      maxLength: 200,
+                      maxLines: 5,
+                      controller: _descricaoController,
+                      type: TextInputType.text,
+                      validation: descricaoValidation
+                  ),
+                  Column(
+                    children: [
+                      TextButton(
+                          onPressed: (_idTecnicoSelected != null && _nomeEquipamento != null) ? () => _showDialog(context) : () => {},
+                          style: TextButton.styleFrom(
+                              fixedSize: Size(MediaQuery.of(context).size.width * 0.80, 48),
+                              backgroundColor: (_idTecnicoSelected != null && _nomeEquipamento != null) ? Colors.blueAccent : Colors.grey,
+                              foregroundColor: (_idTecnicoSelected != null && _nomeEquipamento != null) ? Colors.white : Colors.black26,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5)
+                              )
+                          ),
+                          child: const Text("Verificar disponibilidade", style: TextStyle(fontSize: 20))
+                      ),
+                      Divider(
+                          height: MediaQuery.of(context).size.height * 0.01,
+                          thickness: 0,
+                          color: Colors.transparent
+                      ),
+                      TextButton(
+                          onPressed: (_idTecnicoSelected != null && _nomeEquipamento != null && nomeController.text.isNotEmpty && (telefoneCelularController.text.isNotEmpty || telefoneFixoController.text.isNotEmpty) && enderecoController.text.isNotEmpty && municipioController.text.isNotEmpty && bairroController.text.isNotEmpty) ? () => _cadastrarServico() : () => {},
+                          style: TextButton.styleFrom(
+                              fixedSize: Size(MediaQuery.of(context).size.width * 0.80, 48),
+                              backgroundColor: (_idTecnicoSelected != null && _nomeEquipamento != null && nomeController.text.isNotEmpty && (telefoneCelularController.text.isNotEmpty || telefoneFixoController.text.isNotEmpty) && enderecoController.text.isNotEmpty && municipioController.text.isNotEmpty && bairroController.text.isNotEmpty) ? Colors.blueAccent : Colors.grey,
+                              foregroundColor: (_idTecnicoSelected != null && _nomeEquipamento != null && nomeController.text.isNotEmpty && (telefoneCelularController.text.isNotEmpty || telefoneFixoController.text.isNotEmpty) && enderecoController.text.isNotEmpty && municipioController.text.isNotEmpty && bairroController.text.isNotEmpty) ? Colors.white : Colors.black26,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5)
+                              )
+                          ),
+                          child: const Text("Cadastrar novo serviço", style: TextStyle(fontSize: 20))
+                      ),
+                    ],
+                  )
+                ],
+              ),
           ),
-          CustomSearchDropDown(
-            label: "Marca",
-            maxLength: 40,
-            hide: true,
-            errorMessage: _errorMessage,
-            dropdownValues: Constants.marcas,
-            onChanged: (value) {},
-            validation: marcaValidation,
-            controller: _marcaController
-          ),
-          CustomDropdownField(
-            label: "Filial",
-            dropdownValues: Constants.filiais,
-            controller: _filialController
-          ),
-          CustomDatePicker(
-            label: "Data Atendimento Previsto",
-            hint: "",
-            mask: "##/##/####",
-            type: TextInputType.datetime,
-            maxLength: 10,
-            hide: true,
-            errorMessage: _errorMessage,
-            validation: dataAtendimentoPrevistaValidation,
-            controller: _dataAtendimentoPrevistaController
-          ),
-          CustomDropdownField(
-            label: "Horário Previsto",
-            dropdownValues: Constants.dataAtendimento,
-            controller: _horarioPrevistoController,
-          ),
-          CustomSearchDropDown(
-            label: "Técnico",
-            hide: true,
-            errorMessage: _errorMessage,
-            maxLength: 40,
-            dropdownValues: _dropdownValuesNomes,
-            onChanged: (nome) => getNomesTecnicos(nome),
-            onSelected: (nome) => getIdTecnico(nome),
-            validation: tecnicoValidation,
-            controller: _tecnicoController
-          ),
-          TextButton(
-            onPressed: (_idTecnicoSelected != null && _nomeEquipamento != null) ? () => _showDialog(context) : () => {},
-            style: TextButton.styleFrom(
-              backgroundColor: (_idTecnicoSelected != null && _nomeEquipamento != null) ? Colors.blueAccent : Colors.grey,
-              foregroundColor: (_idTecnicoSelected != null && _nomeEquipamento != null) ? Colors.white : Colors.black26,
-              padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.175, vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5)
-              )
-            ),
-            child: const Text("Verificar disponibilidade", style: TextStyle(fontSize: 20))
-          )
-          ],
         ),
-      ),
     );
   }
-
-  TextStyle textStyle = const TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeight.bold,
-  );
 
   String dayOfTheWeekString(int day) {
     return switch (day) {
@@ -221,44 +535,83 @@ class _CreateServicoState extends State<CreateServico>{
       );
     }
 
-    Table tableWithData = Table(
+    return Table(
       columnWidths: const <int, TableColumnWidth> {
-        0: IntrinsicColumnWidth(flex: 2)
+        0: FlexColumnWidth(2)
       },
+      border: TableBorder.all(
+          color: Colors.black,
+          width: 2
+      ),
+      children: construirLinhasTecnicos(_tecnicos, dayOfTheWeek, 5),
     );
+  }
+
+  Map<String, int> calcularDias(int dayOfTheWeek, List<Disponibilidade> disponibilidades) {
+    Map<String, int> dias = {
+      "total": 0,
+      "${dayOfTheWeekString(dayOfTheWeek)}M": 0,
+      "${dayOfTheWeekString(dayOfTheWeek)}T": 0,
+      "${dayOfTheWeekString(dayOfTheWeek + 1)}M": 0,
+      "${dayOfTheWeekString(dayOfTheWeek + 1)}T": 0,
+      "${dayOfTheWeekString(dayOfTheWeek + 2)}M": 0,
+      "${dayOfTheWeekString(dayOfTheWeek + 2)}T": 0,
+    };
+
+    for (Disponibilidade disponibilidade in disponibilidades) {
+      String key = "${dayOfTheWeekString(disponibilidade.dia!)}${disponibilidade.periodo!.substring(0, 1).toUpperCase()}";
+      dias[key] = disponibilidade.quantidade!;
+      dias["total"] = dias["total"]! + disponibilidade.quantidade!;
+    }
+
+    return dias;
+  }
+
+  List<TableRow> construirLinhasTecnicos(List<TecnicoDisponivel> tecnicos, int dayOfTheWeek, int quantidadeLimiteDeLinhas) {
+    // Ordena os técnicos pelo total de quantidades, do maior para o menor
+    tecnicos.sort((a, b) {
+      int totalA = a.disponibilidades!.fold(0, (prev, element) => prev + element.quantidade!);
+      int totalB = b.disponibilidades!.fold(0, (prev, element) => prev + element.quantidade!);
+      return totalB.compareTo(totalA); // Maior para menor
+    });
 
     List<TableRow> tecnicosDisponiveis = [];
-    for (TecnicoDisponivel tecnico in _tecnicos) {
+    for (int i = 0; i < tecnicos.length && i < quantidadeLimiteDeLinhas; i++) {
+      TecnicoDisponivel tecnico = tecnicos[i];
+      Map<String, int> dias = calcularDias(dayOfTheWeek, tecnico.disponibilidades!);
+
       tecnicosDisponiveis.add(
         TableRow(
           children: [
             TableCell(
-              child: Text(tecnico.nome!, style: textStyle)
+              child: Text(tecnico.nome!, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis, textAlign: TextAlign.center),
             ),
             TableCell(
-              child: Text("")
+              child: Text("${dias["${dayOfTheWeekString(dayOfTheWeek)}M"]}", style: textStyle, textAlign: TextAlign.center),
             ),
             TableCell(
-              child: Text("")
+              child: Text("${dias["${dayOfTheWeekString(dayOfTheWeek)}T"]}", style: textStyle, textAlign: TextAlign.center),
             ),
             TableCell(
-              child: Text("")
+              child: Text("${dias["${dayOfTheWeekString(dayOfTheWeek + 1)}M"]}", style: textStyle, textAlign: TextAlign.center),
             ),
             TableCell(
-              child: Text("")
+              child: Text("${dias["${dayOfTheWeekString(dayOfTheWeek + 1)}T"]}", style: textStyle, textAlign: TextAlign.center),
             ),
             TableCell(
-              child: Text("")
+              child: Text("${dias["${dayOfTheWeekString(dayOfTheWeek + 2)}M"]}", style: textStyle, textAlign: TextAlign.center),
             ),
             TableCell(
-              child: Text("")
+              child: Text("${dias["${dayOfTheWeekString(dayOfTheWeek + 2)}T"]}", style: textStyle, textAlign: TextAlign.center),
             ),
-          ]
-        )
+          ],
+        ),
       );
     }
-    return tableWithData;
+
+    return tecnicosDisponiveis;
   }
+
 
   String dataFormated(int daysToAdd) {
     DateTime diaAtual = DateTime.now();

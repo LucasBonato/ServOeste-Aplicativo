@@ -1,5 +1,5 @@
 import 'package:serv_oeste/src/models/tecnico.dart';
-import 'package:serv_oeste/src/models/cliente.dart';
+import 'package:serv_oeste/src/models/cliente/cliente.dart';
 
 class Constants {
   static const String baseUri = "http://localhost:8080/api/v1";

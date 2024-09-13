@@ -4,7 +4,7 @@ import 'package:serv_oeste/src/services/cliente_service.dart';
 import '../../util/constants.dart';
 import '../../widgets/dropdown_field.dart';
 import '../../widgets/mask_field.dart';
-import '../../models/cliente.dart';
+import '../../models/cliente/cliente.dart';
 
 class CreateCliente extends StatefulWidget {
   const CreateCliente({super.key});
@@ -34,6 +34,30 @@ class _CreateClienteState extends State<CreateCliente> {
     validationEndereco = false,
     validationBairro = false,
     validationMunicipio = false;
+
+  @override
+  void initState() {
+    super.initState();
+    nomeController = TextEditingController();
+    telefoneFixoController = TextEditingController();
+    telefoneCelularController = TextEditingController();
+    cepController = TextEditingController();
+    enderecoController = TextEditingController();
+    bairroController = TextEditingController();
+    municipioController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    nomeController.dispose();
+    telefoneFixoController.dispose();
+    telefoneCelularController.dispose();
+    cepController.dispose();
+    enderecoController.dispose();
+    bairroController.dispose();
+    municipioController.dispose();
+    super.dispose();
+  }
 
   void setError(int erro, String errorMessage){
     setErrorNome(String errorMessage){
@@ -142,30 +166,6 @@ class _CreateClienteState extends State<CreateCliente> {
       return;
     }
     setError(5, "Endereço não\n encontrado");
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    nomeController = TextEditingController();
-    telefoneFixoController = TextEditingController();
-    telefoneCelularController = TextEditingController();
-    cepController = TextEditingController();
-    enderecoController = TextEditingController();
-    bairroController = TextEditingController();
-    municipioController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    nomeController.dispose();
-    telefoneFixoController.dispose();
-    telefoneCelularController.dispose();
-    cepController.dispose();
-    enderecoController.dispose();
-    bairroController.dispose();
-    municipioController.dispose();
-    super.dispose();
   }
 
   void getNomesClientes(String nome) async{

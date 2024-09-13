@@ -12,6 +12,7 @@ class CustomMaskField extends StatefulWidget {
   final TextInputType type;
   final double? rightPadding;
   final double? leftPadding;
+  final int? maxLines;
   bool validation;
   Function(String?)? onChanged;
   bool hide;
@@ -29,7 +30,8 @@ class CustomMaskField extends StatefulWidget {
     this.hide = false,
     this.onChanged,
     this.leftPadding,
-    this.rightPadding
+    this.rightPadding,
+    this.maxLines
   });
 
   @override
@@ -46,6 +48,8 @@ class _CustomMaskFieldState extends State<CustomMaskField> {
         mask: widget.mask,
         maxLength: widget.maxLength,
         keyboardType: widget.type,
+        maxLines: widget.maxLines?? 1,
+        minLines: 1,
         decoration: InputDecoration(
           counterText: widget.hide ? "" : null,
           error: (widget.validation) ? Text(widget.errorMessage, textAlign: TextAlign.center, style: const TextStyle(color: Colors.red),) : null,

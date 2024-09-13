@@ -1,4 +1,4 @@
-import 'package:serv_oeste/src/models/cliente.dart';
+import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'api_serv_oeste.dart';
 
 class ClienteService{
