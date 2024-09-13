@@ -580,29 +580,50 @@ class _CreateServicoState extends State<CreateServico>{
       TecnicoDisponivel tecnico = tecnicos[i];
       Map<String, int> dias = calcularDias(dayOfTheWeek, tecnico.disponibilidades!);
 
+      int id = tecnico.id!;
+      String nome = tecnico.nome!;
+
       tecnicosDisponiveis.add(
         TableRow(
           children: [
             TableCell(
-              child: Text(tecnico.nome!, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis, textAlign: TextAlign.center),
+              child: Text(nome, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis, textAlign: TextAlign.center),
             ),
             TableCell(
-              child: Text("${dias["${dayOfTheWeekString(dayOfTheWeek)}M"]}", style: textStyle, textAlign: TextAlign.center),
+              child: GestureDetector(
+                onDoubleTap: () => _changeInformationsOnTheFormFromTable(id, 0, nome),
+                child: Text("${dias["${dayOfTheWeekString(dayOfTheWeek)}M"]}", style: textStyle, textAlign: TextAlign.center),
+              ),
             ),
             TableCell(
-              child: Text("${dias["${dayOfTheWeekString(dayOfTheWeek)}T"]}", style: textStyle, textAlign: TextAlign.center),
+              child: GestureDetector(
+                onDoubleTap: () => _changeInformationsOnTheFormFromTable(id, 0, nome),
+                child: Text("${dias["${dayOfTheWeekString(dayOfTheWeek)}T"]}", style: textStyle, textAlign: TextAlign.center),
+              )
             ),
             TableCell(
-              child: Text("${dias["${dayOfTheWeekString(dayOfTheWeek + 1)}M"]}", style: textStyle, textAlign: TextAlign.center),
+              child: GestureDetector(
+                onDoubleTap: () => _changeInformationsOnTheFormFromTable(id, 1, nome),
+                child: Text("${dias["${dayOfTheWeekString(dayOfTheWeek + 1)}M"]}", style: textStyle, textAlign: TextAlign.center),
+              )
             ),
             TableCell(
-              child: Text("${dias["${dayOfTheWeekString(dayOfTheWeek + 1)}T"]}", style: textStyle, textAlign: TextAlign.center),
+                child: GestureDetector(
+                  onDoubleTap: () => _changeInformationsOnTheFormFromTable(id, 1, nome),
+                  child: Text("${dias["${dayOfTheWeekString(dayOfTheWeek + 1)}T"]}", style: textStyle, textAlign: TextAlign.center),
+              )
             ),
             TableCell(
-              child: Text("${dias["${dayOfTheWeekString(dayOfTheWeek + 2)}M"]}", style: textStyle, textAlign: TextAlign.center),
+                child: GestureDetector(
+                  onDoubleTap: () => _changeInformationsOnTheFormFromTable(id, 2, nome),
+                  child: Text("${dias["${dayOfTheWeekString(dayOfTheWeek + 2)}M"]}", style: textStyle, textAlign: TextAlign.center),
+              )
             ),
             TableCell(
-              child: Text("${dias["${dayOfTheWeekString(dayOfTheWeek + 2)}T"]}", style: textStyle, textAlign: TextAlign.center),
+                child: GestureDetector(
+                  onDoubleTap: () => _changeInformationsOnTheFormFromTable(id, 2, nome),
+                  child: Text("${dias["${dayOfTheWeekString(dayOfTheWeek + 2)}T"]}", style: textStyle, textAlign: TextAlign.center),
+              )
             ),
           ],
         ),
@@ -612,6 +633,15 @@ class _CreateServicoState extends State<CreateServico>{
     return tecnicosDisponiveis;
   }
 
+  void _changeInformationsOnTheFormFromTable(int id, int daysToAdd, String nome) {
+    String dataAtendimento = "${dataFormated(daysToAdd)}/${DateTime.now().year}";
+    setState(() {
+      _idTecnicoSelected = id;
+      _tecnicoController.text = nome;
+      _dataAtendimentoPrevistaController.text = dataAtendimento;
+    });
+    Navigator.pop(context);
+  }
 
   String dataFormated(int daysToAdd) {
     DateTime diaAtual = DateTime.now();
@@ -631,7 +661,7 @@ class _CreateServicoState extends State<CreateServico>{
     String formattedDate = "${diaAtual.day.toString().padLeft(2, '0')}/${diaAtual.month.toString().padLeft(2, '0')}";
     return formattedDate;
   }
-
+  
   Table _tableDias() {
     return Table(
       border: TableBorder.all(
@@ -677,6 +707,8 @@ class _CreateServicoState extends State<CreateServico>{
   }
 
   Future _showDialog(BuildContext context) {
+    print(_tecnicoController.text);
+    print(_dataAtendimentoPrevistaController.text);
     return showDialog(
       context: context,
       builder: (BuildContext context) => Dialog(
@@ -723,6 +755,7 @@ class _CreateServicoState extends State<CreateServico>{
                 ],
               ),
               _buildTableWithData(),
+              const Text("Clique duas vezes em um dos números para puxar as informações do técnico no formulario", textAlign: TextAlign.center, )
             ],
           ),
         ),
