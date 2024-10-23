@@ -110,37 +110,51 @@ class _CreateServicoState extends State<CreateServico>{
   }
 
   void setError(int erro, String errorMessage){
-    setErrorNome(String errorMessage){
-      _errorMessage = errorMessage;
+    setErrorNome(){
       validationNome = true;
     }
-    setErrorTelefoneCelular(String errorMessage){
-      _errorMessage = errorMessage;
+    setErrorTelefoneCelular(){
       validationTelefoneCelular = true;
     }
-    setErrorTelefoneFixo(String errorMessage){
-      _errorMessage = errorMessage;
+    setErrorTelefoneFixo(){
       validationTelefoneFixo = true;
     }
-    setErrorTelefones(String errorMessage){
-      setErrorTelefoneCelular(errorMessage);
-      setErrorTelefoneFixo(errorMessage);
+    setErrorTelefones(){
+      setErrorTelefoneCelular();
+      setErrorTelefoneFixo();
     }
-    setErrorCep(String errorMessage){
-      _errorMessage = errorMessage;
+    setErrorCep(){
       validationCep = true;
     }
-    setErrorEndereco(String errorMessage){
-      _errorMessage = errorMessage;
+    setErrorEndereco(){
       validationEndereco = true;
     }
-    setErrorBairro(String errorMessage){
-      _errorMessage = errorMessage;
+    setErrorMunicipio(){
+      validationMunicipio = true;
+    }
+    setErrorBairro(){
       validationBairro = true;
     }
-    setErrorMunicipio(String errorMessage){
-      _errorMessage = errorMessage;
-      validationMunicipio = true;
+    setErrorEquipamento() {
+      equipamentoValidation = true;
+    }
+    setErrorMarca() {
+      marcaValidation = true;
+    }
+    setErrorFilial() {
+      filialValidation = true;
+    }
+    setErrorDataAtendimento() {
+      dataAtendimentoPrevistaValidation = true;
+    }
+    setErrorHorarioPrevisto() {
+      horarioPrevistoValidation = true;
+    }
+    setErrorTecnico() {
+      tecnicoValidation = true;
+    }
+    setErrorDescricao() {
+      descricaoValidation = true;
     }
     setState(() {
       validationNome = false;
@@ -150,18 +164,33 @@ class _CreateServicoState extends State<CreateServico>{
       validationEndereco = false;
       validationBairro = false;
       validationMunicipio = false;
-      _errorMessage = "";
+      equipamentoValidation = false;
+      marcaValidation = false;
+      filialValidation = false;
+      dataAtendimentoPrevistaValidation = false;
+      horarioPrevistoValidation = false;
+      tecnicoValidation = false;
+      descricaoValidation = false;
 
+      _errorMessage = "";
       switch(erro){
-        case 1: setErrorNome(errorMessage); break;
-        case 2: setErrorTelefoneCelular(errorMessage); break;
-        case 3: setErrorTelefoneFixo(errorMessage); break;
-        case 4: setErrorTelefones(errorMessage); break;
-        case 5: setErrorCep(errorMessage); break;
-        case 6: setErrorEndereco(errorMessage); break;
-        case 7: setErrorBairro(errorMessage); break;
-        case 8: setErrorMunicipio(errorMessage); break;
+        case 1: setErrorNome(); break;
+        case 2: setErrorTelefoneCelular(); break;
+        case 3: setErrorTelefoneFixo(); break;
+        case 4: setErrorTelefones(); break;
+        case 5: setErrorCep(); break;
+        case 6: setErrorEndereco(); break;
+        case 7: setErrorBairro(); break;
+        case 8: setErrorMunicipio(); break;
+        case 9: setErrorEquipamento(); break;
+        case 10: setErrorMarca(); break;
+        case 11: setErrorFilial(); break;
+        case 12: setErrorDataAtendimento(); break;
+        case 13: setErrorHorarioPrevisto(); break;
+        case 14: setErrorTecnico(); break;
+        case 15: setErrorDescricao(); break;
       }
+      _errorMessage = errorMessage;
     });
   }
 
@@ -441,17 +470,6 @@ class _CreateServicoState extends State<CreateServico>{
                     dropdownValues: Constants.dataAtendimento,
                     controller: _horarioPrevistoController,
                   ),
-                  CustomSearchDropDown(
-                      label: "Técnico",
-                      hide: true,
-                      errorMessage: _errorMessage,
-                      maxLength: 40,
-                      dropdownValues: _dropdownValuesNames,
-                      onChanged: (nome) => getNomesTecnicos(nome),
-                      onSelected: (nome) => getIdTecnico(nome),
-                      validation: tecnicoValidation,
-                      controller: _tecnicoController
-                  ),
                   CustomMaskField(
                       hint: "Descrição...",
                       label: "Descrição",
@@ -462,6 +480,17 @@ class _CreateServicoState extends State<CreateServico>{
                       controller: _descricaoController,
                       type: TextInputType.text,
                       validation: descricaoValidation
+                  ),
+                  CustomSearchDropDown(
+                      label: "Técnico",
+                      hide: true,
+                      errorMessage: _errorMessage,
+                      maxLength: 40,
+                      dropdownValues: _dropdownValuesNames,
+                      onChanged: (nome) => getNomesTecnicos(nome),
+                      onSelected: (nome) => getIdTecnico(nome),
+                      validation: tecnicoValidation,
+                      controller: _tecnicoController
                   ),
                   Column(
                     children: [
@@ -483,11 +512,11 @@ class _CreateServicoState extends State<CreateServico>{
                           color: Colors.transparent
                       ),
                       TextButton(
-                          onPressed: (_idTecnicoSelected != null && _nomeEquipamento != null && nomeController.text.isNotEmpty && (telefoneCelularController.text.isNotEmpty || telefoneFixoController.text.isNotEmpty) && enderecoController.text.isNotEmpty && municipioController.text.isNotEmpty && bairroController.text.isNotEmpty) ? () => _cadastrarServico() : () => {},
+                          onPressed: (_idTecnicoSelected != null && _nomeEquipamento != null && nomeController.text.isNotEmpty && (telefoneCelularController.text.isNotEmpty || telefoneFixoController.text.isNotEmpty) && enderecoController.text.isNotEmpty && municipioController.text.isNotEmpty && bairroController.text.isNotEmpty && _descricaoController.text.isNotEmpty) ? () => _cadastrarServico() : () => {},
                           style: TextButton.styleFrom(
                               fixedSize: Size(MediaQuery.of(context).size.width * 0.80, 48),
-                              backgroundColor: (_idTecnicoSelected != null && _nomeEquipamento != null && nomeController.text.isNotEmpty && (telefoneCelularController.text.isNotEmpty || telefoneFixoController.text.isNotEmpty) && enderecoController.text.isNotEmpty && municipioController.text.isNotEmpty && bairroController.text.isNotEmpty) ? Colors.blueAccent : Colors.grey,
-                              foregroundColor: (_idTecnicoSelected != null && _nomeEquipamento != null && nomeController.text.isNotEmpty && (telefoneCelularController.text.isNotEmpty || telefoneFixoController.text.isNotEmpty) && enderecoController.text.isNotEmpty && municipioController.text.isNotEmpty && bairroController.text.isNotEmpty) ? Colors.white : Colors.black26,
+                              backgroundColor: (_idTecnicoSelected != null && _nomeEquipamento != null && nomeController.text.isNotEmpty && (telefoneCelularController.text.isNotEmpty || telefoneFixoController.text.isNotEmpty) && enderecoController.text.isNotEmpty && municipioController.text.isNotEmpty && bairroController.text.isNotEmpty && _descricaoController.text.isNotEmpty) ? Colors.blueAccent : Colors.grey,
+                              foregroundColor: (_idTecnicoSelected != null && _nomeEquipamento != null && nomeController.text.isNotEmpty && (telefoneCelularController.text.isNotEmpty || telefoneFixoController.text.isNotEmpty) && enderecoController.text.isNotEmpty && municipioController.text.isNotEmpty && bairroController.text.isNotEmpty && _descricaoController.text.isNotEmpty) ? Colors.white : Colors.black26,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(5)
                               )
@@ -707,8 +736,7 @@ class _CreateServicoState extends State<CreateServico>{
   }
 
   Future _showDialog(BuildContext context) {
-    print(_tecnicoController.text);
-    print(_dataAtendimentoPrevistaController.text);
+    print(_descricaoController.text.isNotEmpty);
     return showDialog(
       context: context,
       builder: (BuildContext context) => Dialog(
@@ -755,7 +783,7 @@ class _CreateServicoState extends State<CreateServico>{
                 ],
               ),
               _buildTableWithData(),
-              const Text("Clique duas vezes em um dos números para puxar as informações do técnico no formulario", textAlign: TextAlign.center, )
+              const Text("Clique duas vezes em um dos números para puxar as informações do técnico para o formulário", textAlign: TextAlign.center, )
             ],
           ),
         ),
