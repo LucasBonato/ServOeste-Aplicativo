@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/src/widgets/mask_field.dart';
+import 'package:serv_oeste/src/components/mask_field.dart';
 import 'package:serv_oeste/src/models/tecnico.dart';
 import 'package:serv_oeste/src/services/tecnico_service.dart';
 

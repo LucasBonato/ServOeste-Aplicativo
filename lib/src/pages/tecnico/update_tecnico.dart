@@ -3,7 +3,7 @@ import 'package:logger/logger.dart';
 import 'package:serv_oeste/src/util/constants.dart';
 import 'package:serv_oeste/src/services/tecnico_service.dart';
 
-import '../../widgets/mask_field.dart';
+import '../../components/mask_field.dart';
 import '../../models/tecnico.dart';
 
 class UpdateTecnico extends StatefulWidget {

@@ -5,7 +5,7 @@ import 'package:serv_oeste/src/services/tecnico_service.dart';
 import 'package:serv_oeste/src/util/constants.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
-import 'package:serv_oeste/src/widgets/search_field.dart';
+import 'package:serv_oeste/src/components/search_field.dart';
 import 'package:flutter/material.dart';
 import '../../models/tecnico.dart';
 

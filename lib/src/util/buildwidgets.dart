@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/dialog_box.dart';
+import '../components/dialog_box.dart';
 
 class BuildWidgets {
   static FloatingActionButton buildFabRemove(BuildContext context, dynamic removeMethod) {

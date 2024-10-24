@@ -6,13 +6,13 @@ import 'package:serv_oeste/src/models/servico/tecnico_disponivel.dart';
 import 'package:serv_oeste/src/services/servico_service.dart';
 import 'package:serv_oeste/src/services/tecnico_service.dart';
 import 'package:serv_oeste/src/util/constants.dart';
-import 'package:serv_oeste/src/widgets/date_picker.dart';
-import 'package:serv_oeste/src/widgets/dropdown_field.dart';
-import 'package:serv_oeste/src/widgets/search_dropdown_field.dart';
+import 'package:serv_oeste/src/components/date_picker.dart';
+import 'package:serv_oeste/src/components/dropdown_field.dart';
+import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 
 import '../../models/cliente/cliente.dart';
 import '../../services/cliente_service.dart';
-import '../../widgets/mask_field.dart';
+import '../../components/mask_field.dart';
 
 class CreateServico extends StatefulWidget {
   const CreateServico({super.key});

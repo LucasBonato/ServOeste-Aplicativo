@@ -2,9 +2,9 @@ import 'package:serv_oeste/src/pages/cliente/update_cliente.dart';
 import 'package:serv_oeste/src/services/cliente_service.dart';
 import 'package:serv_oeste/src/util/constants.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
-import 'package:serv_oeste/src/widgets/expandable_fab.dart';
+import 'package:serv_oeste/src/components/expandable_fab.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
-import '../../widgets/search_field.dart';
+import '../../components/search_field.dart';
 import 'package:flutter/material.dart';
 import '../../models/cliente/cliente.dart';
 
