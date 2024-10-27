@@ -30,7 +30,7 @@ class HomeState extends State<Home> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(6),
               child: Image.asset(
-                'images/servOeste.png',
+                'assets/servOeste.png',
                 fit: BoxFit.cover,
                 alignment: const Alignment(0, 0),
               ),

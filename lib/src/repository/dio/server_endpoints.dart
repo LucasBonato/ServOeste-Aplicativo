@@ -1,16 +1,16 @@
 class ServerEndpoints {
   static const String baseUrl = "http://localhost:8080/api/v1/";
-  //static const String BASE_URL = "http://10.0.2.2:8080/api/v1";
+  //static const String baseUrl = "http://10.0.2.2:8080/api/v1/";
 
-  static const String tecnicoEndpoint = "tecnico/";
-  static const String tecnicoFindEndpoint = "tecnico/find/";
+  static const String tecnicoEndpoint = "tecnico";
+  static const String tecnicoFindEndpoint = "tecnico/find";
 
-  static const String clienteEndpoint = "cliente/";
-  static const String clienteFindEndpoint = "cliente/find/";
+  static const String clienteEndpoint = "cliente";
+  static const String clienteFindEndpoint = "cliente/find";
 
-  static const String servicoEndpoint = "servico/";
-  static const String servicoDisponibilidadeEndpoint = "servico/disponibilidade/";
-  static const String servicoMaisClienteEndpoint = "servico/cliente/";
+  static const String servicoEndpoint = "servico";
+  static const String servicoDisponibilidadeEndpoint = "servico/disponibilidade";
+  static const String servicoMaisClienteEndpoint = "servico/cliente";
 
-  static const String enderecoEndpoint = "endereco/";
+  static const String enderecoEndpoint = "endereco";
 }

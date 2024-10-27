@@ -5,13 +5,18 @@ import 'package:logger/logger.dart';
 
 class DioInterceptor extends Interceptor {
 
-  final Logger _logger = Logger();
+  final Logger _logger = Logger(
+    printer: PrettyPrinter(
+      printEmojis: false
+    )
+  );
   final JsonEncoder jsonEncoder = const JsonEncoder.withIndent("  ");
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     String logMessage = "";
     logMessage += "TimeStamp: ${DateTime.now()}\n";
+    logMessage += "FullUri: ${options.uri}\n";
     logMessage += "BaseUri: ${options.baseUrl}\n";
     logMessage += "Endpoint: ${options.path}\n";
     logMessage += "Method: ${options.method}\n";
