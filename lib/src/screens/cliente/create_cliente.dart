@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
-import 'package:serv_oeste/src/services/cliente_service.dart';
-import '../../util/constants.dart';
+import '../../shared/constants.dart';
 import '../../components/dropdown_field.dart';
 import '../../components/mask_field.dart';
 import '../../models/cliente/cliente.dart';
@@ -143,43 +142,43 @@ class _CreateClienteState extends State<CreateCliente> {
   }
 
   void adicionarCliente(BuildContext context) async{
-    ClienteService clienteService = ClienteService();
-    Cliente cliente = includeData();
-    dynamic body = await clienteService.create(cliente, _sobrenome);
-
-    if(body == null && context.mounted) {
-      Navigator.pop(context);
-      return;
-    }
-
-    setError(body["idError"], body["message"]);
+    // ClienteService clienteService = ClienteService();
+    // Cliente cliente = includeData();
+    // dynamic body = await clienteService.create(cliente, _sobrenome);
+    //
+    // if(body == null && context.mounted) {
+    //   Navigator.pop(context);
+    //   return;
+    // }
+    //
+    // setError(body["idError"], body["message"]);
   }
 
   void getInformationsAboutCep(String? cep) async {
     if(cep?.length != 9) return;
-    String? endereco = await ClienteService().getEndereco(cep!);
-    if(endereco != null) {
-      List<String> camposSobreEndereco = endereco.split("|");
-      enderecoController.text = camposSobreEndereco[0];
-      bairroController.text = camposSobreEndereco[1];
-      municipioController.text = camposSobreEndereco[2];
-      return;
-    }
+    // String? endereco = await ClienteService().getEndereco(cep!);
+    // if(endereco != null) {
+    //   List<String> camposSobreEndereco = endereco.split("|");
+    //   enderecoController.text = camposSobreEndereco[0];
+    //   bairroController.text = camposSobreEndereco[1];
+    //   municipioController.text = camposSobreEndereco[2];
+    //   return;
+    // }
     setError(5, "Endereço não\n encontrado");
   }
 
   void getNomesClientes(String nome) async{
-    List<Cliente>? clientes = await ClienteService().getByNome(nome);
-    if(clientes == null) return;
-    List<String> nomes = [];
-    for (int i = 0; i < clientes.length && i < 5; i++) {
-      nomes.add(clientes[i].nome!);
-    }
-    if(_dropdownValuesNomes != nomes) {
-      setState(() {
-        _dropdownValuesNomes = nomes;
-      });
-    }
+    // List<Cliente>? clientes = await ClienteService().getByNome(nome);
+    // if(clientes == null) return;
+    // List<String> nomes = [];
+    // for (int i = 0; i < clientes.length && i < 5; i++) {
+    //   nomes.add(clientes[i].nome!);
+    // }
+    // if(_dropdownValuesNomes != nomes) {
+    //   setState(() {
+    //     _dropdownValuesNomes = nomes;
+    //   });
+    // }
   }
 
   @override

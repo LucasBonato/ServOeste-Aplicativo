@@ -1,6 +1,5 @@
-import 'package:serv_oeste/src/pages/cliente/update_cliente.dart';
-import 'package:serv_oeste/src/services/cliente_service.dart';
-import 'package:serv_oeste/src/util/constants.dart';
+import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
+import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
 import 'package:serv_oeste/src/components/expandable_fab.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
@@ -12,11 +11,11 @@ class ClientePage extends StatefulWidget {
   const ClientePage({super.key});
 
   @override
-  State<ClientePage> createState() => _ClientePageState();
+  State<ClientePage> createState() => _Clientescreenstate();
 }
 
-class _ClientePageState extends State<ClientePage> {
-  final ClienteService clienteService = ClienteService();
+class _Clientescreenstate extends State<ClientePage> {
+  //final ClienteService clienteService = ClienteService();
   final List<int> _selectedItens = [];
   late List<Cliente>? clientes;
   late TextEditingController _nomeController, _telefoneController, _enderecoController;
@@ -41,11 +40,13 @@ class _ClientePageState extends State<ClientePage> {
   }
 
   void carregarClientes() async{
+    /*
     clientes = await clienteService.getAllCliente(
         _nome,
         _telefone,
         _endereco
     );
+    */
     setState(() {
       isLoaded = true;
       isSelected = false;
@@ -54,7 +55,7 @@ class _ClientePageState extends State<ClientePage> {
   }
 
   void deletarClientes() async{
-    await clienteService.disableList(_selectedItens);
+    //await clienteService.disableList(_selectedItens);
     carregarClientes();
   }
 

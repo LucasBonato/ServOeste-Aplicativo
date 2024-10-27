@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/src/pages/account.dart';
-import 'package:serv_oeste/src/pages/cliente/cliente.dart';
-import 'package:serv_oeste/src/pages/servico/servico.dart';
-import 'package:serv_oeste/src/pages/tecnico/tecnico.dart';
+import 'package:serv_oeste/src/screens/account.dart';
+import 'package:serv_oeste/src/screens/cliente/cliente.dart';
+import 'package:serv_oeste/src/screens/servico/servico.dart';
+import 'package:serv_oeste/src/screens/tecnico/tecnico.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
 class Home extends StatefulWidget {
@@ -103,7 +103,7 @@ class HomeState extends State<Home> {
         title: ClipRRect(
           borderRadius: BorderRadius.circular(6),
           child: Image.asset(
-            'images/servOeste.png',
+            'assets/servOeste.png',
             fit: BoxFit.cover,
             alignment: const Alignment(0, 0),
           ),

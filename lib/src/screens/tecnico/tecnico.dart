@@ -1,23 +1,22 @@
 import 'package:drop_down_search_field/drop_down_search_field.dart';
-import 'package:serv_oeste/src/pages/tecnico/create_tecnico.dart';
-import 'package:serv_oeste/src/pages/tecnico/update_tecnico.dart';
-import 'package:serv_oeste/src/services/tecnico_service.dart';
-import 'package:serv_oeste/src/util/constants.dart';
+import 'package:serv_oeste/src/screens/tecnico/create_tecnico.dart';
+import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
+import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:serv_oeste/src/components/search_field.dart';
 import 'package:flutter/material.dart';
-import '../../models/tecnico.dart';
+import '../../models/tecnico/tecnico.dart';
 
 class TecnicoPage extends StatefulWidget {
   const TecnicoPage({super.key});
 
   @override
-  State<TecnicoPage> createState() => _TecnicoPageState();
+  State<TecnicoPage> createState() => _Tecnicoscreenstate();
 }
 
-class _TecnicoPageState extends State<TecnicoPage> {
-  final TecnicoService tecnicoService = TecnicoService();
+class _Tecnicoscreenstate extends State<TecnicoPage> {
+  //final TecnicoService tecnicoService = TecnicoService();
   final List<int> _selectedItens = [];
   late List<Tecnico>? tecnicos;
   late TextEditingController _idController, _nomeController, _situacaoController;
@@ -43,7 +42,7 @@ class _TecnicoPageState extends State<TecnicoPage> {
   }
 
   void carregarTecnicos({String? situacao = "ativo"}) async {
-    tecnicos = await tecnicoService.getByIdNomesituacao(_id, _nome, situacao);
+    //tecnicos = await tecnicoService.getByIdNomesituacao(_id, _nome, situacao);
     setState(() {
       isLoaded = true;
       isSelected = false;
@@ -53,7 +52,7 @@ class _TecnicoPageState extends State<TecnicoPage> {
   }
 
   void desativarTecnicos() async{
-    await tecnicoService.disableList(_selectedItens);
+    //await tecnicoService.disableList(_selectedItens);
     carregarTecnicos();
   }
 

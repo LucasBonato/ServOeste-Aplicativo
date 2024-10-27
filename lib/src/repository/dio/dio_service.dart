@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:serv_oeste/src/repository/dio/server_endpoints.dart';
-import 'package:serv_oeste/src/util/constants.dart';
+import 'package:serv_oeste/src/shared/constants.dart';
 
 class DioService {
   final Dio _dio = Dio(

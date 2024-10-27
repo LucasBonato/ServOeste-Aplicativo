@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_request.dart';
 import 'package:serv_oeste/src/models/servico/servico_request.dart';
-import 'package:serv_oeste/src/models/tecnico.dart';
+import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/models/servico/tecnico_disponivel.dart';
-import 'package:serv_oeste/src/services/servico_service.dart';
-import 'package:serv_oeste/src/services/tecnico_service.dart';
-import 'package:serv_oeste/src/util/constants.dart';
+import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/components/date_picker.dart';
 import 'package:serv_oeste/src/components/dropdown_field.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 
 import '../../models/cliente/cliente.dart';
-import '../../services/cliente_service.dart';
 import '../../components/mask_field.dart';
 
 class CreateServico extends StatefulWidget {
@@ -223,57 +220,57 @@ class _CreateServicoState extends State<CreateServico>{
   }
 
   void getInformationsAboutCep(String? cep) async {
-    if(cep?.length != 9) return;
-    String? endereco = await ClienteService().getEndereco(cep!);
-    if(endereco != null) {
-      List<String> camposSobreEndereco = endereco.split("|");
-      enderecoController.text = camposSobreEndereco[0];
-      bairroController.text = camposSobreEndereco[1];
-      municipioController.text = camposSobreEndereco[2];
-      return;
-    }
-    setError(5, "Endereço não\n encontrado");
+    // if(cep?.length != 9) return;
+    // String? endereco = await ClienteService().getEndereco(cep!);
+    // if(endereco != null) {
+    //   List<String> camposSobreEndereco = endereco.split("|");
+    //   enderecoController.text = camposSobreEndereco[0];
+    //   bairroController.text = camposSobreEndereco[1];
+    //   municipioController.text = camposSobreEndereco[2];
+    //   return;
+    // }
+    // setError(5, "Endereço não\n encontrado");
   }
 
   void getNomesClientes(String nome) async{
-    List<Cliente>? clientes = await ClienteService().getByNome(nome);
-    if(clientes == null) return;
-    List<String> nomes = [];
-    for (int i = 0; i < clientes.length && i < 5; i++) {
-      nomes.add(clientes[i].nome!);
-    }
-    if(_dropdownValuesNomes != nomes) {
-      setState(() {
-        _dropdownValuesNomes = nomes;
-      });
-    }
+    // List<Cliente>? clientes = await ClienteService().getByNome(nome);
+    // if(clientes == null) return;
+    // List<String> nomes = [];
+    // for (int i = 0; i < clientes.length && i < 5; i++) {
+    //   nomes.add(clientes[i].nome!);
+    // }
+    // if(_dropdownValuesNomes != nomes) {
+    //   setState(() {
+    //     _dropdownValuesNomes = nomes;
+    //   });
+    // }
   }
 
 
 
   void getNomesTecnicos(String nome) async{
-    _idTecnicoSelected = null;
-    List<Tecnico>? tecnicos = await TecnicoService().getByIdNomesituacao(null, nome, "Ativo");
-    if(tecnicos == null) return;
-    List<String> nomes = [];
-    for (int i = 0; i < tecnicos.length && i < 5; i++) {
-      nomes.add("${tecnicos[i].nome!} ${tecnicos[i].sobrenome!}");
-    }
-    if(_dropdownValuesNames != nomes) {
-      setState(() {
-        _listTecnicos = tecnicos;
-        _dropdownValuesNames = nomes;
-      });
-    }
+    // _idTecnicoSelected = null;
+    // List<Tecnico>? tecnicos = await TecnicoService().getByIdNomesituacao(null, nome, "Ativo");
+    // if(tecnicos == null) return;
+    // List<String> nomes = [];
+    // for (int i = 0; i < tecnicos.length && i < 5; i++) {
+    //   nomes.add("${tecnicos[i].nome!} ${tecnicos[i].sobrenome!}");
+    // }
+    // if(_dropdownValuesNames != nomes) {
+    //   setState(() {
+    //     _listTecnicos = tecnicos;
+    //     _dropdownValuesNames = nomes;
+    //   });
+    // }
   }
 
   void getTecnicosDisponiveis() async {
-    ServicoService servicoService = ServicoService();
-    List<TecnicoDisponivel> tecnicos = await servicoService.getTecnicosDisponiveis();
-    setState(() {
-      _tecnicos = tecnicos;
-      isTecnicosLoading = false;
-    });
+    // ServicoService servicoService = ServicoService();
+    // List<TecnicoDisponivel> tecnicos = await servicoService.getTecnicosDisponiveis();
+    // setState(() {
+    //   _tecnicos = tecnicos;
+    //   isTecnicosLoading = false;
+    // });
   }
 
   void getIdTecnico(String nome) {
@@ -311,13 +308,13 @@ class _CreateServicoState extends State<CreateServico>{
     );
     ClienteRequest cliente = includeDataCliente();
 
-    dynamic body = await ServicoService().cadastrarServicoMaisCliente(servico, cliente);
-
-    if(body == null && context.mounted) {
-      Navigator.pop(context);
-      return;
-    }
-    setError(body["idError"], body["message"]);
+    // dynamic body = await ServicoService().cadastrarServicoMaisCliente(servico, cliente);
+    //
+    // if(body == null && context.mounted) {
+    //   Navigator.pop(context);
+    //   return;
+    // }
+    // setError(body["idError"], body["message"]);
   }
   
   @override

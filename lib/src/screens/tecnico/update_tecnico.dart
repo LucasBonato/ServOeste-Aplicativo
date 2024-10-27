@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:serv_oeste/src/util/constants.dart';
-import 'package:serv_oeste/src/services/tecnico_service.dart';
+import 'package:serv_oeste/src/shared/constants.dart';
 
 import '../../components/mask_field.dart';
-import '../../models/tecnico.dart';
+import '../../models/tecnico/tecnico.dart';
 
 class UpdateTecnico extends StatefulWidget {
   final int id;
@@ -116,11 +115,11 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
 
   void loadTecnico() async {
     try {
-      Tecnico? tecnico = await TecnicoService().getById(widget.id);
-      setState(() {
-        this.tecnico = tecnico;
-        isLoading = false;
-      });
+      // Tecnico? tecnico = await TecnicoService().getById(widget.id);
+      // setState(() {
+      //   this.tecnico = tecnico;
+      //   isLoading = false;
+      // });
     } catch (e) {
       Logger().e("Erro ao carregar o técnico: $e");
       setState(() {
@@ -198,15 +197,15 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
   }
 
   void updateTecnico(BuildContext context) async {
-    Tecnico tecnico = includeData();
-    dynamic body = await TecnicoService().update(tecnico);
-
-    if(body == null && context.mounted) {
-      Navigator.pop(context);
-      return;
-    }
-
-    setError(body["idError"], body["message"]);
+    // Tecnico tecnico = includeData();
+    // dynamic body = await TecnicoService().update(tecnico);
+    //
+    // if(body == null && context.mounted) {
+    //   Navigator.pop(context);
+    //   return;
+    // }
+    //
+    // setError(body["idError"], body["message"]);
   }
 
   @override

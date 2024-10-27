@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:serv_oeste/src/repository/dio/dio_service.dart';
 import 'package:serv_oeste/src/repository/dio/server_endpoints.dart';
 
-import '../models/tecnico.dart';
+import '../models/tecnico/tecnico.dart';
 
 class TecnicoRepository extends DioService {
   // Future<List<Tecnico>?> getTecnicos(int? id, String? nome, String? situacao) async{

@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-List<Cliente> tecnicoFromJson(String str) => List<Cliente>.from(json.decode(str));
+List<Cliente> clienteFromJson(String str) => List<Cliente>.from(json.decode(str));
 
 class Cliente {
   int? id;

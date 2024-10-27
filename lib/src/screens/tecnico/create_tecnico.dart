@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/src/components/mask_field.dart';
-import 'package:serv_oeste/src/models/tecnico.dart';
-import 'package:serv_oeste/src/services/tecnico_service.dart';
+import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 
 class CreateTecnico extends StatefulWidget {
   const CreateTecnico({super.key});
@@ -174,16 +173,16 @@ class _CreateTecnicoState extends State<CreateTecnico> {
   }
 
   void adicionarTecnico(BuildContext context) async {
-    TecnicoService tecnicoService = TecnicoService();
-    Tecnico tecnico = includeData();
-    dynamic body = await tecnicoService.create(tecnico);
-
-    if(body == null && context.mounted) {
-      Navigator.pop(context);
-      return;
-    }
-
-    setError(body["idError"], body["message"]);
+    // TecnicoService tecnicoService = TecnicoService();
+    // Tecnico tecnico = includeData();
+    // dynamic body = await tecnicoService.create(tecnico);
+    //
+    // if(body == null && context.mounted) {
+    //   Navigator.pop(context);
+    //   return;
+    // }
+    //
+    // setError(body["idError"], body["message"]);
   }
 
   @override

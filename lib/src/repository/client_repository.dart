@@ -15,7 +15,7 @@ class ClientRepository extends DioService {
   //   return clientes;
   // }
 
-  Future<List<Cliente>?> getClientesByFind(String? nome, String? telefone, String? endereco) async{
+  Future<List<Cliente>?> getClientesByFind(String? nome, String? telefone, String? endereco) async {
     try {
       final response = await dio.post(
         ServerEndpoints.clienteFindEndpoint,

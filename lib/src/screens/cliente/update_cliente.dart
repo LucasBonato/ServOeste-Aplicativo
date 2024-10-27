@@ -1,6 +1,5 @@
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
-import 'package:serv_oeste/src/services/cliente_service.dart';
-import '../../util/constants.dart';
+import '../../shared/constants.dart';
 import '../../components/dropdown_field.dart';
 import 'package:flutter/material.dart';
 import '../../components/mask_field.dart';
@@ -69,7 +68,7 @@ class _UpdateClienteState extends State<UpdateCliente> {
 
   void loadCliente() async {
     try {
-      Cliente? cliente = await ClienteService().getById(widget.id);
+      //Cliente? cliente = await ClienteService().getById(widget.id);
       if(mounted){
         setState(() {
           this.cliente = cliente;
@@ -168,44 +167,44 @@ class _UpdateClienteState extends State<UpdateCliente> {
   }
 
   void atualizarCliente(BuildContext context) async{
-    Cliente cliente = includeData();
-    dynamic body = await ClienteService().update(cliente, _sobrenome);
-
-    if(body == null && context.mounted) {
-      Navigator.pop(context);
-      return;
-    }
-
-    setError(body["idError"], body["message"]);
+    // Cliente cliente = includeData();
+    // dynamic body = await ClienteService().update(cliente, _sobrenome);
+    //
+    // if(body == null && context.mounted) {
+    //   Navigator.pop(context);
+    //   return;
+    // }
+    //
+    // setError(body["idError"], body["message"]);
   }
 
   void getInformationsAboutCep(String? cep) async {
     if(cep?.length != 9) return;
-    String? endereco = await ClienteService().getEndereco(cep!);
-    if(endereco != null) {
-      List<String> camposSobreEndereco = endereco.split("|");
-      if(mounted){
-        enderecoController.text = camposSobreEndereco[0];
-        bairroController.text = camposSobreEndereco[1];
-        municipioController.text = camposSobreEndereco[2];
-      }
-      return;
-    }
-    setError(5, "Endereço não\n encontrado");
+    // String? endereco = await ClienteService().getEndereco(cep!);
+    // if(endereco != null) {
+    //   List<String> camposSobreEndereco = endereco.split("|");
+    //   if(mounted){
+    //     enderecoController.text = camposSobreEndereco[0];
+    //     bairroController.text = camposSobreEndereco[1];
+    //     municipioController.text = camposSobreEndereco[2];
+    //   }
+    //   return;
+    // }
+    // setError(5, "Endereço não\n encontrado");
   }
 
   void getNomesClientes(String nome) async{
-    List<Cliente>? clientes = await ClienteService().getByNome(nome);
-    if(clientes == null) return;
-    List<String> nomes = [];
-    for (int i = 0; i < clientes.length && i < 5; i++) {
-      nomes.add(clientes[i].nome!);
-    }
-    if(_dropdownValuesNomes != nomes && mounted) {
-      setState(() {
-        _dropdownValuesNomes = nomes;
-      });
-    }
+    // List<Cliente>? clientes = await ClienteService().getByNome(nome);
+    // if(clientes == null) return;
+    // List<String> nomes = [];
+    // for (int i = 0; i < clientes.length && i < 5; i++) {
+    //   nomes.add(clientes[i].nome!);
+    // }
+    // if(_dropdownValuesNomes != nomes && mounted) {
+    //   setState(() {
+    //     _dropdownValuesNomes = nomes;
+    //   });
+    // }
   }
 
   @override

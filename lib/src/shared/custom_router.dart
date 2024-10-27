@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:serv_oeste/src/pages/home.dart';
-import '../pages/cliente/create_cliente.dart';
-import '../pages/servico/create_servico.dart';
-import '../pages/tecnico/create_tecnico.dart';
+import 'package:serv_oeste/src/screens/home.dart';
+import '../screens/cliente/create_cliente.dart';
+import '../screens/servico/create_servico.dart';
+import '../screens/tecnico/create_tecnico.dart';
 
 class CustomRouter {
   static Map<String, WidgetBuilder> getRoutes(BuildContext context) {

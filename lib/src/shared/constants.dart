@@ -1,4 +1,4 @@
-import 'package:serv_oeste/src/models/tecnico.dart';
+import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 
 class Constants {
