@@ -51,7 +51,6 @@ class ClientRepository extends DioService {
 
       }
     }
-
     return null;
   }
 
