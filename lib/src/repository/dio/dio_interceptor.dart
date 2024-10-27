@@ -30,6 +30,7 @@ class DioInterceptor extends Interceptor {
     logMessage += "StatusCode: ${response.statusCode}\n";
     if(response.data != null) {
       logMessage += "ResponseBody: ${jsonEncoder.convert(response.data)}\n";
+      logMessage += "RuntimeTypeBody: ${response.data.runtimeType}\n";
     }
 
     _logger.i(logMessage);
