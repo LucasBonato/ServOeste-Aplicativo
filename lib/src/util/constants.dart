@@ -2,8 +2,7 @@ import 'package:serv_oeste/src/models/tecnico.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 
 class Constants {
-  static const String baseUri = "http://localhost:8080/api/v1";
-  //static const String baseUri = "http://10.0.2.2:8080/api/v1";
+  static const bool isDev = true;
 
   static const List<String> list = ['Ativo', 'Licença', 'Desativado'];
   static const List<String> municipios = ['Osasco', 'Barueri', 'Cotia', 'São Paulo', 'Itapevi', 'Carapicuíba'];

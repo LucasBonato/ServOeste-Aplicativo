@@ -12,7 +12,6 @@ import '../../src/models/endereco.dart';
 
 class ServOesteApi{
   var client = http.Client();
-  final String baseUri = Constants.baseUri;
 
   Future<List<Tecnico>?> getTecnicos(int? id, String? nome, String? situacao) async{
     var uri = Uri.parse("$baseUri/tecnico/find");
