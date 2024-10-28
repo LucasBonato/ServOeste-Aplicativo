@@ -20,15 +20,12 @@ class _Clientescreenstate extends State<ClientePage> {
   //final ClienteService clienteService = ClienteService();
   final List<int> _selectedItens = [];
   late TextEditingController _nomeController, _telefoneController, _enderecoController;
-  bool isLoaded = false,
-      isSelected = false;
-  String? _nome, _telefone, _endereco;
-  late final ClienteBloc _clienteBloc;
+  bool isSelected = false;
+  late final ClienteBloc _clienteBloc = ClienteBloc();
 
   @override
   void initState() {
     super.initState();
-    _clienteBloc = ClienteBloc();
     _clienteBloc.add(ClienteLoadingEvent());
 
     _nomeController = TextEditingController();
@@ -47,34 +44,13 @@ class _Clientescreenstate extends State<ClientePage> {
   }
 
   void carregarClientes() async {
-    /*
-    clientes = await clienteService.getAllCliente(
-        _nome,
-        _telefone,
-        _endereco
-    );
-    */
     setState(() {
-      isLoaded = true;
-      isSelected = false;
       _selectedItens.clear();
     });
   }
 
   void deletarClientes() async {
     //await clienteService.disableList(_selectedItens);
-    carregarClientes();
-  }
-
-  void findBy({String? nome, String? telefone, String? endereco}) {
-    if (nome != null && nome.isNotEmpty) _nome = nome;
-    if (telefone != null && telefone.isNotEmpty) _telefone = telefone;
-    if (endereco != null && endereco.isNotEmpty) _endereco = endereco;
-
-    if (_nomeController.text.isEmpty) _nome = null;
-    if (_telefoneController.text.isEmpty) _telefone = null;
-    if (_enderecoController.text.isEmpty) _endereco = null;
-
     carregarClientes();
   }
 
@@ -93,33 +69,33 @@ class _Clientescreenstate extends State<ClientePage> {
 
   ExpandableFab _buildFab(BuildContext context) {
     return ExpandableFab(
-        distance: 100,
-        children: [
-          Column(
-            children: [
-              FloatingActionButton(
-                onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed("/createCliente"),
-                heroTag: "cliente",
-                mini: true,
-                shape: const CircleBorder(eccentricity: 0),
-                child: const Icon(Icons.person_add_alt_1),
-              ),
-              const Text("Cliente")
-            ],
-          ),
-          Column(
-            children: [
-              FloatingActionButton(
-                  onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed("/createServico"),
-                  heroTag: "servico",
-                  mini: true,
-                  shape: const CircleBorder(eccentricity: 0),
-                  child: const Icon(Icons.content_paste)
-              ),
-              const Text("Serviço")
-            ],
-          )
-        ]
+      distance: 100,
+      children: [
+        Column(
+          children: [
+            FloatingActionButton(
+              onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed("/createCliente"),
+              heroTag: "cliente",
+              mini: true,
+              shape: const CircleBorder(eccentricity: 0),
+              child: const Icon(Icons.person_add_alt_1),
+            ),
+            const Text("Cliente")
+          ],
+        ),
+        Column(
+          children: [
+            FloatingActionButton(
+              onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed("/createServico"),
+              heroTag: "servico",
+              mini: true,
+              shape: const CircleBorder(eccentricity: 0),
+              child: const Icon(Icons.content_paste)
+            ),
+            const Text("Serviço")
+          ],
+        )
+      ]
     );
   }
 
@@ -135,9 +111,7 @@ class _Clientescreenstate extends State<ClientePage> {
               isSelected = false;
               _selectedItens.clear();
             });
-            Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => UpdateCliente(id: id))
+            Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateCliente(id: id))
             );
           },
           icon: const Icon(Icons.edit, color: Colors.white),
@@ -168,29 +142,41 @@ class _Clientescreenstate extends State<ClientePage> {
       body: Column(
         children: [
           SearchTextField(
-              hint: "Procure por Clientes...",
-              controller: _nomeController,
-              onChangedAction: (String nome) => findBy(nome: nome)
+            hint: "Procure por Clientes...",
+            controller: _nomeController,
+            onChangedAction: (String nome) => _clienteBloc.add(ClienteSearchEvent(
+              nome: nome,
+              telefone: _telefoneController.text,
+              endereco: _enderecoController.text
+            ))
           ),
           Row(
             children: [
               Expanded(
                 flex: 4,
                 child: SearchTextField(
-                    hint: "Telefone...",
-                    controller: _telefoneController,
-                    keyboardType: TextInputType.phone,
-                    rightPadding: 0,
-                    onChangedAction: (String telefone) => findBy(telefone: telefone)
+                  hint: "Telefone...",
+                  controller: _telefoneController,
+                  keyboardType: TextInputType.phone,
+                  rightPadding: 0,
+                  onChangedAction: (String telefone) => _clienteBloc.add(ClienteSearchEvent(
+                    nome: _nomeController.text,
+                    telefone: telefone,
+                    endereco: _enderecoController.text
+                  ))
                 ),
               ),
               Expanded(
                 flex: 5,
                 child: SearchTextField(
-                    hint: "Endereço...",
-                    controller: _enderecoController,
-                    leftPadding: 8,
-                    onChangedAction: (String endereco) => findBy(endereco: endereco)
+                  hint: "Endereço...",
+                  controller: _enderecoController,
+                  leftPadding: 8,
+                  onChangedAction: (String endereco) => _clienteBloc.add(ClienteSearchEvent(
+                    nome: _nomeController.text,
+                    telefone: _telefoneController.text,
+                    endereco: endereco
+                  ))
                 ),
               )
             ],
@@ -199,8 +185,8 @@ class _Clientescreenstate extends State<ClientePage> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Container(
               decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  color: Color.fromRGBO(21, 72, 169, 1)
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                color: Color.fromRGBO(21, 72, 169, 1)
               ),
               child: const SizedBox(
                 width: double.infinity,
@@ -225,39 +211,50 @@ class _Clientescreenstate extends State<ClientePage> {
                   ClienteLoadingState() => const Center(child: CircularProgressIndicator.adaptive()),
 
                   ClienteSuccessState() => SuperListView.builder(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                        scrollDirection: Axis.vertical,
-                        itemCount: state.clientes.length,
-                        itemBuilder: (context, index) {
-                          final Cliente cliente = state.clientes[index];
-                          final int id = cliente.id!;
-                          final bool editable = (isSelected && _selectedItens.length == 1 && _selectedItens.contains(id));
-                          return Padding(
-                            padding: const EdgeInsets.fromLTRB(8, 5, 8, 0),
-                            child: ListTile(
-                              leading: Text("$id", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                              title: Text(cliente.nome!, style: const TextStyle(fontWeight: FontWeight.bold)),
-                              subtitle: Text(Constants.transformTelefone(cliente: cliente)),
-                              trailing: (editable) ? _buildEditableSection(id) : Text(cliente.municipio != null ? cliente.municipio! : "UF"),
-                              onLongPress: () => selectItens(id),
-                              onTap: () {
-                                if (_selectedItens.isNotEmpty) {
-                                  selectItens(id);
-                                }
-                                if (_selectedItens.isEmpty) {
-                                isSelected = false;
-                                }
-                              },
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)
-                              ),
-                              tileColor: const Color.fromRGBO(239, 239, 239, 100),
-                              selectedTileColor: Colors.blue.withOpacity(.5),
-                              selected: _selectedItens.contains(id),
-                            ),
-                          );
-                        },
-                      ),
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                    scrollDirection: Axis.vertical,
+                    itemCount: state.clientes.length,
+                    itemBuilder: (context, index) {
+                      final Cliente cliente = state.clientes[index];
+                      final int id = cliente.id!;
+                      final bool editable = (isSelected && _selectedItens.length == 1 && _selectedItens.contains(id));
+                      return Padding(
+                        padding: const EdgeInsets.fromLTRB(8, 5, 8, 0),
+                        child: ListTile(
+                          leading: Text(
+                            "$id",
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                            )
+                          ),
+                          title: Text(
+                            cliente.nome!,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold
+                            )
+                          ),
+                          subtitle: Text(Constants.transformTelefone(cliente: cliente)),
+                          trailing: (editable) ? _buildEditableSection(id) : Text(cliente.municipio?? "UF"),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)
+                          ),
+                          tileColor: const Color.fromRGBO(239, 239, 239, 100),
+                          selectedTileColor: Colors.blue.withOpacity(.5),
+                          selected: _selectedItens.contains(id),
+                          onLongPress: () => selectItens(id),
+                          onTap: () {
+                            if (_selectedItens.isNotEmpty) {
+                              selectItens(id);
+                            }
+                            if (_selectedItens.isEmpty) {
+                              isSelected = false;
+                            }
+                          },
+                        ),
+                      );
+                    },
+                  ),
 
                   ClienteErrorState() => Column(
                     mainAxisAlignment: MainAxisAlignment.center,

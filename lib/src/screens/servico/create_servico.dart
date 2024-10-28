@@ -8,7 +8,6 @@ import 'package:serv_oeste/src/components/date_picker.dart';
 import 'package:serv_oeste/src/components/dropdown_field.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 
-import '../../models/cliente/cliente.dart';
 import '../../components/mask_field.dart';
 
 class CreateServico extends StatefulWidget {
@@ -19,7 +18,7 @@ class CreateServico extends StatefulWidget {
 }
 
 class _CreateServicoState extends State<CreateServico>{
-  List<String> _dropdownValuesNomes = [];
+  final List<String> _dropdownValuesNomes = [];
   late TextEditingController nomeController,
       telefoneFixoController,
       telefoneCelularController,
@@ -56,9 +55,9 @@ class _CreateServicoState extends State<CreateServico>{
       tecnicoValidation = false,
       descricaoValidation = false;
   bool isTecnicosLoading = true;
-  List<String> _dropdownValuesNames = [];
-  List<Tecnico>? _listTecnicos = [];
-  List<TecnicoDisponivel> _tecnicos = [];
+  final List<String> _dropdownValuesNames = [];
+  final List<Tecnico> _listTecnicos = [];
+  final List<TecnicoDisponivel> _tecnicos = [];
   int? _idTecnicoSelected;
   String? _nomeEquipamento;
   TextStyle textStyle = const TextStyle(
@@ -274,7 +273,7 @@ class _CreateServicoState extends State<CreateServico>{
   }
 
   void getIdTecnico(String nome) {
-    for(Tecnico tecnico in _listTecnicos!) {
+    for(Tecnico tecnico in _listTecnicos) {
       if("${tecnico.nome!} ${tecnico.sobrenome!}" == _tecnicoController.text) {
         setState(() {
           _idTecnicoSelected = tecnico.id!;

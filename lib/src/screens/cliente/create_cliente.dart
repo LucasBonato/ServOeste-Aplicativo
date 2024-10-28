@@ -13,7 +13,7 @@ class CreateCliente extends StatefulWidget {
 }
 
 class _CreateClienteState extends State<CreateCliente> {
-  List<String> _dropdownValuesNomes = [];
+  final List<String> _dropdownValuesNomes = [];
   late TextEditingController nomeController,
       telefoneFixoController,
       telefoneCelularController,

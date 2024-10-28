@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:logger/logger.dart';
 import 'package:serv_oeste/src/repository/dio/dio_service.dart';
 import 'package:serv_oeste/src/repository/dio/server_endpoints.dart';
 
@@ -33,7 +32,7 @@ class ClienteRepository extends DioService {
   //   return clientes;
   // }
 
-  Future<List<Cliente>?> getClientesByFind(String? nome, String? telefone, String? endereco) async {
+  Future<List<Cliente>?> getClientesByFind({String? nome, String? telefone, String? endereco}) async {
     try {
       final Response<dynamic> response = await dio.post(
         ServerEndpoints.clienteFindEndpoint,
@@ -68,10 +67,13 @@ class ClienteRepository extends DioService {
       final response = await dio.get(
         "${ServerEndpoints.clienteEndpoint}$id"
       );
-    } on DioException catch(e) {
-      if(e.response != null && e.response!.data != null) {
 
+      if(response.data != null) {
+        dynamic jsonResponse = json.decode(response.data);
+        return Cliente.fromJson(jsonResponse);
       }
+    } on DioException catch(e) {
+      throw Exception(onRequestError(e));
     }
     return null;
   }

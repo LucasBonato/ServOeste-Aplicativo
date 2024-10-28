@@ -21,7 +21,7 @@ class UpdateCliente extends StatefulWidget {
 class _UpdateClienteState extends State<UpdateCliente> {
   Cliente? cliente;
   bool _isLoading = true, _fieldsLoaded = false;
-  List<String> _dropdownValuesNomes = [];
+  final List<String> _dropdownValuesNomes = [];
   late TextEditingController nomeController,
       telefoneFixoController,
       telefoneCelularController,
@@ -71,7 +71,7 @@ class _UpdateClienteState extends State<UpdateCliente> {
       //Cliente? cliente = await ClienteService().getById(widget.id);
       if(mounted){
         setState(() {
-          this.cliente = cliente;
+          cliente = cliente;
           _isLoading = false;
         });
       }
