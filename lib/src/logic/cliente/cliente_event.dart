@@ -27,6 +27,14 @@ final class ClienteSearchEvent extends ClienteEvent {
   });
 }
 
+final class ClienteDeleteListEvent extends ClienteEvent {
+  final List<int> selectedList;
+
+  ClienteDeleteListEvent({
+    required this.selectedList
+  });
+}
+
 final class ClienteToggleItemSelectEvent extends ClienteEvent {
   final int id;
 

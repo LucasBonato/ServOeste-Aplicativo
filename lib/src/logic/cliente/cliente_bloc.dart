@@ -15,6 +15,7 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
     on<ClienteLoadingEvent>(_fetchAllClients);
     on<ClienteSearchEvent>(_searchClients);
     //on<ClienteToggleItemSelectEvent>(_toggleItemsSelected);
+    on<ClienteDeleteListEvent>(_deleteListClients);
   }
 
   Future<void> _fetchAllClients(ClienteLoadingEvent event, Emitter emit) async {
@@ -49,4 +50,14 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
   //
   //   emit(ClienteSelectedItemsState(selectedItems: newSelectedItems));
   // }
+
+  Future<void> _deleteListClients(ClienteDeleteListEvent event, Emitter emit) async {
+    emit(ClienteLoadingEvent());
+    try {
+      await clienteRepository.deleteClientes(event.selectedList);
+      await _fetchAllClients(ClienteLoadingEvent(nome: _nome, telefone: _telefone, endereco: _endereco), emit);
+    } catch(e) {
+      emit(ClienteErrorState(error: ErrorEntity(id: 0, error: "")));
+    }
+  }
 }

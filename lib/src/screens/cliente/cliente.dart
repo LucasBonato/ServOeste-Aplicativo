@@ -46,7 +46,7 @@ class _ClienteScreenState extends State<ClientePage> {
   }
 
   void _disableClientes() async {
-    //await clienteService.disableList(_selectedItems);
+    _clienteBloc.add(ClienteDeleteListEvent(selectedList: _selectedItems));
     setState(() {
       _selectedItems.clear();
     });
