@@ -1,41 +1,43 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/material.dart';
+
+import 'package:super_sliver_list/super_sliver_list.dart';
+
+import 'package:serv_oeste/src/components/expandable_fab_items.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
-import 'package:serv_oeste/src/components/expandable_fab.dart';
-import 'package:super_sliver_list/super_sliver_list.dart';
+
 import '../../components/search_field.dart';
-import 'package:flutter/material.dart';
 import '../../models/cliente/cliente.dart';
 
 class ClientePage extends StatefulWidget {
   const ClientePage({super.key});
 
   @override
-  State<ClientePage> createState() => _Clientescreenstate();
+  State<ClientePage> createState() => _ClienteScreenState();
 }
 
-class _Clientescreenstate extends State<ClientePage> {
-  //final ClienteService clienteService = ClienteService();
-  final List<int> _selectedItens = [];
-  late TextEditingController _nomeController, _telefoneController, _enderecoController;
-  bool isSelected = false;
+class _ClienteScreenState extends State<ClientePage> {
   late final ClienteBloc _clienteBloc = ClienteBloc();
+  late final TextEditingController _nomeController, _telefoneController, _enderecoController;
+  late final List<int> _selectedItems;
+  bool isSelected = false;
 
   @override
   void initState() {
     super.initState();
     _clienteBloc.add(ClienteLoadingEvent());
-
     _nomeController = TextEditingController();
     _telefoneController = TextEditingController();
     _enderecoController = TextEditingController();
-    carregarClientes();
+    _selectedItems = [];
   }
 
   @override
   void dispose() {
+    _selectedItems.clear();
     _nomeController.dispose();
     _telefoneController.dispose();
     _enderecoController.dispose();
@@ -43,61 +45,34 @@ class _Clientescreenstate extends State<ClientePage> {
     super.dispose();
   }
 
-  void carregarClientes() async {
+  void _disableClientes() async {
+    //await clienteService.disableList(_selectedItems);
     setState(() {
-      _selectedItens.clear();
+      _selectedItems.clear();
     });
   }
 
-  void deletarClientes() async {
-    //await clienteService.disableList(_selectedItens);
-    carregarClientes();
-  }
-
-  void selectItens(int id) {
-    if (_selectedItens.contains(id)) {
+  void _selectItems(int id) {
+    if (_selectedItems.contains(id)) {
       setState(() {
-        _selectedItens.removeWhere((value) => value == id);
+        _selectedItems.remove(id);
       });
       return;
     }
-    _selectedItens.add(id);
+    _selectedItems.add(id);
     setState(() {
       if (!isSelected) isSelected = true;
     });
   }
 
-  ExpandableFab _buildFab(BuildContext context) {
-    return ExpandableFab(
-      distance: 100,
-      children: [
-        Column(
-          children: [
-            FloatingActionButton(
-              onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed("/createCliente"),
-              heroTag: "cliente",
-              mini: true,
-              shape: const CircleBorder(eccentricity: 0),
-              child: const Icon(Icons.person_add_alt_1),
-            ),
-            const Text("Cliente")
-          ],
-        ),
-        Column(
-          children: [
-            FloatingActionButton(
-              onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed("/createServico"),
-              heroTag: "servico",
-              mini: true,
-              shape: const CircleBorder(eccentricity: 0),
-              child: const Icon(Icons.content_paste)
-            ),
-            const Text("Serviço")
-          ],
-        )
-      ]
-    );
-  }
+  ExpandableFabItems _buildFab() => const ExpandableFabItems(
+    firstHeroTag: "cliente",
+    secondHeroTag: "servico",
+    firstRouterName: "/createCliente",
+    secondRouterName: "/createServico",
+    firstText: "Cliente",
+    secondText: "Serviço"
+  );
 
   Widget _buildEditableSection(int id) {
     return Row(
@@ -109,7 +84,7 @@ class _Clientescreenstate extends State<ClientePage> {
           onPressed: () {
             setState(() {
               isSelected = false;
-              _selectedItens.clear();
+              _selectedItems.clear();
             });
             Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateCliente(id: id))
             );
@@ -124,7 +99,7 @@ class _Clientescreenstate extends State<ClientePage> {
           onPressed: () {
             setState(() {
               isSelected = false;
-              _selectedItens.clear();
+              _selectedItems.clear();
             });
           },
           icon: const Icon(Icons.content_paste, color: Colors.white),
@@ -138,7 +113,7 @@ class _Clientescreenstate extends State<ClientePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      floatingActionButton: (!isSelected) ? _buildFab(context) : BuildWidgets.buildFabRemove(context, deletarClientes),
+      floatingActionButton: (!isSelected) ? _buildFab() : BuildWidgets.buildFabRemove(context, _disableClientes),
       body: Column(
         children: [
           SearchTextField(
@@ -217,7 +192,7 @@ class _Clientescreenstate extends State<ClientePage> {
                     itemBuilder: (context, index) {
                       final Cliente cliente = state.clientes[index];
                       final int id = cliente.id!;
-                      final bool editable = (isSelected && _selectedItens.length == 1 && _selectedItens.contains(id));
+                      final bool editable = (isSelected && _selectedItems.length == 1 && _selectedItems.contains(id));
                       return Padding(
                         padding: const EdgeInsets.fromLTRB(8, 5, 8, 0),
                         child: ListTile(
@@ -241,13 +216,13 @@ class _Clientescreenstate extends State<ClientePage> {
                           ),
                           tileColor: const Color.fromRGBO(239, 239, 239, 100),
                           selectedTileColor: Colors.blue.withOpacity(.5),
-                          selected: _selectedItens.contains(id),
-                          onLongPress: () => selectItens(id),
+                          selected: _selectedItems.contains(id),
+                          onLongPress: () => _selectItems(id),
                           onTap: () {
-                            if (_selectedItens.isNotEmpty) {
-                              selectItens(id);
+                            if (_selectedItems.isNotEmpty) {
+                              _selectItems(id);
                             }
-                            if (_selectedItens.isEmpty) {
+                            if (_selectedItems.isEmpty) {
                               isSelected = false;
                             }
                           },

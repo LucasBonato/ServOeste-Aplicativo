@@ -14,6 +14,7 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
   ClienteBloc() : super(ClienteInitialState()) {
     on<ClienteLoadingEvent>(_fetchAllClients);
     on<ClienteSearchEvent>(_searchClients);
+    //on<ClienteToggleItemSelectEvent>(_toggleItemsSelected);
   }
 
   Future<void> _fetchAllClients(ClienteLoadingEvent event, Emitter emit) async {
@@ -36,4 +37,16 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
     _endereco = event.endereco?.isNotEmpty == true ? event.endereco : null;
     await _fetchAllClients(ClienteLoadingEvent(nome: _nome, telefone: _telefone, endereco: _endereco), emit);
   }
+
+  // Future<void> _toggleItemsSelected(ClienteToggleItemSelectEvent event, Emitter emit) {
+  //   final newSelectedItems = List<int>.from(state.selectedItems);
+  //
+  //   if (newSelectedItems.contains(event.id)) {
+  //     newSelectedItems.remove(event.id);
+  //   } else {
+  //     newSelectedItems.add(event.id);
+  //   }
+  //
+  //   emit(ClienteSelectedItemsState(selectedItems: newSelectedItems));
+  // }
 }

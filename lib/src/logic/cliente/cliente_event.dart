@@ -26,3 +26,11 @@ final class ClienteSearchEvent extends ClienteEvent {
     this.endereco
   });
 }
+
+final class ClienteToggleItemSelectEvent extends ClienteEvent {
+  final int id;
+
+  ClienteToggleItemSelectEvent({
+    required this.id
+  });
+}

@@ -15,6 +15,14 @@ final class ClienteSuccessState extends ClienteState {
   });
 }
 
+// final class ClienteSelectedItemsState extends ClienteState {
+//   final List<int> selectedItems;
+//
+//   ClienteSelectedItemsState({
+//     required this.selectedItems
+//   });
+// }
+
 final class ClienteErrorState extends ClienteState {
   final ErrorEntity error;
 
