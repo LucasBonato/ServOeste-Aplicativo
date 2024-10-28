@@ -74,40 +74,38 @@ class _ClienteScreenState extends State<ClientePage> {
     secondText: "Serviço"
   );
 
-  Widget _buildEditableSection(int id) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        IconButton(
-          onPressed: () {
-            setState(() {
-              isSelected = false;
-              _selectedItems.clear();
-            });
-            Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateCliente(id: id))
-            );
-          },
-          icon: const Icon(Icons.edit, color: Colors.white),
-          style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
-        ),
-        const SizedBox(
-          width: 16,
-        ),
-        IconButton(
-          onPressed: () {
-            setState(() {
-              isSelected = false;
-              _selectedItems.clear();
-            });
-          },
-          icon: const Icon(Icons.content_paste, color: Colors.white),
-          style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
-        )
-      ],
-    );
-  }
+  Widget _buildEditableSection(int id) => Row(
+    mainAxisAlignment: MainAxisAlignment.end,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      IconButton(
+        onPressed: () {
+          setState(() {
+            isSelected = false;
+            _selectedItems.clear();
+          });
+          Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateCliente(id: id))
+          );
+        },
+        icon: const Icon(Icons.edit, color: Colors.white),
+        style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
+      ),
+      const SizedBox(
+        width: 16,
+      ),
+      IconButton(
+        onPressed: () {
+          setState(() {
+            isSelected = false;
+            _selectedItems.clear();
+          });
+        },
+        icon: const Icon(Icons.content_paste, color: Colors.white),
+        style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
+      )
+    ],
+  );
 
   @override
   Widget build(BuildContext context) {
