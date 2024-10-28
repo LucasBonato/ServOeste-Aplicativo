@@ -1,4 +1,3 @@
-
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
@@ -38,4 +37,3 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
     await _fetchAllClients(ClienteLoadingEvent(nome: _nome, telefone: _telefone, endereco: _endereco), emit);
   }
 }
-

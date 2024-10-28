@@ -7,36 +7,25 @@ import '../models/servico/servico_request.dart';
 import '../models/servico/tecnico_disponivel.dart';
 
 class ServiceRepository extends DioService {
-  // Future<List<TecnicoDisponivel>> getTecnicosDisponiveis() async {
-  //   var responseBodyUtf8 = utf8.decode(response.body.runes.toList());
-  //   List<dynamic> jsonResponse = json.decode(responseBodyUtf8);
-  //   List<TecnicoDisponivel> tecnicosDisponiveis = jsonResponse.map((json) => TecnicoDisponivel.fromJson(json)).toList();
-  //   return tecnicosDisponiveis;
-  // }
 
   Future<List<TecnicoDisponivel>?> getTecnicosDisponiveis() async {
     try {
       final response = await dio.get(
         ServerEndpoints.servicoDisponibilidadeEndpoint
       );
-    } on DioException catch(e) {
-      if(e.response != null && e.response!.data != null) {
 
+      if (response.data is List) {
+        return (response.data as List)
+            .map((json) => TecnicoDisponivel.fromJson(json))
+            .toList();
       }
+    } on DioException catch(e) {
+      throw Exception(onRequestError(e));
     }
     return null;
   }
 
-  // Future<dynamic> registerServicoMaisCliente(ServicoRequest servico, ClienteRequest cliente) async {
-  //   if(response.statusCode != 201){
-  //     dynamic body = jsonDecode(utf8.decode(response.body.runes.toList()));
-  //     return body;
-  //   }
-  //
-  //   return null;
-  // }
-
-  Future<dynamic> postServicoComClienteNaoExistente(ServicoRequest servico, ClienteRequest cliente) async {
+  Future<void> postServicoComClienteNaoExistente(ServicoRequest servico, ClienteRequest cliente) async {
     try {
       await dio.post(
         ServerEndpoints.servicoMaisClienteEndpoint,
@@ -62,23 +51,11 @@ class ServiceRepository extends DioService {
         }
       );
     } on DioException catch(e) {
-      if(e.response != null && e.response!.data != null) {
-
-      }
+      throw Exception(onRequestError(e));
     }
-    return null;
   }
 
-  // Future<dynamic> registerServicoComCliente(ServicoRequest servico) async {
-  //   if(response.statusCode != 201){
-  //     dynamic body = jsonDecode(utf8.decode(response.body.runes.toList()));
-  //     return body;
-  //   }
-  //
-  //   return null;
-  // }
-
-  Future<dynamic> postServicoComClienteExistente(ServicoRequest servico) async {
+  Future<void> postServicoComClienteExistente(ServicoRequest servico) async {
     try {
       await dio.post(
         ServerEndpoints.servicoEndpoint,
@@ -96,10 +73,7 @@ class ServiceRepository extends DioService {
         }
       );
     } on DioException catch(e) {
-      if(e.response != null && e.response!.data != null) {
-
-      }
+      throw Exception(onRequestError(e));
     }
-    return null;
   }
 }

@@ -7,13 +7,6 @@ import 'package:serv_oeste/src/repository/dio/server_endpoints.dart';
 import '../models/tecnico/tecnico.dart';
 
 class TecnicoRepository extends DioService {
-  // Future<List<Tecnico>?> getTecnicos(int? id, String? nome, String? situacao) async{
-  //   var responseBodyUtf8 = utf8.decode(response.body.runes.toList());
-  //   List<dynamic> jsonResponse = json.decode(responseBodyUtf8);
-  //   List<Tecnico> tecnicos = jsonResponse.map((json) => Tecnico.fromJson(json)).toList();
-  //   return tecnicos;
-  // }
-
   Future<List<Tecnico>?> getTecnicosByFind(int? id, String? nome, String? situacao) async {
     try {
       final response = await dio.post(
@@ -24,43 +17,35 @@ class TecnicoRepository extends DioService {
           "situacao": situacao
         }
       );
-    } on DioException catch(e) {
-      if(e.response != null && e.response!.data != null) {
 
+      if (response.data is List) {
+        return (response.data as List)
+            .map((json) => Tecnico.fromJson(json))
+            .toList();
       }
+    } on DioException catch(e) {
+      throw Exception(onRequestError(e));
     }
     return null;
   }
-
-  // Future<Tecnico?> getTecnicoById(int id) async{
-  //   var responseBodyUtf8 = utf8.decode(response.body.runes.toList());
-  //   dynamic jsonResponse = json.decode(responseBodyUtf8);
-  //   Tecnico tecnico = Tecnico.fromJson(jsonResponse);
-  //   return tecnico;
-  // }
 
   Future<Tecnico?> getTecnicoById(int id) async {
     try {
       final response = await dio.get(
           "${ServerEndpoints.tecnicoEndpoint}$id"
       );
-    } on DioException catch(e) {
-      if(e.response != null && e.response!.data != null) {
 
+      if (response.data != null) {
+        dynamic jsonResponse = json.decode(utf8.decode(response.data));
+        return Tecnico.fromJson(jsonResponse);
       }
+    } on DioException catch(e) {
+      throw Exception(onRequestError(e));
     }
     return null;
   }
 
-  // Future<dynamic> registerTecnico(Tecnico tecnico) async{
-  //   if(response.statusCode != 201){
-  //     dynamic body = jsonDecode(utf8.decode(response.body.runes.toList()));
-  //     return body;
-  //   }
-  //   return null;
-  // }
-
-  Future<dynamic> postTecnico(Tecnico tecnico) async {
+  Future<void> postTecnico(Tecnico tecnico) async {
     try {
       await dio.post(
         ServerEndpoints.tecnicoEndpoint,
@@ -73,22 +58,11 @@ class TecnicoRepository extends DioService {
         }
       );
     } on DioException catch(e) {
-      if(e.response != null && e.response!.data != null) {
-
-      }
+      throw Exception(onRequestError(e));
     }
-    return null;
   }
 
-  // Future<dynamic> updateTecnico(Tecnico tecnico) async{
-  //   if(response.statusCode != 200){
-  //     dynamic body = jsonDecode(utf8.decode(response.body.runes.toList()));
-  //     return body;
-  //   }
-  //   return null;
-  // }
-
-  Future<dynamic> putTecnico(Tecnico tecnico) async {
+  Future<void> putTecnico(Tecnico tecnico) async {
     try {
       await dio.put(
         "${ServerEndpoints.tecnicoEndpoint}${tecnico.id}",
@@ -102,31 +76,18 @@ class TecnicoRepository extends DioService {
         }
       );
     } on DioException catch(e) {
-      if(e.response != null && e.response!.data != null) {
-
-      }
+      throw Exception(onRequestError(e));
     }
-    return null;
   }
 
-  // Future<dynamic> disableListOfTecnicos(List<int> selectedItems) async{
-  //   if(response.statusCode != 200){
-  //     Logger().e("Vai ver a API");
-  //   }
-  //   return;
-  // }
-
-  Future<dynamic> disableListOfTecnicos(List<int> selectedItems) async {
+  Future<void> disableListOfTecnicos(List<int> selectedItems) async {
     try {
       await dio.delete(
         ServerEndpoints.tecnicoEndpoint,
         data: jsonEncode(selectedItems)
       );
     } on DioException catch(e) {
-      if(e.response != null && e.response!.data != null) {
-
-      }
+      throw Exception(onRequestError(e));
     }
-    return null;
   }
 }

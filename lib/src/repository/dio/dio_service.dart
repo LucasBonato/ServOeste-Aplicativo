@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
+import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/repository/dio/dio_interceptor.dart';
 import 'package:serv_oeste/src/repository/dio/server_endpoints.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
@@ -22,10 +25,12 @@ class DioService {
 
   Dio get dio => _dio;
 
-  dynamic onRequestError(DioException e) {
+  ErrorEntity? onRequestError(DioException e) {
     if(e.response != null && e.response!.data != null) {
-      return "Teste";
+      dynamic json = jsonDecode(e.response!.data);
+      ErrorEntity error = ErrorEntity.fromJson(json);
+      return error;
     }
+    return null;
   }
-
 }
