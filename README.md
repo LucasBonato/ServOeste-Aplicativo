@@ -1,16 +1,20 @@
-# serv_oeste
+<div align="center">
+    <br>
+    <img src="https://servoeste.com.br/wp-content/uploads/2023/11/Logo.png" alt="">
+    <hr/>
 
-Front-end do servOeste
+  <p>
+      <img loading="lazy" src="http://img.shields.io/static/v1?label=STATUS&message=EM%20DESENVOLVIMENTO&color=GREEN&style=for-the-badge" alt=""/>
+  </p>
+<p>Um projeto da criação de uma API utilizando <a href="https://spring.io/projects/spring-boot">Spring Boot</a> junto do seu consumo em uma aplicação <a href="https://flutter.dev">Flutter</a> utilizando MySql como o banco de dados.</p>
 
-## Getting Started
+</div>
 
-This project is a starting point for a Flutter application.
+<hr/>
 
-A few resources to get you started if this is your first Flutter project:
+<div align="center">
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+  # Projeção do Sistema
+  ![alt](./assets/ServOesteProjection.png)
+  
+</div>
