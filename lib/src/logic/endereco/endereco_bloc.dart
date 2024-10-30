@@ -1,6 +1,3 @@
-
-import 'dart:math';
-
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:serv_oeste/src/models/endereco/endereco.dart';
