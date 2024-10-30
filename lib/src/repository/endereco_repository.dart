@@ -6,7 +6,7 @@ import 'package:serv_oeste/src/repository/dio/dio_service.dart';
 import 'package:serv_oeste/src/repository/dio/server_endpoints.dart';
 
 class EnderecoRepository extends DioService {
-  Future<String?> getEndereco(String cep) async{
+  Future<Endereco?> getEndereco(String cep) async{
     try {
       final response = await dio.get(
         ServerEndpoints.enderecoEndpoint,
@@ -18,7 +18,7 @@ class EnderecoRepository extends DioService {
       if (response.data != null) {
         dynamic json = jsonDecode(utf8.decode(response.data));
         Endereco endereco = Endereco.fromJson(json);
-        return endereco.endereco;
+        return endereco;
       }
     } on DioException catch(e) {
       throw Exception(onRequestError(e));
