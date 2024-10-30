@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
+import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
+import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
 import '../../shared/constants.dart';
 import '../../components/dropdown_field.dart';
 import '../../components/mask_field.dart';
@@ -13,6 +16,7 @@ class CreateCliente extends StatefulWidget {
 }
 
 class _CreateClienteState extends State<CreateCliente> {
+  final EnderecoBloc _enderecoBloc = EnderecoBloc();
   final List<String> _dropdownValuesNomes = [];
   late TextEditingController nomeController,
       telefoneFixoController,
@@ -156,14 +160,7 @@ class _CreateClienteState extends State<CreateCliente> {
 
   void getInformationsAboutCep(String? cep) async {
     if(cep?.length != 9) return;
-    // String? endereco = await ClienteService().getEndereco(cep!);
-    // if(endereco != null) {
-    //   List<String> camposSobreEndereco = endereco.split("|");
-    //   enderecoController.text = camposSobreEndereco[0];
-    //   bairroController.text = camposSobreEndereco[1];
-    //   municipioController.text = camposSobreEndereco[2];
-    //   return;
-    // }
+    _enderecoBloc.add(EnderecoSearchCepEvent(cep: cep!));
     setError(5, "Endereço não\n encontrado");
   }
 
@@ -227,57 +224,129 @@ class _CreateClienteState extends State<CreateCliente> {
                 validation: validationTelefoneFixo,
                 type: TextInputType.phone,
               ),  // Telefone Fixo
-              Row(
-                children: [
-                  Expanded(
-                    flex: 5,
-                    child: CustomMaskField(
-                      hint: "00000-000",
-                      label: "CEP",
-                      mask: "#####-###",
-                      errorMessage: _errorMessage,
-                      maxLength: 9,
-                      hide: true,
-                      controller: cepController,
-                      validation: validationCep,
-                      type: TextInputType.number,
-                      rightPadding: 4,
-                      onChanged: (cep) => getInformationsAboutCep(cep),
-                    ),
-                  ),  // CEP
-                  Expanded(
-                    flex: 8,
-                    child: CustomMaskField(
-                      hint: "Rua...",
-                      label: "Endereço, Número e Complemento",
-                      mask: null,
-                      errorMessage: _errorMessage,
-                      maxLength: 255,
-                      hide: true,
-                      controller: enderecoController,
-                      validation: validationEndereco,
-                      type: TextInputType.text,
-                      leftPadding: 4,
-                    ),
-                  ),  // Endereço
-                ],
-              ),
-              CustomDropdownField(
-                label: "Município",
-                dropdownValues: Constants.municipios,
-                controller: municipioController
-              ),
-              CustomMaskField(
-                hint: "Bairro...",
-                label: "Bairro",
-                mask: null,
-                errorMessage: _errorMessage,
-                maxLength: 255,
-                hide: true,
-                controller: bairroController,
-                validation: validationBairro,
-                type: TextInputType.text
-              ),  // Bairro
+              BlocBuilder<EnderecoBloc, EnderecoState>(
+                bloc: _enderecoBloc,
+                builder: (context, state) {
+                  if (state is EnderecoInitialState || state is EnderecoLoadingState) {
+                    return Column(
+                      children: [
+                        Row(
+                        children: [
+                          Expanded(
+                            flex: 5,
+                            child: CustomMaskField(
+                              hint: "00000-000",
+                              label: "CEP",
+                              mask: "#####-###",
+                              errorMessage: _errorMessage,
+                              maxLength: 9,
+                              hide: true,
+                              controller: cepController,
+                              validation: validationCep,
+                              type: TextInputType.number,
+                              rightPadding: 4,
+                              onChanged: getInformationsAboutCep,
+                            ),
+                          ),  // CEP
+                          Expanded(
+                            flex: 8,
+                            child: CustomMaskField(
+                              hint: "Rua...",
+                              label: "Endereço, Número e Complemento",
+                              mask: null,
+                              errorMessage: _errorMessage,
+                              maxLength: 255,
+                              hide: true,
+                              controller: enderecoController,
+                              validation: validationEndereco,
+                              type: TextInputType.text,
+                              leftPadding: 4,
+                            ),
+                          ),  // Endereço
+                        ],
+                      ),
+                      CustomDropdownField(
+                        label: "Município",
+                        dropdownValues: Constants.municipios,
+                        controller: municipioController
+                      ),
+                      CustomMaskField(
+                        hint: "Bairro...",
+                        label: "Bairro",
+                        mask: null,
+                        errorMessage: _errorMessage,
+                        maxLength: 255,
+                        hide: true,
+                        controller: bairroController,
+                        validation: validationBairro,
+                        type: TextInputType.text
+                      ),  // Bairro
+                      ],
+                    );
+                  }
+                  else if (state is EnderecoSuccessState) {
+                    enderecoController.text = state.endereco!;                    enderecoController.text = state.endereco!;
+                    municipioController.text = state.endereco!;
+                    enderecoController.text = state.endereco!;
+
+                    return Column(
+                      children: [
+                        Row(
+                        children: [
+                          Expanded(
+                            flex: 5,
+                            child: CustomMaskField(
+                              hint: "00000-000",
+                              label: "CEP",
+                              mask: "#####-###",
+                              errorMessage: _errorMessage,
+                              maxLength: 9,
+                              hide: true,
+                              controller: cepController,
+                              validation: validationCep,
+                              type: TextInputType.number,
+                              rightPadding: 4,
+                              onChanged: getInformationsAboutCep,
+                            ),
+                          ),  // CEP
+                          Expanded(
+                            flex: 8,
+                            child: CustomMaskField(
+                              hint: "Rua...",
+                              label: "Endereço, Número e Complemento",
+                              mask: null,
+                              errorMessage: _errorMessage,
+                              maxLength: 255,
+                              hide: true,
+                              controller: enderecoController,
+                              validation: validationEndereco,
+                              type: TextInputType.text,
+                              leftPadding: 4,
+                            ),
+                          ),  // Endereço
+                        ],
+                      ),
+                      CustomDropdownField(
+                        label: "Município",
+                        dropdownValues: Constants.municipios,
+                        controller: municipioController
+                      ),
+                      CustomMaskField(
+                        hint: "Bairro...",
+                        label: "Bairro",
+                        mask: null,
+                        errorMessage: _errorMessage,
+                        maxLength: 255,
+                        hide: true,
+                        controller: bairroController,
+                        validation: validationBairro,
+                        type: TextInputType.text
+                      ),  // Bairro
+                      ],
+                    );
+                  }
+                },
+              ),              
               Padding(
                 padding: const EdgeInsetsDirectional.fromSTEB(0, 32, 0, 0),
                 child: Column(
