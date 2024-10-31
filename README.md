@@ -15,6 +15,6 @@
 <div align="center">
 
   # Projeção do Sistema
-  ![alt](./assets/ServOesteProjection.png)
+  ![alt](./assets/ServOesteProjection-Transparent.png)
   
 </div>
