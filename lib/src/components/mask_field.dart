@@ -7,31 +7,35 @@ class CustomMaskField extends StatefulWidget {
   final String label;
   final String? mask;
   final int maxLength;
-  final TextEditingController controller;
-  final String errorMessage;
+  final TextEditingController? controller;
+  final String? errorMessage;
   final TextInputType type;
   final double? rightPadding;
   final double? leftPadding;
   final int? maxLines;
-  bool validation;
+  bool? validation;
   Function(String?)? onChanged;
+  Function(String?)? onSaved;
+  String? Function([String?])? validator;
   bool hide;
 
   CustomMaskField({
     super.key,
     required this.hint,
     required this.label,
-    required this.mask,
-    required this.errorMessage,
     required this.maxLength,
-    required this.controller,
     required this.type,
-    required this.validation,
+    this.errorMessage,
+    this.mask,
+    this.controller,
+    this.validation,
     this.hide = false,
     this.onChanged,
     this.leftPadding,
     this.rightPadding,
-    this.maxLines
+    this.maxLines,
+    this.validator,
+    this.onSaved
   });
 
   @override
@@ -52,16 +56,15 @@ class _CustomMaskFieldState extends State<CustomMaskField> {
         minLines: 1,
         decoration: InputDecoration(
           counterText: widget.hide ? "" : null,
-          error: (widget.validation) ? Text(widget.errorMessage, textAlign: TextAlign.center, style: const TextStyle(color: Colors.red),) : null,
           hintText: widget.hint,
           labelText: widget.label,
           isDense: true,
           fillColor: const Color(0xFFF1F4F8),
           border: const OutlineInputBorder(
-              borderSide: BorderSide(
-                  color: Colors.blueAccent,
-                  width: 2
-              )
+            borderSide: BorderSide(
+              color: Colors.blueAccent,
+              width: 2
+            )
           ),
           enabledBorder: const OutlineInputBorder(
             borderSide: BorderSide(
@@ -83,6 +86,8 @@ class _CustomMaskFieldState extends State<CustomMaskField> {
           ),
         ),
         onChanged: widget.onChanged,
+        validator: widget.validator,
+        onSaved: widget.onSaved,
         onTap: () => {
           setState(() {
             widget.validation = false;

@@ -15,6 +15,8 @@ final class ClienteSuccessState extends ClienteState {
   });
 }
 
+final class ClienteRegisterSuccessState extends ClienteState {}
+
 // final class ClienteSelectedItemsState extends ClienteState {
 //   final List<int> selectedItems;
 //

@@ -27,6 +27,16 @@ final class ClienteSearchEvent extends ClienteEvent {
   });
 }
 
+final class ClienteRegisterEvent extends ClienteEvent {
+  final Cliente cliente;
+  final String sobrenome;
+
+  ClienteRegisterEvent({
+    required this.cliente,
+    required this.sobrenome
+  });
+}
+
 final class ClienteDeleteListEvent extends ClienteEvent {
   final List<int> selectedList;
 

@@ -1,14 +1,15 @@
 class ErrorEntity {
-  final int id;
-  final String error;
+  late int id;
+  late String errorMessage;
 
   ErrorEntity({
     required this.id,
-    required this.error
+    required this.errorMessage
   });
 
   factory ErrorEntity.fromJson(Map<String, dynamic> json) => ErrorEntity(
       id: json["id"],
-      error: json["error"]
+      errorMessage: json["error"]
   );
+
 }

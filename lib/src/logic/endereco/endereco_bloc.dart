@@ -33,9 +33,9 @@ class EnderecoBloc extends Bloc<EnderecoEvent, EnderecoState> {
         );
         return;
       }
-      emit(EnderecoErrorState(error: ErrorEntity(id: 0, error: "Endereço não encotrado")));
+      emit(EnderecoErrorState(error: ErrorEntity(id: 0, errorMessage: "Endereço não encotrado")));
     } catch(e) {
-      emit(EnderecoErrorState(error: ErrorEntity(id: 0, error: "")));
+      emit(EnderecoErrorState(error: e as ErrorEntity));
     }
   }
 

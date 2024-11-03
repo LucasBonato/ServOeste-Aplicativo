@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:serv_oeste/src/models/endereco/endereco.dart';
 import 'package:serv_oeste/src/repository/dio/dio_service.dart';
@@ -16,7 +14,7 @@ class EnderecoRepository extends DioService {
       );
 
       if (response.data != null) {
-        dynamic json = jsonDecode(utf8.decode(response.data));
+        Map<String, dynamic> json = response.data;
         Endereco endereco = Endereco.fromJson(json);
         return endereco;
       }

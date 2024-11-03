@@ -47,7 +47,7 @@ class ClienteRepository extends DioService {
     return null;
   }
 
-  Future<dynamic> postCliente(Cliente cliente, String sobrenome) async {
+  Future<void> postCliente(Cliente cliente, String sobrenome) async {
     try {
       await dio.post(
         ServerEndpoints.clienteEndpoint,
@@ -66,7 +66,7 @@ class ClienteRepository extends DioService {
     }
   }
 
-  Future<dynamic> putCliente(Cliente cliente, String sobrenome) async {
+  Future<void> putCliente(Cliente cliente, String sobrenome) async {
     try {
       await dio.put(
         ServerEndpoints.clienteEndpoint,
@@ -88,7 +88,7 @@ class ClienteRepository extends DioService {
     }
   }
 
-  Future<dynamic> deleteClientes(List<int> idClientes) async {
+  Future<void> deleteClientes(List<int> idClientes) async {
     try {
       await dio.delete(
         ServerEndpoints.clienteEndpoint,

@@ -229,12 +229,12 @@ class _ClienteScreenState extends State<ClientePage> {
                     },
                   ),
 
-                  ClienteErrorState() => Column(
+                  _ => Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Icon(Icons.not_interested, size: 30),
                       const SizedBox(height: 16),
-                      Text(state.error.error)
+                      Text("Aconteceu um erro!!")
                     ],
                   ),
                 };

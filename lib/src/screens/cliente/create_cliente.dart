@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
+import 'package:lucid_validation/lucid_validation.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:serv_oeste/src/components/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
+import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
+import 'package:serv_oeste/src/models/cliente/cliente_create_form.dart';
 import '../../shared/constants.dart';
 import '../../components/dropdown_field.dart';
-import '../../components/mask_field.dart';
 import '../../models/cliente/cliente.dart';
 
 class CreateCliente extends StatefulWidget {
@@ -16,17 +21,26 @@ class CreateCliente extends StatefulWidget {
 
 class _CreateClienteState extends State<CreateCliente> {
   final EnderecoBloc _enderecoBloc = EnderecoBloc();
-  final List<String> _dropdownValuesNomes = [];
-  late TextEditingController nomeController,
-      telefoneFixoController,
-      telefoneCelularController,
-      cepController,
-      enderecoController,
-      bairroController,
-      municipioController;
+  final ClienteBloc _clienteBloc = ClienteBloc();
+  final ClienteCreateForm clienteCreateForm = ClienteCreateForm();
+  final ClienteCreateValidator clienteCreateValidator = ClienteCreateValidator();
+  final GlobalKey<FormState> clienteFormKey = GlobalKey<FormState>();
+  final List<MaskTextInputFormatter> maskCep = [
+    MaskTextInputFormatter(
+      mask: '#####-###',
+      filter: { "#": RegExp(r'[0-9]') },
+    )
+  ];
+  final List<MaskTextInputFormatter> maskTelefone = [
+    MaskTextInputFormatter(
+      mask: '(##) #####-####',
+      filter: { "#": RegExp(r'[0-9]') },
+    )
+  ];
+  late TextEditingController nomeController;
+  List<String> _dropdownValuesNomes = [];
+
   String _errorMessage = "",
-      _telefoneCelular = "",
-      _telefoneFixo = "",
       _sobrenome = "";
   bool
     validationNome = false,
@@ -41,23 +55,11 @@ class _CreateClienteState extends State<CreateCliente> {
   void initState() {
     super.initState();
     nomeController = TextEditingController();
-    telefoneFixoController = TextEditingController();
-    telefoneCelularController = TextEditingController();
-    cepController = TextEditingController();
-    enderecoController = TextEditingController();
-    bairroController = TextEditingController();
-    municipioController = TextEditingController();
   }
 
   @override
   void dispose() {
     nomeController.dispose();
-    telefoneFixoController.dispose();
-    telefoneCelularController.dispose();
-    cepController.dispose();
-    enderecoController.dispose();
-    bairroController.dispose();
-    municipioController.dispose();
     super.dispose();
   }
 
@@ -117,34 +119,32 @@ class _CreateClienteState extends State<CreateCliente> {
     });
   }
 
-  Cliente includeData() {
-    List<String> nomes = nomeController.text.split(" ");
-    String nome = nomes.first;
-    String sobrenome = "";
-    for(int i = 1; i < nomes.length; i++){
-      sobrenome += "${nomes[i]} ";
-    }
-    _sobrenome = sobrenome.trim();
-
-    _telefoneCelular = transformarMask(telefoneCelularController.text);
-    _telefoneFixo = transformarMask(telefoneFixoController.text);
-
-    return Cliente(
-      nome: nome,
-      telefoneCelular: _telefoneCelular,
-      telefoneFixo: _telefoneFixo,
-      endereco: enderecoController.text,
-      bairro: bairroController.text,
-      municipio: municipioController.text
-    );
+  void fetchClienteNames(String nome) async{
+    if(nome == "") return;
+    _clienteBloc.add(ClienteSearchEvent(nome: nome));
   }
 
-  String transformarMask(String telefone){
-    if(telefone.length != 15) return "";
-    return telefone.substring(1, 3) + telefone.substring(5, 10) + telefone.substring(11);
+  void fetchInformationAboutCep(String? cep) async {
+    if(cep?.length != 9) return;
+    clienteCreateForm.setCep(cep);
+    _enderecoBloc.add(EnderecoSearchCepEvent(cep: cep!));
   }
 
-  void adicionarCliente(BuildContext context) async{
+  bool isValidForm() {
+    clienteFormKey.currentState?.validate();
+    final ValidationResult response = clienteCreateValidator.validate(clienteCreateForm);
+    return response.isValid;
+  }
+
+  void registerCliente() {
+    List<String> nomes = clienteCreateForm.nome.value.split(" ");
+    clienteCreateForm.nome.value = nomes.first;
+    _sobrenome = nomes
+        .sublist(1)
+        .join(" ")
+        .trim();
+
+    _clienteBloc.add(ClienteRegisterEvent(cliente: Cliente.fromCreateForm(clienteCreateForm), sobrenome: _sobrenome));
     // ClienteService clienteService = ClienteService();
     // Cliente cliente = includeData();
     // dynamic body = await clienteService.create(cliente, _sobrenome);
@@ -155,26 +155,6 @@ class _CreateClienteState extends State<CreateCliente> {
     // }
     //
     // setError(body["idError"], body["message"]);
-  }
-
-  void getInformationsAboutCep(String? cep) async {
-    if(cep?.length != 9) return;
-    _enderecoBloc.add(EnderecoSearchCepEvent(cep: cep!));
-    setError(5, "Endereço não\n encontrado");
-  }
-
-  void getNomesClientes(String nome) async{
-    // List<Cliente>? clientes = await ClienteService().getByNome(nome);
-    // if(clientes == null) return;
-    // List<String> nomes = [];
-    // for (int i = 0; i < clientes.length && i < 5; i++) {
-    //   nomes.add(clientes[i].nome!);
-    // }
-    // if(_dropdownValuesNomes != nomes) {
-    //   setState(() {
-    //     _dropdownValuesNomes = nomes;
-    //   });
-    // }
   }
 
   @override
@@ -191,190 +171,144 @@ class _CreateClienteState extends State<CreateCliente> {
       body: Padding(
         padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
         child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              CustomSearchDropDown(
-                onChanged: (nome) => getNomesClientes(nome),
-                label: "Nome",
-                controller: nomeController,
-                maxLength: 40,
-                dropdownValues: _dropdownValuesNomes,
-                errorMessage: _errorMessage,
-                validation: validationNome
-              ),
-              CustomMaskField(
-                hint: "(99) 99999-9999",
-                label: "Telefone Celular",
-                mask: "(##) #####-####",
-                errorMessage: _errorMessage,
-                maxLength: 15,
-                controller: telefoneCelularController,
-                validation: validationTelefoneCelular,
-                type: TextInputType.phone,
-              ),  // Telefone Celular
-              CustomMaskField(
-                hint: "(99) 99999-9999",
-                label: "Telefone Fixo",
-                mask: "(##) #####-####",
-                errorMessage: _errorMessage,
-                maxLength: 15,
-                controller: telefoneFixoController,
-                validation: validationTelefoneFixo,
-                type: TextInputType.phone,
-              ),  // Telefone Fixo
-              BlocBuilder<EnderecoBloc, EnderecoState>(
-                bloc: _enderecoBloc,
-                builder: (context, state) {
-                  if (state is EnderecoSuccessState) {
-                    enderecoController.text = state.endereco!;
-                    municipioController.text = state.endereco!;
-                    enderecoController.text = state.endereco!;
+          child: Form(
+            key: clienteFormKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                BlocListener<ClienteBloc, ClienteState>(
+                  bloc: _clienteBloc,
+                  listener: (context, state) {
+                    if (state is ClienteSuccessState) {
+                      List<String> nomes = state.clientes
+                          .take(5)
+                          .map((cliente) => cliente.nome!)
+                          .toList();
 
-                    return Column(
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 5,
-                              child: CustomMaskField(
-                                hint: "00000-000",
-                                label: "CEP",
-                                mask: "#####-###",
-                                errorMessage: _errorMessage,
-                                maxLength: 9,
-                                hide: true,
-                                controller: cepController,
-                                validation: validationCep,
-                                type: TextInputType.number,
-                                rightPadding: 4,
-                                onChanged: getInformationsAboutCep,
-                              ),
-                            ), // CEP
-                            Expanded(
-                              flex: 8,
-                              child: CustomMaskField(
-                                hint: "Rua...",
-                                label: "Endereço, Número e Complemento",
-                                mask: null,
-                                errorMessage: _errorMessage,
-                                maxLength: 255,
-                                hide: true,
-                                controller: enderecoController,
-                                validation: validationEndereco,
-                                type: TextInputType.text,
-                                leftPadding: 4,
-                              ),
-                            ), // Endereço
-                          ],
-                        ),
-                        CustomDropdownField(
-                            label: "Município",
-                            dropdownValues: Constants.municipios,
-                            controller: municipioController
-                        ),
-                        CustomMaskField(
-                            hint: "Bairro...",
-                            label: "Bairro",
-                            mask: null,
-                            errorMessage: _errorMessage,
-                            maxLength: 255,
-                            hide: true,
-                            controller: bairroController,
-                            validation: validationBairro,
-                            type: TextInputType.text
-                        ), // Bairro
-                      ],
-                    );
-                  }
-                  else if (state is EnderecoInitialState || state is EnderecoLoadingState) {
-                    return Column(
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 5,
-                              child: CustomMaskField(
-                                hint: "00000-000",
-                                label: "CEP",
-                                mask: "#####-###",
-                                errorMessage: _errorMessage,
-                                maxLength: 9,
-                                hide: true,
-                                controller: cepController,
-                                validation: validationCep,
-                                type: TextInputType.number,
-                                rightPadding: 4,
-                                onChanged: getInformationsAboutCep,
-                              ),
-                            ), // CEP
-                            Expanded(
-                              flex: 8,
-                              child: CustomMaskField(
-                                hint: "Rua...",
-                                label: "Endereço, Número e Complemento",
-                                mask: null,
-                                errorMessage: _errorMessage,
-                                maxLength: 255,
-                                hide: true,
-                                controller: enderecoController,
-                                validation: validationEndereco,
-                                type: TextInputType.text,
-                                leftPadding: 4,
-                              ),
-                            ), // Endereço
-                          ],
-                        ),
-                        CustomDropdownField(
-                            label: "Município",
-                            dropdownValues: Constants.municipios,
-                            controller: municipioController
-                        ),
-                        CustomMaskField(
-                            hint: "Bairro...",
-                            label: "Bairro",
-                            mask: null,
-                            errorMessage: _errorMessage,
-                            maxLength: 255,
-                            hide: true,
-                            controller: bairroController,
-                            validation: validationBairro,
-                            type: TextInputType.text
-                        ), // Bairro
-                      ],
-                    );
-                  } else {
-                    return Column(
-                      children: [
-                        Text((state as EnderecoErrorState).error.error)
-                      ],
-                    );
-                  }
-                }
-              ),              
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(0, 32, 0, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 128),
-                      child: TextButton(
-                        onPressed: () => adicionarCliente(context),
-                        style: TextButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
-                          textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
-                        ),
-                        child: const Text("Adicionar"),
-                      ),
-                    ),
-                  ],
+                      if(_dropdownValuesNomes != nomes) {
+                        _dropdownValuesNomes = nomes;
+                        setState(() {});
+                      }
+                    }
+                  },
+                  child: CustomSearchDropDown(
+                    onChanged: fetchClienteNames,
+                    label: "Nome",
+                    controller: nomeController,
+                    maxLength: 40,
+                    dropdownValues: _dropdownValuesNomes,
+                    errorMessage: _errorMessage,
+                    validation: validationNome,
+                  ),
                 ),
-              )
-            ]
+                CustomTextFormField(
+                  valueNotifier: clienteCreateForm.telefoneCelular,
+                  hint: "(99) 99999-9999",
+                  label: "Telefone Celular",
+                  masks: maskTelefone,
+                  maxLength: 15,
+                  type: TextInputType.phone,
+                  hide: false,
+                  onChanged: clienteCreateForm.setTelefoneCelular,
+                ),  // Telefone Celular
+                CustomTextFormField(
+                  valueNotifier: clienteCreateForm.telefoneFixo,
+                  hint: "(99) 99999-9999",
+                  label: "Telefone Fixo",
+                  masks: maskTelefone,
+                  maxLength: 15,
+                  type: TextInputType.phone,
+                  hide: false,
+                  onChanged: clienteCreateForm.setTelefoneFixo,
+                ),  // Telefone Fixo
+                BlocListener<EnderecoBloc, EnderecoState>(
+                  bloc: _enderecoBloc,
+                  listener: (context, state) {
+                    if (state is EnderecoSuccessState) {
+                      clienteCreateForm.setEndereco(state.endereco!);
+                      clienteCreateForm.setMunicipio(state.municipio!);
+                      clienteCreateForm.setBairro(state.bairro!);
+                    } else if (state is EnderecoErrorState) {
+                      Logger().e(state.error.errorMessage);
+                    }
+                  },
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 5,
+                            child: CustomTextFormField(
+                              valueNotifier: clienteCreateForm.cep,
+                              hint: "00000-000",
+                              label: "CEP",
+                              hide: true,
+                              maxLength: 9,
+                              masks: maskCep,
+                              rightPadding: 4,
+                              type: TextInputType.number,
+                              validator: clienteCreateValidator.byField(clienteCreateForm, "cep"),
+                              onChanged: fetchInformationAboutCep,
+                            ),
+                          ), // CEP
+                          Expanded(
+                            flex: 8,
+                            child: CustomTextFormField(
+                              valueNotifier: clienteCreateForm.endereco,
+                              hint: "Rua...",
+                              label: "Endereço, Número e Complemento",
+                              validator: clienteCreateValidator.byField(clienteCreateForm, "endereco"),
+                              maxLength: 255,
+                              hide: true,
+                              type: TextInputType.text,
+                              leftPadding: 4,
+                              onChanged: clienteCreateForm.setEndereco,
+                            ),
+                          ), // Endereço
+                        ],
+                      ),
+                      CustomDropdownField(
+                        label: "Município",
+                        dropdownValues: Constants.municipios,
+                        valueNotifier: clienteCreateForm.municipio,
+                      ),
+                      CustomTextFormField(
+                        valueNotifier: clienteCreateForm.bairro,
+                        hint: "Bairro...",
+                        label: "Bairro",
+                        validator: clienteCreateValidator.byField(clienteCreateForm, "bairro"),
+                        maxLength: 255,
+                        hide: true,
+                        type: TextInputType.text,
+                        onChanged: clienteCreateForm.setBairro,
+                      ), // Bairro
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 32, 0, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 128),
+                        child: ElevatedButton(
+                          onPressed: () => Logger().w(isValidForm() ? "Válido" : "Inválido"),
+                          style: TextButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
+                          ),
+                          child: const Text("Adicionar"),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ]
+            ),
           ),
         )
       )

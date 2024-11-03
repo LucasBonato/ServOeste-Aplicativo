@@ -5,7 +5,6 @@ import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/models/servico/tecnico_disponivel.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/components/date_picker.dart';
-import 'package:serv_oeste/src/components/dropdown_field.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 
 import '../../components/mask_field.dart';
@@ -398,11 +397,11 @@ class _CreateServicoState extends State<CreateServico>{
                       ),  // Endereço
                     ],
                   ),
-                  CustomDropdownField(
-                      label: "Município",
-                      dropdownValues: Constants.municipios,
-                      controller: municipioController
-                  ),
+                  // CustomDropdownField(
+                  //     label: "Município",
+                  //     dropdownValues: Constants.municipios,
+                  //     controller: municipioController
+                  // ),
                   CustomMaskField(
                       hint: "Bairro...",
                       label: "Bairro",
@@ -445,11 +444,11 @@ class _CreateServicoState extends State<CreateServico>{
                       validation: marcaValidation,
                       controller: _marcaController
                   ),
-                  CustomDropdownField(
-                      label: "Filial",
-                      dropdownValues: Constants.filiais,
-                      controller: _filialController
-                  ),
+                  // CustomDropdownField(
+                  //     label: "Filial",
+                  //     dropdownValues: Constants.filiais,
+                  //     controller: _filialController
+                  // ),
                   CustomDatePicker(
                       label: "Data Atendimento Previsto",
                       hint: "",
@@ -461,11 +460,11 @@ class _CreateServicoState extends State<CreateServico>{
                       validation: dataAtendimentoPrevistaValidation,
                       controller: _dataAtendimentoPrevistaController
                   ),
-                  CustomDropdownField(
-                    label: "Horário Previsto",
-                    dropdownValues: Constants.dataAtendimento,
-                    controller: _horarioPrevistoController,
-                  ),
+                  // CustomDropdownField(
+                  //   label: "Horário Previsto",
+                  //   dropdownValues: Constants.dataAtendimento,
+                  //   controller: _horarioPrevistoController,
+                  // ),
                   CustomMaskField(
                       hint: "Descrição...",
                       label: "Descrição",
@@ -732,7 +731,6 @@ class _CreateServicoState extends State<CreateServico>{
   }
 
   Future _showDialog(BuildContext context) {
-    print(_descricaoController.text.isNotEmpty);
     return showDialog(
       context: context,
       builder: (BuildContext context) => Dialog(

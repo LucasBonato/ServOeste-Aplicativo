@@ -1,6 +1,5 @@
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import '../../shared/constants.dart';
-import '../../components/dropdown_field.dart';
 import 'package:flutter/material.dart';
 import '../../components/mask_field.dart';
 import 'package:logger/logger.dart';
@@ -304,11 +303,11 @@ class _UpdateClienteState extends State<UpdateCliente> {
                 ),  // Endereço
               ],
             ),
-            CustomDropdownField(
-              label: "Municipío",
-              controller: municipioController,
-              dropdownValues: Constants.municipios,
-            ),
+            // CustomDropdownField(
+            //   label: "Municipío",
+            //   controller: municipioController,
+            //   dropdownValues: Constants.municipios,
+            // ),
             CustomMaskField(
                 hint: "Bairro...",
                 label: "Bairro",
