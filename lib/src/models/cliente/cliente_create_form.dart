@@ -10,7 +10,7 @@ class ClienteCreateForm extends ChangeNotifier {
   ValueNotifier<String> municipio = ValueNotifier("");
   ValueNotifier<String> bairro = ValueNotifier("");
 
-  void setNomes(String? nome) {
+  void setNome(String? nome) {
     this.nome.value = nome?? "";
     notifyListeners();
   }
@@ -50,15 +50,11 @@ class ClienteCreateValidator extends LucidValidator<ClienteCreateForm> {
   ClienteCreateValidator() {
     ruleFor((form) => form.nome.value, key: "nome")
         .must((nome) => nome.isNotEmpty, "O nome é obrigatório!.", "nome")
-        .must((nome) => nome.split(" ").length > 1, "É necessário o nome e sobrenome!", "nome");
-
-    ruleFor((form) => form.telefoneCelular.value, key: "telefoneCelular")
-        .
-
+        .must((nome) => nome.split(" ").length > 1, "É necessário o nome e sobrenome!", "nome")
+        .must((nome) => nome.split(" ")[1].length > 2, "O sobrenome precisa ter 2 caracteres!", "nome");
 
     ruleFor((form) => form.endereco.value, key: "endereco")
-        .mustHaveNumber()
-        .isNotNull();
+        .mustHaveNumber();
 
     ruleFor((form) => form.municipio.value, key: "municipio")
         .isNotNull();
