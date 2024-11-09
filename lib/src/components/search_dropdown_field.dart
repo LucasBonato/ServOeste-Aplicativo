@@ -1,28 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:drop_down_search_field/drop_down_search_field.dart';
 
-//ignore: must_be_immutable
 class CustomSearchDropDown extends StatefulWidget {
-  final String label;
-  final List<String> dropdownValues;
   final TextEditingController controller;
-  final double? rightPadding;
-  final double? leftPadding;
+  final List<String> dropdownValues;
   final Function(String) onChanged;
-  final Function(String)? onSelected;
   final String errorMessage;
   final int maxLength;
+  final String label;
   final bool hide;
-  bool validation;
+  final double? leftPadding;
+  final double? rightPadding;
+  final Function(String)? onSelected;
+  final void Function(String?)? onSaved;
+  final String? Function([String?])? validator;
 
-  CustomSearchDropDown({
+  const CustomSearchDropDown({
     super.key,
     this.rightPadding,
     this.leftPadding,
     this.hide = false,
     this.onSelected,
+    this.onSaved,
+    this.validator,
     required this.maxLength,
-    required this.validation,
     required this.errorMessage,
     required this.onChanged,
     required this.label,
@@ -40,7 +41,9 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsetsDirectional.fromSTEB(widget.leftPadding != null ? widget.leftPadding! : 16, 4, widget.rightPadding != null ? widget.rightPadding! : 16, widget.hide ? 16 : 0),
-      child: DropDownSearchField(
+      child: DropDownSearchFormField(
+        onSaved: widget.onSaved,
+        validator: widget.validator,
         displayAllSuggestionWhenTap: false,
         textFieldConfiguration: TextFieldConfiguration(
           maxLength: widget.maxLength,
@@ -48,7 +51,6 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
           decoration: InputDecoration(
             counterText: widget.hide ? "" : null,
             labelText: widget.label,
-            error: (widget.validation) ? Text(widget.errorMessage, textAlign: TextAlign.center, style: const TextStyle(color: Colors.red),) : null,
             isDense: true,
             fillColor: const Color(0xFFF1F4F8),
             border: const OutlineInputBorder(
@@ -77,11 +79,6 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
             ),
           ),
           onChanged: widget.onChanged,
-          onTap: () => {
-            setState(() {
-              widget.validation = false;
-            })
-          },
         ),
         suggestionsCallback: (nome) async {
           return widget.dropdownValues;
