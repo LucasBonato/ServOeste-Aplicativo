@@ -41,17 +41,7 @@ class _CreateClienteState extends State<CreateCliente> {
   ];
   late TextEditingController nomeController;
   List<String> _dropdownValuesNomes = [];
-
-  String _errorMessage = "",
-      _sobrenome = "";
-  bool
-    validationNome = false,
-    validationTelefoneCelular = false,
-    validationTelefoneFixo = false,
-    validationCep = false,
-    validationEndereco = false,
-    validationBairro = false,
-    validationMunicipio = false;
+  String _sobrenome = "";
 
   @override
   void initState() {
@@ -65,81 +55,81 @@ class _CreateClienteState extends State<CreateCliente> {
     super.dispose();
   }
 
-  void setError(int erro, String errorMessage){
-    setErrorNome(String errorMessage){
-      _errorMessage = errorMessage;
-      validationNome = true;
-    }
-    setErrorTelefoneCelular(String errorMessage){
-      _errorMessage = errorMessage;
-      validationTelefoneCelular = true;
-    }
-    setErrorTelefoneFixo(String errorMessage){
-      _errorMessage = errorMessage;
-      validationTelefoneFixo = true;
-    }
-    setErrorTelefones(String errorMessage){
-      setErrorTelefoneCelular(errorMessage);
-      setErrorTelefoneFixo(errorMessage);
-    }
-    setErrorCep(String errorMessage){
-      _errorMessage = errorMessage;
-      validationCep = true;
-    }
-    setErrorEndereco(String errorMessage){
-      _errorMessage = errorMessage;
-      validationEndereco = true;
-    }
-    setErrorBairro(String errorMessage){
-      _errorMessage = errorMessage;
-      validationBairro = true;
-    }
-    setErrorMunicipio(String errorMessage){
-      _errorMessage = errorMessage;
-      validationMunicipio = true;
-    }
-    setState(() {
-      validationNome = false;
-      validationTelefoneCelular = false;
-      validationTelefoneFixo = false;
-      validationCep = false;
-      validationEndereco = false;
-      validationBairro = false;
-      validationMunicipio = false;
-      _errorMessage = "";
+  // void setError(int erro, String errorMessage){
+  //   setErrorNome(String errorMessage){
+  //     _errorMessage = errorMessage;
+  //     validationNome = true;
+  //   }
+  //   setErrorTelefoneCelular(String errorMessage){
+  //     _errorMessage = errorMessage;
+  //     validationTelefoneCelular = true;
+  //   }
+  //   setErrorTelefoneFixo(String errorMessage){
+  //     _errorMessage = errorMessage;
+  //     validationTelefoneFixo = true;
+  //   }
+  //   setErrorTelefones(String errorMessage){
+  //     setErrorTelefoneCelular(errorMessage);
+  //     setErrorTelefoneFixo(errorMessage);
+  //   }
+  //   setErrorCep(String errorMessage){
+  //     _errorMessage = errorMessage;
+  //     validationCep = true;
+  //   }
+  //   setErrorEndereco(String errorMessage){
+  //     _errorMessage = errorMessage;
+  //     validationEndereco = true;
+  //   }
+  //   setErrorBairro(String errorMessage){
+  //     _errorMessage = errorMessage;
+  //     validationBairro = true;
+  //   }
+  //   setErrorMunicipio(String errorMessage){
+  //     _errorMessage = errorMessage;
+  //     validationMunicipio = true;
+  //   }
+  //   setState(() {
+  //     validationNome = false;
+  //     validationTelefoneCelular = false;
+  //     validationTelefoneFixo = false;
+  //     validationCep = false;
+  //     validationEndereco = false;
+  //     validationBairro = false;
+  //     validationMunicipio = false;
+  //     _errorMessage = "";
+  //
+  //     switch(erro){
+  //       case 1: setErrorNome(errorMessage); break;
+  //       case 2: setErrorTelefoneCelular(errorMessage); break;
+  //       case 3: setErrorTelefoneFixo(errorMessage); break;
+  //       case 4: setErrorTelefones(errorMessage); break;
+  //       case 5: setErrorCep(errorMessage); break;
+  //       case 6: setErrorEndereco(errorMessage); break;
+  //       case 7: setErrorBairro(errorMessage); break;
+  //       case 8: setErrorMunicipio(errorMessage); break;
+  //     }
+  //   });
+  // }
 
-      switch(erro){
-        case 1: setErrorNome(errorMessage); break;
-        case 2: setErrorTelefoneCelular(errorMessage); break;
-        case 3: setErrorTelefoneFixo(errorMessage); break;
-        case 4: setErrorTelefones(errorMessage); break;
-        case 5: setErrorCep(errorMessage); break;
-        case 6: setErrorEndereco(errorMessage); break;
-        case 7: setErrorBairro(errorMessage); break;
-        case 8: setErrorMunicipio(errorMessage); break;
-      }
-    });
-  }
-
-  void fetchClienteNames(String nome) async{
+  void _fetchClienteNames(String nome) async{
     clienteCreateForm.setNome(nome);
     if(nome == "") return;
     _clienteBloc.add(ClienteSearchEvent(nome: nome));
   }
 
-  void fetchInformationAboutCep(String? cep) async {
+  void _fetchInformationAboutCep(String? cep) async {
     if(cep?.length != 9) return;
     clienteCreateForm.setCep(cep);
     _enderecoBloc.add(EnderecoSearchCepEvent(cep: cep!));
   }
 
-  bool isValidForm() {
+  bool _isValidForm() {
     clienteFormKey.currentState?.validate();
     final ValidationResult response = clienteCreateValidator.validate(clienteCreateForm);
     return response.isValid;
   }
 
-  void registerCliente() {
+  void _registerCliente() {
     List<String> nomes = clienteCreateForm.nome.value.split(" ");
     clienteCreateForm.nome.value = nomes.first;
     _sobrenome = nomes
@@ -195,12 +185,11 @@ class _CreateClienteState extends State<CreateCliente> {
                     }
                   },
                   child: CustomSearchDropDown(
-                    onChanged: fetchClienteNames,
+                    onChanged: _fetchClienteNames,
                     label: "Nome",
                     controller: nomeController,
                     maxLength: 40,
                     dropdownValues: _dropdownValuesNomes,
-                    errorMessage: _errorMessage,
                     validator: clienteCreateValidator.byField(clienteCreateForm, "nome"),
                   ),
                 ),
@@ -251,7 +240,7 @@ class _CreateClienteState extends State<CreateCliente> {
                               rightPadding: 4,
                               type: TextInputType.number,
                               validator: clienteCreateValidator.byField(clienteCreateForm, "cep"),
-                              onChanged: fetchInformationAboutCep,
+                              onChanged: _fetchInformationAboutCep,
                             ),
                           ), // CEP
                           Expanded(
@@ -298,7 +287,7 @@ class _CreateClienteState extends State<CreateCliente> {
                       Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 128),
                         child: ElevatedButton(
-                          onPressed: () => logger.w(isValidForm() ? "Válido" : "Inválido"),
+                          onPressed: () => logger.w(_isValidForm() ? "Válido" : "Inválido"),
                           style: TextButton.styleFrom(
                             backgroundColor: Colors.blue,
                             foregroundColor: Colors.white,

@@ -5,7 +5,6 @@ class CustomSearchDropDown extends StatefulWidget {
   final TextEditingController controller;
   final List<String> dropdownValues;
   final Function(String) onChanged;
-  final String errorMessage;
   final int maxLength;
   final String label;
   final bool hide;
@@ -24,7 +23,6 @@ class CustomSearchDropDown extends StatefulWidget {
     this.onSaved,
     this.validator,
     required this.maxLength,
-    required this.errorMessage,
     required this.onChanged,
     required this.label,
     required this.dropdownValues,
