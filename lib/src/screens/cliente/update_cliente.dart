@@ -246,7 +246,6 @@ class _UpdateClienteState extends State<UpdateCliente> {
               maxLength: 40,
               dropdownValues: _dropdownValuesNomes,
               errorMessage: _errorMessage,
-              validation: validationNome
             ),
             CustomMaskField(
               hint: "(99) 99999-9999",

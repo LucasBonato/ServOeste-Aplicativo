@@ -12,6 +12,8 @@ import '../../shared/constants.dart';
 import '../../components/dropdown_field.dart';
 import '../../models/cliente/cliente.dart';
 
+Logger logger = Logger();
+
 class CreateCliente extends StatefulWidget {
   const CreateCliente({super.key});
 
@@ -120,6 +122,7 @@ class _CreateClienteState extends State<CreateCliente> {
   }
 
   void fetchClienteNames(String nome) async{
+    clienteCreateForm.setNome(nome);
     if(nome == "") return;
     _clienteBloc.add(ClienteSearchEvent(nome: nome));
   }
@@ -198,7 +201,7 @@ class _CreateClienteState extends State<CreateCliente> {
                     maxLength: 40,
                     dropdownValues: _dropdownValuesNomes,
                     errorMessage: _errorMessage,
-                    validation: validationNome,
+                    validator: clienteCreateValidator.byField(clienteCreateForm, "nome"),
                   ),
                 ),
                 CustomTextFormField(
@@ -229,7 +232,7 @@ class _CreateClienteState extends State<CreateCliente> {
                       clienteCreateForm.setMunicipio(state.municipio!);
                       clienteCreateForm.setBairro(state.bairro!);
                     } else if (state is EnderecoErrorState) {
-                      Logger().e(state.error.errorMessage);
+                      logger.e(state.error.errorMessage);
                     }
                   },
                   child: Column(
@@ -295,7 +298,7 @@ class _CreateClienteState extends State<CreateCliente> {
                       Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 128),
                         child: ElevatedButton(
-                          onPressed: () => Logger().w(isValidForm() ? "Válido" : "Inválido"),
+                          onPressed: () => logger.w(isValidForm() ? "Válido" : "Inválido"),
                           style: TextButton.styleFrom(
                             backgroundColor: Colors.blue,
                             foregroundColor: Colors.white,

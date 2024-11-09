@@ -340,7 +340,6 @@ class _CreateServicoState extends State<CreateServico>{
                       hide: true,
                       dropdownValues: _dropdownValuesNomes,
                       errorMessage: _errorMessage,
-                      validation: validationNome
                   ),
                   CustomMaskField(
                     hint: "(99) 99999-9999",
@@ -431,7 +430,6 @@ class _CreateServicoState extends State<CreateServico>{
                       dropdownValues: Constants.equipamentos,
                       onChanged: (equipamento) => getNomeEquipamento(equipamento),
                       onSelected: (equipamento) => getNomeEquipamento(equipamento),
-                      validation: equipamentoValidation,
                       controller: _equipamentoController
                   ),
                   CustomSearchDropDown(
@@ -441,7 +439,6 @@ class _CreateServicoState extends State<CreateServico>{
                       errorMessage: _errorMessage,
                       dropdownValues: Constants.marcas,
                       onChanged: (value) {},
-                      validation: marcaValidation,
                       controller: _marcaController
                   ),
                   // CustomDropdownField(
@@ -484,7 +481,6 @@ class _CreateServicoState extends State<CreateServico>{
                       dropdownValues: _dropdownValuesNames,
                       onChanged: (nome) => getNomesTecnicos(nome),
                       onSelected: (nome) => getIdTecnico(nome),
-                      validation: tecnicoValidation,
                       controller: _tecnicoController
                   ),
                   Column(
