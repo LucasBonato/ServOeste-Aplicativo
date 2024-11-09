@@ -42,7 +42,7 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
   }
 
   Future<void> _registerClient(ClienteRegisterEvent event, Emitter emit) async {
-    emit(ClienteLoadingEvent());
+    emit(ClienteLoadingState());
     try {
       await _clienteRepository.postCliente(event.cliente, event.sobrenome);
       emit(ClienteRegisterSuccessState());

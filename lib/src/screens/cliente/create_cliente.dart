@@ -8,6 +8,7 @@ import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_create_form.dart';
+import 'package:serv_oeste/src/models/error/error_entity.dart';
 import '../../shared/constants.dart';
 import '../../components/dropdown_field.dart';
 import '../../models/cliente/cliente.dart';
@@ -130,6 +131,10 @@ class _CreateClienteState extends State<CreateCliente> {
   }
 
   void _registerCliente() {
+    if(_isValidForm() == false) {
+      return;
+    }
+
     List<String> nomes = clienteCreateForm.nome.value.split(" ");
     clienteCreateForm.nome.value = nomes.first;
     _sobrenome = nomes
@@ -138,16 +143,6 @@ class _CreateClienteState extends State<CreateCliente> {
         .trim();
 
     _clienteBloc.add(ClienteRegisterEvent(cliente: Cliente.fromCreateForm(clienteCreateForm), sobrenome: _sobrenome));
-    // ClienteService clienteService = ClienteService();
-    // Cliente cliente = includeData();
-    // dynamic body = await clienteService.create(cliente, _sobrenome);
-    //
-    // if(body == null && context.mounted) {
-    //   Navigator.pop(context);
-    //   return;
-    // }
-    //
-    // setError(body["idError"], body["message"]);
   }
 
   @override
@@ -278,7 +273,7 @@ class _CreateClienteState extends State<CreateCliente> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(0, 32, 0, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisSize: MainAxisSize.max,
@@ -286,14 +281,30 @@ class _CreateClienteState extends State<CreateCliente> {
                     children: [
                       Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 128),
-                        child: ElevatedButton(
-                          onPressed: () => logger.w(_isValidForm() ? "Válido" : "Inválido"),
-                          style: TextButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            foregroundColor: Colors.white,
-                            textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
+                        child: BlocListener<ClienteBloc, ClienteState>(
+                          bloc: _clienteBloc,
+                          listener: (context, state) {
+                            if (state is ClienteRegisterSuccessState) {
+                              Navigator.pop(context);
+                            }
+                            else if (state is ClienteErrorState) {
+                              ErrorEntity error = state.error;
+
+                              clienteCreateValidator.applyBackendError(error);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("[ERROR] Informação(ões) inválida(s) ao registrar o Cliente."))
+                              );
+                            }
+                          },
+                          child: ElevatedButton(
+                            onPressed: () => _registerCliente(),
+                            style: TextButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              foregroundColor: Colors.white,
+                              textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
+                            ),
+                            child: const Text("Adicionar"),
                           ),
-                          child: const Text("Adicionar"),
                         ),
                       ),
                     ],

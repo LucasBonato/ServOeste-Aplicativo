@@ -11,5 +11,4 @@ class ErrorEntity {
       id: json["id"],
       errorMessage: json["error"]
   );
-
 }

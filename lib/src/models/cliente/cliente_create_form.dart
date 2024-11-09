@@ -1,5 +1,6 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:lucid_validation/lucid_validation.dart';
+import 'package:serv_oeste/src/models/error/error_entity.dart';
 
 class ClienteCreateForm extends ChangeNotifier {
   ValueNotifier<String> nome = ValueNotifier("");
@@ -47,19 +48,64 @@ class ClienteCreateForm extends ChangeNotifier {
 }
 
 class ClienteCreateValidator extends LucidValidator<ClienteCreateForm> {
-  ClienteCreateValidator() {
-    ruleFor((form) => form.nome.value, key: "nome")
-        .must((nome) => nome.isNotEmpty, "O nome é obrigatório!.", "nome")
-        .must((nome) => nome.split(" ").length > 1, "É necessário o nome e sobrenome!", "nome")
-        .must((nome) => nome.split(" ")[1].length > 2, "O sobrenome precisa ter 2 caracteres!", "nome");
+  final Map<String, String> externalErrors = {};
+  final String nomeKey = "nome";
+  final String telefoneFixoKey = "telefoneFixo";
+  final String telefoneCelularKey = "telefoneCelular";
+  final String enderecoKey = "endereco";
+  final String municipioKey = "municipio";
+  final String bairroKey = "bairro";
 
-    ruleFor((form) => form.endereco.value, key: "endereco")
+  ClienteCreateValidator() {
+    ruleFor((form) => form.nome.value, key: nomeKey)
+        .must((nome) => nome.isNotEmpty, "O nome é obrigatório!.", nomeKey)
+        .must((nome) => nome.split(" ").length > 1, "É necessário o nome e sobrenome!", nomeKey)
+        .must((nome) => (nome.split(" ").length > 1 && nome.split(" ")[1].length > 2), "O sobrenome precisa ter 2 caracteres!", nomeKey);
+
+    ruleFor((form) => form.endereco.value, key: enderecoKey)
         .mustHaveNumber();
 
-    ruleFor((form) => form.municipio.value, key: "municipio")
+    ruleFor((form) => form.municipio.value, key: municipioKey)
         .isNotNull();
 
-    ruleFor((form) => form.bairro.value, key: "bairro")
-        .must((municipio) => municipio.isNotEmpty, "'bairro' cannot be empty", "bairro");
+    ruleFor((form) => form.bairro.value, key: bairroKey)
+        .must((municipio) => municipio.isNotEmpty, "'bairro' cannot be empty", bairroKey);
+  }
+
+  ValidationResult validateWithExternalErrors(ClienteCreateForm entity) {
+    ValidationResult result = validate(entity);
+
+    for(var entry in externalErrors.entries) {
+      result.exceptions.add(
+        ValidationException(message: entry.value, key: entry.key, code: "")
+      );
+    }
+
+    return ValidationResult(isValid: result.exceptions.isEmpty, exceptions: result.exceptions);
+  }
+
+  void applyBackendError(ErrorEntity errorEntity) {
+    switch (errorEntity.id) {
+      case 1: _addError(nomeKey, errorEntity.errorMessage);
+        break;
+      case 2: _addError(telefoneFixoKey, errorEntity.errorMessage);
+        break;
+      case 3: _addError(telefoneCelularKey, errorEntity.errorMessage);
+        break;
+      case 4:
+        _addError(telefoneFixoKey, errorEntity.errorMessage);
+        _addError(telefoneCelularKey, errorEntity.errorMessage);
+        break;
+      case 5: _addError(enderecoKey, errorEntity.errorMessage);
+        break;
+      case 6: _addError(municipioKey, errorEntity.errorMessage);
+        break;
+      case 7: _addError(bairroKey, errorEntity.errorMessage);
+        break;
+    }
+  }
+
+  void _addError(String key, String message) {
+    externalErrors[key] = message;
   }
 }
