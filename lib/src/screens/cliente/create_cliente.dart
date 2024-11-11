@@ -196,6 +196,7 @@ class _CreateClienteState extends State<CreateCliente> {
                   maxLength: 15,
                   type: TextInputType.phone,
                   hide: false,
+                  validator: clienteCreateValidator.byField(clienteCreateForm, "telefoneCelular"),
                   onChanged: clienteCreateForm.setTelefoneCelular,
                 ),  // Telefone Celular
                 CustomTextFormField(
@@ -206,6 +207,7 @@ class _CreateClienteState extends State<CreateCliente> {
                   maxLength: 15,
                   type: TextInputType.phone,
                   hide: false,
+                  validator: clienteCreateValidator.byField(clienteCreateForm, "telefoneFixo"),
                   onChanged: clienteCreateForm.setTelefoneFixo,
                 ),  // Telefone Fixo
                 BlocListener<EnderecoBloc, EnderecoState>(
@@ -291,6 +293,8 @@ class _CreateClienteState extends State<CreateCliente> {
                               ErrorEntity error = state.error;
 
                               clienteCreateValidator.applyBackendError(error);
+                              clienteCreateValidator.validateWithExternalErrors(clienteCreateForm);
+                              clienteFormKey.currentState?.validate();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text("[ERROR] Informação(ões) inválida(s) ao registrar o Cliente."))
                               );

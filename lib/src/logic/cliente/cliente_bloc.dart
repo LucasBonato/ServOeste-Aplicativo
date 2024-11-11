@@ -44,10 +44,10 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
   Future<void> _registerClient(ClienteRegisterEvent event, Emitter emit) async {
     emit(ClienteLoadingState());
     try {
-      await _clienteRepository.postCliente(event.cliente, event.sobrenome);
-      emit(ClienteRegisterSuccessState());
+      ErrorEntity? error = await _clienteRepository.postCliente(event.cliente, event.sobrenome);
+      emit((error == null)? ClienteRegisterSuccessState() : ClienteErrorState(error: error));
     } catch (e) {
-      emit(ClienteErrorState(error: (e as ErrorEntity)));
+      emit(ClienteErrorState(error: ErrorEntity(id: 0, errorMessage: "Algo deu errado!")));
     }
   }
 

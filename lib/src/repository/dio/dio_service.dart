@@ -26,10 +26,16 @@ class DioService {
   Dio get dio => _dio;
 
   ErrorEntity? onRequestError(DioException e) {
-    if(e.response != null && e.response!.data != null) {
-      dynamic json = jsonDecode(e.response!.data);
-      ErrorEntity error = ErrorEntity.fromJson(json);
-      return error;
+    if (e.error is JsonUnsupportedObjectError) {
+      try {
+        final unsupportedObject = (e.error as JsonUnsupportedObjectError).unsupportedObject;
+
+        if (unsupportedObject is Response && unsupportedObject.data is Map<String, dynamic>) {
+          return ErrorEntity.fromJson(unsupportedObject.data as Map<String, dynamic>);
+        }
+      } catch (decodeError) {
+        print("Erro ao decodificar e.error como JSON: $decodeError");
+      }
     }
     return null;
   }

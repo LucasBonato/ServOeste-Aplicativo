@@ -8,7 +8,7 @@ class ErrorEntity {
   });
 
   factory ErrorEntity.fromJson(Map<String, dynamic> json) => ErrorEntity(
-      id: json["id"],
-      errorMessage: json["error"]
+      id: json["idError"],
+      errorMessage: json["message"]
   );
 }

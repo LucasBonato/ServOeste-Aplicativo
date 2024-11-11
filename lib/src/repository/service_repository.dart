@@ -25,7 +25,7 @@ class ServiceRepository extends DioService {
     return null;
   }
 
-  Future<void> postServicoComClienteNaoExistente(ServicoRequest servico, ClienteRequest cliente) async {
+  Future<void> createServicoComClienteNaoExistente(ServicoRequest servico, ClienteRequest cliente) async {
     try {
       await dio.post(
         ServerEndpoints.servicoMaisClienteEndpoint,
@@ -55,7 +55,7 @@ class ServiceRepository extends DioService {
     }
   }
 
-  Future<void> postServicoComClienteExistente(ServicoRequest servico) async {
+  Future<void> createServicoComClienteExistente(ServicoRequest servico) async {
     try {
       await dio.post(
         ServerEndpoints.servicoEndpoint,

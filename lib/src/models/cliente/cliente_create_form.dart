@@ -62,6 +62,9 @@ class ClienteCreateValidator extends LucidValidator<ClienteCreateForm> {
         .must((nome) => nome.split(" ").length > 1, "É necessário o nome e sobrenome!", nomeKey)
         .must((nome) => (nome.split(" ").length > 1 && nome.split(" ")[1].length > 2), "O sobrenome precisa ter 2 caracteres!", nomeKey);
 
+    ruleFor((form) => form.telefoneCelular, key: telefoneCelularKey)
+        .when((form) => externalErrors.containsKey(telefoneCelularKey));
+
     ruleFor((form) => form.endereco.value, key: enderecoKey)
         .mustHaveNumber();
 
