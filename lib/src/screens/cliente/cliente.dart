@@ -1,16 +1,13 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-
-import 'package:super_sliver_list/super_sliver_list.dart';
-
-import 'package:serv_oeste/src/components/expandable_fab_items.dart';
-import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
-import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
-
-import '../../components/search_field.dart';
-import '../../models/cliente/cliente.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
+import 'package:serv_oeste/src/models/cliente/cliente.dart';
+import 'package:serv_oeste/src/components/search_field.dart';
+import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
+import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
+import 'package:serv_oeste/src/components/expandable_fab_items.dart';
 
 class ClientePage extends StatefulWidget {
   const ClientePage({super.key});

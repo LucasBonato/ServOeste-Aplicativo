@@ -249,6 +249,8 @@ class _CreateClienteState extends State<CreateCliente> {
 
   @override
   void dispose() {
+    _enderecoBloc.close();
+    _clienteBloc.close();
     _debounce?.cancel();
     super.dispose();
   }
