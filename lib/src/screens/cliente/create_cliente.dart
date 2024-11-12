@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
@@ -24,11 +26,18 @@ class _CreateClienteState extends State<CreateCliente> {
   final ClienteCreateForm clienteCreateForm = ClienteCreateForm();
   final ClienteCreateValidator clienteCreateValidator = ClienteCreateValidator();
   final GlobalKey<FormState> clienteFormKey = GlobalKey<FormState>();
+  Timer? _debounce;
   List<String> _dropdownValuesNomes = [];
+
+  void _onNomeChanged(String nome) {
+    if (_debounce?.isActive?? false) _debounce!.cancel();
+
+    _debounce = Timer(Duration(milliseconds: 150), () => _fetchClienteNames(nome));
+  }
 
   void _fetchClienteNames(String nome) async{
     clienteCreateForm.setNome(nome);
-    if (nome == "" || nome.length < 3) return;
+    if (nome == "") return;
     if (nome.split(" ").length > 1 && _dropdownValuesNomes.isEmpty) return;
     _clienteBloc.add(ClienteSearchEvent(nome: nome));
   }
@@ -96,7 +105,7 @@ class _CreateClienteState extends State<CreateCliente> {
                     }
                   },
                   child: CustomSearchDropDown(
-                    onChanged: _fetchClienteNames,
+                    onChanged: _onNomeChanged,
                     label: "Nome",
                     maxLength: 40,
                     dropdownValues: _dropdownValuesNomes,
@@ -235,5 +244,11 @@ class _CreateClienteState extends State<CreateCliente> {
         )
       )
     );
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
   }
 }
