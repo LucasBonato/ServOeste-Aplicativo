@@ -43,7 +43,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(widget.leftPadding != null ? widget.leftPadding! : 16, 4, widget.rightPadding != null ? widget.rightPadding! : 16, widget.hide ? 16 : 0),
+      padding: EdgeInsetsDirectional.fromSTEB(widget.leftPadding?? 16, 4, widget.rightPadding?? 16, widget.hide ? 16 : 0),
       child: DropDownSearchFormField(
         onSaved: widget.onSaved,
         validator: widget.validator,
@@ -51,6 +51,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
         textFieldConfiguration: TextFieldConfiguration(
           maxLength: widget.maxLength,
           controller: _customSearchController,
+          onChanged: widget.onChanged,
           decoration: InputDecoration(
             counterText: widget.hide ? "" : null,
             labelText: widget.label,
@@ -81,7 +82,6 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
               ),
             ),
           ),
-          onChanged: widget.onChanged,
         ),
         suggestionsCallback: (nome) async {
           return widget.dropdownValues;
@@ -94,13 +94,13 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
         },
         itemBuilder: (context, suggestion) {
           return ListTile(
-              title: Text(suggestion)
+            title: Text(suggestion)
           );
         },
         hideOnEmpty: true,
         debounceDuration: const Duration(milliseconds: 150),
         transitionBuilder: (context, suggestionBox, animationController) { return suggestionBox; },
-        suggestionsBoxVerticalOffset: 0,
+        suggestionsBoxVerticalOffset: -20,
       ),
     );
   }

@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
@@ -35,7 +34,7 @@ class _CreateClienteState extends State<CreateCliente> {
     _debounce = Timer(Duration(milliseconds: 150), () => _fetchClienteNames(nome));
   }
 
-  void _fetchClienteNames(String nome) async{
+  void _fetchClienteNames(String nome) async {
     clienteCreateForm.setNome(nome);
     if (nome == "") return;
     if (nome.split(" ").length > 1 && _dropdownValuesNomes.isEmpty) return;
