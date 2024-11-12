@@ -65,13 +65,14 @@ class _ClienteScreenState extends State<ClientePage> {
     });
   }
 
-  ExpandableFabItems _buildFab() => const ExpandableFabItems(
+  ExpandableFabItems _buildFab() => ExpandableFabItems(
     firstHeroTag: "cliente",
     secondHeroTag: "servico",
     firstRouterName: "/createCliente",
     secondRouterName: "/createServico",
     firstText: "Cliente",
-    secondText: "Serviço"
+    secondText: "Serviço",
+    updateList: () => _clienteBloc.add(ClienteSearchEvent()),
   );
 
   Widget _buildEditableSection(int id) => Row(

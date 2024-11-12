@@ -8,7 +8,7 @@ class ClienteCreateForm extends ChangeNotifier {
   ValueNotifier<String> telefoneFixo = ValueNotifier("");
   ValueNotifier<String> cep = ValueNotifier("");
   ValueNotifier<String> endereco = ValueNotifier("");
-  ValueNotifier<String> municipio = ValueNotifier("");
+  ValueNotifier<String> municipio = ValueNotifier("Osasco");
   ValueNotifier<String> bairro = ValueNotifier("");
 
   void setNome(String? nome) {
@@ -72,7 +72,8 @@ class ClienteCreateValidator extends LucidValidator<ClienteCreateForm> {
         .mustHaveNumber();
 
     ruleFor((cliente) => cliente.municipio.value, key: municipioKey)
-        .isNotNull();
+        .isNotNull()
+        .must((cliente) => cliente!.isNotEmpty, "Selecione um múnicipio", municipioKey);
 
     ruleFor((cliente) => cliente.bairro.value, key: bairroKey)
         .must((municipio) => municipio.isNotEmpty, "'bairro' cannot be empty", bairroKey);

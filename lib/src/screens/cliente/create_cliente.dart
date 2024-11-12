@@ -25,8 +25,8 @@ class _CreateClienteState extends State<CreateCliente> {
   final ClienteCreateForm clienteCreateForm = ClienteCreateForm();
   final ClienteCreateValidator clienteCreateValidator = ClienteCreateValidator();
   final GlobalKey<FormState> clienteFormKey = GlobalKey<FormState>();
-  Timer? _debounce;
   List<String> _dropdownValuesNomes = [];
+  Timer? _debounce;
 
   void _onNomeChanged(String nome) {
     if (_debounce?.isActive?? false) _debounce!.cancel();
@@ -75,7 +75,7 @@ class _CreateClienteState extends State<CreateCliente> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.pop(context, ""),
         ),
         title: const Text("Novo Cliente"),
         centerTitle: true,
@@ -181,6 +181,8 @@ class _CreateClienteState extends State<CreateCliente> {
                         label: "Município",
                         dropdownValues: Constants.municipios,
                         valueNotifier: clienteCreateForm.municipio,
+                        validator: clienteCreateValidator.byField(clienteCreateForm, "municipio"),
+                        onChanged: clienteCreateForm.setMunicipio,
                       ),
                       CustomTextFormField(
                         valueNotifier: clienteCreateForm.bairro,

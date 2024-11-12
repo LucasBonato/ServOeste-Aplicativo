@@ -9,6 +9,7 @@ class ExpandableFabItems extends StatelessWidget {
   final String secondRouterName;
   final String firstText;
   final String secondText;
+  final void Function() updateList;
 
   const ExpandableFabItems({
     super.key,
@@ -18,6 +19,7 @@ class ExpandableFabItems extends StatelessWidget {
     required this.secondRouterName,
     required this.firstText,
     required this.secondText,
+    required this.updateList
   });
 
   @override
@@ -28,7 +30,11 @@ class ExpandableFabItems extends StatelessWidget {
         Column(
           children: [
             FloatingActionButton(
-              onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed(firstRouterName),
+              onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed(firstRouterName).then((value) {
+                if (value == null) {
+                  updateList();
+                }
+              }),
               heroTag: firstHeroTag,
               mini: true,
               shape: const CircleBorder(eccentricity: 0),
@@ -40,11 +46,15 @@ class ExpandableFabItems extends StatelessWidget {
         Column(
           children: [
             FloatingActionButton(
-                onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed(secondRouterName),
-                heroTag: secondHeroTag,
-                mini: true,
-                shape: const CircleBorder(eccentricity: 0),
-                child: const Icon(Icons.content_paste)
+              onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed(secondRouterName).then((value) {
+                if (value == null) {
+                  updateList();
+                }
+              }),
+              heroTag: secondHeroTag,
+              mini: true,
+              shape: const CircleBorder(eccentricity: 0),
+              child: const Icon(Icons.content_paste)
             ),
             Text(secondText)
           ],
