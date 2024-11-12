@@ -57,34 +57,25 @@ class ClienteCreateValidator extends LucidValidator<ClienteCreateForm> {
   final String bairroKey = "bairro";
 
   ClienteCreateValidator() {
-    ruleFor((form) => form.nome.value, key: nomeKey)
+    ruleFor((cliente) => cliente.nome.value, key: nomeKey)
         .must((nome) => nome.isNotEmpty, "O nome é obrigatório!.", nomeKey)
         .must((nome) => nome.split(" ").length > 1, "É necessário o nome e sobrenome!", nomeKey)
         .must((nome) => (nome.split(" ").length > 1 && nome.split(" ")[1].length > 2), "O sobrenome precisa ter 2 caracteres!", nomeKey);
 
-    ruleFor((form) => form.telefoneCelular, key: telefoneCelularKey)
-        .when((form) => externalErrors.containsKey(telefoneCelularKey));
+    ruleFor((cliente) => cliente.telefoneCelular.value, key: telefoneCelularKey)
+        .customValidExternalErrors(externalErrors, telefoneCelularKey);
 
-    ruleFor((form) => form.endereco.value, key: enderecoKey)
+    ruleFor((cliente) => cliente.telefoneFixo.value, key: telefoneFixoKey)
+        .customValidExternalErrors(externalErrors, telefoneFixoKey);
+
+    ruleFor((cliente) => cliente.endereco.value, key: enderecoKey)
         .mustHaveNumber();
 
-    ruleFor((form) => form.municipio.value, key: municipioKey)
+    ruleFor((cliente) => cliente.municipio.value, key: municipioKey)
         .isNotNull();
 
-    ruleFor((form) => form.bairro.value, key: bairroKey)
+    ruleFor((cliente) => cliente.bairro.value, key: bairroKey)
         .must((municipio) => municipio.isNotEmpty, "'bairro' cannot be empty", bairroKey);
-  }
-
-  ValidationResult validateWithExternalErrors(ClienteCreateForm entity) {
-    ValidationResult result = validate(entity);
-
-    for(var entry in externalErrors.entries) {
-      result.exceptions.add(
-        ValidationException(message: entry.value, key: entry.key, code: "")
-      );
-    }
-
-    return ValidationResult(isValid: result.exceptions.isEmpty, exceptions: result.exceptions);
   }
 
   void applyBackendError(ErrorEntity errorEntity) {
@@ -95,9 +86,7 @@ class ClienteCreateValidator extends LucidValidator<ClienteCreateForm> {
         break;
       case 3: _addError(telefoneCelularKey, errorEntity.errorMessage);
         break;
-      case 4:
-        _addError(telefoneFixoKey, errorEntity.errorMessage);
-        _addError(telefoneCelularKey, errorEntity.errorMessage);
+      case 4: _addListError([telefoneFixoKey, telefoneCelularKey], errorEntity.errorMessage);
         break;
       case 5: _addError(enderecoKey, errorEntity.errorMessage);
         break;
@@ -108,7 +97,33 @@ class ClienteCreateValidator extends LucidValidator<ClienteCreateForm> {
     }
   }
 
+  void cleanExternalErrors() {
+    externalErrors.clear();
+  }
+
   void _addError(String key, String message) {
     externalErrors[key] = message;
+  }
+
+  void _addListError(List<String> keys, String message) {
+    for (String key in keys) {
+      externalErrors[key] = message;
+    }
+  }
+}
+
+extension on LucidValidationBuilder<String, ClienteCreateForm> {
+  LucidValidationBuilder<String, ClienteCreateForm> customValidExternalErrors(Map<String, String> externalErrors, String code) {
+    ValidationException? callback(value, entity) {
+      if(externalErrors[code] == null) {
+        return null;
+      }
+      return ValidationException(
+        message: externalErrors[code]!,
+        code: code
+      );
+    }
+
+    return use(callback);
   }
 }
