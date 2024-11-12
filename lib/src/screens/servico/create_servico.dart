@@ -333,7 +333,6 @@ class _CreateServicoState extends State<CreateServico>{
               CustomSearchDropDown(
                 onChanged: (nome) => getNomesClientes(nome),
                 label: "Nome",
-                controller: nomeController,
                 maxLength: 40,
                 hide: true,
                 dropdownValues: _dropdownValuesNomes,
@@ -426,7 +425,6 @@ class _CreateServicoState extends State<CreateServico>{
                 dropdownValues: Constants.equipamentos,
                 onChanged: (equipamento) => getNomeEquipamento(equipamento),
                 onSelected: (equipamento) => getNomeEquipamento(equipamento),
-                controller: _equipamentoController
               ),
               CustomSearchDropDown(
                 label: "Marca",
@@ -434,7 +432,6 @@ class _CreateServicoState extends State<CreateServico>{
                 hide: true,
                 dropdownValues: Constants.marcas,
                 onChanged: (value) {},
-                controller: _marcaController
               ),
               // CustomDropdownField(
               //     label: "Filial",
@@ -475,7 +472,6 @@ class _CreateServicoState extends State<CreateServico>{
                 dropdownValues: _dropdownValuesNames,
                 onChanged: (nome) => getNomesTecnicos(nome),
                 onSelected: (nome) => getIdTecnico(nome),
-                controller: _tecnicoController
               ),
               Column(
                 children: [

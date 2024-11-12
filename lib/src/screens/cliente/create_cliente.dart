@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
+import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:lucid_validation/lucid_validation.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:serv_oeste/src/components/custom_text_form_field.dart';
-import 'package:serv_oeste/src/components/search_dropdown_field.dart';
+import 'package:serv_oeste/src/models/cliente/cliente.dart';
+import 'package:serv_oeste/src/models/error/error_entity.dart';
+import 'package:serv_oeste/src/components/dropdown_field.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
+import 'package:serv_oeste/src/components/search_dropdown_field.dart';
+import 'package:serv_oeste/src/components/custom_text_form_field.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_create_form.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
-import '../../shared/constants.dart';
-import '../../components/dropdown_field.dart';
-import '../../models/cliente/cliente.dart';
-
-Logger logger = Logger();
 
 class CreateCliente extends StatefulWidget {
   const CreateCliente({super.key});
@@ -28,93 +24,12 @@ class _CreateClienteState extends State<CreateCliente> {
   final ClienteCreateForm clienteCreateForm = ClienteCreateForm();
   final ClienteCreateValidator clienteCreateValidator = ClienteCreateValidator();
   final GlobalKey<FormState> clienteFormKey = GlobalKey<FormState>();
-  final List<MaskTextInputFormatter> maskCep = [
-    MaskTextInputFormatter(
-      mask: '#####-###',
-      filter: { "#": RegExp(r'[0-9]') },
-    )
-  ];
-  final List<MaskTextInputFormatter> maskTelefone = [
-    MaskTextInputFormatter(
-      mask: '(##) #####-####',
-      filter: { "#": RegExp(r'[0-9]') },
-    )
-  ];
-  late TextEditingController nomeController;
   List<String> _dropdownValuesNomes = [];
-  String _sobrenome = "";
-
-  @override
-  void initState() {
-    super.initState();
-    nomeController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    nomeController.dispose();
-    super.dispose();
-  }
-
-  // void setError(int erro, String errorMessage){
-  //   setErrorNome(String errorMessage){
-  //     _errorMessage = errorMessage;
-  //     validationNome = true;
-  //   }
-  //   setErrorTelefoneCelular(String errorMessage){
-  //     _errorMessage = errorMessage;
-  //     validationTelefoneCelular = true;
-  //   }
-  //   setErrorTelefoneFixo(String errorMessage){
-  //     _errorMessage = errorMessage;
-  //     validationTelefoneFixo = true;
-  //   }
-  //   setErrorTelefones(String errorMessage){
-  //     setErrorTelefoneCelular(errorMessage);
-  //     setErrorTelefoneFixo(errorMessage);
-  //   }
-  //   setErrorCep(String errorMessage){
-  //     _errorMessage = errorMessage;
-  //     validationCep = true;
-  //   }
-  //   setErrorEndereco(String errorMessage){
-  //     _errorMessage = errorMessage;
-  //     validationEndereco = true;
-  //   }
-  //   setErrorBairro(String errorMessage){
-  //     _errorMessage = errorMessage;
-  //     validationBairro = true;
-  //   }
-  //   setErrorMunicipio(String errorMessage){
-  //     _errorMessage = errorMessage;
-  //     validationMunicipio = true;
-  //   }
-  //   setState(() {
-  //     validationNome = false;
-  //     validationTelefoneCelular = false;
-  //     validationTelefoneFixo = false;
-  //     validationCep = false;
-  //     validationEndereco = false;
-  //     validationBairro = false;
-  //     validationMunicipio = false;
-  //     _errorMessage = "";
-  //
-  //     switch(erro){
-  //       case 1: setErrorNome(errorMessage); break;
-  //       case 2: setErrorTelefoneCelular(errorMessage); break;
-  //       case 3: setErrorTelefoneFixo(errorMessage); break;
-  //       case 4: setErrorTelefones(errorMessage); break;
-  //       case 5: setErrorCep(errorMessage); break;
-  //       case 6: setErrorEndereco(errorMessage); break;
-  //       case 7: setErrorBairro(errorMessage); break;
-  //       case 8: setErrorMunicipio(errorMessage); break;
-  //     }
-  //   });
-  // }
 
   void _fetchClienteNames(String nome) async{
     clienteCreateForm.setNome(nome);
-    if(nome == "") return;
+    if (nome == "" || nome.length < 3) return;
+    if (nome.split(" ").length > 1 && _dropdownValuesNomes.isEmpty) return;
     _clienteBloc.add(ClienteSearchEvent(nome: nome));
   }
 
@@ -137,12 +52,13 @@ class _CreateClienteState extends State<CreateCliente> {
 
     List<String> nomes = clienteCreateForm.nome.value.split(" ");
     clienteCreateForm.nome.value = nomes.first;
-    _sobrenome = nomes
+    String sobrenome = nomes
         .sublist(1)
         .join(" ")
         .trim();
 
-    _clienteBloc.add(ClienteRegisterEvent(cliente: Cliente.fromCreateForm(clienteCreateForm), sobrenome: _sobrenome));
+    _clienteBloc.add(ClienteRegisterEvent(cliente: Cliente.fromCreateForm(clienteCreateForm), sobrenome: sobrenome));
+    clienteCreateForm.nome.value = "${nomes.first} $sobrenome";
   }
 
   @override
@@ -182,7 +98,6 @@ class _CreateClienteState extends State<CreateCliente> {
                   child: CustomSearchDropDown(
                     onChanged: _fetchClienteNames,
                     label: "Nome",
-                    controller: nomeController,
                     maxLength: 40,
                     dropdownValues: _dropdownValuesNomes,
                     validator: clienteCreateValidator.byField(clienteCreateForm, "nome"),
@@ -192,7 +107,7 @@ class _CreateClienteState extends State<CreateCliente> {
                   valueNotifier: clienteCreateForm.telefoneCelular,
                   hint: "(99) 99999-9999",
                   label: "Telefone Celular",
-                  masks: maskTelefone,
+                  masks: Constants.maskTelefone,
                   maxLength: 15,
                   type: TextInputType.phone,
                   hide: false,
@@ -203,7 +118,7 @@ class _CreateClienteState extends State<CreateCliente> {
                   valueNotifier: clienteCreateForm.telefoneFixo,
                   hint: "(99) 99999-9999",
                   label: "Telefone Fixo",
-                  masks: maskTelefone,
+                  masks: Constants.maskTelefone,
                   maxLength: 15,
                   type: TextInputType.phone,
                   hide: false,
@@ -217,8 +132,6 @@ class _CreateClienteState extends State<CreateCliente> {
                       clienteCreateForm.setEndereco(state.endereco!);
                       clienteCreateForm.setMunicipio(state.municipio!);
                       clienteCreateForm.setBairro(state.bairro!);
-                    } else if (state is EnderecoErrorState) {
-                      logger.e(state.error.errorMessage);
                     }
                   },
                   child: Column(
@@ -233,7 +146,7 @@ class _CreateClienteState extends State<CreateCliente> {
                               label: "CEP",
                               hide: true,
                               maxLength: 9,
-                              masks: maskCep,
+                              masks: Constants.maskCep,
                               rightPadding: 4,
                               type: TextInputType.number,
                               validator: clienteCreateValidator.byField(clienteCreateForm, "cep"),
@@ -293,11 +206,13 @@ class _CreateClienteState extends State<CreateCliente> {
                               ErrorEntity error = state.error;
 
                               clienteCreateValidator.applyBackendError(error);
-                              clienteCreateValidator.validateWithExternalErrors(clienteCreateForm);
                               clienteFormKey.currentState?.validate();
+                              clienteCreateValidator.cleanExternalErrors();
+
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text("[ERROR] Informação(ões) inválida(s) ao registrar o Cliente."))
                               );
+
                             }
                           },
                           child: ElevatedButton(

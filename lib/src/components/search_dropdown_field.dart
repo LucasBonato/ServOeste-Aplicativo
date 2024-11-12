@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:drop_down_search_field/drop_down_search_field.dart';
 
 class CustomSearchDropDown extends StatefulWidget {
-  final TextEditingController controller;
   final List<String> dropdownValues;
   final Function(String) onChanged;
   final int maxLength;
@@ -26,7 +25,6 @@ class CustomSearchDropDown extends StatefulWidget {
     required this.onChanged,
     required this.label,
     required this.dropdownValues,
-    required this.controller
   });
 
   @override
@@ -34,6 +32,13 @@ class CustomSearchDropDown extends StatefulWidget {
 }
 
 class _CustomSearchDropDown extends State<CustomSearchDropDown> {
+  late final TextEditingController _customSearchController;
+
+  @override
+  void initState() {
+    _customSearchController = TextEditingController();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +50,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
         displayAllSuggestionWhenTap: false,
         textFieldConfiguration: TextFieldConfiguration(
           maxLength: widget.maxLength,
-          controller: widget.controller,
+          controller: _customSearchController,
           decoration: InputDecoration(
             counterText: widget.hide ? "" : null,
             labelText: widget.label,
@@ -82,7 +87,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
           return widget.dropdownValues;
         },
         onSuggestionSelected: (String? suggestion) {
-          widget.controller.text = suggestion!;
+          _customSearchController.text = suggestion!;
           if(widget.onSelected != null) {
             widget.onSelected!(suggestion);
           }

@@ -242,7 +242,6 @@ class _UpdateClienteState extends State<UpdateCliente> {
             CustomSearchDropDown(
               onChanged: (nome) => getNomesClientes(nome),
               label: "Nome",
-              controller: nomeController,
               maxLength: 40,
               dropdownValues: _dropdownValuesNomes,
             ),

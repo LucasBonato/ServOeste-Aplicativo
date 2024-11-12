@@ -1,3 +1,4 @@
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 
@@ -10,6 +11,19 @@ class Constants {
   static const List<String> marcas = ["Brastemp", "Consul", "Electrolux", "Samsung"];
   static const List<String> filiais = ["Osasco", "Carapicuíba"];
   static const List<String> dataAtendimento = ["Manhã", "Tarde"];
+
+  static final List<MaskTextInputFormatter> maskCep = [
+    MaskTextInputFormatter(
+      mask: '#####-###',
+      filter: { "#": RegExp(r'[0-9]') },
+    )
+  ];
+  static final List<MaskTextInputFormatter> maskTelefone = [
+    MaskTextInputFormatter(
+      mask: '(##) #####-####',
+      filter: { "#": RegExp(r'[0-9]') },
+    )
+  ];
 
   static String deTransformarMask(String telefone) {
     return "(${telefone.substring(0, 2)}) ${telefone.substring(2, 7)}-${telefone.substring(7)}";
