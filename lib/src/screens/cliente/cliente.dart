@@ -83,8 +83,9 @@ class _ClienteScreenState extends State<ClientePage> {
             isSelected = false;
             _selectedItems.clear();
           });
-          Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateCliente(id: id))
-          );
+          
+          Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateCliente(id: id)))
+              .then((value) => value?? _clienteBloc.add(ClienteSearchEvent()));
         },
         icon: const Icon(Icons.edit, color: Colors.white),
         style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
@@ -115,11 +116,13 @@ class _ClienteScreenState extends State<ClientePage> {
           SearchTextField(
             hint: "Procure por Clientes...",
             controller: _nomeController,
-            onChangedAction: (String nome) => _clienteBloc.add(ClienteSearchEvent(
-              nome: nome,
-              telefone: _telefoneController.text,
-              endereco: _enderecoController.text
-            ))
+            onChangedAction: (String nome) => _clienteBloc.add(
+              ClienteSearchEvent(
+                nome: nome,
+                telefone: _telefoneController.text,
+                endereco: _enderecoController.text
+              )
+            )
           ),
           Row(
             children: [

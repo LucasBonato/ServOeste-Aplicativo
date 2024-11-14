@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:serv_oeste/src/models/cliente/cliente_create_form.dart';
+import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
 
 List<Cliente> clienteFromJson(String str) => List<Cliente>.from(json.decode(str));
 
@@ -23,13 +23,14 @@ class Cliente {
     this.municipio
   });
 
-  Cliente.fromCreateForm(ClienteCreateForm clienteCreateForm) {
-    nome = clienteCreateForm.nome.value;
-    telefoneFixo = transformTelefoneMask(clienteCreateForm.telefoneFixo.value);
-    telefoneCelular = transformTelefoneMask(clienteCreateForm.telefoneCelular.value);
-    endereco = clienteCreateForm.endereco.value;
-    bairro = clienteCreateForm.bairro.value;
-    municipio = clienteCreateForm.municipio.value;
+  Cliente.fromForm(ClienteForm clienteForm) {
+    id = clienteForm.id;
+    nome = clienteForm.nome.value;
+    telefoneFixo = transformTelefoneMask(clienteForm.telefoneFixo.value);
+    telefoneCelular = transformTelefoneMask(clienteForm.telefoneCelular.value);
+    endereco = clienteForm.endereco.value;
+    bairro = clienteForm.bairro.value;
+    municipio = clienteForm.municipio.value;
   }
 
   String transformTelefoneMask(String telefone){

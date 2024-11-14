@@ -9,18 +9,20 @@ class CustomSearchDropDown extends StatefulWidget {
   final bool hide;
   final double? leftPadding;
   final double? rightPadding;
+  final TextEditingController? controller;
   final Function(String)? onSelected;
   final void Function(String?)? onSaved;
   final String? Function([String?])? validator;
 
   const CustomSearchDropDown({
     super.key,
+    this.hide = false,
     this.rightPadding,
     this.leftPadding,
-    this.hide = false,
     this.onSelected,
     this.onSaved,
     this.validator,
+    this.controller,
     required this.maxLength,
     required this.onChanged,
     required this.label,
@@ -36,7 +38,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
 
   @override
   void initState() {
-    _customSearchController = TextEditingController();
+    _customSearchController = widget.controller?? TextEditingController();
     super.initState();
   }
 

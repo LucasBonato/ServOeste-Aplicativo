@@ -10,7 +10,7 @@ import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/components/custom_text_form_field.dart';
-import 'package:serv_oeste/src/models/cliente/cliente_create_form.dart';
+import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
 
 class CreateCliente extends StatefulWidget {
   const CreateCliente({super.key});
@@ -22,8 +22,8 @@ class CreateCliente extends StatefulWidget {
 class _CreateClienteState extends State<CreateCliente> {
   final EnderecoBloc _enderecoBloc = EnderecoBloc();
   final ClienteBloc _clienteBloc = ClienteBloc();
-  final ClienteCreateForm clienteCreateForm = ClienteCreateForm();
-  final ClienteCreateValidator clienteCreateValidator = ClienteCreateValidator();
+  final ClienteForm clienteCreateForm = ClienteForm();
+  final ClienteValidator clienteCreateValidator = ClienteValidator();
   final GlobalKey<FormState> clienteFormKey = GlobalKey<FormState>();
   List<String> _dropdownValuesNomes = [];
   Timer? _debounce;
@@ -65,7 +65,7 @@ class _CreateClienteState extends State<CreateCliente> {
         .join(" ")
         .trim();
 
-    _clienteBloc.add(ClienteRegisterEvent(cliente: Cliente.fromCreateForm(clienteCreateForm), sobrenome: sobrenome));
+    _clienteBloc.add(ClienteRegisterEvent(cliente: Cliente.fromForm(clienteCreateForm), sobrenome: sobrenome));
     clienteCreateForm.nome.value = "${nomes.first} $sobrenome";
   }
 

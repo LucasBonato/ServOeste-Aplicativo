@@ -7,6 +7,14 @@ final class ClienteInitialState extends ClienteState {}
 
 final class ClienteLoadingState extends ClienteState {}
 
+final class ClienteSearchOneSuccessState extends ClienteState {
+  final Cliente cliente;
+
+  ClienteSearchOneSuccessState({
+    required this.cliente
+  });
+}
+
 final class ClienteSuccessState extends ClienteState {
   final List<Cliente> clientes;
 
@@ -16,6 +24,8 @@ final class ClienteSuccessState extends ClienteState {
 }
 
 final class ClienteRegisterSuccessState extends ClienteState {}
+
+final class ClienteUpdateSuccessState extends ClienteState {}
 
 // final class ClienteSelectedItemsState extends ClienteState {
 //   final List<int> selectedItems;

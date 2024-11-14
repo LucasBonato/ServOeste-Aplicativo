@@ -1,11 +1,9 @@
-import 'dart:convert';
-
-import 'package:dio/dio.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
-import 'package:serv_oeste/src/repository/dio/dio_service.dart';
 import 'package:serv_oeste/src/repository/dio/server_endpoints.dart';
-
-import '../models/cliente/cliente.dart';
+import 'package:serv_oeste/src/repository/dio/dio_service.dart';
+import 'package:serv_oeste/src/models/error/error_entity.dart';
+import 'package:serv_oeste/src/models/cliente/cliente.dart';
+import 'package:dio/dio.dart';
+import 'dart:convert';
 
 class ClienteRepository extends DioService {
 
@@ -32,15 +30,14 @@ class ClienteRepository extends DioService {
     return null;
   }
 
-  Future<Cliente?> getClienteById(int id) async {
+  Future<Cliente?> getClienteById({required int id}) async {
     try {
       final response = await dio.get(
-        "${ServerEndpoints.clienteEndpoint}$id"
+        "${ServerEndpoints.clienteEndpoint}/$id"
       );
 
-      if(response.data != null) {
-        dynamic jsonResponse = json.decode(utf8.decode(response.data));
-        return Cliente.fromJson(jsonResponse);
+      if(response.data != null && response.data is Map) {
+        return Cliente.fromJson(response.data as Map<String, dynamic>);
       }
     } on DioException catch(e) {
       throw Exception(onRequestError(e));
@@ -68,7 +65,7 @@ class ClienteRepository extends DioService {
     return null;
   }
 
-  Future<void> putCliente(Cliente cliente, String sobrenome) async {
+  Future<ErrorEntity?> putCliente(Cliente cliente, String sobrenome) async {
     try {
       await dio.put(
         ServerEndpoints.clienteEndpoint,
@@ -86,8 +83,9 @@ class ClienteRepository extends DioService {
         }
       );
     } on DioException catch(e) {
-      throw Exception(onRequestError(e));
+      return onRequestError(e);
     }
+    return null;
   }
 
   Future<void> deleteClientes(List<int> idClientes) async {

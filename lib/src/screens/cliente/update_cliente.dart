@@ -1,9 +1,16 @@
+import 'package:serv_oeste/src/components/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
-import '../../shared/constants.dart';
+import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
+import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
+import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
+import 'package:serv_oeste/src/models/error/error_entity.dart';
+import 'package:serv_oeste/src/components/dropdown_field.dart';
+import 'package:serv_oeste/src/models/cliente/cliente.dart';
+import 'package:lucid_validation/lucid_validation.dart';
+import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import '../../components/mask_field.dart';
-import 'package:logger/logger.dart';
-import '../../models/cliente/cliente.dart';
+import 'dart:async';
 
 class UpdateCliente extends StatefulWidget {
   final int id;
@@ -18,192 +25,62 @@ class UpdateCliente extends StatefulWidget {
 }
 
 class _UpdateClienteState extends State<UpdateCliente> {
-  Cliente? cliente;
-  bool _isLoading = true, _fieldsLoaded = false;
-  final List<String> _dropdownValuesNomes = [];
-  late TextEditingController nomeController,
-      telefoneFixoController,
-      telefoneCelularController,
-      cepController,
-      enderecoController,
-      bairroController,
-      municipioController;
-  String _errorMessage = "",
-      _telefoneCelular = "",
-      _telefoneFixo = "",
-      _sobrenome = "";
-  bool validationNome = false,
-      validationTelefoneCelular = false,
-      validationTelefoneFixo = false,
-      validationCep = false,
-      validationEndereco = false,
-      validationBairro = false,
-      validationMunicipio = false;
+  final ClienteBloc _clienteBloc = ClienteBloc();
+  final EnderecoBloc _enderecoBloc = EnderecoBloc();
+  final ClienteForm _clienteUpdateForm = ClienteForm();
+  final ClienteValidator _clienteUpdateValidator = ClienteValidator();
+  final GlobalKey<FormState> _clienteFormKey = GlobalKey<FormState>();
+  final TextEditingController _nomeController = TextEditingController();
+  List<String> _dropdownValuesNomes = [];
+  Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
-    nomeController = TextEditingController();
-    telefoneFixoController = TextEditingController();
-    telefoneCelularController = TextEditingController();
-    cepController = TextEditingController();
-    enderecoController = TextEditingController();
-    bairroController = TextEditingController();
-    municipioController = TextEditingController();
-    loadCliente();
+    _clienteUpdateForm.setId(widget.id);
+    _clienteBloc.add(ClienteSearchOneEvent(id: widget.id));
   }
 
-  @override
-  void dispose() {
-    nomeController.dispose();
-    telefoneFixoController.dispose();
-    telefoneCelularController.dispose();
-    cepController.dispose();
-    enderecoController.dispose();
-    bairroController.dispose();
-    municipioController.dispose();
-    super.dispose();
+  void _onNomeChanged(String nome) {
+    if (_debounce?.isActive?? false) _debounce!.cancel();
+
+    _debounce = Timer(Duration(milliseconds: 150), () => _fetchClienteNames(nome));
   }
 
-  void loadCliente() async {
-    try {
-      //Cliente? cliente = await ClienteService().getById(widget.id);
-      if(mounted){
-        setState(() {
-          cliente = cliente;
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      Logger().e("Erro ao carregar o Cliente: $e");
-      if(mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
+  void _fetchClienteNames(String nome) async {
+    _clienteUpdateForm.setNome(nome);
+    if (nome == "") return;
+    if (nome.split(" ").length > 1 && _dropdownValuesNomes.isEmpty) return;
+    _clienteBloc.add(ClienteSearchEvent(nome: nome));
   }
 
-  void setError(int erro, String errorMessage){
-    setErrorNome(String errorMessage){
-      _errorMessage = errorMessage;
-      validationNome = true;
-    }
-    setErrorTelefoneCelular(String errorMessage){
-      _errorMessage = errorMessage;
-      validationTelefoneCelular = true;
-    }
-    setErrorTelefoneFixo(String errorMessage){
-      _errorMessage = errorMessage;
-      validationTelefoneFixo = true;
-    }
-    setErrorTelefones(String errorMessage){
-      setErrorTelefoneCelular(errorMessage);
-      setErrorTelefoneFixo(errorMessage);
-    }
-    setErrorCep(String errorMessage){
-      _errorMessage = errorMessage;
-      validationCep = true;
-    }
-    setErrorEndereco(String errorMessage){
-      _errorMessage = errorMessage;
-      validationEndereco = true;
-    }
-    setErrorBairro(String errorMessage){
-      _errorMessage = errorMessage;
-      validationBairro = true;
-    }
-    setErrorMunicipio(String errorMessage){
-      _errorMessage = errorMessage;
-      validationMunicipio = true;
-    }
-    if(mounted) {
-      setState(() {
-        validationNome = false;
-        validationTelefoneCelular = false;
-        validationTelefoneFixo = false;
-        validationCep = false;
-        validationEndereco = false;
-        validationBairro = false;
-        validationMunicipio = false;
-        _errorMessage = "";
-
-        switch(erro){
-          case 1: setErrorNome(errorMessage); break;
-          case 2: setErrorTelefoneCelular(errorMessage); break;
-          case 3: setErrorTelefoneFixo(errorMessage); break;
-          case 4: setErrorTelefones(errorMessage); break;
-          case 5: setErrorCep(errorMessage); break;
-          case 6: setErrorEndereco(errorMessage); break;
-          case 7: setErrorBairro(errorMessage); break;
-          case 8: setErrorMunicipio(errorMessage); break;
-        }
-      });
-    }
-  }
-
-  Cliente includeData() {
-    List<String> nomes = nomeController.text.split(" ");
-    String nome = nomes.first;
-    String sobrenome = "";
-    for(int i = 1; i < nomes.length; i++){
-      sobrenome += "${nomes[i]} ";
-    }
-    _sobrenome = sobrenome.trim();
-
-    _telefoneCelular = Constants.transformarMask(telefoneCelularController.text);
-    _telefoneFixo = Constants.transformarMask(telefoneFixoController.text);
-
-    return Cliente(
-      id: widget.id,
-      nome: nome,
-      telefoneCelular: _telefoneCelular,
-      telefoneFixo: _telefoneFixo,
-      endereco: enderecoController.text,
-      bairro: bairroController.text,
-      municipio: municipioController.text
-    );
-  }
-
-  void atualizarCliente(BuildContext context) async{
-    // Cliente cliente = includeData();
-    // dynamic body = await ClienteService().update(cliente, _sobrenome);
-    //
-    // if(body == null && context.mounted) {
-    //   Navigator.pop(context);
-    //   return;
-    // }
-    //
-    // setError(body["idError"], body["message"]);
-  }
-
-  void getInformationsAboutCep(String? cep) async {
+  void _fetchInformationAboutCep(String? cep) async {
     if(cep?.length != 9) return;
-    // String? endereco = await ClienteService().getEndereco(cep!);
-    // if(endereco != null) {
-    //   List<String> camposSobreEndereco = endereco.split("|");
-    //   if(mounted){
-    //     enderecoController.text = camposSobreEndereco[0];
-    //     bairroController.text = camposSobreEndereco[1];
-    //     municipioController.text = camposSobreEndereco[2];
-    //   }
-    //   return;
-    // }
-    // setError(5, "Endereço não\n encontrado");
+    _clienteUpdateForm.setCep(cep);
+    _enderecoBloc.add(EnderecoSearchCepEvent(cep: cep!));
   }
 
-  void getNomesClientes(String nome) async{
-    // List<Cliente>? clientes = await ClienteService().getByNome(nome);
-    // if(clientes == null) return;
-    // List<String> nomes = [];
-    // for (int i = 0; i < clientes.length && i < 5; i++) {
-    //   nomes.add(clientes[i].nome!);
-    // }
-    // if(_dropdownValuesNomes != nomes && mounted) {
-    //   setState(() {
-    //     _dropdownValuesNomes = nomes;
-    //   });
-    // }
+  void _updateCliente() {
+    if(_isValidForm() == false) {
+      return;
+    }
+
+    List<String> nomes = _clienteUpdateForm.nome.value.split(" ");
+    _clienteUpdateForm.nome.value = nomes.first;
+    String sobrenome = nomes
+        .sublist(1)
+        .join(" ")
+        .trim();
+
+    _clienteBloc.add(ClienteUpdateEvent(cliente: Cliente.fromForm(_clienteUpdateForm), sobrenome: sobrenome));
+    _clienteUpdateForm.nome.value = "${nomes.first} $sobrenome";
+
+  }
+
+  bool _isValidForm() {
+    _clienteFormKey.currentState?.validate();
+    final ValidationResult response = _clienteUpdateValidator.validate(_clienteUpdateForm);
+    return response.isValid;
   }
 
   @override
@@ -217,130 +94,203 @@ class _UpdateClienteState extends State<UpdateCliente> {
         title: const Text("Atualizar Cliente"),
         centerTitle: true,
       ),
-      body: _isLoading
-        ? const Center(child: CircularProgressIndicator())
-        : buildClienteUpdatePage(cliente)
+      body: BlocBuilder<ClienteBloc, ClienteState>(
+        bloc: _clienteBloc,
+        buildWhen: (previousState, state) {
+          if(state is ClienteSearchOneSuccessState) {
+            _clienteUpdateForm.nome.value = state.cliente.nome!;
+            _nomeController.text = _clienteUpdateForm.nome.value;
+            _clienteUpdateForm.telefoneCelular.value = (state.cliente.telefoneCelular!.isEmpty ? "" :  Constants.deTransformarMask(state.cliente.telefoneCelular!));
+            _clienteUpdateForm.telefoneFixo.value = (state.cliente.telefoneFixo!.isEmpty ? "" : Constants.deTransformarMask(state.cliente.telefoneFixo!));
+            _clienteUpdateForm.endereco.value = state.cliente.endereco!;
+            _clienteUpdateForm.municipio.value = state.cliente.municipio!;
+            _clienteUpdateForm.bairro.value = state.cliente.bairro!;
+            return true;
+          }
+          return false;
+        },
+        builder: (context, state) {
+          return switch(state) {
+            ClienteLoadingState() => const Center(child: CircularProgressIndicator.adaptive()),
+
+            ClienteSearchOneSuccessState() => Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _clienteFormKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      BlocListener<ClienteBloc, ClienteState>(
+                        bloc: _clienteBloc,
+                        listener: (context, state) {
+                          if (state is ClienteSuccessState) {
+                            List<String> nomes = state.clientes
+                                .take(5)
+                                .map((cliente) => cliente.nome!)
+                                .toList();
+
+                            if(_dropdownValuesNomes != nomes) {
+                              _dropdownValuesNomes = nomes;
+                              setState(() {});
+                            }
+                          }
+                        },
+                        child: CustomSearchDropDown(
+                          onChanged: _onNomeChanged,
+                          controller: _nomeController,
+                          label: "Nome",
+                          maxLength: 40,
+                          dropdownValues: _dropdownValuesNomes,
+                          validator: _clienteUpdateValidator.byField(_clienteUpdateForm, "nome"),
+                        ),
+                      ),
+                      CustomTextFormField(
+                        valueNotifier: _clienteUpdateForm.telefoneCelular,
+                        hint: "(99) 99999-9999",
+                        label: "Telefone Celular",
+                        masks: Constants.maskTelefone,
+                        maxLength: 15,
+                        type: TextInputType.phone,
+                        hide: false,
+                        validator: _clienteUpdateValidator.byField(_clienteUpdateForm, "telefoneCelular"),
+                        onChanged: _clienteUpdateForm.setTelefoneCelular,
+                      ),  // Telefone Celular
+                      CustomTextFormField(
+                        valueNotifier: _clienteUpdateForm.telefoneFixo,
+                        hint: "(99) 99999-9999",
+                        label: "Telefone Fixo",
+                        masks: Constants.maskTelefone,
+                        maxLength: 15,
+                        type: TextInputType.phone,
+                        hide: false,
+                        validator: _clienteUpdateValidator.byField(_clienteUpdateForm, "telefoneFixo"),
+                        onChanged: _clienteUpdateForm.setTelefoneFixo,
+                      ),  // Telefone Fixo
+                      BlocListener<EnderecoBloc, EnderecoState>(
+                        bloc: _enderecoBloc,
+                        listener: (context, state) {
+                          if (state is EnderecoSuccessState) {
+                            _clienteUpdateForm.setEndereco(state.endereco!);
+                            _clienteUpdateForm.setMunicipio(state.municipio!);
+                            _clienteUpdateForm.setBairro(state.bairro!);
+                          }
+                        },
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  flex: 5,
+                                  child: CustomTextFormField(
+                                    valueNotifier: _clienteUpdateForm.cep,
+                                    hint: "00000-000",
+                                    label: "CEP",
+                                    hide: true,
+                                    maxLength: 9,
+                                    masks: Constants.maskCep,
+                                    rightPadding: 4,
+                                    type: TextInputType.number,
+                                    validator: _clienteUpdateValidator.byField(_clienteUpdateForm, "cep"),
+                                    onChanged: _fetchInformationAboutCep,
+                                  ),
+                                ), // CEP
+                                Expanded(
+                                  flex: 8,
+                                  child: CustomTextFormField(
+                                    valueNotifier: _clienteUpdateForm.endereco,
+                                    hint: "Rua...",
+                                    label: "Endereço, Número e Complemento",
+                                    maxLength: 255,
+                                    hide: true,
+                                    type: TextInputType.text,
+                                    leftPadding: 4,
+                                    validator: _clienteUpdateValidator.byField(_clienteUpdateForm, "endereco"),
+                                    onChanged: _clienteUpdateForm.setEndereco,
+                                  ),
+                                ), // Endereço
+                              ],
+                            ),
+                            CustomDropdownField(
+                              label: "Município",
+                              dropdownValues: Constants.municipios,
+                              valueNotifier: _clienteUpdateForm.municipio,
+                              validator: _clienteUpdateValidator.byField(_clienteUpdateForm, "municipio"),
+                              onChanged: _clienteUpdateForm.setMunicipio,
+                            ),
+                            CustomTextFormField(
+                              valueNotifier: _clienteUpdateForm.bairro,
+                              hint: "Bairro...",
+                              label: "Bairro",
+                              maxLength: 255,
+                              hide: true,
+                              type: TextInputType.text,
+                              validator: _clienteUpdateValidator.byField(_clienteUpdateForm, "bairro"),
+                              onChanged: _clienteUpdateForm.setBairro,
+                            ), // Bairro
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 128),
+                              child: BlocListener<ClienteBloc, ClienteState>(
+                                bloc: _clienteBloc,
+                                listener: (context, state) {
+                                  if (state is ClienteUpdateSuccessState) {
+                                    Navigator.pop(context);
+                                  }
+                                  else if (state is ClienteErrorState) {
+                                    ErrorEntity error = state.error;
+
+                                    _clienteUpdateValidator.applyBackendError(error);
+                                    _clienteFormKey.currentState?.validate();
+                                    _clienteUpdateValidator.cleanExternalErrors();
+
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text("[ERROR] Informação(ões) inválida(s) ao registrar o Cliente."))
+                                    );
+
+                                  }
+                                },
+                                child: ElevatedButton(
+                                  onPressed: () => _updateCliente(),
+                                  style: TextButton.styleFrom(
+                                    backgroundColor: Colors.blue,
+                                    foregroundColor: Colors.white,
+                                    textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
+                                  ),
+                                  child: const Text("Atualizar"),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ]
+                  ),
+                ),
+              )
+            ),
+
+            _ => const Center(child: CircularProgressIndicator.adaptive()),
+          };
+        },
+      )
     );
   }
 
-  Widget buildClienteUpdatePage(Cliente? cliente) {
-    if(!_fieldsLoaded && cliente != null) {
-      nomeController.text = cliente.nome!;
-      telefoneCelularController.text = (cliente.telefoneCelular == null || cliente.telefoneCelular == "") ? "" : Constants.deTransformarMask(cliente.telefoneCelular!);
-      telefoneFixoController.text = (cliente.telefoneFixo == null || cliente.telefoneFixo == "") ? "" : Constants.deTransformarMask(cliente.telefoneFixo!);
-      enderecoController.text = cliente.endereco!;
-      municipioController.text = cliente.municipio!;
-      bairroController.text = cliente.bairro!;
-      _fieldsLoaded = true;
-    }
-    return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            CustomSearchDropDown(
-              onChanged: (nome) => getNomesClientes(nome),
-              label: "Nome",
-              maxLength: 40,
-              dropdownValues: _dropdownValuesNomes,
-            ),
-            CustomMaskField(
-              hint: "(99) 99999-9999",
-              label: "Telefone Celular",
-              mask: "(##) #####-####",
-              errorMessage: _errorMessage,
-              maxLength: 15,
-              controller: telefoneCelularController,
-              validation: validationTelefoneCelular,
-              type: TextInputType.phone,
-            ),  // Telefone Celular
-            CustomMaskField(
-              hint: "(99) 99999-9999",
-              label: "Telefone Fixo",
-              mask: "(##) #####-####",
-              errorMessage: _errorMessage,
-              maxLength: 15,
-              controller: telefoneFixoController,
-              validation: validationTelefoneFixo,
-              type: TextInputType.phone,
-            ),  // Telefone Fixo
-            Row(
-              children: [
-                Expanded(
-                  flex: 5,
-                  child: CustomMaskField(
-                    hint: "00000-000",
-                    label: "CEP",
-                    mask: "#####-###",
-                    errorMessage: _errorMessage,
-                    maxLength: 9,
-                    hide: true,
-                    controller: cepController,
-                    validation: validationCep,
-                    type: TextInputType.number,
-                    rightPadding: 4,
-                    onChanged: (cep) => getInformationsAboutCep(cep),
-                  ),
-                ),  // CEP
-                Expanded(
-                  flex: 8,
-                  child: CustomMaskField(
-                    hint: "Rua...",
-                    label: "Endereço, Número e Complemento",
-                    mask: null,
-                    errorMessage: _errorMessage,
-                    maxLength: 255,
-                    hide: true,
-                    controller: enderecoController,
-                    validation: validationEndereco,
-                    type: TextInputType.text,
-                    leftPadding: 4,
-                  ),
-                ),  // Endereço
-              ],
-            ),
-            // CustomDropdownField(
-            //   label: "Municipío",
-            //   controller: municipioController,
-            //   dropdownValues: Constants.municipios,
-            // ),
-            CustomMaskField(
-                hint: "Bairro...",
-                label: "Bairro",
-                mask: null,
-                errorMessage: _errorMessage,
-                maxLength: 255,
-                hide: true,
-                controller: bairroController,
-                validation: validationBairro,
-                type: TextInputType.text
-            ),  // Bairro
-            Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(0, 32, 0, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 128),
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
-                        textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
-                      ),
-                      onPressed: () => atualizarCliente(context),
-                      child: const Text("Atualizar"),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ]
-        ),
-      )
-    );
+  @override
+  void dispose() {
+    _clienteBloc.close();
+    _enderecoBloc.close();
+    _nomeController.dispose();
+    super.dispose();
   }
 }

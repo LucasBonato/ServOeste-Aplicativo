@@ -15,6 +15,14 @@ final class ClienteLoadingEvent extends ClienteEvent {
   });
 }
 
+final class ClienteSearchOneEvent extends ClienteEvent {
+  final int id;
+
+  ClienteSearchOneEvent({
+    required this.id
+  });
+}
+
 final class ClienteSearchEvent extends ClienteEvent {
   final String? nome;
   final String? telefone;
@@ -32,6 +40,16 @@ final class ClienteRegisterEvent extends ClienteEvent {
   final String sobrenome;
 
   ClienteRegisterEvent({
+    required this.cliente,
+    required this.sobrenome
+  });
+}
+
+final class ClienteUpdateEvent extends ClienteEvent {
+  final Cliente cliente;
+  final String sobrenome;
+
+  ClienteUpdateEvent({
     required this.cliente,
     required this.sobrenome
   });

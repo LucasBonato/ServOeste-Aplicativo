@@ -13,11 +13,26 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
   String? _nome, _telefone, _endereco;
 
   ClienteBloc() : super(ClienteInitialState()) {
+    on<ClienteSearchOneEvent>(_fetchOneClient);
     on<ClienteLoadingEvent>(_fetchAllClients);
     on<ClienteSearchEvent>(_searchClients);
-    //on<ClienteToggleItemSelectEvent>(_toggleItemsSelected);
     on<ClienteDeleteListEvent>(_deleteListClients);
+    on<ClienteUpdateEvent>(_updateClient);
     on<ClienteRegisterEvent>(_registerClient);
+    //on<ClienteToggleItemSelectEvent>(_toggleItemsSelected);
+  }
+
+  Future<void> _fetchOneClient(ClienteSearchOneEvent event, Emitter emit) async {
+    emit(ClienteLoadingState());
+    try {
+      final Cliente? cliente = await _clienteRepository.getClienteById(id: event.id);
+      if (cliente != null) {
+        emit(ClienteSearchOneSuccessState(cliente: cliente));
+      }
+      emit(ClienteErrorState(error: ErrorEntity(id: 0, errorMessage: "")));
+    } on DioException catch (e) {
+      emit(ClienteErrorState(error: e as ErrorEntity));
+    }
   }
 
   Future<void> _fetchAllClients(ClienteLoadingEvent event, Emitter emit) async {
@@ -51,6 +66,26 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
     }
   }
 
+  Future<void> _updateClient(ClienteUpdateEvent event, Emitter emit) async {
+    emit(ClienteLoadingState());
+    try {
+      ErrorEntity? error = await _clienteRepository.putCliente(event.cliente, event.sobrenome);
+      emit(error == null ? ClienteUpdateSuccessState() : ClienteErrorState(error: error));
+    } catch (e) {
+      emit(ClienteErrorState(error: ErrorEntity(id: 0, errorMessage: "Algo deu errado!")));
+    }
+  }
+
+  Future<void> _deleteListClients(ClienteDeleteListEvent event, Emitter emit) async {
+    emit(ClienteLoadingEvent());
+    try {
+      await _clienteRepository.deleteClientes(event.selectedList);
+      await _fetchAllClients(ClienteLoadingEvent(nome: _nome, telefone: _telefone, endereco: _endereco), emit);
+    } catch(e) {
+      emit(ClienteErrorState(error: ErrorEntity(id: 0, errorMessage: "")));
+    }
+  }
+
   // Future<void> _toggleItemsSelected(ClienteToggleItemSelectEvent event, Emitter emit) {
   //   final newSelectedItems = List<int>.from(state.selectedItems);
   //
@@ -62,14 +97,4 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
   //
   //   emit(ClienteSelectedItemsState(selectedItems: newSelectedItems));
   // }
-
-  Future<void> _deleteListClients(ClienteDeleteListEvent event, Emitter emit) async {
-    emit(ClienteLoadingEvent());
-    try {
-      await _clienteRepository.deleteClientes(event.selectedList);
-      await _fetchAllClients(ClienteLoadingEvent(nome: _nome, telefone: _telefone, endereco: _endereco), emit);
-    } catch(e) {
-      emit(ClienteErrorState(error: ErrorEntity(id: 0, errorMessage: "")));
-    }
-  }
 }

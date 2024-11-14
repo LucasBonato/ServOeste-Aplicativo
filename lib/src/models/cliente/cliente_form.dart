@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 
-class ClienteCreateForm extends ChangeNotifier {
+class ClienteForm extends ChangeNotifier {
+  int? id;
   ValueNotifier<String> nome = ValueNotifier("");
   ValueNotifier<String> telefoneCelular = ValueNotifier("");
   ValueNotifier<String> telefoneFixo = ValueNotifier("");
@@ -10,6 +11,10 @@ class ClienteCreateForm extends ChangeNotifier {
   ValueNotifier<String> endereco = ValueNotifier("");
   ValueNotifier<String> municipio = ValueNotifier("Osasco");
   ValueNotifier<String> bairro = ValueNotifier("");
+
+  void setId(int? id) {
+    this.id = id;
+  }
 
   void setNome(String? nome) {
     this.nome.value = nome?? "";
@@ -47,7 +52,7 @@ class ClienteCreateForm extends ChangeNotifier {
   }
 }
 
-class ClienteCreateValidator extends LucidValidator<ClienteCreateForm> {
+class ClienteValidator extends LucidValidator<ClienteForm> {
   final Map<String, String> externalErrors = {};
   final String nomeKey = "nome";
   final String telefoneFixoKey = "telefoneFixo";
@@ -113,8 +118,8 @@ class ClienteCreateValidator extends LucidValidator<ClienteCreateForm> {
   }
 }
 
-extension on LucidValidationBuilder<String, ClienteCreateForm> {
-  LucidValidationBuilder<String, ClienteCreateForm> customValidExternalErrors(Map<String, String> externalErrors, String code) {
+extension on LucidValidationBuilder<String, ClienteForm> {
+  LucidValidationBuilder<String, ClienteForm> customValidExternalErrors(Map<String, String> externalErrors, String code) {
     ValidationException? callback(value, entity) {
       if(externalErrors[code] == null) {
         return null;
