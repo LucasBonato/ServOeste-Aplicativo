@@ -1,12 +1,14 @@
-import 'package:drop_down_search_field/drop_down_search_field.dart';
+import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/screens/tecnico/create_tecnico.dart';
 import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
-import 'package:serv_oeste/src/shared/constants.dart';
-import 'package:serv_oeste/src/util/buildwidgets.dart';
-import 'package:super_sliver_list/super_sliver_list.dart';
+import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/components/search_field.dart';
+import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
+import 'package:serv_oeste/src/util/buildwidgets.dart';
+import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import '../../models/tecnico/tecnico.dart';
 
 class TecnicoPage extends StatefulWidget {
   const TecnicoPage({super.key});
@@ -16,82 +18,65 @@ class TecnicoPage extends StatefulWidget {
 }
 
 class _Tecnicoscreenstate extends State<TecnicoPage> {
-  //final TecnicoService tecnicoService = TecnicoService();
-  final List<int> _selectedItens = [];
-  late List<Tecnico>? tecnicos;
+  final TecnicoBloc _tecnicoBloc = TecnicoBloc();
   late TextEditingController _idController, _nomeController, _situacaoController;
-  bool isLoaded = false, isSelected = false, isDropDown = false;
-  String? _nome, _situacao;
-  int? _id;
+  late final List<int> _selectedItems;
+  bool isSelected = false;
 
   @override
   void initState() {
     super.initState();
+    _tecnicoBloc.add(TecnicoLoadingEvent());
     _idController = TextEditingController();
     _nomeController = TextEditingController();
     _situacaoController = TextEditingController();
-    carregarTecnicos();
+    _selectedItems = [];
   }
 
-  @override
-  void dispose() {
-    _idController.dispose();
-    _nomeController.dispose();
-    _situacaoController.dispose();
-    super.dispose();
-  }
-
-  void carregarTecnicos({String? situacao = "ativo"}) async {
-    //tecnicos = await tecnicoService.getByIdNomesituacao(_id, _nome, situacao);
+  void disableTecnicos() async {
+    _tecnicoBloc.add(TecnicoDisableListEvent(selectedList: _selectedItems));
     setState(() {
-      isLoaded = true;
-      isSelected = false;
-      _selectedItens.clear();
+      _selectedItems.clear();
     });
-    return;
   }
 
-  void desativarTecnicos() async{
-    //await tecnicoService.disableList(_selectedItens);
-    carregarTecnicos();
-  }
-
-  void findBy({int? id, String? nome, String? situacao}) {
-    if(id != null) _id = id;
-    if(nome != null && nome.isNotEmpty) _nome = nome;
-    if(situacao != null) _situacao = situacao.toLowerCase();
-
-    if (_idController.text.isEmpty) _id = null;
-    if (_nomeController.text.isEmpty) _nome = null;
-    if (_situacaoController.text.isEmpty) _situacao = null;
-
-    carregarTecnicos(situacao: _situacao);
-  }
-
-  void selectItens(int id) {
-    if(_selectedItens.contains(id)){
+  void _selectItems(int id) {
+    if (_selectedItems.contains(id)) {
       setState(() {
-        _selectedItens.removeWhere((value) => value == id);
+        _selectedItems.remove(id);
       });
       return;
     }
-    _selectedItens.add(id);
+    _selectedItems.add(id);
     setState(() {
-      if(!isSelected) isSelected = true;
+      if (!isSelected) isSelected = true;
     });
   }
+  
+  Widget _buildEditableSection(int id) => IconButton(
+    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateTecnico(id: id)))
+                      .then((value) => value?? _tecnicoBloc.add(TecnicoSearchEvent())),
+    icon: const Icon(Icons.edit, color: Colors.white),
+    style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
+  );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      floatingActionButton: (!isSelected) ? BuildWidgets.buildFabAdd(context, const CreateTecnico()) : BuildWidgets.buildFabRemove(context, desativarTecnicos),
+      floatingActionButton: (!isSelected) ? BuildWidgets.buildFabAdd(context, const CreateTecnico()) : BuildWidgets.buildFabRemove(context, disableTecnicos),
       body: Column(
         children: [
           SearchTextField(
             hint: "Procure por Técnicos...",
             controller: _nomeController,
-            onChangedAction: (String nome) => findBy(nome: nome)
+            onChangedAction: (String nome) => _tecnicoBloc.add(
+              TecnicoSearchEvent(
+                nome: nome,
+                id: int.parse(_idController.text),
+                situacao: _situacaoController.text
+              )
+            )
           ), // Nome Técnicos
           Row(
             children: [
@@ -101,54 +86,30 @@ class _Tecnicoscreenstate extends State<TecnicoPage> {
                   hint: 'Id',
                   keyboardType: TextInputType.number,
                   controller: _idController,
-                  onChangedAction: (value) => findBy(id: int.tryParse(value))
+                  onChangedAction: (String id) => _tecnicoBloc.add(
+                    TecnicoSearchEvent(
+                      nome: _nomeController.text,
+                      id: int.tryParse(id),
+                      situacao: _situacaoController.text
+                    )
+                  )
                 ),
               ), // Id Técnicos
               Expanded(
                 flex: 5,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 5, 16, 0),
-                  child: DropDownSearchField(
-                    hideKeyboard: true,
-                    displayAllSuggestionWhenTap: true,
-                    suggestionsCallback: (String pattern) => Constants.list,
-                    itemBuilder: (BuildContext context, String suggestion) {
-                      return ListTile(
-                        title: Text(suggestion)
-                      );
-                    },
-                    onSuggestionSelected: (String suggestion) {
-                      _situacaoController.text = suggestion;
-                      findBy(situacao: _situacaoController.text);
-                    },
-                    textFieldConfiguration: TextFieldConfiguration(
-                      controller: _situacaoController,
-                      keyboardType: TextInputType.none,
-                      decoration: InputDecoration(
-                        label: const Text("Situação"),
-                        suffixIcon: const Icon(
-                          Icons.arrow_drop_down_outlined,
-                          color: Color(0xFF57636C),
-                        ),
-                        isDense: false,
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                            color: Color(0xFFF1F4F8),
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                            color: Color(0xFF4B39EF),
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        filled: true,
-                        fillColor: const Color(0xFFF1F4F8),
-                      ),
-                    ),
+                child: CustomSearchDropDown(
+                  label: "Situação",
+                  dropdownValues: Constants.situationTecnicoList,
+                  controller: _situacaoController,
+                  searchDecoration: true,
+                  leftPadding: 0,
+                  suggestionVerticalOffset: 0,
+                  onChanged: (situacao) => _tecnicoBloc.add(
+                    TecnicoSearchEvent(
+                      id: int.tryParse(_idController.text),
+                      nome: _nomeController.text,
+                      situacao: _situacaoController.text
+                    )
                   ),
                 ),
               ), // Situação Técnicos
@@ -176,49 +137,84 @@ class _Tecnicoscreenstate extends State<TecnicoPage> {
           ),
           Flexible(
             flex: 1,
-            child: isLoaded ? SuperListView.builder(
-              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-              scrollDirection: Axis.vertical,
-              itemCount: tecnicos!.length,
-              itemBuilder: (context, index) {
-                final Tecnico tecnico = tecnicos![index];
-                final int id = tecnico.id!;
-                final bool editable = (isSelected && _selectedItens.length == 1 && _selectedItens.contains(id));
-                return Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 5, 8, 0),
-                  child: ListTile(
-                    leading: Text("$id", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                    title: Text("${tecnico.nome} ${tecnico.sobrenome}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                    subtitle: Text(Constants.transformTelefone(tecnico: tecnico)),
-                    trailing: (editable) ? IconButton(
-                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateTecnico(id: id))),
-                      icon: const Icon(Icons.edit, color: Colors.white),
-                      style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
-                    ) : Text(tecnico.situacao.toString()),
-                    onLongPress: () => selectItens(id),
-                    onTap: () {
-                      if (_selectedItens.isNotEmpty) {
-                        selectItens(id);
-                      }
-                      if (_selectedItens.isEmpty) {
-                        isSelected = false;
-                      }
+            child: BlocBuilder<TecnicoBloc, TecnicoState>(
+              bloc: _tecnicoBloc,
+              builder: (context, state) {
+                return switch(state) {
+                  TecnicoInitialState() ||
+                  TecnicoLoadingState() => const Center(child: CircularProgressIndicator.adaptive()),
+                  
+                  TecnicoSearchSuccessState() => SuperListView.builder(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                    scrollDirection: Axis.vertical,
+                    itemCount: state.tecnicos.length,
+                    itemBuilder: (context, index) {
+                      final Tecnico tecnico = state.tecnicos[index];
+                      final int id = tecnico.id!;
+                      final bool editable = (isSelected && _selectedItems.length == 1 && _selectedItems.contains(id));
+                      // TODO - Criar um componente para o ListTile
+                      return Padding(
+                        padding: const EdgeInsets.fromLTRB(8, 5, 8, 0),
+                        child: ListTile(
+                          leading: Text(
+                            "$id", 
+                            style: const TextStyle(
+                              fontSize: 20, 
+                              fontWeight: FontWeight.bold
+                            )
+                          ),
+                          title: Text(
+                            "${tecnico.nome} ${tecnico.sobrenome}", 
+                            style: const TextStyle(
+                              fontSize: 20, 
+                              fontWeight: FontWeight.bold
+                            )
+                          ),
+                          subtitle: Text(Constants.transformTelefone(tecnico: tecnico)),
+                          trailing: (editable) ? _buildEditableSection(id) : Text(tecnico.situacao.toString()),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)
+                          ),
+                          tileColor: const Color.fromRGBO(239, 239, 239, 100),
+                          selectedTileColor: Colors.blue.withOpacity(.5),
+                          selected: _selectedItems.contains(id),
+                          onLongPress: () => _selectItems(id),
+                          onTap: () {
+                            if (_selectedItems.isNotEmpty) {
+                              _selectItems(id);
+                            }
+                            if (_selectedItems.isEmpty) {
+                              isSelected = false;
+                            }
+                          },
+                        ),
+                      );
                     },
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)
-                    ),
-                    tileColor: const Color.fromRGBO(239, 239, 239, 100),
-                    selectedTileColor: Colors.blue.withOpacity(.5),
-                    selected: _selectedItens.contains(id),
                   ),
-                );
+                  
+                  _ => Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.not_interested, size: 30),
+                      const SizedBox(height: 16),
+                      Text("Aconteceu um erro!!")
+                    ],
+                  )
+                };
               },
-            ) : const Center(
-              child: CircularProgressIndicator(),
             ),
           )
         ]
       )
     );
+  }
+
+  @override
+  void dispose() {
+    _idController.dispose();
+    _nomeController.dispose();
+    _situacaoController.dispose();
+    _tecnicoBloc.close();
+    super.dispose();
   }
 }

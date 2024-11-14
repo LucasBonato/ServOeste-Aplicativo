@@ -228,9 +228,9 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
   Widget buildTecnicoUpdatePage(Tecnico? tecnico){
     if(!isCheckersAndNameLoaded) {
 
-      if(tecnico!.situacao!.toLowerCase().startsWith("a")) _dropDownValue = Constants.list[0];
-      if(tecnico.situacao!.toLowerCase().startsWith("l")) _dropDownValue = Constants.list[1];
-      if(tecnico.situacao!.toLowerCase().startsWith("d")) _dropDownValue = Constants.list[2];
+      if(tecnico!.situacao!.toLowerCase().startsWith("a")) _dropDownValue = Constants.situationTecnicoList[0];
+      if(tecnico.situacao!.toLowerCase().startsWith("l")) _dropDownValue = Constants.situationTecnicoList[1];
+      if(tecnico.situacao!.toLowerCase().startsWith("d")) _dropDownValue = Constants.situationTecnicoList[2];
 
       nomeController = TextEditingController(text: "${tecnico.nome} ${tecnico.sobrenome}");
       telefoneCelularController = TextEditingController(text: (tecnico.telefoneCelular == null || tecnico.telefoneCelular == "") ? "" : Constants.deTransformarMask(tecnico.telefoneCelular!));
@@ -255,11 +255,11 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
           children: [
             DropdownButton<String>(
               value: _dropDownValue,
-              items: Constants.list.map<DropdownMenuItem<String>>((String value) =>
-                  DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  )
+              items: Constants.situationTecnicoList.map<DropdownMenuItem<String>>((String value) =>
+                DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                )
               ).toList(),
               onChanged: (valorSelecionado) {
                 setState(() {

@@ -43,7 +43,7 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
         telefone: event.telefone,
         endereco: event.endereco
       );
-      emit(ClienteSuccessState(clientes: response?? []));
+      emit(ClienteSearchSuccessState(clientes: response?? []));
     } on DioException catch (e) {
       emit(ClienteErrorState(error: ErrorEntity(id: 0, errorMessage: e.toString())));
     }

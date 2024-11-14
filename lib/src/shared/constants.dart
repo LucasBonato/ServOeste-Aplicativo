@@ -5,7 +5,7 @@ import 'package:serv_oeste/src/models/cliente/cliente.dart';
 class Constants {
   static const bool isDev = true;
 
-  static const List<String> list = ['Ativo', 'Licença', 'Desativado'];
+  static const List<String> situationTecnicoList = ['Ativo', 'Licença', 'Desativado'];
   static const List<String> municipios = ['Osasco', 'Barueri', 'Cotia', 'São Paulo', 'Itapevi', 'Carapicuíba'];
   static const List<String> equipamentos = ["Adega", "Bebedouro", "Climatizador", "Cooler", "Frigobar", "Geladeira", "Lava Louça", "Lava Roupa", "Microondas", "Putificador", "Secadora"];
   static const List<String> marcas = ["Brastemp", "Consul", "Electrolux", "Samsung"];

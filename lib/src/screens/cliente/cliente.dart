@@ -17,7 +17,7 @@ class ClientePage extends StatefulWidget {
 }
 
 class _ClienteScreenState extends State<ClientePage> {
-  late final ClienteBloc _clienteBloc = ClienteBloc();
+  final ClienteBloc _clienteBloc = ClienteBloc();
   late final TextEditingController _nomeController, _telefoneController, _enderecoController;
   late final List<int> _selectedItems;
   bool isSelected = false;
@@ -30,16 +30,6 @@ class _ClienteScreenState extends State<ClientePage> {
     _telefoneController = TextEditingController();
     _enderecoController = TextEditingController();
     _selectedItems = [];
-  }
-
-  @override
-  void dispose() {
-    _selectedItems.clear();
-    _nomeController.dispose();
-    _telefoneController.dispose();
-    _enderecoController.dispose();
-    _clienteBloc.close();
-    super.dispose();
   }
 
   void _disableClientes() async {
@@ -184,7 +174,7 @@ class _ClienteScreenState extends State<ClientePage> {
                   ClienteInitialState() ||
                   ClienteLoadingState() => const Center(child: CircularProgressIndicator.adaptive()),
 
-                  ClienteSuccessState() => SuperListView.builder(
+                  ClienteSearchSuccessState() => SuperListView.builder(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                     scrollDirection: Axis.vertical,
                     itemCount: state.clientes.length,
@@ -192,6 +182,7 @@ class _ClienteScreenState extends State<ClientePage> {
                       final Cliente cliente = state.clientes[index];
                       final int id = cliente.id!;
                       final bool editable = (isSelected && _selectedItems.length == 1 && _selectedItems.contains(id));
+                      // TODO - Criar um componente para o ListTile
                       return Padding(
                         padding: const EdgeInsets.fromLTRB(8, 5, 8, 0),
                         child: ListTile(
@@ -245,5 +236,15 @@ class _ClienteScreenState extends State<ClientePage> {
         ]
       )
     );
+  }
+
+  @override
+  void dispose() {
+    _selectedItems.clear();
+    _nomeController.dispose();
+    _telefoneController.dispose();
+    _enderecoController.dispose();
+    _clienteBloc.close();
+    super.dispose();
   }
 }

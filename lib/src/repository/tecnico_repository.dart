@@ -7,7 +7,7 @@ import 'package:serv_oeste/src/repository/dio/server_endpoints.dart';
 import '../models/tecnico/tecnico.dart';
 
 class TecnicoRepository extends DioService {
-  Future<List<Tecnico>?> getTecnicosByFind(int? id, String? nome, String? situacao) async {
+  Future<List<Tecnico>?> getTecnicosByFind({int? id, String? nome, String? situacao}) async {
     try {
       final response = await dio.post(
         ServerEndpoints.tecnicoFindEndpoint,

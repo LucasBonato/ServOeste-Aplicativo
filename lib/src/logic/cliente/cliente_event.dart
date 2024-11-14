@@ -63,6 +63,7 @@ final class ClienteDeleteListEvent extends ClienteEvent {
   });
 }
 
+// TODO - Fazer o toggle dos items através de eventos (BloC)
 final class ClienteToggleItemSelectEvent extends ClienteEvent {
   final int id;
 

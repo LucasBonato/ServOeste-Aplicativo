@@ -15,10 +15,10 @@ final class ClienteSearchOneSuccessState extends ClienteState {
   });
 }
 
-final class ClienteSuccessState extends ClienteState {
+final class ClienteSearchSuccessState extends ClienteState {
   final List<Cliente> clientes;
 
-  ClienteSuccessState({
+  ClienteSearchSuccessState({
     required this.clientes
   });
 }

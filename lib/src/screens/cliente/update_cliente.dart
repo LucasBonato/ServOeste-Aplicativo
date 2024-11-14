@@ -124,7 +124,7 @@ class _UpdateClienteState extends State<UpdateCliente> {
                       BlocListener<ClienteBloc, ClienteState>(
                         bloc: _clienteBloc,
                         listener: (context, state) {
-                          if (state is ClienteSuccessState) {
+                          if (state is ClienteSearchSuccessState) {
                             List<String> nomes = state.clientes
                                 .take(5)
                                 .map((cliente) => cliente.nome!)

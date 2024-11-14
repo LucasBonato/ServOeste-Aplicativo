@@ -4,9 +4,11 @@ import 'package:drop_down_search_field/drop_down_search_field.dart';
 class CustomSearchDropDown extends StatefulWidget {
   final List<String> dropdownValues;
   final Function(String) onChanged;
-  final int maxLength;
+  final int? maxLength;
+  final double? suggestionVerticalOffset;
   final String label;
   final bool hide;
+  final bool searchDecoration;
   final double? leftPadding;
   final double? rightPadding;
   final TextEditingController? controller;
@@ -17,13 +19,15 @@ class CustomSearchDropDown extends StatefulWidget {
   const CustomSearchDropDown({
     super.key,
     this.hide = false,
+    this.searchDecoration = false,
     this.rightPadding,
     this.leftPadding,
     this.onSelected,
     this.onSaved,
     this.validator,
     this.controller,
-    required this.maxLength,
+    this.maxLength,
+    this.suggestionVerticalOffset,
     required this.onChanged,
     required this.label,
     required this.dropdownValues,
@@ -54,7 +58,33 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
           maxLength: widget.maxLength,
           controller: _customSearchController,
           onChanged: widget.onChanged,
-          decoration: InputDecoration(
+          decoration: (widget.searchDecoration)
+            ? InputDecoration(
+            counterText: widget.hide ? "" : null,
+            labelText: widget.label,
+            suffixIcon: const Icon(
+              Icons.arrow_drop_down_outlined,
+              color: Color(0xFF57636C),
+            ),
+            isDense: false,
+            enabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(
+                color: Color(0xFFF1F4F8),
+                width: 2,
+              ),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: const BorderSide(
+                color: Color(0xFF4B39EF),
+                width: 2,
+              ),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            filled: true,
+            fillColor: const Color(0xFFF1F4F8),
+          )
+          : InputDecoration(
             counterText: widget.hide ? "" : null,
             labelText: widget.label,
             isDense: true,
@@ -90,6 +120,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
         },
         onSuggestionSelected: (String? suggestion) {
           _customSearchController.text = suggestion!;
+          widget.onChanged(suggestion);
           if(widget.onSelected != null) {
             widget.onSelected!(suggestion);
           }
@@ -102,7 +133,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
         hideOnEmpty: true,
         debounceDuration: const Duration(milliseconds: 150),
         transitionBuilder: (context, suggestionBox, animationController) { return suggestionBox; },
-        suggestionsBoxVerticalOffset: -20,
+        suggestionsBoxVerticalOffset: widget.suggestionVerticalOffset?? -20,
       ),
     );
   }
