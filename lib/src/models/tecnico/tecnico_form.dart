@@ -2,17 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 
-class ClienteForm extends ChangeNotifier {
+class TecnicoForm extends ChangeNotifier {
   int? id;
   ValueNotifier<String> nome = ValueNotifier("");
   ValueNotifier<String> telefoneCelular = ValueNotifier("");
   ValueNotifier<String> telefoneFixo = ValueNotifier("");
-  ValueNotifier<String> cep = ValueNotifier("");
-  ValueNotifier<String> endereco = ValueNotifier("");
-  ValueNotifier<String> municipio = ValueNotifier("Osasco");
-  ValueNotifier<String> bairro = ValueNotifier("");
+  ValueNotifier<List<EspecialidadeForm>> conhecimentos = ValueNotifier([]);
 
-  void setId(int? id) {
+  void setId(int id) {
     this.id = id;
   }
 
@@ -31,57 +28,35 @@ class ClienteForm extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setCep(String? cep) {
-    this.cep.value = cep?? "";
-    notifyListeners();
-  }
-
-  void setEndereco(String? endereco) {
-    this.endereco.value = endereco?? "";
-    notifyListeners();
-  }
-
-  void setMunicipio(String? municipio) {
-    this.municipio.value = municipio?? "";
-    notifyListeners();
-  }
-
-  void setBairro(String? bairro) {
-    this.bairro.value = bairro?? "";
-    notifyListeners();
-  }
+  // void setConhecimentos(String? key, bool? value) {
+  //   if(key == null || value == null) return;
+  //   conhecimentos.value[key] = value;
+  //   notifyListeners();
+  // }
 }
 
-class ClienteValidator extends LucidValidator<ClienteForm> {
+class TecnicoValidator extends LucidValidator<TecnicoForm> {
+  final EspecialidadeValidator especialidadeValidator = EspecialidadeValidator();
   final Map<String, String> externalErrors = {};
   final String nomeKey = "nome";
   final String telefoneFixoKey = "telefoneFixo";
   final String telefoneCelularKey = "telefoneCelular";
-  final String enderecoKey = "endereco";
-  final String municipioKey = "municipio";
-  final String bairroKey = "bairro";
+  final String conhecimentosKey = "conhecimentos";
 
-  ClienteValidator() {
-    ruleFor((cliente) => cliente.nome.value, key: nomeKey)
+  TecnicoValidator() {
+    ruleFor((tecnico) => tecnico.nome.value, key: nomeKey)
         .must((nome) => nome.isNotEmpty, "O nome é obrigatório!.", nomeKey)
         .must((nome) => nome.split(" ").length > 1, "É necessário o nome e sobrenome!", nomeKey)
         .must((nome) => (nome.split(" ").length > 1 && nome.split(" ")[1].length > 2), "O sobrenome precisa ter 2 caracteres!", nomeKey);
 
-    ruleFor((cliente) => cliente.telefoneCelular.value, key: telefoneCelularKey)
+    ruleFor((tecnico) => tecnico.telefoneCelular.value, key: telefoneCelularKey)
         .customValidExternalErrors(externalErrors, telefoneCelularKey);
 
-    ruleFor((cliente) => cliente.telefoneFixo.value, key: telefoneFixoKey)
+    ruleFor((tecnico) => tecnico.telefoneFixo.value, key: telefoneFixoKey)
         .customValidExternalErrors(externalErrors, telefoneFixoKey);
 
-    ruleFor((cliente) => cliente.endereco.value, key: enderecoKey)
-        .mustHaveNumber();
-
-    ruleFor((cliente) => cliente.municipio.value, key: municipioKey)
-        .isNotNull()
-        .must((cliente) => cliente!.isNotEmpty, "Selecione um múnicipio", municipioKey);
-
-    ruleFor((cliente) => cliente.bairro.value, key: bairroKey)
-        .must((municipio) => municipio.isNotEmpty, "'bairro' cannot be empty", bairroKey);
+    // ruleFor((tecnico) => tecnico.conhecimentos.value, key: conhecimentosKey)
+    //     .setValidator(especialidadeValidator);
   }
 
   void applyBackendError(ErrorEntity errorEntity) {
@@ -94,11 +69,7 @@ class ClienteValidator extends LucidValidator<ClienteForm> {
         break;
       case 4: _addListError([telefoneFixoKey, telefoneCelularKey], errorEntity.errorMessage);
         break;
-      case 5: _addError(enderecoKey, errorEntity.errorMessage);
-        break;
-      case 6: _addError(municipioKey, errorEntity.errorMessage);
-        break;
-      case 7: _addError(bairroKey, errorEntity.errorMessage);
+      case 10: _addError(conhecimentosKey, errorEntity.errorMessage);
         break;
     }
   }
@@ -118,6 +89,7 @@ class ClienteValidator extends LucidValidator<ClienteForm> {
   }
 }
 
+// TODO - Refatorar para ser utilizado em qualquer validator
 extension on LucidValidationBuilder<String, dynamic> {
   LucidValidationBuilder<String, dynamic> customValidExternalErrors(Map<String, String> externalErrors, String code) {
     ValidationException? callback(value, entity) {
@@ -131,5 +103,51 @@ extension on LucidValidationBuilder<String, dynamic> {
     }
 
     return use(callback);
+  }
+}
+
+// extension on SimpleValidationBuilder<String> {
+//   SimpleValidationBuilder<String> setValidatorForList(LucidValidator validator) {
+//     return
+//   }
+// }
+
+
+class EspecialidadeForm extends ChangeNotifier {
+  ValueNotifier<int> id = ValueNotifier(0);
+  ValueNotifier<String> conhecimento = ValueNotifier("");
+
+  void setId(int id) {
+    this.id.value = id;
+    notifyListeners();
+  }
+
+  void setConhecimento(String conhecimento) {
+    this.conhecimento.value = conhecimento;
+    notifyListeners();
+  }
+}
+
+class EspecialidadeValidator extends LucidValidator<EspecialidadeForm> {
+  final Map<String, String> externalErrors = {};
+  final String conhecimentoKey = "conhecimento";
+
+  EspecialidadeValidator() {
+    ruleFor((especialidade) => especialidade.conhecimento.value, key: conhecimentoKey);
+  }
+
+  void applyBackendError(ErrorEntity errorEntity) {
+    switch (errorEntity.id) {
+      case 10: _addError(conhecimentoKey, errorEntity.errorMessage);
+      break;
+    }
+  }
+
+  void cleanExternalErrors() {
+    externalErrors.clear();
+  }
+
+  void _addError(String key, String message) {
+    externalErrors[key] = message;
   }
 }
