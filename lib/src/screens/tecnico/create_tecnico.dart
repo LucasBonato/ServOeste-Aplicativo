@@ -1,6 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:serv_oeste/src/components/mask_field.dart';
+import 'package:lucid_validation/lucid_validation.dart';
+import 'package:serv_oeste/src/components/custom_text_form_field.dart';
+import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
+import 'package:serv_oeste/src/components/mask_field.dart';
+import 'package:flutter/material.dart';
+import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
+import 'package:serv_oeste/src/shared/constants.dart';
 
 class CreateTecnico extends StatefulWidget {
   const CreateTecnico({super.key});
@@ -10,18 +15,16 @@ class CreateTecnico extends StatefulWidget {
 }
 
 class _CreateTecnicoState extends State<CreateTecnico> {
+  final TecnicoBloc _tecnicoBloc = TecnicoBloc();
+  final TecnicoForm _tecnicoCreateForm = TecnicoForm();
+  final TecnicoValidator _tecnicoCreateValidator = TecnicoValidator();
+  final GlobalKey<FormState> _tecnicoFormKey = GlobalKey<FormState>();
+
   late TextEditingController nomeController,
       telefoneCelularController,
       telefoneFixoController;
 
-  bool validationNome = false,
-       validationTelefoneCelular = false,
-       validationTelefoneFixo = false,
-       validationCheckBoxes = false;
-
-  String _errorMessage = "",
-        _telefoneCelular = "",
-        _telefoneFixo = "";
+  bool validationCheckBoxes = false;
 
   final Map<String, bool> checkersMap = {
     "Adega": false,
@@ -37,6 +40,15 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     "Secadora": false,
     "Outros": false
   };
+
+  @override
+  void initState() {
+    super.initState();
+    nomeController = TextEditingController();
+    telefoneCelularController = TextEditingController();
+    telefoneFixoController = TextEditingController();
+  }
+
   Widget gridCheckersMap() {
     return GridView.count(
       shrinkWrap: true,
@@ -56,29 +68,29 @@ class _CreateTecnicoState extends State<CreateTecnico> {
             Expanded(
               flex: 1,
               child: Theme(
-                  data: ThemeData(
-                    unselectedWidgetColor: Colors.blueAccent,
-                    checkboxTheme: const CheckboxThemeData(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                      ),
+                data: ThemeData(
+                  unselectedWidgetColor: Colors.blueAccent,
+                  checkboxTheme: const CheckboxThemeData(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
                     ),
-                  ),
-                  child: Checkbox(
-                    value: isChecked,
-                    activeColor: Colors.blue,
-                    side: const BorderSide(
-                      width: 2,
-                      color: Colors.blueAccent,
-                    ),
-                    onChanged: (value) {
-                      if (value == null) return;
-                      setState(() {
-                        checkersMap[label] = value;
-                      });
-                    },
                   ),
                 ),
+                child: Checkbox(
+                  value: isChecked,
+                  activeColor: Colors.blue,
+                  side: const BorderSide(
+                    width: 2,
+                    color: Colors.blueAccent,
+                  ),
+                  onChanged: (value) {
+                    if (value == null) return;
+                    setState(() {
+                      checkersMap[label] = value;
+                    });
+                  },
+                ),
+              ),
             )
           ],
         );
@@ -86,103 +98,54 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    nomeController = TextEditingController();
-    telefoneCelularController = TextEditingController();
-    telefoneFixoController = TextEditingController();
-  }
-  @override
-  void dispose() {
-    nomeController.dispose();
-    telefoneCelularController.dispose();
-    telefoneFixoController.dispose();
-    super.dispose();
-  }
+  // Tecnico includeData() {
+  //   List<String> nomes = nomeController.text.split(" ");
+  //   String nome = nomes.first;
+  //   String sobrenome = "";
+  //   for(int i = 1; i < nomes.length; i++){
+  //     sobrenome += "${nomes[i]} ";
+  //   }
+  //   sobrenome = sobrenome.trim();
+  //
+  //   _telefoneCelular = transformarMask(telefoneCelularController.text);
+  //   _telefoneFixo = transformarMask(telefoneFixoController.text);
+  //
+  //   List<int> especialidadesIds = [];
+  //   checkersMap.forEach((label, isChecked) {
+  //     if(isChecked){
+  //       especialidadesIds.add(checkersMap.keys.toList().indexOf(label) + 1);
+  //     }
+  //   });
+  //
+  //   return Tecnico(
+  //     nome: nome,
+  //     sobrenome: sobrenome,
+  //     telefoneCelular: _telefoneCelular,
+  //     telefoneFixo: _telefoneFixo,
+  //     especialidadesIds: especialidadesIds
+  //   );
+  // }
 
-  String transformarMask(String telefone){
-    if(telefone.length != 15) return "";
-    return telefone.substring(1, 3) + telefone.substring(5, 10) + telefone.substring(11);
-  }
-
-  void setError(int erro, String errorMessage){
-    setErrorNome(String errorMessage){
-      _errorMessage = errorMessage;
-      validationNome = true;
-    }
-    setErrorTelefoneCelular(String errorMessage){
-      _errorMessage = errorMessage;
-      validationTelefoneCelular = true;
-    }
-    setErrorTelefoneFixo(String errorMessage){
-      _errorMessage = errorMessage;
-      validationTelefoneFixo = true;
-    }
-    setErrorTelefones(String errorMessage){
-      setErrorTelefoneCelular(errorMessage);
-      setErrorTelefoneFixo(errorMessage);
-    }
-    setErrorCheckBox(String errorMessage){
-      _errorMessage = errorMessage;
-      validationCheckBoxes = true;
-    }
-    setState(() {
-      validationNome = false;
-      validationTelefoneCelular = false;
-      validationTelefoneFixo = false;
-      validationCheckBoxes = false;
-      _errorMessage = "";
-
-      switch(erro){
-        case 1: setErrorNome(errorMessage); break;
-        case 2: setErrorTelefoneCelular(errorMessage); break;
-        case 3: setErrorTelefoneFixo(errorMessage); break;
-        case 4: setErrorTelefones(errorMessage); break;
-        case 5: setErrorCheckBox(errorMessage); break;
-      }
-    });
+  bool _isValidForm() {
+    _tecnicoFormKey.currentState?.validate();
+    final ValidationResult response = _tecnicoCreateValidator.validate(_tecnicoCreateForm);
+    return response.isValid;
   }
 
-  Tecnico includeData() {
-    List<String> nomes = nomeController.text.split(" ");
-    String nome = nomes.first;
-    String sobrenome = "";
-    for(int i = 1; i < nomes.length; i++){
-      sobrenome += "${nomes[i]} ";
+  void _registerTecnico() async {
+    if(_isValidForm() == false) {
+      return;
     }
-    sobrenome = sobrenome.trim();
 
-    _telefoneCelular = transformarMask(telefoneCelularController.text);
-    _telefoneFixo = transformarMask(telefoneFixoController.text);
+    List<String> nomes = _tecnicoCreateForm.nome.value.split(" ");
+    _tecnicoCreateForm.nome.value = nomes.first;
+    String sobrenome = nomes
+        .sublist(1)
+        .join(" ")
+        .trim();
 
-    List<int> especialidadesIds = [];
-    checkersMap.forEach((label, isChecked) {
-      if(isChecked){
-        especialidadesIds.add(checkersMap.keys.toList().indexOf(label) + 1);
-      }
-    });
-
-    return Tecnico(
-      nome: nome,
-      sobrenome: sobrenome,
-      telefoneCelular: _telefoneCelular,
-      telefoneFixo: _telefoneFixo,
-      especialidadesIds: especialidadesIds
-    );
-  }
-
-  void adicionarTecnico(BuildContext context) async {
-    // TecnicoService tecnicoService = TecnicoService();
-    // Tecnico tecnico = includeData();
-    // dynamic body = await tecnicoService.create(tecnico);
-    //
-    // if(body == null && context.mounted) {
-    //   Navigator.pop(context);
-    //   return;
-    // }
-    //
-    // setError(body["idError"], body["message"]);
+    _tecnicoBloc.add(TecnicoRegisterEvent(tecnico: Tecnico.fromForm(_tecnicoCreateForm), sobrenome: sobrenome));
+    _tecnicoCreateForm.nome.value = "${nomes.first} $sobrenome";
   }
 
   @override
@@ -190,84 +153,100 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-             icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.pop(context),
-          ),
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: const Text("Novo Técnico"),
         centerTitle: true,
         ),
       body: Padding(
         padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
         child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Column(
-                children: [
-                  CustomMaskField(
-                    hint: "Nome...",
-                    label: "Nome",
-                    mask: null,
-                    errorMessage: _errorMessage,
-                    maxLength: 40,
-                    controller: nomeController,
-                    validation: validationNome,
-                    type: TextInputType.name,
-                  ),
-                  CustomMaskField(
-                    hint: "(99) 99999-9999",
-                    label: "Telefone Celular",
-                    mask: "(##) #####-####",
-                    errorMessage: _errorMessage,
-                    maxLength: 15,
-                    controller: telefoneCelularController,
-                    validation: validationTelefoneCelular,
-                    type: TextInputType.phone,
-                  ),
-                  CustomMaskField(
-                    hint: "(99) 99999-9999",
-                    label: "Telefone Fixo",
-                    mask: "(##) #####-####",
-                    errorMessage: _errorMessage,
-                    maxLength: 15,
-                    controller: telefoneFixoController,
-                    validation: validationTelefoneFixo,
-                    type: TextInputType.phone,
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(0, 32, 0, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
+          child: Form(
+            key: _tecnicoFormKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Column(
                   children: [
-                    const Text('Selecione os conhecimentos do Técnico:', textAlign: TextAlign.center, style: TextStyle(fontSize: 20)),
-                    //rowCheckersMap(),
-                    Container(
-                      child: gridCheckersMap()
+                    CustomTextFormField(
+                      hint: "Nome...",
+                      label: "Nome",
+                      controller: nomeController,
+                      type: TextInputType.name,
+                      maxLength: 40,
+                      hide: false,
+                      valueNotifier: _tecnicoCreateForm.nome,
+                      validator: _tecnicoCreateValidator.byField(_tecnicoCreateForm, "nome"),
+                      onChanged: _tecnicoCreateForm.setNome,
                     ),
-                    Text(validationCheckBoxes ? _errorMessage : "", textAlign: TextAlign.center, style: const TextStyle(color: Colors.red)),
-                    Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
-                      child: TextButton(
-                        onPressed: () => adicionarTecnico(context),
-                        style: TextButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
-                          textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
-                        ),
-                        child: const Text("Adicionar"),
-                      ),
+                    CustomTextFormField(
+                      hint: "(99) 99999-9999",
+                      label: "Telefone Celular",
+                      controller: telefoneCelularController,
+                      masks: Constants.maskTelefone,
+                      type: TextInputType.phone,
+                      maxLength: 15,
+                      hide: false,
+                      valueNotifier: _tecnicoCreateForm.telefoneCelular,
+                      validator: _tecnicoCreateValidator.byField(_tecnicoCreateForm, "telefoneCelular"),
+                      onChanged: _tecnicoCreateForm.setTelefoneCelular,
+                    ),
+                    CustomTextFormField(
+                      hint: "(99) 99999-9999",
+                      label: "Telefone Fixo",
+                      masks: Constants.maskTelefone,
+                      controller: telefoneFixoController,
+                      type: TextInputType.phone,
+                      maxLength: 15,
+                      hide: false,
+                      valueNotifier: _tecnicoCreateForm.telefoneFixo,
+                      validator: _tecnicoCreateValidator.byField(_tecnicoCreateForm, "telefoneFixo"),
+                      onChanged: _tecnicoCreateForm.setTelefoneFixo,
                     ),
                   ],
                 ),
-              )
-            ]
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 32, 0, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('Selecione os conhecimentos do Técnico:', textAlign: TextAlign.center, style: TextStyle(fontSize: 20)),
+                      //rowCheckersMap(),
+                      Container(
+                        child: gridCheckersMap()
+                      ),
+                      Text(validationCheckBoxes ? "Error" : "", textAlign: TextAlign.center, style: const TextStyle(color: Colors.red)),
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
+                        child: TextButton(
+                          onPressed: _registerTecnico,
+                          style: TextButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
+                          ),
+                          child: const Text("Adicionar"),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ]
+            ),
           ),
         )
       )
     );
+  }
+
+  @override
+  void dispose() {
+    nomeController.dispose();
+    telefoneCelularController.dispose();
+    telefoneFixoController.dispose();
+    super.dispose();
   }
 }

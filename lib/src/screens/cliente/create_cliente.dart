@@ -22,9 +22,9 @@ class CreateCliente extends StatefulWidget {
 class _CreateClienteState extends State<CreateCliente> {
   final EnderecoBloc _enderecoBloc = EnderecoBloc();
   final ClienteBloc _clienteBloc = ClienteBloc();
-  final ClienteForm clienteCreateForm = ClienteForm();
-  final ClienteValidator clienteCreateValidator = ClienteValidator();
-  final GlobalKey<FormState> clienteFormKey = GlobalKey<FormState>();
+  final ClienteForm _clienteCreateForm = ClienteForm();
+  final ClienteValidator _clienteCreateValidator = ClienteValidator();
+  final GlobalKey<FormState> _clienteFormKey = GlobalKey<FormState>();
   List<String> _dropdownValuesNomes = [];
   Timer? _debounce;
 
@@ -35,7 +35,7 @@ class _CreateClienteState extends State<CreateCliente> {
   }
 
   void _fetchClienteNames(String nome) async {
-    clienteCreateForm.setNome(nome);
+    _clienteCreateForm.setNome(nome);
     if (nome == "") return;
     if (nome.split(" ").length > 1 && _dropdownValuesNomes.isEmpty) return;
     _clienteBloc.add(ClienteSearchEvent(nome: nome));
@@ -43,13 +43,13 @@ class _CreateClienteState extends State<CreateCliente> {
 
   void _fetchInformationAboutCep(String? cep) async {
     if(cep?.length != 9) return;
-    clienteCreateForm.setCep(cep);
+    _clienteCreateForm.setCep(cep);
     _enderecoBloc.add(EnderecoSearchCepEvent(cep: cep!));
   }
 
   bool _isValidForm() {
-    clienteFormKey.currentState?.validate();
-    final ValidationResult response = clienteCreateValidator.validate(clienteCreateForm);
+    _clienteFormKey.currentState?.validate();
+    final ValidationResult response = _clienteCreateValidator.validate(_clienteCreateForm);
     return response.isValid;
   }
 
@@ -58,15 +58,15 @@ class _CreateClienteState extends State<CreateCliente> {
       return;
     }
 
-    List<String> nomes = clienteCreateForm.nome.value.split(" ");
-    clienteCreateForm.nome.value = nomes.first;
+    List<String> nomes = _clienteCreateForm.nome.value.split(" ");
+    _clienteCreateForm.nome.value = nomes.first;
     String sobrenome = nomes
         .sublist(1)
         .join(" ")
         .trim();
 
-    _clienteBloc.add(ClienteRegisterEvent(cliente: Cliente.fromForm(clienteCreateForm), sobrenome: sobrenome));
-    clienteCreateForm.nome.value = "${nomes.first} $sobrenome";
+    _clienteBloc.add(ClienteRegisterEvent(cliente: Cliente.fromForm(_clienteCreateForm), sobrenome: sobrenome));
+    _clienteCreateForm.nome.value = "${nomes.first} $sobrenome";
   }
 
   @override
@@ -84,7 +84,7 @@ class _CreateClienteState extends State<CreateCliente> {
         padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
         child: SingleChildScrollView(
           child: Form(
-            key: clienteFormKey,
+            key: _clienteFormKey,
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
@@ -108,38 +108,38 @@ class _CreateClienteState extends State<CreateCliente> {
                     label: "Nome",
                     maxLength: 40,
                     dropdownValues: _dropdownValuesNomes,
-                    validator: clienteCreateValidator.byField(clienteCreateForm, "nome"),
+                    validator: _clienteCreateValidator.byField(_clienteCreateForm, "nome"),
                   ),
                 ),
                 CustomTextFormField(
-                  valueNotifier: clienteCreateForm.telefoneCelular,
+                  valueNotifier: _clienteCreateForm.telefoneCelular,
                   hint: "(99) 99999-9999",
                   label: "Telefone Celular",
                   masks: Constants.maskTelefone,
                   maxLength: 15,
                   type: TextInputType.phone,
                   hide: false,
-                  validator: clienteCreateValidator.byField(clienteCreateForm, "telefoneCelular"),
-                  onChanged: clienteCreateForm.setTelefoneCelular,
+                  validator: _clienteCreateValidator.byField(_clienteCreateForm, "telefoneCelular"),
+                  onChanged: _clienteCreateForm.setTelefoneCelular,
                 ),  // Telefone Celular
                 CustomTextFormField(
-                  valueNotifier: clienteCreateForm.telefoneFixo,
+                  valueNotifier: _clienteCreateForm.telefoneFixo,
                   hint: "(99) 99999-9999",
                   label: "Telefone Fixo",
                   masks: Constants.maskTelefone,
                   maxLength: 15,
                   type: TextInputType.phone,
                   hide: false,
-                  validator: clienteCreateValidator.byField(clienteCreateForm, "telefoneFixo"),
-                  onChanged: clienteCreateForm.setTelefoneFixo,
+                  validator: _clienteCreateValidator.byField(_clienteCreateForm, "telefoneFixo"),
+                  onChanged: _clienteCreateForm.setTelefoneFixo,
                 ),  // Telefone Fixo
                 BlocListener<EnderecoBloc, EnderecoState>(
                   bloc: _enderecoBloc,
                   listener: (context, state) {
                     if (state is EnderecoSuccessState) {
-                      clienteCreateForm.setEndereco(state.endereco!);
-                      clienteCreateForm.setMunicipio(state.municipio!);
-                      clienteCreateForm.setBairro(state.bairro!);
+                      _clienteCreateForm.setEndereco(state.endereco!);
+                      _clienteCreateForm.setMunicipio(state.municipio!);
+                      _clienteCreateForm.setBairro(state.bairro!);
                     }
                   },
                   child: Column(
@@ -149,7 +149,7 @@ class _CreateClienteState extends State<CreateCliente> {
                           Expanded(
                             flex: 5,
                             child: CustomTextFormField(
-                              valueNotifier: clienteCreateForm.cep,
+                              valueNotifier: _clienteCreateForm.cep,
                               hint: "00000-000",
                               label: "CEP",
                               hide: true,
@@ -157,22 +157,22 @@ class _CreateClienteState extends State<CreateCliente> {
                               masks: Constants.maskCep,
                               rightPadding: 4,
                               type: TextInputType.number,
-                              validator: clienteCreateValidator.byField(clienteCreateForm, "cep"),
+                              validator: _clienteCreateValidator.byField(_clienteCreateForm, "cep"),
                               onChanged: _fetchInformationAboutCep,
                             ),
                           ), // CEP
                           Expanded(
                             flex: 8,
                             child: CustomTextFormField(
-                              valueNotifier: clienteCreateForm.endereco,
+                              valueNotifier: _clienteCreateForm.endereco,
                               hint: "Rua...",
                               label: "Endereço, Número e Complemento",
-                              validator: clienteCreateValidator.byField(clienteCreateForm, "endereco"),
+                              validator: _clienteCreateValidator.byField(_clienteCreateForm, "endereco"),
                               maxLength: 255,
                               hide: true,
                               type: TextInputType.text,
                               leftPadding: 4,
-                              onChanged: clienteCreateForm.setEndereco,
+                              onChanged: _clienteCreateForm.setEndereco,
                             ),
                           ), // Endereço
                         ],
@@ -180,19 +180,19 @@ class _CreateClienteState extends State<CreateCliente> {
                       CustomDropdownField(
                         label: "Município",
                         dropdownValues: Constants.municipios,
-                        valueNotifier: clienteCreateForm.municipio,
-                        validator: clienteCreateValidator.byField(clienteCreateForm, "municipio"),
-                        onChanged: clienteCreateForm.setMunicipio,
+                        valueNotifier: _clienteCreateForm.municipio,
+                        validator: _clienteCreateValidator.byField(_clienteCreateForm, "municipio"),
+                        onChanged: _clienteCreateForm.setMunicipio,
                       ),
                       CustomTextFormField(
-                        valueNotifier: clienteCreateForm.bairro,
+                        valueNotifier: _clienteCreateForm.bairro,
                         hint: "Bairro...",
                         label: "Bairro",
-                        validator: clienteCreateValidator.byField(clienteCreateForm, "bairro"),
+                        validator: _clienteCreateValidator.byField(_clienteCreateForm, "bairro"),
                         maxLength: 255,
                         hide: true,
                         type: TextInputType.text,
-                        onChanged: clienteCreateForm.setBairro,
+                        onChanged: _clienteCreateForm.setBairro,
                       ), // Bairro
                     ],
                   ),
@@ -215,9 +215,9 @@ class _CreateClienteState extends State<CreateCliente> {
                             else if (state is ClienteErrorState) {
                               ErrorEntity error = state.error;
 
-                              clienteCreateValidator.applyBackendError(error);
-                              clienteFormKey.currentState?.validate();
-                              clienteCreateValidator.cleanExternalErrors();
+                              _clienteCreateValidator.applyBackendError(error);
+                              _clienteFormKey.currentState?.validate();
+                              _clienteCreateValidator.cleanExternalErrors();
 
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text("[ERROR] Informação(ões) inválida(s) ao registrar o Cliente."))

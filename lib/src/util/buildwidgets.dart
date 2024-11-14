@@ -11,11 +11,11 @@ class BuildWidgets {
     );
   }
 
-  static FloatingActionButton buildFabAdd(BuildContext context, Widget page) {
+  static FloatingActionButton buildFabAdd(BuildContext context, String route) {
     return FloatingActionButton(
       backgroundColor: null,
       shape: const CircleBorder(eccentricity: 0),
-      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => page)),
+      onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed(route),
       child: const Icon(Icons.add),
     );
   }

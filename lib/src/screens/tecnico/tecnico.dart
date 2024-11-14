@@ -1,5 +1,4 @@
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
-import 'package:serv_oeste/src/screens/tecnico/create_tecnico.dart';
 import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/components/search_field.dart';
@@ -14,10 +13,10 @@ class TecnicoPage extends StatefulWidget {
   const TecnicoPage({super.key});
 
   @override
-  State<TecnicoPage> createState() => _Tecnicoscreenstate();
+  State<TecnicoPage> createState() => _TecnicoScreenState();
 }
 
-class _Tecnicoscreenstate extends State<TecnicoPage> {
+class _TecnicoScreenState extends State<TecnicoPage> {
   final TecnicoBloc _tecnicoBloc = TecnicoBloc();
   late TextEditingController _idController, _nomeController, _situacaoController;
   late final List<int> _selectedItems;
@@ -33,7 +32,7 @@ class _Tecnicoscreenstate extends State<TecnicoPage> {
     _selectedItems = [];
   }
 
-  void disableTecnicos() async {
+  void _disableTecnicos() async {
     _tecnicoBloc.add(TecnicoDisableListEvent(selectedList: _selectedItems));
     setState(() {
       _selectedItems.clear();
@@ -64,7 +63,9 @@ class _Tecnicoscreenstate extends State<TecnicoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      floatingActionButton: (!isSelected) ? BuildWidgets.buildFabAdd(context, const CreateTecnico()) : BuildWidgets.buildFabRemove(context, disableTecnicos),
+      floatingActionButton: (!isSelected)
+          ? BuildWidgets.buildFabAdd(context, "/createTecnico")
+          : BuildWidgets.buildFabRemove(context, _disableTecnicos),
       body: Column(
         children: [
           SearchTextField(

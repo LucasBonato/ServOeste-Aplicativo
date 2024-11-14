@@ -29,7 +29,15 @@ final class TecnicoSearchEvent extends TecnicoEvent {
   });
 }
 
-final class TecnicoRegisterEvent extends TecnicoEvent {}
+final class TecnicoRegisterEvent extends TecnicoEvent {
+  final Tecnico tecnico;
+  final String sobrenome;
+
+  TecnicoRegisterEvent({
+    required this.tecnico,
+    required this.sobrenome
+  });
+}
 
 final class TecnicoUpdateEvent extends TecnicoEvent {}
 
