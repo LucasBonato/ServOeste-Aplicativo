@@ -1,11 +1,10 @@
-import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/components/custom_text_form_field.dart';
+import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
-import 'package:serv_oeste/src/components/mask_field.dart';
-import 'package:flutter/material.dart';
-import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
+import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:flutter/material.dart';
 
 class CreateTecnico extends StatefulWidget {
   const CreateTecnico({super.key});
@@ -52,18 +51,17 @@ class _CreateTecnicoState extends State<CreateTecnico> {
   Widget gridCheckersMap() {
     return GridView.count(
       shrinkWrap: true,
-      crossAxisCount: 3,
+      crossAxisCount: (MediaQuery.of(context).size.width < 450) ? 2 : 3,
       crossAxisSpacing: 0,
-      childAspectRatio: 3,
+      childAspectRatio: 5,
       children: checkersMap.keys.map((label) {
-        bool isChecked = checkersMap[label] ?? false; // Valor booleano associado a essa label
         return Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Expanded(
-              flex: 1,
-              child: Text(label, style: const TextStyle(fontSize: 12)),
+              flex: 3,
+              child: Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold))
             ),
             Expanded(
               flex: 1,
@@ -77,7 +75,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                   ),
                 ),
                 child: Checkbox(
-                  value: isChecked,
+                  value: checkersMap[label] ?? false,
                   activeColor: Colors.blue,
                   side: const BorderSide(
                     width: 2,
@@ -220,7 +218,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                       ),
                       Text(validationCheckBoxes ? "Error" : "", textAlign: TextAlign.center, style: const TextStyle(color: Colors.red)),
                       Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
                         child: TextButton(
                           onPressed: _registerTecnico,
                           style: TextButton.styleFrom(
