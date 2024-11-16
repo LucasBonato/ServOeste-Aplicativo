@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../components/dialog_box.dart';
 
+// TODO - Remove this class creating a component of each method
 class BuildWidgets {
   static FloatingActionButton buildFabRemove(BuildContext context, dynamic removeMethod) {
     return FloatingActionButton(

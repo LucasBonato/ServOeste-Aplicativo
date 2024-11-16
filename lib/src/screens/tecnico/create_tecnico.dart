@@ -22,9 +22,9 @@ class _CreateTecnicoState extends State<CreateTecnico> {
   final TecnicoValidator _tecnicoCreateValidator = TecnicoValidator();
   final GlobalKey<FormState> _tecnicoFormKey = GlobalKey<FormState>();
 
-  late TextEditingController nomeController,
-      telefoneCelularController,
-      telefoneFixoController;
+  late TextEditingController _nomeController,
+      _telefoneCelularController,
+      _telefoneFixoController;
 
   bool validationCheckBoxes = false;
 
@@ -46,9 +46,9 @@ class _CreateTecnicoState extends State<CreateTecnico> {
   @override
   void initState() {
     super.initState();
-    nomeController = TextEditingController();
-    telefoneCelularController = TextEditingController();
-    telefoneFixoController = TextEditingController();
+    _nomeController = TextEditingController();
+    _telefoneCelularController = TextEditingController();
+    _telefoneFixoController = TextEditingController();
   }
 
   Widget gridCheckersMap() {
@@ -177,7 +177,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                     CustomTextFormField(
                       hint: "Nome...",
                       label: "Nome",
-                      controller: nomeController,
+                      controller: _nomeController,
                       type: TextInputType.name,
                       maxLength: 40,
                       hide: false,
@@ -188,7 +188,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                     CustomTextFormField(
                       hint: "(99) 99999-9999",
                       label: "Telefone Celular",
-                      controller: telefoneCelularController,
+                      controller: _telefoneCelularController,
                       masks: Constants.maskTelefone,
                       type: TextInputType.phone,
                       maxLength: 15,
@@ -201,7 +201,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                       hint: "(99) 99999-9999",
                       label: "Telefone Fixo",
                       masks: Constants.maskTelefone,
-                      controller: telefoneFixoController,
+                      controller: _telefoneFixoController,
                       type: TextInputType.phone,
                       maxLength: 15,
                       hide: false,
@@ -267,9 +267,11 @@ class _CreateTecnicoState extends State<CreateTecnico> {
 
   @override
   void dispose() {
-    nomeController.dispose();
-    telefoneCelularController.dispose();
-    telefoneFixoController.dispose();
+    _nomeController.dispose();
+    _telefoneCelularController.dispose();
+    _telefoneFixoController.dispose();
+    _tecnicoBloc.close();
+    _tecnicoCreateForm.dispose();
     super.dispose();
   }
 }
