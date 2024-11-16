@@ -11,13 +11,12 @@ class BuildWidgets {
     );
   }
 
-  static FloatingActionButton buildFabAdd(BuildContext context, String route, void event) {
+  static FloatingActionButton buildFabAdd(BuildContext context, String route, dynamic event) {
     return FloatingActionButton(
       backgroundColor: null,
       shape: const CircleBorder(eccentricity: 0),
-      //TODO - Fazer com que o evento seja executado corretamente
       onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed(route)
-          .then((value) => value?? event),
+          .then((value) => value?? event()),
       child: const Icon(Icons.add),
     );
   }

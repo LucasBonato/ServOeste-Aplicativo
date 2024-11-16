@@ -64,7 +64,7 @@ class _TecnicoScreenState extends State<TecnicoPage> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       floatingActionButton: (!isSelected)
-          ? BuildWidgets.buildFabAdd(context, "/createTecnico", _tecnicoBloc.add(TecnicoSearchEvent()))
+          ? BuildWidgets.buildFabAdd(context, "/createTecnico", () => _tecnicoBloc.add(TecnicoSearchEvent()))
           : BuildWidgets.buildFabRemove(context, _disableTecnicos),
       body: Column(
         children: [
