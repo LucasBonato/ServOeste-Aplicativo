@@ -30,6 +30,7 @@ class Tecnico {
         nome = tecnicoForm.nome.value;
         telefoneFixo = transformTelefoneMask(tecnicoForm.telefoneFixo.value);
         telefoneCelular = transformTelefoneMask(tecnicoForm.telefoneCelular.value);
+        especialidadesIds = tecnicoForm.conhecimentos.value;
     }
 
     factory Tecnico.fromJson(Map<String, dynamic> json) => Tecnico(

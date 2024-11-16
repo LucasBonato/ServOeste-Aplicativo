@@ -7,7 +7,7 @@ class TecnicoForm extends ChangeNotifier {
   ValueNotifier<String> nome = ValueNotifier("");
   ValueNotifier<String> telefoneCelular = ValueNotifier("");
   ValueNotifier<String> telefoneFixo = ValueNotifier("");
-  ValueNotifier<List<EspecialidadeForm>> conhecimentos = ValueNotifier([]);
+  ValueNotifier<List<int>> conhecimentos = ValueNotifier([]);
 
   void setId(int id) {
     this.id = id;
@@ -28,20 +28,26 @@ class TecnicoForm extends ChangeNotifier {
     notifyListeners();
   }
 
-  // void setConhecimentos(String? key, bool? value) {
-  //   if(key == null || value == null) return;
-  //   conhecimentos.value[key] = value;
-  //   notifyListeners();
-  // }
+  void addConhecimentos(int conhecimento) {
+    if (!conhecimentos.value.contains(conhecimento)) {
+      conhecimentos.value.add(conhecimento);
+    }
+    notifyListeners();
+  }
+
+  void removeConhecimentos(int conhecimento) {
+    conhecimentos.value.removeWhere((especialidade) => especialidade == conhecimento);
+    notifyListeners();
+  }
 }
 
 class TecnicoValidator extends LucidValidator<TecnicoForm> {
-  final EspecialidadeValidator especialidadeValidator = EspecialidadeValidator();
   final Map<String, String> externalErrors = {};
   final String nomeKey = "nome";
   final String telefoneFixoKey = "telefoneFixo";
   final String telefoneCelularKey = "telefoneCelular";
   final String conhecimentosKey = "conhecimentos";
+  List<int> conhecimentos = [];
 
   TecnicoValidator() {
     ruleFor((tecnico) => tecnico.nome.value, key: nomeKey)
@@ -55,8 +61,8 @@ class TecnicoValidator extends LucidValidator<TecnicoForm> {
     ruleFor((tecnico) => tecnico.telefoneFixo.value, key: telefoneFixoKey)
         .customValidExternalErrors(externalErrors, telefoneFixoKey);
 
-    // ruleFor((tecnico) => tecnico.conhecimentos.value, key: conhecimentosKey)
-    //     .setValidator(especialidadeValidator);
+    ruleFor((tecnico) => tecnico.conhecimentos.value, key: conhecimentosKey)
+        .customValidIsEmpty(conhecimentos, "Selecione ao menos um conhecimento!", conhecimentosKey);
   }
 
   void applyBackendError(ErrorEntity errorEntity) {
@@ -78,6 +84,11 @@ class TecnicoValidator extends LucidValidator<TecnicoForm> {
     externalErrors.clear();
   }
 
+  void setConhecimentos(List<int> conhecimentos) {
+    this.conhecimentos.clear();
+    this.conhecimentos.addAll(conhecimentos);
+  }
+
   void _addError(String key, String message) {
     externalErrors[key] = message;
   }
@@ -86,6 +97,23 @@ class TecnicoValidator extends LucidValidator<TecnicoForm> {
     for (String key in keys) {
       externalErrors[key] = message;
     }
+  }
+}
+
+extension on LucidValidationBuilder<List<int>, TecnicoForm> {
+  LucidValidationBuilder<List<int>, TecnicoForm> customValidIsEmpty(List<int> especialidades, String message, String code) {
+    ValidationException? callback(value, entity) {
+      if(especialidades.isNotEmpty) {
+        return null;
+      }
+      return ValidationException(
+        message: message,
+        key: code,
+        code: code
+      );
+    }
+
+    return use(callback);
   }
 }
 
@@ -103,51 +131,5 @@ extension on LucidValidationBuilder<String, dynamic> {
     }
 
     return use(callback);
-  }
-}
-
-// extension on SimpleValidationBuilder<String> {
-//   SimpleValidationBuilder<String> setValidatorForList(LucidValidator validator) {
-//     return
-//   }
-// }
-
-
-class EspecialidadeForm extends ChangeNotifier {
-  ValueNotifier<int> id = ValueNotifier(0);
-  ValueNotifier<String> conhecimento = ValueNotifier("");
-
-  void setId(int id) {
-    this.id.value = id;
-    notifyListeners();
-  }
-
-  void setConhecimento(String conhecimento) {
-    this.conhecimento.value = conhecimento;
-    notifyListeners();
-  }
-}
-
-class EspecialidadeValidator extends LucidValidator<EspecialidadeForm> {
-  final Map<String, String> externalErrors = {};
-  final String conhecimentoKey = "conhecimento";
-
-  EspecialidadeValidator() {
-    ruleFor((especialidade) => especialidade.conhecimento.value, key: conhecimentoKey);
-  }
-
-  void applyBackendError(ErrorEntity errorEntity) {
-    switch (errorEntity.id) {
-      case 10: _addError(conhecimentoKey, errorEntity.errorMessage);
-      break;
-    }
-  }
-
-  void cleanExternalErrors() {
-    externalErrors.clear();
-  }
-
-  void _addError(String key, String message) {
-    externalErrors[key] = message;
   }
 }

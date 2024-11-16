@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/repository/dio/dio_service.dart';
 import 'package:serv_oeste/src/repository/dio/server_endpoints.dart';
 
@@ -45,7 +46,7 @@ class TecnicoRepository extends DioService {
     return null;
   }
 
-  Future<void> postTecnico(Tecnico tecnico) async {
+  Future<ErrorEntity?> postTecnico(Tecnico tecnico) async {
     try {
       await dio.post(
         ServerEndpoints.tecnicoEndpoint,
@@ -58,8 +59,9 @@ class TecnicoRepository extends DioService {
         }
       );
     } on DioException catch(e) {
-      throw Exception(onRequestError(e));
+      return onRequestError(e);
     }
+    return null;
   }
 
   Future<void> putTecnico(Tecnico tecnico) async {

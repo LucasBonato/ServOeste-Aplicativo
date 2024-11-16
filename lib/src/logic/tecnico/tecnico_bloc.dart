@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
+import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/repository/tecnico_repository.dart';
@@ -16,6 +19,7 @@ class TecnicoBloc extends Bloc<TecnicoEvent, TecnicoState> {
   TecnicoBloc() : super(TecnicoInitialState()) {
     on<TecnicoLoadingEvent>(_fetchAllTecnicos);
     on<TecnicoSearchEvent>(_searchTecnicos);
+    on<TecnicoRegisterEvent>(_registerTecnico);
   }
 
   Future<void> _fetchAllTecnicos(TecnicoLoadingEvent event, Emitter emit) async {
@@ -37,5 +41,16 @@ class TecnicoBloc extends Bloc<TecnicoEvent, TecnicoState> {
     _nome = event.nome?.isNotEmpty == true ? event.nome : null;
     _situacao = event.situacao?.isNotEmpty == true && event.situacao != null ? event.situacao!.toLowerCase() : null;
     await _fetchAllTecnicos(TecnicoLoadingEvent(id: _id, nome: _nome, situacao: _situacao), emit);
+  }
+
+  Future<void> _registerTecnico(TecnicoRegisterEvent event, Emitter emit) async {
+    emit(TecnicoLoadingState());
+    try {
+      event.tecnico.sobrenome = event.sobrenome;
+      ErrorEntity? error = await _tecnicoRepository.postTecnico(event.tecnico);
+      emit((error == null) ? TecnicoRegisterSuccessState() : TecnicoErrorState(error: error));
+    } on DioException {
+      emit(ClienteErrorState(error: ErrorEntity(id: 0, errorMessage: "Algo não ocorreu como esperado")));
+    }
   }
 }
