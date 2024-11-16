@@ -18,8 +18,10 @@ class TecnicoBloc extends Bloc<TecnicoEvent, TecnicoState> {
 
   TecnicoBloc() : super(TecnicoInitialState()) {
     on<TecnicoLoadingEvent>(_fetchAllTecnicos);
+    on<TecnicoSearchOneEvent>(_fetchOneTecnico);
     on<TecnicoSearchEvent>(_searchTecnicos);
     on<TecnicoRegisterEvent>(_registerTecnico);
+    on<TecnicoUpdateEvent>(_updateTecnico);
   }
 
   Future<void> _fetchAllTecnicos(TecnicoLoadingEvent event, Emitter emit) async {
@@ -33,6 +35,20 @@ class TecnicoBloc extends Bloc<TecnicoEvent, TecnicoState> {
       emit(TecnicoSearchSuccessState(tecnicos: tecnicos?? []));
     } on DioException catch (e) {
       emit(TecnicoErrorState(error: ErrorEntity(id: 0, errorMessage: e.message?? "")));
+    }
+  }
+  
+  Future<void> _fetchOneTecnico(TecnicoSearchOneEvent event, Emitter emit) async {
+    emit(TecnicoLoadingState());
+    try {
+      Tecnico? tecnico = await _tecnicoRepository.getTecnicoById(event.id);
+      if (tecnico != null) {
+        emit(TecnicoSearchOneSuccessState(tecnico: tecnico));
+        return;
+      }
+      emit(TecnicoErrorState(error: ErrorEntity(id: 0, errorMessage: "Não foi possível encontrar o técnico!")));
+    } on DioException catch (e) {
+      emit(TecnicoErrorState(error: e as ErrorEntity));
     }
   }
   
@@ -51,6 +67,17 @@ class TecnicoBloc extends Bloc<TecnicoEvent, TecnicoState> {
       emit((error == null) ? TecnicoRegisterSuccessState() : TecnicoErrorState(error: error));
     } on DioException {
       emit(ClienteErrorState(error: ErrorEntity(id: 0, errorMessage: "Algo não ocorreu como esperado")));
+    }
+  }
+
+  Future<void> _updateTecnico(TecnicoUpdateEvent event, Emitter emit) async {
+    emit(TecnicoLoadingState());
+    try {
+      event.tecnico.sobrenome = event.sobrenome;
+      ErrorEntity? error = await _tecnicoRepository.putTecnico(event.tecnico);
+      emit(error == null ? TecnicoUpdateSuccessState() : ClienteErrorState(error: error));
+    } catch (e) {
+      emit(ClienteErrorState(error: e as ErrorEntity));
     }
   }
 }

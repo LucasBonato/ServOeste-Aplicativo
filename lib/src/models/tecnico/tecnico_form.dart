@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
+import 'package:serv_oeste/src/shared/constants.dart';
 
 class TecnicoForm extends ChangeNotifier {
   int? id;
   ValueNotifier<String> nome = ValueNotifier("");
+  ValueNotifier<String> situacao = ValueNotifier("");
   ValueNotifier<String> telefoneCelular = ValueNotifier("");
   ValueNotifier<String> telefoneFixo = ValueNotifier("");
   ValueNotifier<List<int>> conhecimentos = ValueNotifier([]);
@@ -18,14 +20,23 @@ class TecnicoForm extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setTelefoneFixo(String? telefoneFixo) {
-    this.telefoneFixo.value = telefoneFixo?? "";
+  void setSituacao(String? situacao) {
+    this.situacao.value = situacao?? "";
     notifyListeners();
   }
 
+  void setTelefoneFixo(String? telefoneFixo) {
+    if (telefoneFixo!.isNotEmpty) {
+      this.telefoneFixo.value = Constants.deTransformarMask(telefoneFixo);
+      notifyListeners();
+    }
+  }
+
   void setTelefoneCelular(String? telefoneCelular) {
-    this.telefoneCelular.value = telefoneCelular?? "";
-    notifyListeners();
+    if (telefoneCelular!.isNotEmpty) {
+      this.telefoneCelular.value = Constants.deTransformarMask(telefoneCelular);
+      notifyListeners();
+    }
   }
 
   void addConhecimentos(int conhecimento) {

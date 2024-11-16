@@ -134,8 +134,6 @@ class _CreateTecnicoState extends State<CreateTecnico> {
         _tecnicoCreateForm.removeConhecimentos(idConhecimento);
       }
     });
-    Logger().w(_tecnicoCreateForm.conhecimentos.value);
-
     _tecnicoCreateValidator.setConhecimentos(_tecnicoCreateForm.conhecimentos.value);
 
     if(_isValidForm() == false) {
@@ -238,7 +236,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                               _tecnicoCreateValidator.cleanExternalErrors();
 
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text("[ERROR] Informação(ões) inválida(s) ao registrar o Técnico: ${error.errorMessage}"))
+                                SnackBar(content: Text("[ERROR] Informação(ões) inválida(s) ao registrar o Técnico: ${error.errorMessage}"))
                               );
 
                             }

@@ -74,7 +74,6 @@ class _UpdateClienteState extends State<UpdateCliente> {
 
     _clienteBloc.add(ClienteUpdateEvent(cliente: Cliente.fromForm(_clienteUpdateForm), sobrenome: sobrenome));
     _clienteUpdateForm.nome.value = "${nomes.first} $sobrenome";
-
   }
 
   bool _isValidForm() {
@@ -111,8 +110,6 @@ class _UpdateClienteState extends State<UpdateCliente> {
         },
         builder: (context, state) {
           return switch(state) {
-            ClienteLoadingState() => const Center(child: CircularProgressIndicator.adaptive()),
-
             ClienteSearchOneSuccessState() => Padding(
               padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
               child: SingleChildScrollView(

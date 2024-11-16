@@ -28,6 +28,7 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
       final Cliente? cliente = await _clienteRepository.getClienteById(id: event.id);
       if (cliente != null) {
         emit(ClienteSearchOneSuccessState(cliente: cliente));
+        return;
       }
       emit(ClienteErrorState(error: ErrorEntity(id: 0, errorMessage: "")));
     } on DioException catch (e) {

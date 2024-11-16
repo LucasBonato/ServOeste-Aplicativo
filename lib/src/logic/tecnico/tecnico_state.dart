@@ -7,7 +7,13 @@ final class TecnicoInitialState extends TecnicoState {}
 
 final class TecnicoLoadingState extends TecnicoState {}
 
-final class TecnicoSearchOneSuccessState extends TecnicoState {}
+final class TecnicoSearchOneSuccessState extends TecnicoState {
+  final Tecnico tecnico;
+
+  TecnicoSearchOneSuccessState({
+    required this.tecnico
+  });
+}
 
 final class TecnicoSearchSuccessState extends TecnicoState {
   final List<Tecnico> tecnicos;

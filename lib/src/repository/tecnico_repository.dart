@@ -33,12 +33,11 @@ class TecnicoRepository extends DioService {
   Future<Tecnico?> getTecnicoById(int id) async {
     try {
       final response = await dio.get(
-          "${ServerEndpoints.tecnicoEndpoint}$id"
+          "${ServerEndpoints.tecnicoEndpoint}/$id"
       );
 
       if (response.data != null) {
-        dynamic jsonResponse = json.decode(utf8.decode(response.data));
-        return Tecnico.fromJson(jsonResponse);
+        return Tecnico.fromJson(response.data as Map<String, dynamic>);
       }
     } on DioException catch(e) {
       throw Exception(onRequestError(e));
@@ -64,10 +63,10 @@ class TecnicoRepository extends DioService {
     return null;
   }
 
-  Future<void> putTecnico(Tecnico tecnico) async {
+  Future<ErrorEntity?> putTecnico(Tecnico tecnico) async {
     try {
       await dio.put(
-        "${ServerEndpoints.tecnicoEndpoint}${tecnico.id}",
+        "${ServerEndpoints.tecnicoEndpoint}/${tecnico.id}",
         data: {
           "nome": tecnico.nome,
           "sobrenome": tecnico.sobrenome,
@@ -78,8 +77,9 @@ class TecnicoRepository extends DioService {
         }
       );
     } on DioException catch(e) {
-      throw Exception(onRequestError(e));
+      return onRequestError(e);
     }
+    return null;
   }
 
   Future<void> disableListOfTecnicos(List<int> selectedItems) async {

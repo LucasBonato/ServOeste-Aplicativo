@@ -28,6 +28,7 @@ class Tecnico {
     Tecnico.fromForm(TecnicoForm tecnicoForm) {
         id = tecnicoForm.id;
         nome = tecnicoForm.nome.value;
+        situacao = tecnicoForm.situacao.value;
         telefoneFixo = transformTelefoneMask(tecnicoForm.telefoneFixo.value);
         telefoneCelular = transformTelefoneMask(tecnicoForm.telefoneCelular.value);
         especialidadesIds = tecnicoForm.conhecimentos.value;

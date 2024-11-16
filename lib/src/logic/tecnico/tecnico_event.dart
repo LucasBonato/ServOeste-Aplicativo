@@ -15,7 +15,13 @@ final class TecnicoLoadingEvent extends TecnicoEvent {
   });
 }
 
-final class TecnicoSearchOneEvent extends TecnicoEvent {}
+final class TecnicoSearchOneEvent extends TecnicoEvent {
+  final int id;
+
+  TecnicoSearchOneEvent({
+    required this.id
+  });
+}
 
 final class TecnicoSearchEvent extends TecnicoEvent {
   final int? id;
@@ -39,7 +45,15 @@ final class TecnicoRegisterEvent extends TecnicoEvent {
   });
 }
 
-final class TecnicoUpdateEvent extends TecnicoEvent {}
+final class TecnicoUpdateEvent extends TecnicoEvent {
+  final Tecnico tecnico;
+  final String sobrenome;
+
+  TecnicoUpdateEvent({
+    required this.tecnico,
+    required this.sobrenome
+  });
+}
 
 final class TecnicoDisableListEvent extends TecnicoEvent {
   final List<int> selectedList;
