@@ -54,7 +54,10 @@ class _TecnicoScreenState extends State<TecnicoPage> {
   
   Widget _buildEditableSection(int id) => IconButton(
     onPressed: () {
-      _selectedItems.clear();
+      setState(() {
+        _selectedItems.clear();
+        isSelected = false;
+      });
       Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateTecnico(id: id)))
           .then((value) => value?? _tecnicoBloc.add(TecnicoSearchEvent()));
     },
