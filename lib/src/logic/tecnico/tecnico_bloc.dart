@@ -22,6 +22,7 @@ class TecnicoBloc extends Bloc<TecnicoEvent, TecnicoState> {
     on<TecnicoSearchEvent>(_searchTecnicos);
     on<TecnicoRegisterEvent>(_registerTecnico);
     on<TecnicoUpdateEvent>(_updateTecnico);
+    on<TecnicoDisableListEvent>(_disableListOfTecnicos);
   }
 
   Future<void> _fetchAllTecnicos(TecnicoLoadingEvent event, Emitter emit) async {
@@ -78,6 +79,15 @@ class TecnicoBloc extends Bloc<TecnicoEvent, TecnicoState> {
       emit(error == null ? TecnicoUpdateSuccessState() : ClienteErrorState(error: error));
     } catch (e) {
       emit(ClienteErrorState(error: e as ErrorEntity));
+    }
+  }
+
+  Future<void> _disableListOfTecnicos(TecnicoDisableListEvent event, Emitter emit) async {
+    try {
+      await _tecnicoRepository.disableListOfTecnicos(event.selectedList);
+      await _fetchAllTecnicos(TecnicoLoadingEvent(id: _id, nome: _nome, situacao: _situacao), emit);
+    } catch (e) {
+      emit(TecnicoErrorState(error: ErrorEntity(id: 0, errorMessage: "")));
     }
   }
 }

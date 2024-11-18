@@ -32,10 +32,12 @@ class _TecnicoScreenState extends State<TecnicoPage> {
     _selectedItems = [];
   }
 
-  void _disableTecnicos() async {
-    _tecnicoBloc.add(TecnicoDisableListEvent(selectedList: _selectedItems));
+  void _disableTecnicos() {
+    final List<int> selectedItemsCopy = List<int>.from(_selectedItems);
+    _tecnicoBloc.add(TecnicoDisableListEvent(selectedList: selectedItemsCopy));
     setState(() {
       _selectedItems.clear();
+      isSelected = false;
     });
   }
 

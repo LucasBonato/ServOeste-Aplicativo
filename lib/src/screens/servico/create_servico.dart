@@ -476,7 +476,8 @@ class _CreateServicoState extends State<CreateServico>{
               Column(
                 children: [
                   TextButton(
-                    onPressed: (_idTecnicoSelected != null && _nomeEquipamento != null) ? () => _showDialog(context) : () => {},
+                    // onPressed: (_idTecnicoSelected != null && _nomeEquipamento != null) ? () => _showDialog(context) : () => {},
+                    onPressed: () => _showDialog(context),
                     style: TextButton.styleFrom(
                       fixedSize: Size(MediaQuery.of(context).size.width * 0.80, 48),
                       backgroundColor: (_idTecnicoSelected != null && _nomeEquipamento != null) ? Colors.blueAccent : Colors.grey,
@@ -493,11 +494,14 @@ class _CreateServicoState extends State<CreateServico>{
                     color: Colors.transparent
                   ),
                   TextButton(
-                    onPressed: (_idTecnicoSelected != null && _nomeEquipamento != null && nomeController.text.isNotEmpty && (telefoneCelularController.text.isNotEmpty || telefoneFixoController.text.isNotEmpty) && enderecoController.text.isNotEmpty && municipioController.text.isNotEmpty && bairroController.text.isNotEmpty && _descricaoController.text.isNotEmpty) ? () => _cadastrarServico() : () => {},
+                    // onPressed: (_idTecnicoSelected != null && _nomeEquipamento != null && nomeController.text.isNotEmpty && (telefoneCelularController.text.isNotEmpty || telefoneFixoController.text.isNotEmpty) && enderecoController.text.isNotEmpty && municipioController.text.isNotEmpty && bairroController.text.isNotEmpty && _descricaoController.text.isNotEmpty) ? () => _cadastrarServico() : () => {},
+                    onPressed: () => _cadastrarServico(),
                     style: TextButton.styleFrom(
                       fixedSize: Size(MediaQuery.of(context).size.width * 0.80, 48),
-                      backgroundColor: (_idTecnicoSelected != null && _nomeEquipamento != null && nomeController.text.isNotEmpty && (telefoneCelularController.text.isNotEmpty || telefoneFixoController.text.isNotEmpty) && enderecoController.text.isNotEmpty && municipioController.text.isNotEmpty && bairroController.text.isNotEmpty && _descricaoController.text.isNotEmpty) ? Colors.blueAccent : Colors.grey,
-                      foregroundColor: (_idTecnicoSelected != null && _nomeEquipamento != null && nomeController.text.isNotEmpty && (telefoneCelularController.text.isNotEmpty || telefoneFixoController.text.isNotEmpty) && enderecoController.text.isNotEmpty && municipioController.text.isNotEmpty && bairroController.text.isNotEmpty && _descricaoController.text.isNotEmpty) ? Colors.white : Colors.black26,
+                      // backgroundColor: (_idTecnicoSelected != null && _nomeEquipamento != null && nomeController.text.isNotEmpty && (telefoneCelularController.text.isNotEmpty || telefoneFixoController.text.isNotEmpty) && enderecoController.text.isNotEmpty && municipioController.text.isNotEmpty && bairroController.text.isNotEmpty && _descricaoController.text.isNotEmpty) ? Colors.blueAccent : Colors.grey,
+                      backgroundColor: Colors.blueAccent,
+                      // foregroundColor: (_idTecnicoSelected != null && _nomeEquipamento != null && nomeController.text.isNotEmpty && (telefoneCelularController.text.isNotEmpty || telefoneFixoController.text.isNotEmpty) && enderecoController.text.isNotEmpty && municipioController.text.isNotEmpty && bairroController.text.isNotEmpty && _descricaoController.text.isNotEmpty) ? Colors.white : Colors.black26,
+                      foregroundColor:Colors.white,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5)
                       )
@@ -526,7 +530,6 @@ class _CreateServicoState extends State<CreateServico>{
   }
 
   Table _buildTableWithData()  {
-    getTecnicosDisponiveis();
 
     if(_tecnicos.isEmpty) {
       return Table(

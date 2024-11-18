@@ -7,7 +7,7 @@ class BuildWidgets {
     return FloatingActionButton(
       backgroundColor: Colors.red,
       shape: const CircleBorder(eccentricity: 0),
-      onPressed: () => DialogUtils.showConfirmationDialog(context, "Deletar itens selecionados?", "", "Sim", "Não", () => removeMethod()),
+      onPressed: () => DialogUtils.showConfirmationDialog(context, "Deletar itens selecionados?", "", "Sim", "Não", removeMethod),
       child: const Icon(Icons.delete, color: Colors.white),
     );
   }
