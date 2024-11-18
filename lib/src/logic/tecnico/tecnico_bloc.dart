@@ -83,6 +83,7 @@ class TecnicoBloc extends Bloc<TecnicoEvent, TecnicoState> {
   }
 
   Future<void> _disableListOfTecnicos(TecnicoDisableListEvent event, Emitter emit) async {
+    emit(TecnicoLoadingState());
     try {
       await _tecnicoRepository.disableListOfTecnicos(event.selectedList);
       await _fetchAllTecnicos(TecnicoLoadingEvent(id: _id, nome: _nome, situacao: _situacao), emit);

@@ -78,7 +78,7 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
   }
 
   Future<void> _deleteListClients(ClienteDeleteListEvent event, Emitter emit) async {
-    emit(ClienteLoadingEvent());
+    emit(ClienteLoadingState());
     try {
       await _clienteRepository.deleteClientes(event.selectedList);
       await _fetchAllClients(ClienteLoadingEvent(nome: _nome, telefone: _telefone, endereco: _endereco), emit);

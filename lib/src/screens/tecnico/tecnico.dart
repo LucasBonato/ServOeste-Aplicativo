@@ -61,7 +61,12 @@ class _TecnicoScreenState extends State<TecnicoPage> {
         isSelected = false;
       });
       Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateTecnico(id: id)))
-          .then((value) => value?? _tecnicoBloc.add(TecnicoSearchEvent()));
+        .then((value) {
+          if(value == null) {
+            _tecnicoBloc.add(TecnicoSearchEvent());
+          }
+        }
+      );
     },
     icon: const Icon(Icons.edit, color: Colors.white),
     style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),

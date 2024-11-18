@@ -32,10 +32,12 @@ class _ClienteScreenState extends State<ClientePage> {
     _selectedItems = [];
   }
 
-  void _disableClientes() async {
-    _clienteBloc.add(ClienteDeleteListEvent(selectedList: _selectedItems));
+  void _disableClientes() {
+    final List<int> selectedItemsCopy = List<int>.from(_selectedItems);
+    _clienteBloc.add(ClienteDeleteListEvent(selectedList: selectedItemsCopy));
     setState(() {
       _selectedItems.clear();
+      isSelected = false;
     });
   }
 
