@@ -38,7 +38,7 @@ class _HomeState extends State<Home> {
   List<Widget> _buildScreens() => [
         const Servico(),
         const ClientePage(),
-        _buildHomeScreen(), // Substituído para refletir o design
+        _buildHomeScreen(),
         const TecnicoPage(),
       ];
 
@@ -86,7 +86,6 @@ class _HomeState extends State<Home> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header ajustado
             Container(
               padding: EdgeInsets.symmetric(
                 horizontal: MediaQuery.of(context).size.width * 0.05,
@@ -127,12 +126,11 @@ class _HomeState extends State<Home> {
               ),
             ),
             const SizedBox(height: 20),
-            // Hero com overlay e imagem com maxHeight
             Stack(
               children: [
                 ConstrainedBox(
                   constraints: BoxConstraints(
-                    maxHeight: 300, // Definindo a altura máxima
+                    maxHeight: 300,
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
@@ -229,7 +227,6 @@ class _HomeState extends State<Home> {
     final bool isLargeScreen = screenWidth >= 768;
 
     if (!isLargeScreen) {
-      // Modo Mobile: Ajustando para evitar dois headers
       return Scaffold(
         body: PersistentTabView(
           context,
@@ -249,7 +246,6 @@ class _HomeState extends State<Home> {
         ),
       );
     } else {
-      // Modo Desktop: Sidebar com header fixo
       return Scaffold(
         body: Row(
           children: [

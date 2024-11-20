@@ -107,7 +107,6 @@ class CardServiceAgenda extends StatelessWidget {
                     ),
                   ],
                 ),
-                // Texto laranja
                 Align(
                   alignment: Alignment.centerRight,
                   child: Padding(
