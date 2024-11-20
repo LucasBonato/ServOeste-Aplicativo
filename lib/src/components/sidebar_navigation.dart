@@ -14,7 +14,6 @@ class SidebarNavigation extends StatefulWidget {
 class _SidebarNavigationState extends State<SidebarNavigation> {
   int _selectedIndex = 0;
 
-  // Lista de telas prontas
   final List<Widget> _screens = [
     const Home(),
     const Servico(),
