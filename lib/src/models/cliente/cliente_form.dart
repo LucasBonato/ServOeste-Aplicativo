@@ -50,6 +50,16 @@ class ClienteForm extends ChangeNotifier {
     this.bairro.value = bairro?? "";
     notifyListeners();
   }
+
+  bool isRequiredFieldsFilled() {
+    return (
+        nome.value.isNotEmpty &&
+        endereco.value.isNotEmpty &&
+        municipio.value.isNotEmpty &&
+        bairro.value.isNotEmpty &&
+        (telefoneFixo.value.isNotEmpty || telefoneCelular.value.isNotEmpty)
+      );
+  }
 }
 
 class ClienteValidator extends LucidValidator<ClienteForm> {

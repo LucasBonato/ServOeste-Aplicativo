@@ -8,30 +8,28 @@ class CustomDatePicker extends StatefulWidget {
   final String label;
   final String? mask;
   final int maxLength;
-  final TextEditingController controller;
-  final String errorMessage;
+  final TextEditingController? controller;
   final TextInputType type;
   final double? rightPadding;
   final double? leftPadding;
-  late bool validation;
+  late bool? validation;
   final Function(String?)? onChanged;
   final bool hide;
 
   CustomDatePicker({
     super.key,
+    this.hide = false,
+    this.controller,
+    this.validation,
+    this.onChanged,
+    this.leftPadding,
+    this.rightPadding,
     this.restorationId,
     required this.hint,
     required this.label,
     required this.mask,
-    required this.errorMessage,
     required this.maxLength,
-    required this.controller,
     required this.type,
-    required this.validation,
-    this.hide = false,
-    this.onChanged,
-    this.leftPadding,
-    this.rightPadding
   });
 
   @override
@@ -41,7 +39,16 @@ class CustomDatePicker extends StatefulWidget {
 class _CustomDatePickerState extends State<CustomDatePicker> with RestorationMixin{
   @override
   String? get restorationId => widget.restorationId;
+
   String _dateSelected = "";
+
+  late final TextEditingController _internalController;
+
+  @override
+  void initState() {
+    _internalController = widget.controller?? TextEditingController();
+    super.initState();
+  }
 
   final RestorableDateTime _selectedDate = RestorableDateTime(DateTime.now());
   late final RestorableRouteFuture<DateTime?> _restorableDatePickerRouteFuture = RestorableRouteFuture<DateTime?>(
@@ -81,7 +88,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> with RestorationMix
       setState(() {
         _selectedDate.value = newSelectedDate;
         _dateSelected = '${_selectedDate.value.day < 10 ? '0${_selectedDate.value.day}' : _selectedDate.value.day}/${_selectedDate.value.month < 10 ? '0${_selectedDate.value.month}' : _selectedDate.value.month}/${_selectedDate.value.year}';
-        widget.controller.text = _dateSelected;
+        _internalController.text = _dateSelected;
       });
     }
   }
@@ -89,15 +96,14 @@ class _CustomDatePickerState extends State<CustomDatePicker> with RestorationMix
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(widget.leftPadding != null ? widget.leftPadding! : 16, 4, widget.rightPadding != null ? widget.rightPadding! : 16, widget.hide ? 16 : 0),
+      padding: EdgeInsetsDirectional.fromSTEB(widget.leftPadding?? 16, 4, widget.rightPadding?? 16, widget.hide ? 16 : 0),
       child: MaskedTextField(
-        controller: widget.controller,
+        controller: _internalController,
         mask: widget.mask,
         maxLength: widget.maxLength,
         keyboardType: widget.type,
         decoration: InputDecoration(
           counterText: widget.hide ? "" : null,
-          error: (widget.validation) ? Text(widget.errorMessage, textAlign: TextAlign.center, style: const TextStyle(color: Colors.red),) : null,
           hintText: widget.hint,
           labelText: widget.label,
           isDense: true,
