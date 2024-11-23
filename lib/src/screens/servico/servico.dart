@@ -33,7 +33,7 @@ class _ServicoState extends State<Servico> {
             itemCount: state.servicos.length,
             itemBuilder: (context, index) => ListTile(
               leading: Text(state.servicos[index].id.toString()),
-              title: Text(state.servicos[index].dataAtendimentoPrevisto.toString()),
+              title: Text('${state.servicos[index].dataAtendimentoPrevisto.day < 10 ? '0${state.servicos[index].dataAtendimentoPrevisto.day}' : state.servicos[index].dataAtendimentoPrevisto.day}/${state.servicos[index].dataAtendimentoPrevisto.month < 10 ? '0${state.servicos[index].dataAtendimentoPrevisto.month}' : state.servicos[index].dataAtendimentoPrevisto.month}/${state.servicos[index].dataAtendimentoPrevisto.year}'),
               trailing: Text(state.servicos[index].situacao),
             ),
           ),
@@ -44,3 +44,4 @@ class _ServicoState extends State<Servico> {
     );
   }
 }
+

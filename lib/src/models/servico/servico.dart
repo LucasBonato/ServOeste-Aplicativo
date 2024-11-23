@@ -31,6 +31,6 @@ class Servico {
     horarioPrevisto: json["horarioPrevisto"],
     marca: json["marca"],
     situacao: json["situacao"],
-    dataAtendimentoPrevisto: json["dataAtendimentoPrevisto"]
+    dataAtendimentoPrevisto: DateTime.parse(json["dataAtendimentoPrevisto"])
   );
 }
