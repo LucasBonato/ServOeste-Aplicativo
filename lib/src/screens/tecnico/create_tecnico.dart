@@ -1,7 +1,8 @@
 import 'package:serv_oeste/src/components/custom_text_form_field.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
+import 'package:serv_oeste/src/models/validators/validator.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
+import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
@@ -174,7 +175,6 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                     CustomTextFormField(
                       hint: "Nome...",
                       label: "Nome",
-                      controller: _nomeController,
                       type: TextInputType.name,
                       maxLength: 40,
                       hide: false,
@@ -185,7 +185,6 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                     CustomTextFormField(
                       hint: "(99) 99999-9999",
                       label: "Telefone Celular",
-                      controller: _telefoneCelularController,
                       masks: Constants.maskTelefone,
                       type: TextInputType.phone,
                       maxLength: 15,
@@ -198,7 +197,6 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                       hint: "(99) 99999-9999",
                       label: "Telefone Fixo",
                       masks: Constants.maskTelefone,
-                      controller: _telefoneFixoController,
                       type: TextInputType.phone,
                       maxLength: 15,
                       hide: false,
