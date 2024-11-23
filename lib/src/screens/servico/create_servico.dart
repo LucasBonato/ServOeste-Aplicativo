@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 import 'package:serv_oeste/src/components/custom_text_form_field.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
@@ -22,25 +23,23 @@ import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
 import '../../components/dropdown_field.dart';
 
 class CreateServico extends StatefulWidget {
-  const CreateServico({super.key});
+  final bool isWithAnExistingClient;
+  final int? clientId;
+
+  const CreateServico({
+    super.key,
+    this.clientId,
+    this.isWithAnExistingClient = false,
+  });
 
   @override
   State<CreateServico> createState() => _CreateServicoState();
 }
 
 class _CreateServicoState extends State<CreateServico>{
-  final EnderecoBloc _enderecoBloc = EnderecoBloc();
   final TecnicoBloc _tecnicoBloc = TecnicoBloc();
-
   late List<Tecnico> _tecnicos;
-
   List<String> _dropdownTecnicoValuesNomes = [];
-
-  final ClienteBloc _clienteBloc = ClienteBloc();
-  final ClienteForm _clienteCreateForm = ClienteForm();
-  final ClienteValidator _clienteCreateValidator = ClienteValidator();
-  final GlobalKey<FormState> _clienteFormKey = GlobalKey<FormState>();
-  List<String> _dropdownClienteValuesNomes = [];
 
   Timer? _debounce;
 
@@ -48,6 +47,15 @@ class _CreateServicoState extends State<CreateServico>{
   final ServicoForm _servicoCreateForm = ServicoForm();
   final ServicoValidator _servicoCreateValidator = ServicoValidator();
   final GlobalKey<FormState> _servicoFormKey = GlobalKey<FormState>();
+
+  final GlobalKey<FormState> _clienteFormKey = GlobalKey<FormState>();
+  final ClienteBloc _clienteBloc = ClienteBloc();
+  final ClienteForm _clienteCreateForm = ClienteForm();
+  final ClienteValidator _clienteCreateValidator = ClienteValidator();
+  List<String> _dropdownClienteValuesNomes = [];
+
+  late final EnderecoBloc _enderecoBloc = EnderecoBloc();
+
 
   late int dayOfTheWeek;
 
@@ -59,6 +67,10 @@ class _CreateServicoState extends State<CreateServico>{
   @override
   void initState() {
     super.initState();
+    if (widget.isWithAnExistingClient) {
+      _servicoCreateForm.setIdCliente(widget.clientId);
+    }
+
     dayOfTheWeek = DateTime.now().weekday;
   }
 
@@ -156,7 +168,17 @@ class _CreateServicoState extends State<CreateServico>{
     ));
     _clienteCreateForm.nome.value = "${nomes.first} $sobrenomeCliente";
   }
-  
+
+  void _registerServicoForACliente() {
+    Logger().i("Passou");
+
+    if(_isServicoValidForm() == false) {
+      return;
+    }
+
+    _servicoBloc.add(ServicoRegisterEvent(servico: ServicoRequest.fromServicoForm(servico: _servicoCreateForm)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -174,133 +196,139 @@ class _CreateServicoState extends State<CreateServico>{
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
-              Form(
-                key: _clienteFormKey,
+              Visibility(
+                visible: !widget.isWithAnExistingClient,
                 child: Column(
-                  mainAxisSize: MainAxisSize.max,
                   children: [
-                    BlocListener<ClienteBloc, ClienteState>(
-                      bloc: _clienteBloc,
-                      listener: (context, state) {
-                        if (state is ClienteSearchSuccessState) {
-                          List<String> nomes = state.clientes
-                              .take(5)
-                              .map((cliente) => cliente.nome!)
-                              .toList();
-
-                          if(_dropdownClienteValuesNomes != nomes) {
-                            _dropdownClienteValuesNomes = nomes;
-                            setState(() {});
-                          }
-                        }
-                      },
-                      child: CustomSearchDropDown(
-                        label: "Nome",
-                        maxLength: 40,
-                        onChanged: _onNomeClienteChanged,
-                        onSelected: _onNomeClienteChanged,
-                        dropdownValues: _dropdownClienteValuesNomes,
-                        validator: _clienteCreateValidator.byField(_clienteCreateForm, "nome"),
-                      ),
-                    ),
-                    CustomTextFormField(
-                      valueNotifier: _clienteCreateForm.telefoneCelular,
-                      hint: "(99) 99999-9999",
-                      label: "Telefone Celular",
-                      masks: Constants.maskTelefone,
-                      maxLength: 15,
-                      type: TextInputType.phone,
-                      hide: false,
-                      validator: _clienteCreateValidator.byField(_clienteCreateForm, "telefoneCelular"),
-                      onChanged: _clienteCreateForm.setTelefoneCelular,
-                    ),  // Telefone Celular
-                    CustomTextFormField(
-                      valueNotifier: _clienteCreateForm.telefoneFixo,
-                      hint: "(99) 99999-9999",
-                      label: "Telefone Fixo",
-                      masks: Constants.maskTelefone,
-                      maxLength: 15,
-                      type: TextInputType.phone,
-                      hide: false,
-                      validator: _clienteCreateValidator.byField(_clienteCreateForm, "telefoneFixo"),
-                      onChanged: _clienteCreateForm.setTelefoneFixo,
-                    ),  // Telefone Fixo
-                    BlocListener<EnderecoBloc, EnderecoState>(
-                      bloc: _enderecoBloc,
-                      listener: (context, state) {
-                        if (state is EnderecoSuccessState) {
-                          _clienteCreateForm.setEndereco(state.endereco!);
-                          _clienteCreateForm.setMunicipio(state.municipio!);
-                          _clienteCreateForm.setBairro(state.bairro!);
-                        }
-                      },
+                    Form(
+                      key: _clienteFormKey,
                       child: Column(
+                        mainAxisSize: MainAxisSize.max,
                         children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                flex: 5,
-                                child: CustomTextFormField(
-                                  valueNotifier: _clienteCreateForm.cep,
-                                  hint: "00000-000",
-                                  label: "CEP",
-                                  hide: true,
-                                  maxLength: 9,
-                                  masks: Constants.maskCep,
-                                  rightPadding: 4,
-                                  type: TextInputType.number,
-                                  validator: _clienteCreateValidator.byField(_clienteCreateForm, "cep"),
-                                  onChanged: _fetchInformationAboutCep,
+                          BlocListener<ClienteBloc, ClienteState>(
+                            bloc: _clienteBloc,
+                            listener: (context, state) {
+                              if (state is ClienteSearchSuccessState) {
+                                List<String> nomes = state.clientes
+                                    .take(5)
+                                    .map((cliente) => cliente.nome!)
+                                    .toList();
+
+                                if(_dropdownClienteValuesNomes != nomes) {
+                                  _dropdownClienteValuesNomes = nomes;
+                                  setState(() {});
+                                }
+                              }
+                            },
+                            child: CustomSearchDropDown(
+                              label: "Nome",
+                              maxLength: 40,
+                              onChanged: _onNomeClienteChanged,
+                              onSelected: _onNomeClienteChanged,
+                              dropdownValues: _dropdownClienteValuesNomes,
+                              validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.cliente.name),
+                            ),
+                          ),
+                          CustomTextFormField(
+                            valueNotifier: _clienteCreateForm.telefoneCelular,
+                            hint: "(99) 99999-9999",
+                            label: "Telefone Celular",
+                            masks: Constants.maskTelefone,
+                            maxLength: 15,
+                            type: TextInputType.phone,
+                            hide: false,
+                            validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.telefoneCelular.name),
+                            onChanged: _clienteCreateForm.setTelefoneCelular,
+                          ),  // Telefone Celular
+                          CustomTextFormField(
+                            valueNotifier: _clienteCreateForm.telefoneFixo,
+                            hint: "(99) 99999-9999",
+                            label: "Telefone Fixo",
+                            masks: Constants.maskTelefone,
+                            maxLength: 15,
+                            type: TextInputType.phone,
+                            hide: false,
+                            validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.telefoneFixo.name),
+                            onChanged: _clienteCreateForm.setTelefoneFixo,
+                          ),  // Telefone Fixo
+                          BlocListener<EnderecoBloc, EnderecoState>(
+                            bloc: _enderecoBloc,
+                            listener: (context, state) {
+                              if (state is EnderecoSuccessState) {
+                                _clienteCreateForm.setEndereco(state.endereco!);
+                                _clienteCreateForm.setMunicipio(state.municipio!);
+                                _clienteCreateForm.setBairro(state.bairro!);
+                              }
+                            },
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 5,
+                                      child: CustomTextFormField(
+                                        valueNotifier: _clienteCreateForm.cep,
+                                        hint: "00000-000",
+                                        label: "CEP",
+                                        hide: true,
+                                        maxLength: 9,
+                                        masks: Constants.maskCep,
+                                        rightPadding: 4,
+                                        type: TextInputType.number,
+                                        validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.cep.name),
+                                        onChanged: _fetchInformationAboutCep,
+                                      ),
+                                    ), // CEP
+                                    Expanded(
+                                      flex: 8,
+                                      child: CustomTextFormField(
+                                        valueNotifier: _clienteCreateForm.endereco,
+                                        hint: "Rua...",
+                                        label: "Endereço, Número e Complemento",
+                                        validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.endereco.name),
+                                        maxLength: 255,
+                                        hide: true,
+                                        type: TextInputType.text,
+                                        leftPadding: 4,
+                                        onChanged: _clienteCreateForm.setEndereco,
+                                      ),
+                                    ), // Endereço
+                                  ],
                                 ),
-                              ), // CEP
-                              Expanded(
-                                flex: 8,
-                                child: CustomTextFormField(
-                                  valueNotifier: _clienteCreateForm.endereco,
-                                  hint: "Rua...",
-                                  label: "Endereço, Número e Complemento",
-                                  validator: _clienteCreateValidator.byField(_clienteCreateForm, "endereco"),
+                                CustomDropdownField(
+                                  label: "Município",
+                                  dropdownValues: Constants.municipios,
+                                  valueNotifier: _clienteCreateForm.municipio,
+                                  validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.municipio.name),
+                                  onChanged: _clienteCreateForm.setMunicipio,
+                                ),
+                                CustomTextFormField(
+                                  valueNotifier: _clienteCreateForm.bairro,
+                                  hint: "Bairro...",
+                                  label: "Bairro",
+                                  validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.bairro.name),
                                   maxLength: 255,
                                   hide: true,
                                   type: TextInputType.text,
-                                  leftPadding: 4,
-                                  onChanged: _clienteCreateForm.setEndereco,
-                                ),
-                              ), // Endereço
-                            ],
+                                  onChanged: _clienteCreateForm.setBairro,
+                                ), // Bairro
+                              ],
+                            ),
                           ),
-                          CustomDropdownField(
-                            label: "Município",
-                            dropdownValues: Constants.municipios,
-                            valueNotifier: _clienteCreateForm.municipio,
-                            validator: _clienteCreateValidator.byField(_clienteCreateForm, "municipio"),
-                            onChanged: _clienteCreateForm.setMunicipio,
-                          ),
-                          CustomTextFormField(
-                            valueNotifier: _clienteCreateForm.bairro,
-                            hint: "Bairro...",
-                            label: "Bairro",
-                            validator: _clienteCreateValidator.byField(_clienteCreateForm, "bairro"),
-                            maxLength: 255,
-                            hide: true,
-                            type: TextInputType.text,
-                            onChanged: _clienteCreateForm.setBairro,
-                          ), // Bairro
-                        ],
+                        ]
                       ),
                     ),
-                  ]
-                ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          left: MediaQuery.of(context).size.width * 0.032,
+                          right: MediaQuery.of(context).size.width * 0.032,
+                          bottom: 8
+                      ),
+                      child: const Divider(),
+                    ),
+                  ],
+                )
               ), // Cliente Form
-
-              Padding(
-                padding: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width * 0.032,
-                  right: MediaQuery.of(context).size.width * 0.032,
-                  bottom: 8
-                ),
-                child: const Divider(),
-              ),
 
               Form(
                 key: _servicoFormKey,
@@ -314,7 +342,7 @@ class _CreateServicoState extends State<CreateServico>{
                       dropdownValues: Constants.equipamentos,
                       onChanged: _servicoCreateForm.setEquipamento,
                       onSelected: _servicoCreateForm.setEquipamento,
-                      validator: _servicoCreateValidator.byField(_servicoCreateForm, "equipamento"),
+                      validator: _servicoCreateValidator.byField(_servicoCreateForm, ErrorCodeKey.equipamento.name),
                     ),
                     CustomSearchDropDown(
                       label: "Marca",
@@ -324,14 +352,14 @@ class _CreateServicoState extends State<CreateServico>{
                       dropdownValues: Constants.marcas,
                       onChanged: _servicoCreateForm.setMarca,
                       onSelected: _servicoCreateForm.setMarca,
-                      validator: _servicoCreateValidator.byField(_servicoCreateForm, "marca"),
+                      validator: _servicoCreateValidator.byField(_servicoCreateForm, ErrorCodeKey.marca.name),
                     ),
                     CustomDropdownField(
                       label: "Filial",
                       dropdownValues: Constants.filiais,
                       valueNotifier: _servicoCreateForm.filial,
                       onChanged: _servicoCreateForm.setFilial,
-                      validator: _servicoCreateValidator.byField(_servicoCreateForm, "filial"),
+                      validator: _servicoCreateValidator.byField(_servicoCreateForm, ErrorCodeKey.filial.name),
                     ),
                     CustomDatePicker(
                       label: "Data Atendimento Previsto",
@@ -340,7 +368,7 @@ class _CreateServicoState extends State<CreateServico>{
                       type: TextInputType.datetime,
                       maxLength: 10,
                       hide: true,
-                      validator: _servicoCreateValidator.byField(_servicoCreateForm, "dataAtendimentoPrevisto"),
+                      validator: _servicoCreateValidator.byField(_servicoCreateForm, ErrorCodeKey.data.name),
                       valueNotifier: _servicoCreateForm.dataAtendimentoPrevisto,
                     ),
                     CustomDropdownField(
@@ -348,7 +376,7 @@ class _CreateServicoState extends State<CreateServico>{
                       dropdownValues: Constants.dataAtendimento,
                       valueNotifier: _servicoCreateForm.horarioPrevisto,
                       onChanged: _servicoCreateForm.setHorarioPrevisto,
-                      validator: _servicoCreateValidator.byField(_servicoCreateForm, "horarioPrevisto"),
+                      validator: _servicoCreateValidator.byField(_servicoCreateForm, ErrorCodeKey.horario.name),
                     ),
                     BlocListener<TecnicoBloc, TecnicoState>(
                       bloc: _tecnicoBloc,
@@ -375,7 +403,7 @@ class _CreateServicoState extends State<CreateServico>{
                         onChanged: _onNomeTecnicoChanged,
                         onSelected: _getTecnicoId,
                         suggestionVerticalOffset: 0,
-                        validator: _servicoCreateValidator.byField(_servicoCreateForm, "tecnico"),
+                        validator: _servicoCreateValidator.byField(_servicoCreateForm, ErrorCodeKey.tecnico.name),
                       ),
                     ),
                     CustomTextFormField(
@@ -388,7 +416,7 @@ class _CreateServicoState extends State<CreateServico>{
                       valueNotifier: _servicoCreateForm.descricao,
                       onChanged: _servicoCreateForm.setDescricao,
                       hide: false,
-                      validator: _servicoCreateValidator.byField(_servicoCreateForm, "descricao"),
+                      validator: _servicoCreateValidator.byField(_servicoCreateForm, ErrorCodeKey.descricao.name),
                     ),
                     Column(
                       children: [
@@ -422,33 +450,37 @@ class _CreateServicoState extends State<CreateServico>{
                             else if (state is ServicoErrorState) {
                               ErrorEntity error = state.error;
 
-                              _clienteCreateValidator.applyBackendError(error);
-                              _clienteFormKey.currentState?.validate();
-                              _clienteCreateValidator.cleanExternalErrors();
+                              if (!widget.isWithAnExistingClient) {
+                                _clienteCreateValidator.applyBackendError(error);
+                                _clienteFormKey.currentState?.validate();
+                                _clienteCreateValidator.cleanExternalErrors();
+                              }
 
                               _servicoCreateValidator.applyBackendError(error);
                               _servicoFormKey.currentState?.validate();
                               _servicoCreateValidator.cleanExternalErrors();
 
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text("[ERROR] Informação(ões) inválida(s) ao registrar o Serviço: ${error.errorMessage}"))
+                                SnackBar(content: Text("[ERROR] Informação(ões) inválida(s) ao registrar o Serviço: ${error.errorMessage}"))
                               );
-
                             }
                           },
                           child: ElevatedButton(
                             onPressed: () {
-                              if (_servicoCreateForm.isRequiredFieldsFilled() && _clienteCreateForm.isRequiredFieldsFilled()) {
+                              if (!widget.isWithAnExistingClient && _servicoCreateForm.isRequiredFieldsFilled() && _clienteCreateForm.isRequiredFieldsFilled()) {
                                 _registerServicoAndCliente();
+                              }
+                              else if (widget.isWithAnExistingClient && _servicoCreateForm.isRequiredFieldsFilled()) {
+                                _registerServicoForACliente();
                               }
                             },
                             style: TextButton.styleFrom(
-                                fixedSize: Size(MediaQuery.of(context).size.width * 0.80, 48),
-                                backgroundColor: (_servicoCreateForm.isRequiredFieldsFilled() && _clienteCreateForm.isRequiredFieldsFilled()) ? Colors.blueAccent : Colors.grey,
-                                foregroundColor: (_servicoCreateForm.isRequiredFieldsFilled() && _clienteCreateForm.isRequiredFieldsFilled()) ? Colors.white : Colors.black26,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5)
-                                )
+                              fixedSize: Size(MediaQuery.of(context).size.width * 0.80, 48),
+                              backgroundColor: (_servicoCreateForm.isRequiredFieldsFilled() && (!widget.isWithAnExistingClient || _clienteCreateForm.isRequiredFieldsFilled())) ? Colors.blueAccent : Colors.grey,
+                              foregroundColor: (_servicoCreateForm.isRequiredFieldsFilled() && (!widget.isWithAnExistingClient || _clienteCreateForm.isRequiredFieldsFilled())) ? Colors.white : Colors.black26,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5)
+                              )
                             ),
                             child: const Text("Cadastrar novo serviço", style: TextStyle(fontSize: 20))
                           ),

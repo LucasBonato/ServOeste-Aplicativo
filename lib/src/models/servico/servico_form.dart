@@ -10,6 +10,7 @@ class ServicoForm extends ChangeNotifier {
   ValueNotifier<String> descricao = ValueNotifier("");
   ValueNotifier<String> nomeTecnico = ValueNotifier("");
   ValueNotifier<int?> idTecnico = ValueNotifier(null);
+  ValueNotifier<int?> idCliente = ValueNotifier(null);
 
   void setEquipamento(String? equipamento) {
     if(equipamento != null && equipamento.isNotEmpty) {
@@ -52,6 +53,11 @@ class ServicoForm extends ChangeNotifier {
 
   void setIdTecnico(int? idTecnico) {
     this.idTecnico.value = idTecnico;
+    notifyListeners();
+  }
+
+  void setIdCliente(int? idCliente) {
+    this.idCliente.value = idCliente;
     notifyListeners();
   }
 

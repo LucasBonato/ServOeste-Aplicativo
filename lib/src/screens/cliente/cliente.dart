@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/src/screens/servico/create_servico.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
@@ -91,6 +92,9 @@ class _ClienteScreenState extends State<ClientePage> {
             isSelected = false;
             _selectedItems.clear();
           });
+
+          Navigator.push(context, MaterialPageRoute(builder: (context) => CreateServico(isWithAnExistingClient: true, clientId: id)))
+              .then((value) => value?? _clienteBloc.add(ClienteSearchEvent()));
         },
         icon: const Icon(Icons.content_paste, color: Colors.white),
         style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),

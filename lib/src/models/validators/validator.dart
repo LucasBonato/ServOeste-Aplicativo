@@ -13,46 +13,52 @@ mixin BackendErrorsValidator {
         addError(ErrorCodeKey.nomeESobrenome.name, errorEntity.errorMessage);
         break;
       case 2:
-        addError(ErrorCodeKey.telefoneFixo.name, errorEntity.errorMessage);
+        addError(ErrorCodeKey.telefoneCelular.name, errorEntity.errorMessage);
         break;
       case 3:
-        addError(ErrorCodeKey.telefoneCelular.name, errorEntity.errorMessage);
+        addError(ErrorCodeKey.telefoneFixo.name, errorEntity.errorMessage);
         break;
       case 4:
         addListError([ErrorCodeKey.telefoneFixo.name, ErrorCodeKey.telefoneCelular.name], errorEntity.errorMessage);
         break;
       case 5:
-        addError(ErrorCodeKey.endereco.name, errorEntity.errorMessage);
+        addError(ErrorCodeKey.cep.name, errorEntity.errorMessage);
         break;
       case 6:
-        addError(ErrorCodeKey.municipio.name, errorEntity.errorMessage);
+        addError(ErrorCodeKey.endereco.name, errorEntity.errorMessage);
         break;
       case 7:
-        addError(ErrorCodeKey.bairro.name, errorEntity.errorMessage);
+        addError(ErrorCodeKey.municipio.name, errorEntity.errorMessage);
         break;
       case 8:
-        addError(ErrorCodeKey.cliente.name, errorEntity.errorMessage);
+        addError(ErrorCodeKey.bairro.name, errorEntity.errorMessage);
         break;
       case 9:
-        addError(ErrorCodeKey.tecnico.name, errorEntity.errorMessage);
+        addError(ErrorCodeKey.cliente.name, errorEntity.errorMessage);
         break;
       case 10:
-        addError(ErrorCodeKey.equipamento.name, errorEntity.errorMessage);
+        addError(ErrorCodeKey.tecnico.name, errorEntity.errorMessage);
         break;
       case 11:
-        addError(ErrorCodeKey.marca.name, errorEntity.errorMessage);
+        addError(ErrorCodeKey.equipamento.name, errorEntity.errorMessage);
         break;
       case 12:
-        addError(ErrorCodeKey.descricao.name, errorEntity.errorMessage);
+        addError(ErrorCodeKey.marca.name, errorEntity.errorMessage);
         break;
       case 13:
-        addError(ErrorCodeKey.filial.name, errorEntity.errorMessage);
+        addError(ErrorCodeKey.descricao.name, errorEntity.errorMessage);
         break;
       case 14:
-        addError(ErrorCodeKey.horario.name, errorEntity.errorMessage);
+        addError(ErrorCodeKey.filial.name, errorEntity.errorMessage);
         break;
       case 15:
+        addError(ErrorCodeKey.horario.name, errorEntity.errorMessage);
+        break;
+      case 16:
         addError(ErrorCodeKey.data.name, errorEntity.errorMessage);
+        break;
+      case 17:
+        addError(ErrorCodeKey.conhecimento.name, errorEntity.errorMessage);
         break;
       default:
         addError(ErrorCodeKey.global.name, errorEntity.errorMessage);
@@ -201,9 +207,10 @@ extension on LucidValidationBuilder {
 enum ErrorCodeKey {
   global,
   nomeESobrenome,
-  telefoneFixo,
   telefoneCelular,
+  telefoneFixo,
   telefones,
+  cep,
   endereco,
   municipio,
   bairro,

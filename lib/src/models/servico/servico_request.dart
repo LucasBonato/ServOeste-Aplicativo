@@ -22,6 +22,7 @@ class ServicoRequest {
   });
 
   factory ServicoRequest.fromServicoForm({required ServicoForm servico}) => ServicoRequest(
+    idCliente: servico.idCliente.value,
     idTecnico: servico.idTecnico.value!,
     equipamento: servico.equipamento.value,
     marca: servico.marca.value,

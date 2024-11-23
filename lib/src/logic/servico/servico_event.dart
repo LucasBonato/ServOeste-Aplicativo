@@ -15,7 +15,13 @@ final class ServicoSearchOneEvent extends ServicoEvent {}
 
 final class ServicoSearchEvent extends ServicoEvent {}
 
-final class ServicoRegisterEvent extends ServicoEvent {}
+final class ServicoRegisterEvent extends ServicoEvent {
+  final ServicoRequest servico;
+
+  ServicoRegisterEvent({
+    required this.servico
+  });
+}
 
 final class ServicoRegisterPlusClientEvent extends ServicoEvent {
   final ClienteRequest cliente;

@@ -83,25 +83,24 @@ class ServicoRepository extends DioService {
     return null;
   }
 
-  Future<void> createServicoComClienteExistente(ServicoRequest servico) async {
+  Future<ErrorEntity?> createServicoComClienteExistente(ServicoRequest servico) async {
     try {
       await dio.post(
         ServerEndpoints.servicoEndpoint,
         data: {
-          "servicoRequest": {
-            "idCliente": servico.idCliente,
-            "idTecnico": servico.idTecnico,
-            "equipamento": servico.equipamento,
-            "marca": servico.marca,
-            "filial": servico.filial,
-            "dataAtendimento": servico.dataAtendimento,
-            "horarioPrevisto": servico.horarioPrevisto,
-            "descricao": servico.descricao,
-          }
+          "idCliente": servico.idCliente,
+          "idTecnico": servico.idTecnico,
+          "equipamento": servico.equipamento,
+          "marca": servico.marca,
+          "filial": servico.filial,
+          "dataAtendimento": servico.dataAtendimento,
+          "horarioPrevisto": servico.horarioPrevisto,
+          "descricao": servico.descricao,
         }
       );
     } on DioException catch(e) {
-      throw Exception(onRequestError(e));
+      return onRequestError(e);
     }
+    return null;
   }
 }
