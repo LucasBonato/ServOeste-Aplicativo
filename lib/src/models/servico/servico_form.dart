@@ -1,15 +1,12 @@
-
-import 'package:flutter/cupertino.dart';
-import 'package:lucid_validation/lucid_validation.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:flutter/cupertino.dart';
 
 class ServicoForm extends ChangeNotifier {
   ValueNotifier<String> equipamento = ValueNotifier("");
   ValueNotifier<String> marca = ValueNotifier("");
-  ValueNotifier<String> filial = ValueNotifier("");
+  ValueNotifier<String> filial = ValueNotifier(Constants.filiais[0]);
   ValueNotifier<String> dataAtendimentoPrevisto = ValueNotifier("");
-  ValueNotifier<String> horarioPrevisto = ValueNotifier("");
+  ValueNotifier<String> horarioPrevisto = ValueNotifier(Constants.dataAtendimento[0]);
   ValueNotifier<String> descricao = ValueNotifier("");
   ValueNotifier<String> nomeTecnico = ValueNotifier("");
   ValueNotifier<int?> idTecnico = ValueNotifier(null);
@@ -64,56 +61,5 @@ class ServicoForm extends ChangeNotifier {
         equipamento.value.isNotEmpty &&
         descricao.value.isNotEmpty
       );
-  }
-}
-
-class ServicoValidator extends LucidValidator<ServicoForm> {
-  final Map<String, String> externalErrors = {};
-  final String equipamentoKey = "equipamento";
-  final String marcaKey = "marca";
-  final String filialKey = "filial";
-  final String dataAtendimentoPrevistoKey = "dataAtendimentoPrevisto";
-  final String horarioPrevistoKey = "horarioPrevisto";
-  final String descricaoKey = "descricao";
-  final String nomeTecnicoKey = "nomeTecnico";
-
-  ServicoValidator() {
-    ruleFor((servico) => servico.equipamento.value, key: equipamentoKey)
-        .isNotNull();
-  }
-
-  void applyBackendError(ErrorEntity errorEntity) {
-    switch (errorEntity.id) {
-    }
-  }
-
-  void cleanExternalErrors() {
-    externalErrors.clear();
-  }
-
-  void _addError(String key, String message) {
-    externalErrors[key] = message;
-  }
-
-  void _addListError(List<String> keys, String message) {
-    for (String key in keys) {
-      externalErrors[key] = message;
-    }
-  }
-}
-
-extension on LucidValidationBuilder<String, dynamic> {
-  LucidValidationBuilder<String, dynamic> customValidExternalErrors(Map<String, String> externalErrors, String code) {
-    ValidationException? callback(value, entity) {
-      if(externalErrors[code] == null) {
-        return null;
-      }
-      return ValidationException(
-          message: externalErrors[code]!,
-          code: code
-      );
-    }
-
-    return use(callback);
   }
 }
