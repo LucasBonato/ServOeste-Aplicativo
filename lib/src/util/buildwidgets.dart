@@ -3,22 +3,43 @@ import '../components/dialog_box.dart';
 
 // TODO - Remove this class creating a component of each method
 class BuildWidgets {
-  static FloatingActionButton buildFabRemove(BuildContext context, dynamic removeMethod) {
+  static FloatingActionButton buildFabAdd(
+    BuildContext context,
+    String route,
+    dynamic event, {
+    String tooltip = '',
+  }) {
     return FloatingActionButton(
-      backgroundColor: Colors.red,
+      backgroundColor: Colors.blue,
       shape: const CircleBorder(eccentricity: 0),
-      onPressed: () => DialogUtils.showConfirmationDialog(context, "Deletar itens selecionados?", "", "Sim", "Não", removeMethod),
-      child: const Icon(Icons.delete, color: Colors.white),
+      elevation: 8,
+      tooltip: tooltip,
+      onPressed: () => Navigator.of(context, rootNavigator: true)
+          .pushNamed(route)
+          .then((value) => value ?? event()),
+      child: const Icon(Icons.add, color: Colors.white, size: 35),
     );
   }
 
-  static FloatingActionButton buildFabAdd(BuildContext context, String route, dynamic event) {
+  static FloatingActionButton buildFabRemove(
+    BuildContext context,
+    dynamic removeMethod, {
+    String tooltip = '',
+  }) {
     return FloatingActionButton(
-      backgroundColor: null,
+      backgroundColor: Colors.red,
       shape: const CircleBorder(eccentricity: 0),
-      onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed(route)
-          .then((value) => value?? event()),
-      child: const Icon(Icons.add),
+      elevation: 8,
+      tooltip: tooltip,
+      onPressed: () => DialogUtils.showConfirmationDialog(
+        context,
+        "Deletar itens selecionados?",
+        "",
+        "Sim",
+        "Não",
+        removeMethod,
+      ),
+      child: const Icon(Icons.delete, color: Colors.white, size: 35),
     );
   }
 }

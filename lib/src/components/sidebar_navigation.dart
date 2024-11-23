@@ -5,21 +5,30 @@ import 'package:serv_oeste/src/screens/servico/servico.dart';
 import 'package:serv_oeste/src/screens/tecnico/tecnico.dart';
 
 class SidebarNavigation extends StatefulWidget {
-  const SidebarNavigation({Key? key}) : super(key: key);
+  final int currentIndex; // Novo parâmetro para o índice ativo
+
+  const SidebarNavigation({Key? key, required this.currentIndex})
+      : super(key: key);
 
   @override
   State<SidebarNavigation> createState() => _SidebarNavigationState();
 }
 
 class _SidebarNavigationState extends State<SidebarNavigation> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
 
   final List<Widget> _screens = [
     const Home(),
-    const Servico(),
-    const ClientePage(),
     const TecnicoPage(),
+    const ClientePage(),
+    const Servico(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.currentIndex; // Sincroniza o índice inicial
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +37,7 @@ class _SidebarNavigationState extends State<SidebarNavigation> {
     if (!isLargeScreen) return const SizedBox.shrink();
 
     return Container(
-      width: 200,
+      width: 175,
       margin: const EdgeInsets.only(right: 25),
       decoration: const BoxDecoration(
         color: Color.fromARGB(253, 253, 253, 255),
@@ -59,8 +68,8 @@ class _SidebarNavigationState extends State<SidebarNavigation> {
                 const Divider(color: Colors.black),
                 _buildMenuItem(
                   index: 1,
-                  icon: Icons.paste,
-                  label: 'Serviços',
+                  icon: Icons.build,
+                  label: 'Técnicos',
                 ),
                 const Divider(color: Colors.black),
                 _buildMenuItem(
@@ -71,8 +80,8 @@ class _SidebarNavigationState extends State<SidebarNavigation> {
                 const Divider(color: Colors.black),
                 _buildMenuItem(
                   index: 3,
-                  icon: Icons.build,
-                  label: 'Técnicos',
+                  icon: Icons.paste,
+                  label: 'Serviços',
                 ),
               ],
             ),
@@ -103,7 +112,7 @@ class _SidebarNavigationState extends State<SidebarNavigation> {
       leading: Icon(
         icon,
         color: isSelected ? Colors.blue : Colors.black,
-        size: isSelected ? 30 : 24, // Ícone maior se selecionado
+        size: isSelected ? 30 : 24,
       ),
       title: Text(
         label,
@@ -113,14 +122,16 @@ class _SidebarNavigationState extends State<SidebarNavigation> {
         ),
       ),
       onTap: () {
-        setState(() {
-          _selectedIndex = index;
-        });
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => _screens[index],
-          ),
-        );
+        if (_selectedIndex != index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => _screens[index],
+            ),
+          );
+        }
       },
     );
   }

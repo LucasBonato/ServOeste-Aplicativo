@@ -37,25 +37,19 @@ class Constants {
     "Electrolux",
     "Samsung"
   ];
-  static const List<String> filiais = [
-    "Osasco",
-    "Carapicuíba"
-  ];
-  static const List<String> dataAtendimento = [
-    "Manhã",
-    "Tarde"
-  ];
+  static const List<String> filiais = ["Osasco", "Carapicuíba"];
+  static const List<String> dataAtendimento = ["Manhã", "Tarde"];
 
   static final List<MaskTextInputFormatter> maskCep = [
     MaskTextInputFormatter(
       mask: '#####-###',
-      filter: { "#": RegExp(r'[0-9]') },
+      filter: {"#": RegExp(r'[0-9]')},
     )
   ];
   static final List<MaskTextInputFormatter> maskTelefone = [
     MaskTextInputFormatter(
       mask: '(##) #####-####',
-      filter: { "#": RegExp(r'[0-9]') },
+      filter: {"#": RegExp(r'[0-9]')},
     )
   ];
 
@@ -64,15 +58,17 @@ class Constants {
     return "(${telefone.substring(0, 2)}) ${telefone.substring(2, 7)}-${telefone.substring(7)}";
   }
 
-  static String transformarMask(String telefone){
-    if(telefone.length != 15) return "";
-    return telefone.substring(1, 3) + telefone.substring(5, 10) + telefone.substring(11);
+  static String transformarMask(String telefone) {
+    if (telefone.length != 15) return "";
+    return telefone.substring(1, 3) +
+        telefone.substring(5, 10) +
+        telefone.substring(11);
   }
 
-  static String transformTelefone({Tecnico? tecnico, Cliente? cliente}){
+  static String transformTelefone({Tecnico? tecnico, Cliente? cliente}) {
     String telefoneC;
     String telefoneF;
-    if(tecnico == null) {
+    if (tecnico == null) {
       telefoneC = cliente?.telefoneCelular ?? "";
       telefoneF = cliente?.telefoneFixo ?? "";
     } else {
@@ -80,7 +76,8 @@ class Constants {
       telefoneF = tecnico.telefoneFixo ?? "";
     }
     String telefone = (telefoneC.isNotEmpty) ? telefoneC : telefoneF;
-    String telefoneFormatado = "Telefone: (${telefone.substring(0, 2)}) ${telefone.substring(2, 7)}-${telefone.substring(7)}";
+    String telefoneFormatado =
+        "Telefone: (${telefone.substring(0, 2)}) ${telefone.substring(2, 7)}-${telefone.substring(7)}";
     return telefoneFormatado;
   }
 }
