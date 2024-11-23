@@ -23,4 +23,10 @@ final class ServicoUpdateSuccessState extends ServicoState {}
 
 final class ServicoDeleteSuccessState extends ServicoState {}
 
-final class ServicoErrorState extends ServicoState {}
+final class ServicoErrorState extends ServicoState {
+  final ErrorEntity error;
+
+  ServicoErrorState({
+    required this.error
+  });
+}

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
-import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/repository/tecnico_repository.dart';
@@ -67,7 +66,7 @@ class TecnicoBloc extends Bloc<TecnicoEvent, TecnicoState> {
       ErrorEntity? error = await _tecnicoRepository.postTecnico(event.tecnico);
       emit((error == null) ? TecnicoRegisterSuccessState() : TecnicoErrorState(error: error));
     } on DioException {
-      emit(ClienteErrorState(error: ErrorEntity(id: 0, errorMessage: "Algo não ocorreu como esperado")));
+      emit(TecnicoErrorState(error: ErrorEntity(id: 0, errorMessage: "Algo não ocorreu como esperado")));
     }
   }
 
@@ -76,9 +75,9 @@ class TecnicoBloc extends Bloc<TecnicoEvent, TecnicoState> {
     try {
       event.tecnico.sobrenome = event.sobrenome;
       ErrorEntity? error = await _tecnicoRepository.putTecnico(event.tecnico);
-      emit(error == null ? TecnicoUpdateSuccessState() : ClienteErrorState(error: error));
+      emit(error == null ? TecnicoUpdateSuccessState() : TecnicoErrorState(error: error));
     } catch (e) {
-      emit(ClienteErrorState(error: e as ErrorEntity));
+      emit(TecnicoErrorState(error: e as ErrorEntity));
     }
   }
 

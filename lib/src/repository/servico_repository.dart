@@ -1,3 +1,4 @@
+import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/models/servico/tecnico_disponivel.dart';
 import 'package:serv_oeste/src/repository/dio/server_endpoints.dart';
@@ -51,7 +52,7 @@ class ServicoRepository extends DioService {
     return null;
   }
 
-  Future<void> createServicoComClienteNaoExistente(ServicoRequest servico, ClienteRequest cliente) async {
+  Future<ErrorEntity?> createServicoComClienteNaoExistente(ServicoRequest servico, ClienteRequest cliente) async {
     try {
       await dio.post(
         ServerEndpoints.servicoMaisClienteEndpoint,
@@ -77,8 +78,9 @@ class ServicoRepository extends DioService {
         }
       );
     } on DioException catch(e) {
-      throw Exception(onRequestError(e));
+      return onRequestError(e);
     }
+    return null;
   }
 
   Future<void> createServicoComClienteExistente(ServicoRequest servico) async {

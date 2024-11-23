@@ -1,3 +1,4 @@
+import 'package:serv_oeste/src/models/servico/servico_form.dart';
 
 class ServicoRequest {
   int? idCliente;
@@ -19,4 +20,14 @@ class ServicoRequest {
     required this.horarioPrevisto,
     required this.descricao
   });
+
+  factory ServicoRequest.fromServicoForm({required ServicoForm servico}) => ServicoRequest(
+    idTecnico: servico.idTecnico.value!,
+    equipamento: servico.equipamento.value,
+    marca: servico.marca.value,
+    filial: servico.filial.value,
+    dataAtendimento: servico.dataAtendimentoPrevisto.value,
+    horarioPrevisto: servico.horarioPrevisto.value.toLowerCase().replaceAll("ã", "a"),
+    descricao: servico.descricao.value
+  );
 }

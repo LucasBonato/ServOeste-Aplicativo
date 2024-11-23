@@ -2,15 +2,17 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
 import 'package:serv_oeste/src/components/custom_text_form_field.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
-import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
+import 'package:serv_oeste/src/models/cliente/cliente_request.dart';
+import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/servico/servico_form.dart';
+import 'package:serv_oeste/src/models/servico/servico_request.dart';
 import 'package:serv_oeste/src/models/servico/tecnico_disponivel.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
+import 'package:serv_oeste/src/models/validators/validator.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/components/date_picker.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
@@ -82,34 +84,8 @@ class _CreateServicoState extends State<CreateServico>{
     _clienteBloc.add(ClienteSearchEvent(nome: nome));
   }
 
-  void _fetchInformationAboutCep(String? cep) async {
-    if(cep?.length != 9) return;
-    _clienteCreateForm.setCep(cep);
-    _enderecoBloc.add(EnderecoSearchCepEvent(cep: cep!));
-  }
-
-  bool _isValidForm() {
-    _clienteFormKey.currentState?.validate();
-    return _clienteCreateValidator.validate(_clienteCreateForm).isValid;
-  }
-
-  void _registerCliente() {
-    if(_isValidForm() == false) {
-      return;
-    }
-
-    List<String> nomes = _clienteCreateForm.nome.value.split(" ");
-    _clienteCreateForm.nome.value = nomes.first;
-    String sobrenome = nomes
-        .sublist(1)
-        .join(" ")
-        .trim();
-
-    _clienteBloc.add(ClienteRegisterEvent(cliente: Cliente.fromForm(_clienteCreateForm), sobrenome: sobrenome));
-    _clienteCreateForm.nome.value = "${nomes.first} $sobrenome";
-  }
-
   void _onNomeTecnicoChanged(String nome) {
+    _servicoCreateForm.setIdTecnico(null);
     if (_debounce?.isActive?? false) _debounce!.cancel();
 
     _debounce = Timer(Duration(milliseconds: 150), () => _fetchTecnicoNames(nome));
@@ -124,15 +100,6 @@ class _CreateServicoState extends State<CreateServico>{
     // _idTecnicoSelected = null;
   }
 
-  void _fetchTecnicosDisponiveis() async {
-    // ServicoService servicoService = ServicoService();
-    // List<TecnicoDisponivel> tecnicos = await servicoService.getTecnicosDisponiveis();
-    // setState(() {
-    //   _tecnicos = tecnicos;
-    //   isTecnicosLoading = false;
-    // });
-  }
-
   void _getTecnicoId(String nome) {
     _servicoCreateForm.setNomeTecnico(nome);
     for(Tecnico tecnico in _tecnicos) {
@@ -142,17 +109,52 @@ class _CreateServicoState extends State<CreateServico>{
     }
   }
 
-  void _registerServico() {
+  void _fetchInformationAboutCep(String? cep) {
+    if(cep?.length != 9) return;
+    _clienteCreateForm.setCep(cep);
+    _enderecoBloc.add(EnderecoSearchCepEvent(cep: cep!));
+  }
 
-    // ServicoRequest servico = ServicoRequest(
-    //     idTecnico: _idTecnicoSelected!,
-    //     equipamento: _nomeEquipamento!,
-    //     marca: _marcaController.text,
-    //     filial: _filialController.text,
-    //     dataAtendimento: _dataAtendimentoPrevistaController.text,
-    //     horarioPrevisto: _horarioPrevistoController.text.toLowerCase().replaceAll("ã", "a"),
-    //     descricao: _descricaoController.text
-    // );
+  bool _isClienteValidForm() {
+    _clienteFormKey.currentState?.validate();
+    return _clienteCreateValidator.validate(_clienteCreateForm).isValid;
+  }
+
+  bool _isServicoValidForm() {
+    _servicoFormKey.currentState?.validate();
+    return _servicoCreateValidator.validate(_servicoCreateForm).isValid;
+  }
+
+  void _fetchTecnicosDisponiveis() {
+    // ServicoService servicoService = ServicoService();
+    // List<TecnicoDisponivel> tecnicos = await servicoService.getTecnicosDisponiveis();
+    // setState(() {
+    //   _tecnicos = tecnicos;
+    //   isTecnicosLoading = false;
+    // });
+  }
+
+  void _registerServicoAndCliente() {
+    if(_isClienteValidForm() == false) {
+      return;
+    }
+
+    if(_isServicoValidForm() == false) {
+      return;
+    }
+
+    List<String> nomes = _clienteCreateForm.nome.value.split(" ");
+    _clienteCreateForm.nome.value = nomes.first;
+    String sobrenomeCliente = nomes
+        .sublist(1)
+        .join(" ")
+        .trim();
+
+    _servicoBloc.add(ServicoRegisterPlusClientEvent(
+      cliente: ClienteRequest.fromClienteForm(cliente: _clienteCreateForm, sobrenome: sobrenomeCliente),
+      servico: ServicoRequest.fromServicoForm(servico: _servicoCreateForm)
+    ));
+    _clienteCreateForm.nome.value = "${nomes.first} $sobrenomeCliente";
   }
   
   @override
@@ -161,7 +163,7 @@ class _CreateServicoState extends State<CreateServico>{
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.pop(context, ""),
         ),
         title: const Text("Novo Serviço"),
         centerTitle: true,
@@ -312,6 +314,7 @@ class _CreateServicoState extends State<CreateServico>{
                       dropdownValues: Constants.equipamentos,
                       onChanged: _servicoCreateForm.setEquipamento,
                       onSelected: _servicoCreateForm.setEquipamento,
+                      validator: _servicoCreateValidator.byField(_servicoCreateForm, "equipamento"),
                     ),
                     CustomSearchDropDown(
                       label: "Marca",
@@ -321,26 +324,31 @@ class _CreateServicoState extends State<CreateServico>{
                       dropdownValues: Constants.marcas,
                       onChanged: _servicoCreateForm.setMarca,
                       onSelected: _servicoCreateForm.setMarca,
+                      validator: _servicoCreateValidator.byField(_servicoCreateForm, "marca"),
                     ),
                     CustomDropdownField(
                       label: "Filial",
                       dropdownValues: Constants.filiais,
                       valueNotifier: _servicoCreateForm.filial,
                       onChanged: _servicoCreateForm.setFilial,
+                      validator: _servicoCreateValidator.byField(_servicoCreateForm, "filial"),
                     ),
                     CustomDatePicker(
                       label: "Data Atendimento Previsto",
                       hint: "",
-                      mask: "##/##/####",
+                      mask: Constants.maskData,
                       type: TextInputType.datetime,
                       maxLength: 10,
                       hide: true,
+                      validator: _servicoCreateValidator.byField(_servicoCreateForm, "dataAtendimentoPrevisto"),
+                      valueNotifier: _servicoCreateForm.dataAtendimentoPrevisto,
                     ),
                     CustomDropdownField(
                       label: "Horário Previsto",
                       dropdownValues: Constants.dataAtendimento,
                       valueNotifier: _servicoCreateForm.horarioPrevisto,
                       onChanged: _servicoCreateForm.setHorarioPrevisto,
+                      validator: _servicoCreateValidator.byField(_servicoCreateForm, "horarioPrevisto"),
                     ),
                     BlocListener<TecnicoBloc, TecnicoState>(
                       bloc: _tecnicoBloc,
@@ -367,6 +375,7 @@ class _CreateServicoState extends State<CreateServico>{
                         onChanged: _onNomeTecnicoChanged,
                         onSelected: _getTecnicoId,
                         suggestionVerticalOffset: 0,
+                        validator: _servicoCreateValidator.byField(_servicoCreateForm, "tecnico"),
                       ),
                     ),
                     CustomTextFormField(
@@ -379,6 +388,7 @@ class _CreateServicoState extends State<CreateServico>{
                       valueNotifier: _servicoCreateForm.descricao,
                       onChanged: _servicoCreateForm.setDescricao,
                       hide: false,
+                      validator: _servicoCreateValidator.byField(_servicoCreateForm, "descricao"),
                     ),
                     Column(
                       children: [
@@ -386,8 +396,6 @@ class _CreateServicoState extends State<CreateServico>{
                           onPressed: () {
                             if (_servicoCreateForm.isRequiredFieldsFilled()) {
                               _showDialog(context);
-                            } else {
-                              Logger().i(_servicoCreateForm.idTecnico.value);
                             }
                           },
                           style: TextButton.styleFrom(
@@ -405,21 +413,45 @@ class _CreateServicoState extends State<CreateServico>{
                           thickness: 0,
                           color: Colors.transparent
                         ),
-                        ElevatedButton(
-                          onPressed: () {
-                            if (_servicoCreateForm.isRequiredFieldsFilled() && _clienteCreateForm.isRequiredFieldsFilled()) {
-                              _registerServico();
+                        BlocListener<ServicoBloc, ServicoState>(
+                          bloc: _servicoBloc,
+                          listener: (context, state) {
+                            if (state is ServicoRegisterSuccessState) {
+                              Navigator.pop(context);
+                            }
+                            else if (state is ServicoErrorState) {
+                              ErrorEntity error = state.error;
+
+                              _clienteCreateValidator.applyBackendError(error);
+                              _clienteFormKey.currentState?.validate();
+                              _clienteCreateValidator.cleanExternalErrors();
+
+                              _servicoCreateValidator.applyBackendError(error);
+                              _servicoFormKey.currentState?.validate();
+                              _servicoCreateValidator.cleanExternalErrors();
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text("[ERROR] Informação(ões) inválida(s) ao registrar o Serviço: ${error.errorMessage}"))
+                              );
+
                             }
                           },
-                          style: TextButton.styleFrom(
-                            fixedSize: Size(MediaQuery.of(context).size.width * 0.80, 48),
-                            backgroundColor: (_servicoCreateForm.isRequiredFieldsFilled() && _clienteCreateForm.isRequiredFieldsFilled()) ? Colors.blueAccent : Colors.grey,
-                            foregroundColor: (_servicoCreateForm.isRequiredFieldsFilled() && _clienteCreateForm.isRequiredFieldsFilled()) ? Colors.white : Colors.black26,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5)
-                            )
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (_servicoCreateForm.isRequiredFieldsFilled() && _clienteCreateForm.isRequiredFieldsFilled()) {
+                                _registerServicoAndCliente();
+                              }
+                            },
+                            style: TextButton.styleFrom(
+                                fixedSize: Size(MediaQuery.of(context).size.width * 0.80, 48),
+                                backgroundColor: (_servicoCreateForm.isRequiredFieldsFilled() && _clienteCreateForm.isRequiredFieldsFilled()) ? Colors.blueAccent : Colors.grey,
+                                foregroundColor: (_servicoCreateForm.isRequiredFieldsFilled() && _clienteCreateForm.isRequiredFieldsFilled()) ? Colors.white : Colors.black26,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5)
+                                )
+                            ),
+                            child: const Text("Cadastrar novo serviço", style: TextStyle(fontSize: 20))
                           ),
-                          child: const Text("Cadastrar novo serviço", style: TextStyle(fontSize: 20))
                         ),
                       ],
                     )
