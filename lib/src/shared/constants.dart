@@ -58,6 +58,12 @@ class Constants {
       filter: { "#": RegExp(r'[0-9]') },
     )
   ];
+  static final List<MaskTextInputFormatter> maskData = [
+    MaskTextInputFormatter(
+      mask: '##/##/####',
+      filter: { "#": RegExp(r'[0-9]') },
+    )
+  ];
 
   // TODO - Retirar os métodos de transformar Mask das Constants
   static String deTransformarMask(String telefone) {

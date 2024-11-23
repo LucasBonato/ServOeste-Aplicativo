@@ -11,9 +11,9 @@ class CustomTextFormField extends StatefulWidget {
   final double? rightPadding;
   final double? leftPadding;
   final int? maxLines;
-  final TextEditingController? controller;
   final void Function(String?)? onSaved;
   final void Function(String?)? onChanged;
+  final void Function()? onTap;
   final List<MaskTextInputFormatter>? masks;
   final String? Function([String?])? validator;
   final ValueNotifier<String> valueNotifier;
@@ -29,11 +29,11 @@ class CustomTextFormField extends StatefulWidget {
     this.initialValue,
     this.rightPadding,
     this.leftPadding,
-    this.controller,
     this.validator,
     this.onChanged,
     this.maxLines,
     this.onSaved,
+    this.onTap,
     this.masks,
   });
 
@@ -108,6 +108,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             ),
           ),
           onChanged: widget.onChanged,
+          onTap: widget.onTap,
           validator: widget.validator,
           onSaved: widget.onSaved,
         ),

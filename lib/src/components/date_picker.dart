@@ -1,27 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:masked_text/masked_text.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:serv_oeste/src/components/custom_text_form_field.dart';
 
 //ignore: must_be_immutable
 class CustomDatePicker extends StatefulWidget {
   final String? restorationId;
   final String hint;
   final String label;
-  final String? mask;
+  final List<MaskTextInputFormatter>? mask;
   final int maxLength;
-  final TextEditingController? controller;
   final TextInputType type;
   final double? rightPadding;
   final double? leftPadding;
   late bool? validation;
   final Function(String?)? onChanged;
+  final String? Function([String?])? validator;
+  final ValueNotifier<String> valueNotifier;
   final bool hide;
 
   CustomDatePicker({
     super.key,
     this.hide = false,
-    this.controller,
     this.validation,
     this.onChanged,
+    this.validator,
     this.leftPadding,
     this.rightPadding,
     this.restorationId,
@@ -30,6 +32,7 @@ class CustomDatePicker extends StatefulWidget {
     required this.mask,
     required this.maxLength,
     required this.type,
+    required this.valueNotifier,
   });
 
   @override
@@ -42,20 +45,13 @@ class _CustomDatePickerState extends State<CustomDatePicker> with RestorationMix
 
   String _dateSelected = "";
 
-  late final TextEditingController _internalController;
-
-  @override
-  void initState() {
-    _internalController = widget.controller?? TextEditingController();
-    super.initState();
-  }
-
   final RestorableDateTime _selectedDate = RestorableDateTime(DateTime.now());
+
+
   late final RestorableRouteFuture<DateTime?> _restorableDatePickerRouteFuture = RestorableRouteFuture<DateTime?>(
     onComplete: _selectDate,
-    onPresent: (NavigatorState navigator, Object? arguments) {
-      return navigator.restorablePush(_datePickerRoute, arguments: _selectedDate.value.millisecondsSinceEpoch);
-    },
+    onPresent: (NavigatorState navigator, Object? arguments) =>
+        navigator.restorablePush(_datePickerRoute, arguments: _selectedDate.value.millisecondsSinceEpoch),
   );
 
   @pragma('vm:entry-point')
@@ -88,59 +84,29 @@ class _CustomDatePickerState extends State<CustomDatePicker> with RestorationMix
       setState(() {
         _selectedDate.value = newSelectedDate;
         _dateSelected = '${_selectedDate.value.day < 10 ? '0${_selectedDate.value.day}' : _selectedDate.value.day}/${_selectedDate.value.month < 10 ? '0${_selectedDate.value.month}' : _selectedDate.value.month}/${_selectedDate.value.year}';
-        _internalController.text = _dateSelected;
+        widget.valueNotifier.value = _dateSelected;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(widget.leftPadding?? 16, 4, widget.rightPadding?? 16, widget.hide ? 16 : 0),
-      child: MaskedTextField(
-        controller: _internalController,
-        mask: widget.mask,
-        maxLength: widget.maxLength,
-        keyboardType: widget.type,
-        decoration: InputDecoration(
-          counterText: widget.hide ? "" : null,
-          hintText: widget.hint,
-          labelText: widget.label,
-          isDense: true,
-          fillColor: const Color(0xFFF1F4F8),
-          border: const OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.blueAccent,
-              width: 2
-            )
-          ),
-          enabledBorder: const OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.blue,
-              width: 2,
-            ),
-          ),
-          focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.blueAccent,
-              width: 2,
-            ),
-          ),
-          errorBorder: const OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.red,
-              width: 2,
-            ),
-          ),
-        ),
-        onChanged: widget.onChanged,
-        onTap: () {
-          _restorableDatePickerRouteFuture.present();
-          setState(() {
-            widget.validation = false;
-          });
-        },
-      ),
+    return CustomTextFormField(
+      valueNotifier: widget.valueNotifier,
+      hide: widget.hide,
+      label: widget.label,
+      hint: widget.hint,
+      validator: widget.validator,
+      masks: widget.mask,
+      maxLength: widget.maxLength,
+      type: widget.type,
+      onChanged: widget.onChanged,
+      onTap: () {
+        _restorableDatePickerRouteFuture.present();
+        setState(() {
+          widget.validation = false;
+        });
+      },
     );
   }
 }
