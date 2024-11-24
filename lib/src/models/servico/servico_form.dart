@@ -27,8 +27,10 @@ class ServicoForm extends ChangeNotifier {
   }
 
   void setFilial(String? filial) {
-    this.filial.value = filial?? "";
-    notifyListeners();
+    if (filial != null) {
+      this.filial.value = filial;
+      notifyListeners();
+    }
   }
 
   void setDataAtendimentoPrevisto(String? dataAtendimentoPrevisto) {

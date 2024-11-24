@@ -48,6 +48,8 @@ class DioInterceptor extends Interceptor {
     logMessage += "TimeStamp: ${DateTime.now()}\n";
     logMessage += "ErrorType: ${err.type}\n";
     logMessage += "ErrorMessage: ${err.message}\n";
+    logMessage += "Error: ${err.error}\n";
+    logMessage += "Response: ${err.response}\n";
     if(err.response != null) {
       logMessage += "ErrorBody: ${jsonEncoder.convert(err.response)}\n";
     }

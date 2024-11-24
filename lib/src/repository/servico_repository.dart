@@ -15,8 +15,8 @@ class ServicoRepository extends DioService {
       final response = await dio.post(
         ServerEndpoints.servicoFilterEndpoint,
         data: {
-          'dataAtendimentoPrevistoAntes': servicoFilter.dataAtendimentoPrevistoAntes,
-          'dataAtendimentoPrevistoDepois': servicoFilter.dataAtendimentoPrevistoDepois,
+          'dataAtendimentoPrevistoAntes': (servicoFilter.dataAtendimentoPrevistoAntes != null) ? "${servicoFilter.dataAtendimentoPrevistoAntes!.toIso8601String()}Z" : null,
+          'dataAtendimentoPrevistoDepois': (servicoFilter.dataAtendimentoPrevistoDepois != null) ? "${servicoFilter.dataAtendimentoPrevistoDepois!.toIso8601String()}Z" : null,
           'clienteId': servicoFilter.clienteId,
           'tecnicoId': servicoFilter.tecnicoId,
           'filial': servicoFilter.filial,
@@ -64,13 +64,13 @@ class ServicoRepository extends DioService {
             "telefoneCelular": cliente.telefoneCelular,
             "endereco": cliente.endereco,
             "bairro": cliente.bairro,
-            "municipio": cliente.municipio
+            "municipio": cliente.municipio.replaceAll("í", "i").replaceAll("ã", "a")
           },
           "servicoRequest": {
             "idTecnico": servico.idTecnico,
             "equipamento": servico.equipamento,
             "marca": servico.marca,
-            "filial": servico.filial,
+            "filial": servico.filial.replaceAll("í", "i"),
             "dataAtendimento": servico.dataAtendimento,
             "horarioPrevisto": servico.horarioPrevisto,
             "descricao": servico.descricao,
@@ -92,7 +92,7 @@ class ServicoRepository extends DioService {
           "idTecnico": servico.idTecnico,
           "equipamento": servico.equipamento,
           "marca": servico.marca,
-          "filial": servico.filial,
+          "filial": servico.filial.replaceAll("í", "i"),
           "dataAtendimento": servico.dataAtendimento,
           "horarioPrevisto": servico.horarioPrevisto,
           "descricao": servico.descricao,
