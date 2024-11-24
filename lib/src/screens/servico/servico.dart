@@ -17,7 +17,7 @@ class _ServicoState extends State<Servico> {
   @override
   void initState() {
     _servicoBloc.add(ServicoLoadingEvent(filterRequest: ServicoFilterRequest(
-
+      clienteId: 1
     )));
     super.initState();
   }
