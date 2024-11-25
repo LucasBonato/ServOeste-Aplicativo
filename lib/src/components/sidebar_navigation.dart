@@ -1,34 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/src/screens/home.dart';
-import 'package:serv_oeste/src/screens/cliente/cliente.dart';
-import 'package:serv_oeste/src/screens/servico/servico.dart';
-import 'package:serv_oeste/src/screens/tecnico/tecnico.dart';
 
-class SidebarNavigation extends StatefulWidget {
-  final int currentIndex; // Novo parâmetro para o índice ativo
+class SidebarNavigation extends StatelessWidget {
+  final int currentIndex;
+  final Function(int) onSelect;
 
-  const SidebarNavigation({Key? key, required this.currentIndex})
-      : super(key: key);
-
-  @override
-  State<SidebarNavigation> createState() => _SidebarNavigationState();
-}
-
-class _SidebarNavigationState extends State<SidebarNavigation> {
-  late int _selectedIndex;
-
-  final List<Widget> _screens = [
-    const Home(),
-    const TecnicoPage(),
-    const ClientePage(),
-    const Servico(),
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedIndex = widget.currentIndex; // Sincroniza o índice inicial
-  }
+  const SidebarNavigation({
+    super.key,
+    required this.currentIndex,
+    required this.onSelect,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +86,7 @@ class _SidebarNavigationState extends State<SidebarNavigation> {
     required IconData icon,
     required String label,
   }) {
-    final bool isSelected = _selectedIndex == index;
+    final bool isSelected = currentIndex == index;
 
     return ListTile(
       leading: Icon(
@@ -122,15 +102,8 @@ class _SidebarNavigationState extends State<SidebarNavigation> {
         ),
       ),
       onTap: () {
-        if (_selectedIndex != index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => _screens[index],
-            ),
-          );
+        if (currentIndex != index) {
+          onSelect(index);
         }
       },
     );

@@ -33,7 +33,7 @@ class GridListView extends StatelessWidget {
                       : 1,
           mainAxisSpacing: 15,
           crossAxisSpacing: 15,
-          childAspectRatio: 1.7,
+          childAspectRatio: 1.5,
         ),
         itemBuilder: (context, index) {
           return buildCard(dataList[index]);

@@ -7,12 +7,12 @@ class CardClient extends StatelessWidget {
   final String street;
 
   const CardClient({
-    Key? key,
+    super.key,
     required this.name,
     required this.phoneNumber,
     required this.city,
     required this.street,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,30 +35,29 @@ class CardClient extends StatelessWidget {
         children: [
           Text(
             name,
-            style: const TextStyle(
-              fontSize: 18,
+            style: TextStyle(
+              fontSize: MediaQuery.of(context).size.width.clamp(16.0, 18.0),
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             phoneNumber,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.grey,
+            style: TextStyle(
+              fontSize: MediaQuery.of(context).size.width.clamp(14.0, 16.0),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             city,
-            style: const TextStyle(
-              fontSize: 16,
+            style: TextStyle(
+              fontSize: MediaQuery.of(context).size.width.clamp(14.0, 16.0),
             ),
           ),
           Text(
             street,
-            style: const TextStyle(
-              fontSize: 16,
+            style: TextStyle(
+              fontSize: MediaQuery.of(context).size.width.clamp(14.0, 16.0),
             ),
           ),
         ],

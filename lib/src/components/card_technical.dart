@@ -1,83 +1,82 @@
 import 'package:flutter/material.dart';
 
 class CardTechnical extends StatelessWidget {
-  final String index;
+  final int id;
   final String name;
   final String phoneNumber;
   final String cellPhoneNumber;
   final String status;
+  final bool isSelected; // Propriedade para refletir a seleção do card.
 
   const CardTechnical({
-    Key? key,
-    required this.index,
+    super.key,
+    required this.id,
     required this.name,
     required this.phoneNumber,
     required this.cellPhoneNumber,
     required this.status,
-  }) : super(key: key);
+    this.isSelected =
+        false, // Valor padrão para não quebrar chamadas existentes.
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        color: isSelected
+            ? Colors.blue.withOpacity(0.2)
+            : Colors.white, // Alteração de cor para indicar seleção.
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(
+          color: isSelected
+              ? Colors.blue
+              : Colors.grey.shade300, // Borda azul se estiver selecionado.
+          width: isSelected ? 2 : 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.grey.withOpacity(0.2),
             blurRadius: 6,
-            offset: const Offset(0, 2),
+            offset: const Offset(0, 3),
           ),
         ],
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            index,
+            "$id",
             style: const TextStyle(
-              fontSize: 20,
+              fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  phoneNumber,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  cellPhoneNumber,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          const SizedBox(height: 8),
           Text(
-            status,
+            name,
             style: const TextStyle(
-              fontSize: 16,
-              color: Colors.green,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text("Telefone fixo: $phoneNumber"),
+          Text("Celular: $cellPhoneNumber"),
+          const Spacer(),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Text(
+              status,
+              style: TextStyle(
+                fontSize: 14,
+                color: status == "Ativo"
+                    ? const Color.fromARGB(255, 4, 80, 16)
+                    : status == "Licença"
+                        ? const Color.fromARGB(255, 25, 6, 199)
+                        : Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],

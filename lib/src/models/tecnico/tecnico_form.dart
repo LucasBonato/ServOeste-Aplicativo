@@ -16,12 +16,12 @@ class TecnicoForm extends ChangeNotifier {
   }
 
   void setNome(String? nome) {
-    this.nome.value = nome?? "";
+    this.nome.value = nome ?? "";
     notifyListeners();
   }
 
   void setSituacao(String? situacao) {
-    this.situacao.value = situacao?? "";
+    this.situacao.value = situacao ?? "";
     notifyListeners();
   }
 
@@ -47,7 +47,8 @@ class TecnicoForm extends ChangeNotifier {
   }
 
   void removeConhecimentos(int conhecimento) {
-    conhecimentos.value.removeWhere((especialidade) => especialidade == conhecimento);
+    conhecimentos.value
+        .removeWhere((especialidade) => especialidade == conhecimento);
     notifyListeners();
   }
 }
@@ -62,9 +63,14 @@ class TecnicoValidator extends LucidValidator<TecnicoForm> {
 
   TecnicoValidator() {
     ruleFor((tecnico) => tecnico.nome.value, key: nomeKey)
-        .must((nome) => nome.isNotEmpty, "O nome é obrigatório!.", nomeKey)
-        .must((nome) => nome.split(" ").length > 1, "É necessário o nome e sobrenome!", nomeKey)
-        .must((nome) => (nome.split(" ").length > 1 && nome.split(" ")[1].length > 2), "O sobrenome precisa ter 2 caracteres!", nomeKey);
+        .must((nome) => nome.isNotEmpty, "O nome é obrigatório!", nomeKey)
+        .must((nome) => nome.split(" ").length > 1,
+            "É necessário o nome e sobrenome!", nomeKey)
+        .must(
+            (nome) =>
+                (nome.split(" ").length > 1 && nome.split(" ")[1].length > 2),
+            "O sobrenome precisa ter 2 caracteres!",
+            nomeKey);
 
     ruleFor((tecnico) => tecnico.telefoneCelular.value, key: telefoneCelularKey)
         .customValidExternalErrors(externalErrors, telefoneCelularKey);
@@ -73,20 +79,27 @@ class TecnicoValidator extends LucidValidator<TecnicoForm> {
         .customValidExternalErrors(externalErrors, telefoneFixoKey);
 
     ruleFor((tecnico) => tecnico.conhecimentos.value, key: conhecimentosKey)
-        .customValidIsEmpty(conhecimentos, "Selecione ao menos um conhecimento!", conhecimentosKey);
+        .customValidIsEmpty(conhecimentos,
+            "Selecione ao menos um conhecimento!", conhecimentosKey);
   }
 
   void applyBackendError(ErrorEntity errorEntity) {
     switch (errorEntity.id) {
-      case 1: _addError(nomeKey, errorEntity.errorMessage);
+      case 1:
+        _addError(nomeKey, errorEntity.errorMessage);
         break;
-      case 2: _addError(telefoneFixoKey, errorEntity.errorMessage);
+      case 2:
+        _addError(telefoneFixoKey, errorEntity.errorMessage);
         break;
-      case 3: _addError(telefoneCelularKey, errorEntity.errorMessage);
+      case 3:
+        _addError(telefoneCelularKey, errorEntity.errorMessage);
         break;
-      case 4: _addListError([telefoneFixoKey, telefoneCelularKey], errorEntity.errorMessage);
+      case 4:
+        _addListError(
+            [telefoneFixoKey, telefoneCelularKey], errorEntity.errorMessage);
         break;
-      case 10: _addError(conhecimentosKey, errorEntity.errorMessage);
+      case 10:
+        _addError(conhecimentosKey, errorEntity.errorMessage);
         break;
     }
   }
@@ -112,16 +125,13 @@ class TecnicoValidator extends LucidValidator<TecnicoForm> {
 }
 
 extension on LucidValidationBuilder<List<int>, TecnicoForm> {
-  LucidValidationBuilder<List<int>, TecnicoForm> customValidIsEmpty(List<int> especialidades, String message, String code) {
+  LucidValidationBuilder<List<int>, TecnicoForm> customValidIsEmpty(
+      List<int> especialidades, String message, String code) {
     ValidationException? callback(value, entity) {
-      if(especialidades.isNotEmpty) {
+      if (especialidades.isNotEmpty) {
         return null;
       }
-      return ValidationException(
-        message: message,
-        key: code,
-        code: code
-      );
+      return ValidationException(message: message, key: code, code: code);
     }
 
     return use(callback);
@@ -130,15 +140,13 @@ extension on LucidValidationBuilder<List<int>, TecnicoForm> {
 
 // TODO - Refatorar para ser utilizado em qualquer validator
 extension on LucidValidationBuilder<String, dynamic> {
-  LucidValidationBuilder<String, dynamic> customValidExternalErrors(Map<String, String> externalErrors, String code) {
+  LucidValidationBuilder<String, dynamic> customValidExternalErrors(
+      Map<String, String> externalErrors, String code) {
     ValidationException? callback(value, entity) {
-      if(externalErrors[code] == null) {
+      if (externalErrors[code] == null) {
         return null;
       }
-      return ValidationException(
-        message: externalErrors[code]!,
-        code: code
-      );
+      return ValidationException(message: externalErrors[code]!, code: code);
     }
 
     return use(callback);

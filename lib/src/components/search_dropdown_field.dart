@@ -65,68 +65,52 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
           maxLength: widget.maxLength,
           controller: _customSearchController,
           onChanged: widget.onChanged,
-          decoration: widget.searchDecoration
-              ? InputDecoration(
-                  counterText: widget.hide ? "" : null,
-                  labelText: widget.label,
-                  suffixIcon: const Icon(
-                    Icons.arrow_drop_down_outlined,
-                    color: Color(0xFF57636C),
-                  ),
-                  isDense: false,
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFFF1F4F8),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFF4B39EF),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  filled: true,
-                  fillColor: const Color(0xFFF1F4F8),
-                )
-              : InputDecoration(
-                  counterText: widget.hide ? "" : null,
-                  labelText: widget.label,
-                  isDense: true,
-                  fillColor: const Color(0xFFF1F4F8),
-                  border: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.blueAccent,
-                      width: 2,
-                    ),
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.blue,
-                      width: 2,
-                    ),
-                  ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.blueAccent,
-                      width: 2,
-                    ),
-                  ),
-                  errorBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.red,
-                      width: 2,
-                    ),
-                  ),
-                ),
+          decoration: InputDecoration(
+            counterText: widget.hide ? "" : null,
+            labelText: widget.label,
+            labelStyle: const TextStyle(
+              color: Color(0xFFB0A9A9),
+              fontSize: 16,
+            ),
+            suffixIcon: const Icon(
+              Icons.arrow_drop_down_outlined,
+              color: Color(0xFFB0A9A9),
+            ),
+            isDense: true,
+            filled: true,
+            fillColor: const Color(0xFFFFF8F7),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                color: Color(0xFFEAE6E5),
+                width: 1,
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                color: Color(0xFFEAE6E5),
+                width: 1,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                color: Color(0xFFEAE6E5),
+                width: 1,
+              ),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              vertical: 16,
+              horizontal: 20,
+            ),
+          ),
         ),
-        suggestionsCallback: (nome) async {
-          if (nome.isEmpty) return widget.dropdownValues;
+        suggestionsCallback: (query) async {
+          if (query.isEmpty) return widget.dropdownValues;
           return widget.dropdownValues
               .where((element) =>
-                  element.toLowerCase().contains(nome.toLowerCase()))
+                  element.toLowerCase().contains(query.toLowerCase()))
               .toList();
         },
         onSuggestionSelected: (String? suggestion) {

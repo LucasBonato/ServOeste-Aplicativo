@@ -46,10 +46,11 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
   @override
   void initState() {
-    _internalController = TextEditingController(text: widget.valueNotifier.value);
+    _internalController =
+        TextEditingController(text: widget.valueNotifier.value);
 
     widget.valueNotifier.addListener(() {
-      if(_internalController.text != widget.valueNotifier.value) {
+      if (_internalController.text != widget.valueNotifier.value) {
         _internalController.text = widget.valueNotifier.value;
       }
     });
@@ -66,45 +67,64 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(widget.leftPadding?? 16, 4, widget.rightPadding?? 16, widget.hide ? 16 : 0),
+      padding: EdgeInsetsDirectional.fromSTEB(widget.leftPadding ?? 16, 4,
+          widget.rightPadding ?? 16, widget.hide ? 16 : 0),
       child: ValueListenableBuilder<String>(
         valueListenable: widget.valueNotifier,
-        builder: (BuildContext context, String value, Widget? child) => TextFormField(
+        builder: (BuildContext context, String value, Widget? child) =>
+            TextFormField(
           controller: _internalController,
           inputFormatters: widget.masks,
           maxLength: widget.maxLength,
           keyboardType: widget.type,
-          maxLines: widget.maxLines?? 1,
+          maxLines: widget.maxLines ?? 1,
           minLines: 1,
           decoration: InputDecoration(
             counterText: widget.hide ? "" : null,
             hintText: widget.hint,
             labelText: widget.label,
             isDense: true,
-            fillColor: const Color(0xFFF1F4F8),
-            border: const OutlineInputBorder(
-              borderSide: BorderSide(
-                color: Colors.blueAccent,
-                width: 2
-              )
+            filled: true,
+            fillColor: const Color(0xFFFFF8F7),
+            hintStyle: const TextStyle(
+              color: Color(0xFFB0A9A9),
+              fontSize: 16,
             ),
-            enabledBorder: const OutlineInputBorder(
-              borderSide: BorderSide(
-                color: Colors.blue,
-                width: 2,
+            labelStyle: const TextStyle(
+              color: Color.fromARGB(255, 48, 48, 48),
+              fontSize: 16,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                color: Color(0xFFEAE6E5),
+                width: 1,
               ),
             ),
-            focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(
-                color: Colors.blueAccent,
-                width: 2,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                color: Color(0xFFEAE6E5),
+                width: 1,
               ),
             ),
-            errorBorder: const OutlineInputBorder(
-              borderSide: BorderSide(
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                color: Colors.black54,
+                width: 1,
+              ),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
                 color: Colors.red,
-                width: 2,
+                width: 1,
               ),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              vertical: 16,
+              horizontal: 20,
             ),
           ),
           onChanged: widget.onChanged,

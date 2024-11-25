@@ -1,12 +1,11 @@
-import 'package:serv_oeste/src/components/custom_text_form_field.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
-import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
-import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
-import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
-import 'package:lucid_validation/lucid_validation.dart';
-import 'package:serv_oeste/src/shared/constants.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/src/components/custom_text_form_field.dart';
+import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
+import 'package:serv_oeste/src/models/error/error_entity.dart';
+import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
+import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
+import 'package:lucid_validation/lucid_validation.dart';
 
 class CreateTecnico extends StatefulWidget {
   const CreateTecnico({super.key});
@@ -25,8 +24,6 @@ class _CreateTecnicoState extends State<CreateTecnico> {
       _telefoneCelularController,
       _telefoneFixoController;
 
-  bool validationCheckBoxes = false;
-
   final Map<String, bool> checkersMap = {
     "Adega": false,
     "Bebedouro": false,
@@ -39,7 +36,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     "Microondas": false,
     "Purificador": false,
     "Secadora": false,
-    "Outros": false
+    "Outros": false,
   };
 
   @override
@@ -52,65 +49,55 @@ class _CreateTecnicoState extends State<CreateTecnico> {
 
   Widget gridCheckersMap() {
     return FormField(
-      validator: _tecnicoCreateValidator.byField(_tecnicoCreateForm, "conhecimentos"),
+      validator:
+          _tecnicoCreateValidator.byField(_tecnicoCreateForm, "conhecimentos"),
       builder: (field) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          GridView.count(
-            shrinkWrap: true,
-            crossAxisCount: (MediaQuery.of(context).size.width < 450) ? 2 : 3,
-            crossAxisSpacing: 0,
-            childAspectRatio: 5,
-            children: checkersMap.keys.map((label) {
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: Theme(
-                      data: ThemeData(
-                        unselectedWidgetColor: Colors.blueAccent,
-                        checkboxTheme: const CheckboxThemeData(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                          ),
-                        ),
-                      ),
-                      child: Checkbox(
-                        value: checkersMap[label] ?? false,
-                        activeColor: Colors.blue,
-                        side: const BorderSide(
-                          width: 2,
-                          color: Colors.blueAccent,
-                        ),
-                        onChanged: (value) {
-                          if (value == null) return;
-                          setState(() {
-                            checkersMap[label] = value;
-                          });
-                          field.reset();
-                        },
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey, width: 1.5),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            padding: const EdgeInsets.all(16),
+            child: GridView.count(
+              shrinkWrap: true,
+              crossAxisCount: 2,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 12,
+              childAspectRatio: 6,
+              physics: const NeverScrollableScrollPhysics(),
+              children: checkersMap.keys.map((label) {
+                return Row(
+                  children: [
+                    Checkbox(
+                      value: checkersMap[label] ?? false,
+                      activeColor: Colors.blue,
+                      onChanged: (value) {
+                        setState(() {
+                          checkersMap[label] = value ?? false;
+                        });
+                        field.reset();
+                      },
+                    ),
+                    Text(
+                      label,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 3,
-                    child: Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                  ),
-                ],
-              );
-            }).toList(),
+                  ],
+                );
+              }).toList(),
+            ),
           ),
-          if (field.errorText != null) // Exibe o erro abaixo da GridView
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Text(
-                  textAlign: TextAlign.center,
-                  field.errorText!,
-                  style: TextStyle(color: Colors.red, fontSize: 12),
-                ),
+          if (field.errorText != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Text(
+                field.errorText!,
+                style: const TextStyle(color: Colors.red, fontSize: 12),
               ),
             ),
         ],
@@ -120,145 +107,216 @@ class _CreateTecnicoState extends State<CreateTecnico> {
 
   bool _isValidForm() {
     _tecnicoFormKey.currentState?.validate();
-    final ValidationResult response = _tecnicoCreateValidator.validate(_tecnicoCreateForm);
+    final ValidationResult response =
+        _tecnicoCreateValidator.validate(_tecnicoCreateForm);
     return response.isValid;
   }
 
   void _registerTecnico() {
     checkersMap.forEach((label, isChecked) {
       int idConhecimento = (checkersMap.keys.toList().indexOf(label) + 1);
-      if(isChecked){
+      if (isChecked) {
         _tecnicoCreateForm.addConhecimentos(idConhecimento);
       } else {
         _tecnicoCreateForm.removeConhecimentos(idConhecimento);
       }
     });
-    _tecnicoCreateValidator.setConhecimentos(_tecnicoCreateForm.conhecimentos.value);
+    _tecnicoCreateValidator
+        .setConhecimentos(_tecnicoCreateForm.conhecimentos.value);
 
-    if(_isValidForm() == false) {
+    if (_isValidForm() == false) {
       return;
     }
 
     List<String> nomes = _tecnicoCreateForm.nome.value.split(" ");
     _tecnicoCreateForm.nome.value = nomes.first;
-    String sobrenome = nomes
-        .sublist(1)
-        .join(" ")
-        .trim();
+    String sobrenome = nomes.sublist(1).join(" ").trim();
 
-    _tecnicoBloc.add(TecnicoRegisterEvent(tecnico: Tecnico.fromForm(_tecnicoCreateForm), sobrenome: sobrenome));
+    _tecnicoBloc.add(TecnicoRegisterEvent(
+        tecnico: Tecnico.fromForm(_tecnicoCreateForm), sobrenome: sobrenome));
     _tecnicoCreateForm.nome.value = "${nomes.first} $sobrenome";
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF8F4F0),
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context, "Back"),
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () => Navigator.pop(context, "Back"),
+              ),
+              const Text(
+                "Voltar",
+                style: TextStyle(color: Colors.black, fontSize: 16),
+              ),
+            ],
+          ),
         ),
-        title: const Text("Novo Técnico"),
-        centerTitle: true,
-        ),
-      body: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
-        child: SingleChildScrollView(
-          child: Form(
-            key: _tecnicoFormKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Column(
+        backgroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: SingleChildScrollView(
+              child: Form(
+                key: _tecnicoFormKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    CustomTextFormField(
-                      hint: "Nome...",
-                      label: "Nome",
-                      controller: _nomeController,
-                      type: TextInputType.name,
-                      maxLength: 40,
-                      hide: false,
-                      valueNotifier: _tecnicoCreateForm.nome,
-                      validator: _tecnicoCreateValidator.byField(_tecnicoCreateForm, "nome"),
-                      onChanged: _tecnicoCreateForm.setNome,
-                    ),
-                    CustomTextFormField(
-                      hint: "(99) 99999-9999",
-                      label: "Telefone Celular",
-                      controller: _telefoneCelularController,
-                      masks: Constants.maskTelefone,
-                      type: TextInputType.phone,
-                      maxLength: 15,
-                      hide: false,
-                      valueNotifier: _tecnicoCreateForm.telefoneCelular,
-                      validator: _tecnicoCreateValidator.byField(_tecnicoCreateForm, "telefoneCelular"),
-                      onChanged: _tecnicoCreateForm.setTelefoneCelular,
-                    ),
-                    CustomTextFormField(
-                      hint: "(99) 99999-9999",
-                      label: "Telefone Fixo",
-                      masks: Constants.maskTelefone,
-                      controller: _telefoneFixoController,
-                      type: TextInputType.phone,
-                      maxLength: 15,
-                      hide: false,
-                      valueNotifier: _tecnicoCreateForm.telefoneFixo,
-                      validator: _tecnicoCreateValidator.byField(_tecnicoCreateForm, "telefoneFixo"),
-                      onChanged: _tecnicoCreateForm.setTelefoneFixo,
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(0, 32, 0, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('Selecione os conhecimentos do Técnico:', textAlign: TextAlign.center, style: TextStyle(fontSize: 20)),
-                      Container(
-                        child: gridCheckersMap()
+                    const Text(
+                      "Adicionar Técnico",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
                       ),
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
-                        child: BlocListener<TecnicoBloc, TecnicoState>(
-                          bloc: _tecnicoBloc,
-                          listener: (context, state) {
-                            if (state is TecnicoRegisterSuccessState) {
-                              Navigator.pop(context);
-                            }
-                            else if (state is TecnicoErrorState) {
-                              ErrorEntity error = state.error;
-
-                              _tecnicoCreateValidator.applyBackendError(error);
-                              _tecnicoFormKey.currentState?.validate();
-                              _tecnicoCreateValidator.cleanExternalErrors();
-
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text("[ERROR] Informação(ões) inválida(s) ao registrar o Técnico: ${error.errorMessage}"))
-                              );
-
-                            }
-                          },
-                          child: ElevatedButton(
-                            onPressed: _registerTecnico,
-                            style: TextButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              foregroundColor: Colors.white,
-                              textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
+                    ),
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      child: CustomTextFormField(
+                        hint: "Nome...",
+                        label: "Nome*",
+                        type: TextInputType.name,
+                        maxLength: 40,
+                        hide: false,
+                        valueNotifier: _tecnicoCreateForm.nome,
+                        controller: _nomeController,
+                        validator: _tecnicoCreateValidator.byField(
+                            _tecnicoCreateForm, "nome"),
+                        onChanged: _tecnicoCreateForm.setNome,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: CustomTextFormField(
+                              hint: "(99) 99999-9999",
+                              label: "Telefone Fixo**",
+                              maxLength: 15,
+                              hide: false,
+                              type: TextInputType.phone,
+                              valueNotifier: _tecnicoCreateForm.telefoneFixo,
+                              controller: _telefoneFixoController,
+                              validator: _tecnicoCreateValidator.byField(
+                                  _tecnicoCreateForm, "telefoneFixo"),
+                              onChanged: _tecnicoCreateForm.setTelefoneFixo,
                             ),
-                            child: const Text("Adicionar"),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: CustomTextFormField(
+                              hint: "(99) 99999-9999",
+                              label: "Telefone Celular**",
+                              maxLength: 15,
+                              hide: false,
+                              type: TextInputType.phone,
+                              valueNotifier: _tecnicoCreateForm.telefoneCelular,
+                              controller: _telefoneCelularController,
+                              validator: _tecnicoCreateValidator.byField(
+                                  _tecnicoCreateForm, "telefoneCelular"),
+                              onChanged: _tecnicoCreateForm.setTelefoneCelular,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 18),
+                          child: const Text(
+                            "Conhecimentos*",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        gridCheckersMap(),
+                      ],
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(top: 8, left: 16),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            Text(
+                              "* - Campos obrigatórios",
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.black),
+                            ),
+                            SizedBox(width: 16),
+                            Text(
+                              "** - Preencha ao menos um destes campos",
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.black),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    BlocListener<TecnicoBloc, TecnicoState>(
+                      bloc: _tecnicoBloc,
+                      listener: (context, state) {
+                        if (state is TecnicoRegisterSuccessState) {
+                          Navigator.pop(context);
+                        } else if (state is TecnicoErrorState) {
+                          final ErrorEntity error = state.error;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                "[ERROR]: ${error.errorMessage}",
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      child: Center(
+                        child: ElevatedButton(
+                          onPressed: _registerTecnico,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF007BFF),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            minimumSize: const Size(double.infinity, 48),
+                          ),
+                          child: const Text(
+                            "Adicionar Técnico",
+                            style: TextStyle(fontSize: 16, color: Colors.white),
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                )
-              ]
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
-        )
-      )
+        ),
+      ),
     );
   }
 

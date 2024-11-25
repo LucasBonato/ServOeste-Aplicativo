@@ -1,7 +1,6 @@
 import 'package:serv_oeste/src/components/custom_text_form_field.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -54,12 +53,15 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
     _telefoneCelularController = TextEditingController();
     _telefoneFixoController = TextEditingController();
     _tecnicoUpdateForm.setId(widget.id);
+    _dropDownSituacaoValue =
+        Constants.situationTecnicoList.first; // Define um valor inicial
     _tecnicoBloc.add(TecnicoSearchOneEvent(id: widget.id));
   }
 
   Widget gridCheckersMap() {
     return FormField(
-      validator: _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, "conhecimentos"),
+      validator:
+          _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, "conhecimentos"),
       builder: (field) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -103,13 +105,16 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                   ),
                   Expanded(
                     flex: 3,
-                    child: Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    child: Text(label,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.bold)),
                   ),
                 ],
               );
             }).toList(),
           ),
-          if (field.errorText != null) // Exibe o erro abaixo da GridView
+          if (field.errorText != null)
             Center(
               child: Padding(
                 padding: const EdgeInsets.only(top: 8.0),
@@ -133,26 +138,25 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
   void _updateTecnico() {
     checkersMap.forEach((label, isChecked) {
       int idConhecimento = (checkersMap.keys.toList().indexOf(label) + 1);
-      if(isChecked){
+      if (isChecked) {
         _tecnicoUpdateForm.addConhecimentos(idConhecimento);
       } else {
         _tecnicoUpdateForm.removeConhecimentos(idConhecimento);
       }
     });
-    _tecnicoUpdateValidator.setConhecimentos(_tecnicoUpdateForm.conhecimentos.value);
+    _tecnicoUpdateValidator
+        .setConhecimentos(_tecnicoUpdateForm.conhecimentos.value);
 
-    if(_isValidForm() == false) {
+    if (_isValidForm() == false) {
       return;
     }
 
     List<String> nomes = _tecnicoUpdateForm.nome.value.split(" ");
     _tecnicoUpdateForm.nome.value = nomes.first;
-    String sobrenome = nomes
-        .sublist(1)
-        .join(" ")
-        .trim();
+    String sobrenome = nomes.sublist(1).join(" ").trim();
 
-    _tecnicoBloc.add(TecnicoUpdateEvent(tecnico: Tecnico.fromForm(_tecnicoUpdateForm), sobrenome: sobrenome));
+    _tecnicoBloc.add(TecnicoUpdateEvent(
+        tecnico: Tecnico.fromForm(_tecnicoUpdateForm), sobrenome: sobrenome));
     _tecnicoUpdateForm.nome.value = "${nomes.first} $sobrenome";
   }
 
@@ -171,20 +175,29 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
         bloc: _tecnicoBloc,
         buildWhen: (previousState, currentState) {
           if (currentState is TecnicoSearchOneSuccessState) {
-            String nomeCompletoTecnico = "${currentState.tecnico.nome} ${currentState.tecnico.sobrenome}";
+            String nomeCompletoTecnico =
+                "${currentState.tecnico.nome} ${currentState.tecnico.sobrenome}";
             _tecnicoUpdateForm.setNome(nomeCompletoTecnico);
-            _tecnicoUpdateForm.setTelefoneCelular(currentState.tecnico.telefoneCelular);
-            _tecnicoUpdateForm.setTelefoneCelular(currentState.tecnico.telefoneFixo);
+            _tecnicoUpdateForm
+                .setTelefoneCelular(currentState.tecnico.telefoneCelular);
+            _tecnicoUpdateForm
+                .setTelefoneFixo(currentState.tecnico.telefoneFixo);
             _nomeController.text = nomeCompletoTecnico;
-            _telefoneCelularController.text = currentState.tecnico.telefoneCelular!;
+            _telefoneCelularController.text =
+                currentState.tecnico.telefoneCelular!;
             _telefoneFixoController.text = currentState.tecnico.telefoneFixo!;
 
-            final initial = currentState.tecnico.situacao?.toLowerCase()[0] ?? '';
-            _dropDownSituacaoValue = situationMap[initial] ?? _dropDownSituacaoValue;
+            final initial =
+                currentState.tecnico.situacao?.toLowerCase()[0] ?? '';
+            _dropDownSituacaoValue =
+                situationMap[initial] ?? _dropDownSituacaoValue;
 
             if (currentState.tecnico.especialidades != null) {
-              for (Especialidade especialidade in currentState.tecnico.especialidades!) {
-                if (!checkersMap.keys.contains(especialidade.conhecimento)) continue;
+              for (Especialidade especialidade
+                  in currentState.tecnico.especialidades!) {
+                if (!checkersMap.keys.contains(especialidade.conhecimento)) {
+                  continue;
+                }
                 checkersMap[especialidade.conhecimento] = true;
               }
             }
@@ -195,134 +208,92 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
         builder: (context, state) {
           return switch (state) {
             TecnicoSearchOneSuccessState() => Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
-              child: SingleChildScrollView(
-                child: Form(
-                  key: _tecnicoFormKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      DropdownButtonFormField<String>(
-                        validator: _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, "situacao"),
-                        value: _dropDownSituacaoValue,
-                        items: Constants.situationTecnicoList.map((String value) =>
-                          DropdownMenuItem(
-                            value: value,
-                            child: Text(value)
-                          )
-                        ).toList(),
-                        onChanged: (String? value) {
-                          _tecnicoUpdateForm.setSituacao(value);
-                          _dropDownSituacaoValue = value!;
-                          reassemble();
-                        },
-                      ),
-                      Column(
-                        children: [
-                          CustomTextFormField(
-                            hint: "Nome...",
-                            label: "Nome",
-                            controller: _nomeController,
-                            type: TextInputType.name,
-                            maxLength: 40,
-                            hide: false,
-                            valueNotifier: _tecnicoUpdateForm.nome,
-                            validator: _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, "nome"),
-                            onChanged: _tecnicoUpdateForm.setNome,
-                          ),
-                          CustomTextFormField(
-                            hint: "(99) 99999-9999",
-                            label: "Telefone Celular",
-                            controller: _telefoneCelularController,
-                            masks: Constants.maskTelefone,
-                            type: TextInputType.phone,
-                            maxLength: 15,
-                            hide: false,
-                            valueNotifier: _tecnicoUpdateForm.telefoneCelular,
-                            validator: _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, "telefoneCelular"),
-                            onChanged: _tecnicoUpdateForm.setTelefoneCelular,
-                          ),
-                          CustomTextFormField(
-                            hint: "(99) 99999-9999",
-                            label: "Telefone Fixo",
-                            masks: Constants.maskTelefone,
-                            controller: _telefoneFixoController,
-                            type: TextInputType.phone,
-                            maxLength: 15,
-                            hide: false,
-                            valueNotifier: _tecnicoUpdateForm.telefoneFixo,
-                            validator: _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, "telefoneFixo"),
-                            onChanged: _tecnicoUpdateForm.setTelefoneFixo,
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(0, 32, 0, 0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.center,
+                padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: _tecnicoFormKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        DropdownButtonFormField<String>(
+                          validator: _tecnicoUpdateValidator.byField(
+                              _tecnicoUpdateForm, "situacao"),
+                          value: _dropDownSituacaoValue,
+                          items: Constants.situationTecnicoList
+                              .map((String value) => DropdownMenuItem(
+                                    value: value,
+                                    child: Text(value),
+                                  ))
+                              .toList(),
+                          onChanged: (String? value) {
+                            _tecnicoUpdateForm.setSituacao(value);
+                            setState(() {
+                              _dropDownSituacaoValue = value!;
+                            });
+                          },
+                        ),
+                        Column(
                           children: [
-                            const Text(
-                              'Selecione os conhecimentos do Técnico:',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 20)
+                            CustomTextFormField(
+                              hint: "Nome...",
+                              label: "Nome",
+                              controller: _nomeController,
+                              type: TextInputType.name,
+                              maxLength: 40,
+                              hide: false,
+                              valueNotifier: _tecnicoUpdateForm.nome,
+                              validator: _tecnicoUpdateValidator.byField(
+                                  _tecnicoUpdateForm, "nome"),
+                              onChanged: _tecnicoUpdateForm.setNome,
                             ),
-                            Container(child: gridCheckersMap()),
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
-                              child: BlocListener<TecnicoBloc, TecnicoState>(
-                                bloc: _tecnicoBloc,
-                                listener: (context, state) {
-                                  if (state is TecnicoUpdateSuccessState) {
-                                    Navigator.pop(context);
-                                  }
-                                  else if (state is TecnicoErrorState) {
-                                    ErrorEntity error = state.error;
-
-                                    _tecnicoUpdateValidator.applyBackendError(error);
-                                    _tecnicoFormKey.currentState?.validate();
-                                    _tecnicoUpdateValidator.cleanExternalErrors();
-
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text("[ERROR] Informação(ões) inválida(s) ao atualizar o Técnico: ${error.errorMessage}"))
-                                    );
-                                  }
-                                },
-                                child: ElevatedButton(
-                                  onPressed: _updateTecnico,
-                                  style: TextButton.styleFrom(
-                                    backgroundColor: Colors.blue,
-                                    foregroundColor: Colors.white,
-                                    textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
-                                  ),
-                                  child: const Text("Atualizar"),
-                                ),
-                              ),
+                            CustomTextFormField(
+                              hint: "(99) 99999-9999",
+                              label: "Telefone Celular",
+                              controller: _telefoneCelularController,
+                              masks: Constants.maskTelefone,
+                              type: TextInputType.phone,
+                              maxLength: 15,
+                              hide: false,
+                              valueNotifier: _tecnicoUpdateForm.telefoneCelular,
+                              validator: _tecnicoUpdateValidator.byField(
+                                  _tecnicoUpdateForm, "telefoneCelular"),
+                              onChanged: _tecnicoUpdateForm.setTelefoneCelular,
+                            ),
+                            CustomTextFormField(
+                              hint: "(99) 99999-9999",
+                              label: "Telefone Fixo",
+                              masks: Constants.maskTelefone,
+                              controller: _telefoneFixoController,
+                              type: TextInputType.phone,
+                              maxLength: 15,
+                              hide: false,
+                              valueNotifier: _tecnicoUpdateForm.telefoneFixo,
+                              validator: _tecnicoUpdateValidator.byField(
+                                  _tecnicoUpdateForm, "telefoneFixo"),
+                              onChanged: _tecnicoUpdateForm.setTelefoneFixo,
                             ),
                           ],
                         ),
-                      )
-                    ]
+                        gridCheckersMap(),
+                        ElevatedButton(
+                          onPressed: () {
+                            if (_tecnicoFormKey.currentState!.validate()) {
+                              _updateTecnico();
+                            }
+                          },
+                          child: const Text("Salvar"),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              )
-            ),
-
-            _ => const Center(child: CircularProgressIndicator.adaptive())
+              ),
+            TecnicoErrorState() =>
+              Center(child: Text(state.error.errorMessage)),
+            _ => const Center(child: CircularProgressIndicator()),
           };
         },
-      )
+      ),
     );
-  }
-
-  @override
-  void dispose() {
-    _tecnicoBloc.close();
-    _tecnicoUpdateForm.dispose();
-    _nomeController.dispose();
-    _telefoneCelularController.dispose();
-    _telefoneFixoController.dispose();
-    super.dispose();
   }
 }

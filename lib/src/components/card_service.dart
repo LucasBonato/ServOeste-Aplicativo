@@ -10,7 +10,7 @@ class CardService extends StatelessWidget {
   final String status;
 
   const CardService({
-    Key? key,
+    super.key,
     required this.cliente,
     required this.equipamento,
     required this.marca,
@@ -18,7 +18,7 @@ class CardService extends StatelessWidget {
     required this.local,
     required this.data,
     required this.status,
-  }) : super(key: key);
+  });
 
   Color _getStatusColor(String status) {
     switch (status) {
@@ -61,7 +61,7 @@ class CardService extends StatelessWidget {
       builder: (context, constraints) {
         return Center(
           child: Container(
-            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),
@@ -114,7 +114,7 @@ class CardService extends StatelessWidget {
                           left: constraints.maxWidth * 0.1,
                           top: constraints.maxWidth * 0.035),
                       child: Text(
-                        tecnico,
+                        "Técnico - $tecnico",
                         style: TextStyle(
                           fontSize: constraints.maxWidth * 0.045,
                           fontWeight: FontWeight.bold,
@@ -152,7 +152,7 @@ class CardService extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerRight,
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 10),
+                    padding: const EdgeInsets.only(right: 0),
                     child: SizedBox(
                       width: constraints.maxWidth * 0.4,
                       child: Text(
@@ -163,7 +163,7 @@ class CardService extends StatelessWidget {
                           color: _getStatusColor(status),
                         ),
                         maxLines: 3,
-                        textAlign: TextAlign.right,
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
