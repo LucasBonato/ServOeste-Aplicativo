@@ -117,7 +117,6 @@ class _TecnicoScreenState extends State<TecnicoPage> {
                   controller: _situacaoController,
                   searchDecoration: true,
                   leftPadding: 0,
-                  suggestionVerticalOffset: 0,
                   onChanged: (situacao) => _tecnicoBloc.add(
                     TecnicoSearchEvent(
                       id: int.tryParse(_idController.text),

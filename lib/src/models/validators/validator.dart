@@ -84,35 +84,29 @@ class ServicoValidator extends LucidValidator<ServicoForm> with BackendErrorsVal
   ServicoValidator() {
     ruleFor((servico) => servico.equipamento.value, key: ErrorCodeKey.equipamento.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.equipamento.name)
-        .isNotNull();
+        .must((equipamento) => equipamento != "", "Selecione um equipamento", ErrorCodeKey.equipamento.name);
 
     ruleFor((servico) => servico.marca.value, key: ErrorCodeKey.marca.name)
-        .customValidExternalErrors(externalErrors, ErrorCodeKey.marca.name)
-        .isNotNull();
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.marca.name);
 
     ruleFor((servico) => servico.filial.value, key: ErrorCodeKey.filial.name)
-        .customValidExternalErrors(externalErrors, ErrorCodeKey.filial.name)
-        .isNotNull();
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.filial.name);
 
     ruleFor((servico) => servico.dataAtendimentoPrevisto.value, key: ErrorCodeKey.data.name)
-        .customValidExternalErrors(externalErrors, ErrorCodeKey.data.name)
-        .isNotNull();
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.data.name);
 
     ruleFor((servico) => servico.horarioPrevisto.value, key: ErrorCodeKey.horario.name)
-        .customValidExternalErrors(externalErrors, ErrorCodeKey.horario.name)
-        .isNotNull();
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.horario.name);
 
     ruleFor((servico) => servico.descricao.value, key: ErrorCodeKey.descricao.name)
-        .customValidExternalErrors(externalErrors, ErrorCodeKey.descricao.name)
-        .isNotNull();
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.descricao.name);
 
-    ruleFor((servico) => servico.nomeTecnico.value, key: ErrorCodeKey.tecnico.name)
-        .customValidExternalErrors(externalErrors, ErrorCodeKey.tecnico.name)
-        .isNotNull();
+    ruleFor((servico) => servico.nomeTecnico.value, key: ErrorCodeKey.nomeESobrenome.name)
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.nomeESobrenome.name);
 
     ruleFor((servico) => servico.idTecnico.value, key: ErrorCodeKey.tecnico.name)
-        .customValidExternalErrors(externalErrors, ErrorCodeKey.tecnico.name)
-        .isNotNull();
+        .must((id) => id != null, "Selecione um técnico", ErrorCodeKey.tecnico.name)
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.tecnico.name);
   }
 }
 
@@ -195,8 +189,9 @@ extension on LucidValidationBuilder {
         return null;
       }
       return ValidationException(
-          message: externalErrors[code]!,
-          code: code
+        message: externalErrors[code]!,
+        code: code,
+        key: code
       );
     }
 

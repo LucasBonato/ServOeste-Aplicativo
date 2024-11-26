@@ -5,7 +5,6 @@ class CustomSearchDropDown extends StatefulWidget {
   final List<String> dropdownValues;
   final Function(String) onChanged;
   final int? maxLength;
-  final double? suggestionVerticalOffset;
   final String label;
   final bool hide;
   final bool enabled;
@@ -29,7 +28,6 @@ class CustomSearchDropDown extends StatefulWidget {
     this.validator,
     this.controller,
     this.maxLength,
-    this.suggestionVerticalOffset,
     required this.onChanged,
     required this.label,
     required this.dropdownValues,
@@ -87,7 +85,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
             filled: true,
             fillColor: const Color(0xFFF1F4F8),
           )
-          : InputDecoration(
+            : InputDecoration(
             counterText: widget.hide ? "" : null,
             labelText: widget.label,
             isDense: true,
@@ -136,7 +134,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
         hideOnEmpty: true,
         debounceDuration: const Duration(milliseconds: 150),
         transitionBuilder: (context, suggestionBox, animationController) { return suggestionBox; },
-        suggestionsBoxVerticalOffset: widget.suggestionVerticalOffset?? -20,
+        suggestionsBoxVerticalOffset: widget.hide ? 0 : -20,
       ),
     );
   }

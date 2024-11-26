@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
+import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/components/custom_text_form_field.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
@@ -136,7 +137,8 @@ class _CreateServicoState extends State<CreateServico>{
 
   bool _isServicoValidForm() {
     _servicoFormKey.currentState?.validate();
-    return _servicoCreateValidator.validate(_servicoCreateForm).isValid;
+    ValidationResult result = _servicoCreateValidator.validate(_servicoCreateForm);
+    return result.isValid;
   }
 
   void _fetchTecnicosDisponiveis() {
@@ -172,8 +174,6 @@ class _CreateServicoState extends State<CreateServico>{
   }
 
   void _registerServicoForACliente() {
-    Logger().i("Passou");
-
     if(_isServicoValidForm() == false) {
       return;
     }
@@ -338,9 +338,7 @@ class _CreateServicoState extends State<CreateServico>{
                   children: [
                     CustomSearchDropDown(
                       label: "Equipamento",
-                      hide: true,
                       maxLength: 80,
-                      suggestionVerticalOffset: 0,
                       dropdownValues: Constants.equipamentos,
                       onChanged: _servicoCreateForm.setEquipamento,
                       onSelected: _servicoCreateForm.setEquipamento,
@@ -349,7 +347,6 @@ class _CreateServicoState extends State<CreateServico>{
                     CustomSearchDropDown(
                       label: "Marca",
                       maxLength: 40,
-                      suggestionVerticalOffset: 0,
                       hide: true,
                       dropdownValues: Constants.marcas,
                       onChanged: _servicoCreateForm.setMarca,
@@ -397,23 +394,13 @@ class _CreateServicoState extends State<CreateServico>{
                           }
                         }
                       },
-                      child: ValueListenableBuilder(
-                        valueListenable: _servicoCreateForm.equipamento,
-                        builder: (context, value, child) {
-                          bool isFieldEnabled = value.isNotEmpty;
-
-                          return CustomSearchDropDown(
-                            label: "Técnico",
-                            enabled: isFieldEnabled,
-                            hide: true,
-                            maxLength: 40,
-                            dropdownValues: _dropdownTecnicoValuesNomes,
-                            onChanged: _onNomeTecnicoChanged,
-                            onSelected: _getTecnicoId,
-                            suggestionVerticalOffset: 0,
-                            validator: _servicoCreateValidator.byField(_servicoCreateForm, ErrorCodeKey.tecnico.name),
-                          );
-                        },
+                      child: CustomSearchDropDown(
+                        label: "Técnico",
+                        maxLength: 40,
+                        onChanged: _onNomeTecnicoChanged,
+                        onSelected: _getTecnicoId,
+                        dropdownValues: _dropdownTecnicoValuesNomes,
+                        validator: _servicoCreateValidator.byField(_servicoCreateForm, ErrorCodeKey.tecnico.name),
                       ),
                     ),
                     CustomTextFormField(
@@ -481,14 +468,7 @@ class _CreateServicoState extends State<CreateServico>{
                             }
                           },
                           child: ElevatedButton(
-                            onPressed: () {
-                              if (widget.isWithAnExistingClient) {
-                                _registerServicoForACliente();
-                              }
-                              else {
-                                _registerServicoAndCliente();
-                              }
-                            },
+                            onPressed: () => (widget.isWithAnExistingClient) ? _registerServicoForACliente() : _registerServicoAndCliente(),
                             style: TextButton.styleFrom(
                               fixedSize: Size(MediaQuery.of(context).size.width * 0.80, 48),
                               backgroundColor: Colors.blueAccent,
