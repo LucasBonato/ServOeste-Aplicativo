@@ -8,6 +8,7 @@ class CustomSearchDropDown extends StatefulWidget {
   final double? suggestionVerticalOffset;
   final String label;
   final bool hide;
+  final bool enabled;
   final bool searchDecoration;
   final double? leftPadding;
   final double? rightPadding;
@@ -19,6 +20,7 @@ class CustomSearchDropDown extends StatefulWidget {
   const CustomSearchDropDown({
     super.key,
     this.hide = false,
+    this.enabled = true,
     this.searchDecoration = false,
     this.rightPadding,
     this.leftPadding,
@@ -55,6 +57,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
         validator: widget.validator,
         displayAllSuggestionWhenTap: false,
         textFieldConfiguration: TextFieldConfiguration(
+          enabled: widget.enabled,
           maxLength: widget.maxLength,
           controller: _customSearchController,
           onChanged: widget.onChanged,

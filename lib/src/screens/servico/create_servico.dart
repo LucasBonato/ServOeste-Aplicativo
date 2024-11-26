@@ -99,6 +99,7 @@ class _CreateServicoState extends State<CreateServico>{
 
   void _onNomeTecnicoChanged(String nome) {
     _servicoCreateForm.setIdTecnico(null);
+    if (_servicoCreateForm.equipamento.value.isEmpty) return;
     if (_debounce?.isActive?? false) _debounce!.cancel();
 
     _debounce = Timer(Duration(milliseconds: 150), () => _fetchTecnicoNames(nome));
@@ -227,7 +228,7 @@ class _CreateServicoState extends State<CreateServico>{
                               onChanged: _onNomeClienteChanged,
                               onSelected: _onNomeClienteChanged,
                               dropdownValues: _dropdownClienteValuesNomes,
-                              validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.cliente.name),
+                              validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.nomeESobrenome.name),
                             ),
                           ),
                           CustomTextFormField(
@@ -396,15 +397,23 @@ class _CreateServicoState extends State<CreateServico>{
                           }
                         }
                       },
-                      child: CustomSearchDropDown(
-                        label: "Técnico",
-                        hide: true,
-                        maxLength: 40,
-                        dropdownValues: _dropdownTecnicoValuesNomes,
-                        onChanged: _onNomeTecnicoChanged,
-                        onSelected: _getTecnicoId,
-                        suggestionVerticalOffset: 0,
-                        validator: _servicoCreateValidator.byField(_servicoCreateForm, ErrorCodeKey.tecnico.name),
+                      child: ValueListenableBuilder(
+                        valueListenable: _servicoCreateForm.equipamento,
+                        builder: (context, value, child) {
+                          bool isFieldEnabled = value.isNotEmpty;
+
+                          return CustomSearchDropDown(
+                            label: "Técnico",
+                            enabled: isFieldEnabled,
+                            hide: true,
+                            maxLength: 40,
+                            dropdownValues: _dropdownTecnicoValuesNomes,
+                            onChanged: _onNomeTecnicoChanged,
+                            onSelected: _getTecnicoId,
+                            suggestionVerticalOffset: 0,
+                            validator: _servicoCreateValidator.byField(_servicoCreateForm, ErrorCodeKey.tecnico.name),
+                          );
+                        },
                       ),
                     ),
                     CustomTextFormField(
