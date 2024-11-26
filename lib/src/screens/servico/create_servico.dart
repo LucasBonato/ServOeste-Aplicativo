@@ -80,6 +80,7 @@ class _CreateServicoState extends State<CreateServico>{
     _clienteBloc.close();
     _servicoBloc.close();
     _tecnicoBloc.close();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -420,21 +421,26 @@ class _CreateServicoState extends State<CreateServico>{
                     ),
                     Column(
                       children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            if (_servicoCreateForm.isRequiredFieldsFilled()) {
-                              _showDialog(context);
-                            }
+                        ValueListenableBuilder(
+                          valueListenable: _servicoCreateForm.equipamento,
+                          builder: (context, value, child) {
+                            bool isButtonEnabled = value.isNotEmpty;
+
+                            return ElevatedButton(
+                              onPressed: (isButtonEnabled)
+                                  ? () => _showDialog(context)
+                                  : null,
+                              style: TextButton.styleFrom(
+                                fixedSize: Size(MediaQuery.of(context).size.width * 0.80, 48),
+                                backgroundColor: (isButtonEnabled) ? Colors.blueAccent : Colors.grey,
+                                foregroundColor: (isButtonEnabled) ? Colors.white : Colors.black26,
+                                shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5)
+                                  )
+                              ),
+                              child: const Text("Verificar disponibilidade", style: TextStyle(fontSize: 20))
+                            );
                           },
-                          style: TextButton.styleFrom(
-                            fixedSize: Size(MediaQuery.of(context).size.width * 0.80, 48),
-                            backgroundColor: (_servicoCreateForm.isRequiredFieldsFilled()) ? Colors.blueAccent : Colors.grey,
-                            foregroundColor: (_servicoCreateForm.isRequiredFieldsFilled()) ? Colors.white : Colors.black26,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)
-                            )
-                          ),
-                          child: const Text("Verificar disponibilidade", style: TextStyle(fontSize: 20))
                         ),
                         Divider(
                           height: MediaQuery.of(context).size.height * 0.01,
@@ -467,17 +473,17 @@ class _CreateServicoState extends State<CreateServico>{
                           },
                           child: ElevatedButton(
                             onPressed: () {
-                              if (!widget.isWithAnExistingClient && _servicoCreateForm.isRequiredFieldsFilled() && _clienteCreateForm.isRequiredFieldsFilled()) {
+                              if (!widget.isWithAnExistingClient && _clienteCreateForm.isRequiredFieldsFilled()) {
                                 _registerServicoAndCliente();
                               }
-                              else if (widget.isWithAnExistingClient && _servicoCreateForm.isRequiredFieldsFilled()) {
+                              else if (widget.isWithAnExistingClient) {
                                 _registerServicoForACliente();
                               }
                             },
                             style: TextButton.styleFrom(
                               fixedSize: Size(MediaQuery.of(context).size.width * 0.80, 48),
-                              backgroundColor: (_servicoCreateForm.isRequiredFieldsFilled() && (!widget.isWithAnExistingClient || _clienteCreateForm.isRequiredFieldsFilled())) ? Colors.blueAccent : Colors.grey,
-                              foregroundColor: (_servicoCreateForm.isRequiredFieldsFilled() && (!widget.isWithAnExistingClient || _clienteCreateForm.isRequiredFieldsFilled())) ? Colors.white : Colors.black26,
+                              backgroundColor: (!widget.isWithAnExistingClient && _clienteCreateForm.isRequiredFieldsFilled()) ? Colors.blueAccent : Colors.grey,
+                              foregroundColor: (!widget.isWithAnExistingClient && _clienteCreateForm.isRequiredFieldsFilled()) ? Colors.white : Colors.black26,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(5)
                               )

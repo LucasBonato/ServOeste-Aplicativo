@@ -1,5 +1,5 @@
 import 'package:serv_oeste/src/shared/constants.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class ServicoForm extends ChangeNotifier {
   ValueNotifier<String> equipamento = ValueNotifier("");
@@ -61,13 +61,5 @@ class ServicoForm extends ChangeNotifier {
   void setIdCliente(int? idCliente) {
     this.idCliente.value = idCliente;
     notifyListeners();
-  }
-
-  bool isRequiredFieldsFilled() {
-    return (
-        idTecnico.value != null &&
-        equipamento.value.isNotEmpty &&
-        descricao.value.isNotEmpty
-      );
   }
 }
