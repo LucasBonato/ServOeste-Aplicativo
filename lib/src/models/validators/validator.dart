@@ -83,30 +83,42 @@ mixin BackendErrorsValidator {
 class ServicoValidator extends LucidValidator<ServicoForm> with BackendErrorsValidator {
   ServicoValidator() {
     ruleFor((servico) => servico.equipamento.value, key: ErrorCodeKey.equipamento.name)
+        .must((equipamento) => equipamento != "", "Selecione um equipamento!", ErrorCodeKey.equipamento.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.equipamento.name)
-        .must((equipamento) => equipamento != "", "Selecione um equipamento", ErrorCodeKey.equipamento.name);
+    ;
 
     ruleFor((servico) => servico.marca.value, key: ErrorCodeKey.marca.name)
-        .customValidExternalErrors(externalErrors, ErrorCodeKey.marca.name);
+        .must((marca) => marca != "", "Selecione a marca do equipamento!", ErrorCodeKey.marca.name)
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.marca.name)
+    ;
 
     ruleFor((servico) => servico.filial.value, key: ErrorCodeKey.filial.name)
-        .customValidExternalErrors(externalErrors, ErrorCodeKey.filial.name);
+        .must((filial) => filial != "", "Selecione uma filial!", ErrorCodeKey.filial.name)
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.filial.name)
+    ;
 
     ruleFor((servico) => servico.dataAtendimentoPrevisto.value, key: ErrorCodeKey.data.name)
-        .customValidExternalErrors(externalErrors, ErrorCodeKey.data.name);
+        .customValidNotSunday(code: ErrorCodeKey.data.name)
+        .must((dataPrevista) => dataPrevista != "", "Selecione uma data!", ErrorCodeKey.data.name)
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.data.name)
+    ;
 
     ruleFor((servico) => servico.horarioPrevisto.value, key: ErrorCodeKey.horario.name)
-        .customValidExternalErrors(externalErrors, ErrorCodeKey.horario.name);
+        .must((horarioPrevisto) => horarioPrevisto != "", "Selecione um periodo válido!", ErrorCodeKey.horario.name)
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.horario.name)
+    ;
 
     ruleFor((servico) => servico.descricao.value, key: ErrorCodeKey.descricao.name)
-        .customValidExternalErrors(externalErrors, ErrorCodeKey.descricao.name);
-
-    ruleFor((servico) => servico.nomeTecnico.value, key: ErrorCodeKey.nomeESobrenome.name)
-        .customValidExternalErrors(externalErrors, ErrorCodeKey.nomeESobrenome.name);
+        .must((descricao) => descricao != "", "Insira um descrição!", ErrorCodeKey.descricao.name)
+        .minLength(10, message: "É necessário o mínimo de 10 caracteres!", code: ErrorCodeKey.descricao.name)
+        .must((descricao) => descricao.split(" ").length > 2, "Insira ao menos 3 palavras!", ErrorCodeKey.descricao.name)
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.descricao.name)
+    ;
 
     ruleFor((servico) => servico.idTecnico.value, key: ErrorCodeKey.tecnico.name)
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.tecnico.name)
         .must((id) => id != null, "Selecione um técnico", ErrorCodeKey.tecnico.name)
-        .customValidExternalErrors(externalErrors, ErrorCodeKey.tecnico.name);
+    ;
   }
 }
 
@@ -162,6 +174,27 @@ class TecnicoValidator extends LucidValidator<TecnicoForm> with BackendErrorsVal
   void setConhecimentos(List<int> conhecimentos) {
     this.conhecimentos.clear();
     this.conhecimentos.addAll(conhecimentos);
+  }
+}
+
+extension CustomValidDateValidator on SimpleValidationBuilder<String> {
+  SimpleValidationBuilder<String> customValidNotSunday({String message = 'Datas aos domingos não são permitidas!', String code = 'invalid_sunday_date'}) {
+    return must((date) {
+      try {
+        final parts = date.split('/');
+        final day = int.parse(parts[0]);
+        final month = int.parse(parts[1]);
+        final year = int.parse(parts[2]);
+
+        final parsedDate = DateTime(year, month, day);
+        return parsedDate.weekday != DateTime.sunday;
+      } catch (e) {
+        return false;
+      }
+    },
+      message,
+      code,
+    );
   }
 }
 

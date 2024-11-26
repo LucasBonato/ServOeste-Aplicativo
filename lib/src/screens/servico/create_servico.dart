@@ -136,8 +136,7 @@ class _CreateServicoState extends State<CreateServico>{
 
   bool _isServicoValidForm() {
     _servicoFormKey.currentState?.validate();
-    ValidationResult result = _servicoCreateValidator.validate(_servicoCreateForm);
-    return result.isValid;
+    return _servicoCreateValidator.validate(_servicoCreateForm).isValid;
   }
 
   void _fetchTecnicosDisponiveis() {
@@ -364,7 +363,6 @@ class _CreateServicoState extends State<CreateServico>{
                       mask: Constants.maskData,
                       type: TextInputType.datetime,
                       maxLength: 10,
-                      hide: true,
                       validator: _servicoCreateValidator.byField(_servicoCreateForm, ErrorCodeKey.data.name),
                       valueNotifier: _servicoCreateForm.dataAtendimentoPrevisto,
                     ),
