@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
 import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/components/custom_text_form_field.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
@@ -20,8 +19,8 @@ import 'package:serv_oeste/src/components/date_picker.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
+import 'package:serv_oeste/src/components/dropdown_field.dart';
 
-import '../../components/dropdown_field.dart';
 
 class CreateServico extends StatefulWidget {
   final bool isWithAnExistingClient;
@@ -347,7 +346,6 @@ class _CreateServicoState extends State<CreateServico>{
                     CustomSearchDropDown(
                       label: "Marca",
                       maxLength: 40,
-                      hide: true,
                       dropdownValues: Constants.marcas,
                       onChanged: _servicoCreateForm.setMarca,
                       onSelected: _servicoCreateForm.setMarca,
@@ -394,13 +392,21 @@ class _CreateServicoState extends State<CreateServico>{
                           }
                         }
                       },
-                      child: CustomSearchDropDown(
-                        label: "Técnico",
-                        maxLength: 40,
-                        onChanged: _onNomeTecnicoChanged,
-                        onSelected: _getTecnicoId,
-                        dropdownValues: _dropdownTecnicoValuesNomes,
-                        validator: _servicoCreateValidator.byField(_servicoCreateForm, ErrorCodeKey.tecnico.name),
+                      child: ValueListenableBuilder(
+                        valueListenable: _servicoCreateForm.equipamento,
+                        builder: (context, value, child) {
+                          bool isFieldEnabled = value.isNotEmpty;
+
+                          return CustomSearchDropDown(
+                            label: "Técnico",
+                            enabled: isFieldEnabled,
+                            maxLength: 40,
+                            onChanged: _onNomeTecnicoChanged,
+                            onSelected: _getTecnicoId,
+                            dropdownValues: _dropdownTecnicoValuesNomes,
+                            validator: _servicoCreateValidator.byField(_servicoCreateForm, ErrorCodeKey.tecnico.name),
+                          );
+                        },
                       ),
                     ),
                     CustomTextFormField(
