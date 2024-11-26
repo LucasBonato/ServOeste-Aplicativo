@@ -39,14 +39,13 @@ class CustomDatePicker extends StatefulWidget {
   State<CustomDatePicker> createState() => _CustomDatePickerState();
 }
 
-class _CustomDatePickerState extends State<CustomDatePicker> with RestorationMixin{
+class _CustomDatePickerState extends State<CustomDatePicker> with RestorationMixin {
   @override
   String? get restorationId => widget.restorationId;
 
   String _dateSelected = "";
 
   final RestorableDateTime _selectedDate = RestorableDateTime(DateTime.now());
-
 
   late final RestorableRouteFuture<DateTime?> _restorableDatePickerRouteFuture = RestorableRouteFuture<DateTime?>(
     onComplete: _selectDate,
@@ -68,6 +67,9 @@ class _CustomDatePickerState extends State<CustomDatePicker> with RestorationMix
           initialDate: DateTime.fromMillisecondsSinceEpoch(arguments! as int),
           firstDate: DateTime.now(),
           lastDate: DateTime(2030),
+          selectableDayPredicate: (DateTime day) {
+            return day.weekday != DateTime.sunday;
+          },
         );
       },
     );
