@@ -473,23 +473,23 @@ class _CreateServicoState extends State<CreateServico>{
                           },
                           child: ElevatedButton(
                             onPressed: () {
-                              if (!widget.isWithAnExistingClient && _clienteCreateForm.isRequiredFieldsFilled()) {
-                                _registerServicoAndCliente();
-                              }
-                              else if (widget.isWithAnExistingClient) {
+                              if (widget.isWithAnExistingClient) {
                                 _registerServicoForACliente();
+                              }
+                              else {
+                                _registerServicoAndCliente();
                               }
                             },
                             style: TextButton.styleFrom(
                               fixedSize: Size(MediaQuery.of(context).size.width * 0.80, 48),
-                              backgroundColor: (!widget.isWithAnExistingClient && _clienteCreateForm.isRequiredFieldsFilled()) ? Colors.blueAccent : Colors.grey,
-                              foregroundColor: (!widget.isWithAnExistingClient && _clienteCreateForm.isRequiredFieldsFilled()) ? Colors.white : Colors.black26,
+                              backgroundColor: Colors.blueAccent,
+                              foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(5)
                               )
                             ),
                             child: const Text("Cadastrar novo serviço", style: TextStyle(fontSize: 20))
-                          ),
+                          )
                         ),
                       ],
                     )
@@ -592,37 +592,37 @@ class _CreateServicoState extends State<CreateServico>{
             ),
             TableCell(
               child: GestureDetector(
-                onDoubleTap: () => _changeInformationsOnTheFormFromTable(id, 0, nome),
+                onDoubleTap: () => _changeInformationOnTheFormFromTable(id, 0, nome),
                 child: Text("${dias["${dayOfTheWeekString(dayOfTheWeek)}M"]}", style: textStyle, textAlign: TextAlign.center),
               ),
             ),
             TableCell(
               child: GestureDetector(
-                onDoubleTap: () => _changeInformationsOnTheFormFromTable(id, 0, nome),
+                onDoubleTap: () => _changeInformationOnTheFormFromTable(id, 0, nome),
                 child: Text("${dias["${dayOfTheWeekString(dayOfTheWeek)}T"]}", style: textStyle, textAlign: TextAlign.center),
               )
             ),
             TableCell(
               child: GestureDetector(
-                onDoubleTap: () => _changeInformationsOnTheFormFromTable(id, 1, nome),
+                onDoubleTap: () => _changeInformationOnTheFormFromTable(id, 1, nome),
                 child: Text("${dias["${dayOfTheWeekString(dayOfTheWeek + 1)}M"]}", style: textStyle, textAlign: TextAlign.center),
               )
             ),
             TableCell(
                 child: GestureDetector(
-                  onDoubleTap: () => _changeInformationsOnTheFormFromTable(id, 1, nome),
+                  onDoubleTap: () => _changeInformationOnTheFormFromTable(id, 1, nome),
                   child: Text("${dias["${dayOfTheWeekString(dayOfTheWeek + 1)}T"]}", style: textStyle, textAlign: TextAlign.center),
               )
             ),
             TableCell(
                 child: GestureDetector(
-                  onDoubleTap: () => _changeInformationsOnTheFormFromTable(id, 2, nome),
+                  onDoubleTap: () => _changeInformationOnTheFormFromTable(id, 2, nome),
                   child: Text("${dias["${dayOfTheWeekString(dayOfTheWeek + 2)}M"]}", style: textStyle, textAlign: TextAlign.center),
               )
             ),
             TableCell(
                 child: GestureDetector(
-                  onDoubleTap: () => _changeInformationsOnTheFormFromTable(id, 2, nome),
+                  onDoubleTap: () => _changeInformationOnTheFormFromTable(id, 2, nome),
                   child: Text("${dias["${dayOfTheWeekString(dayOfTheWeek + 2)}T"]}", style: textStyle, textAlign: TextAlign.center),
               )
             ),
@@ -634,7 +634,7 @@ class _CreateServicoState extends State<CreateServico>{
     return tecnicosDisponiveis;
   }
 
-  void _changeInformationsOnTheFormFromTable(int id, int daysToAdd, String nome) {
+  void _changeInformationOnTheFormFromTable(int id, int daysToAdd, String nome) {
     String dataAtendimento = "${dataFormated(daysToAdd)}/${DateTime.now().year}";
     setState(() {
       _servicoCreateForm.setIdTecnico(id);
