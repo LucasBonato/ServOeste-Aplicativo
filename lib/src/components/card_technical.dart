@@ -6,7 +6,7 @@ class CardTechnical extends StatelessWidget {
   final String phoneNumber;
   final String cellPhoneNumber;
   final String status;
-  final bool isSelected; // Propriedade para refletir a seleção do card.
+  final bool isSelected;
 
   const CardTechnical({
     super.key,
@@ -15,8 +15,7 @@ class CardTechnical extends StatelessWidget {
     required this.phoneNumber,
     required this.cellPhoneNumber,
     required this.status,
-    this.isSelected =
-        false, // Valor padrão para não quebrar chamadas existentes.
+    this.isSelected = false,
   });
 
   @override
@@ -24,14 +23,10 @@ class CardTechnical extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: isSelected
-            ? Colors.blue.withOpacity(0.2)
-            : Colors.white, // Alteração de cor para indicar seleção.
+        color: isSelected ? Colors.blue.withOpacity(0.2) : Colors.white,
         borderRadius: BorderRadius.circular(8.0),
         border: Border.all(
-          color: isSelected
-              ? Colors.blue
-              : Colors.grey.shade300, // Borda azul se estiver selecionado.
+          color: isSelected ? Colors.blue : Colors.grey.shade300,
           width: isSelected ? 2 : 1,
         ),
         boxShadow: [

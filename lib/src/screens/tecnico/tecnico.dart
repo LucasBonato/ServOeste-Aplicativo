@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/grid_view.dart';
-import 'package:serv_oeste/src/components/header.dart';
 import 'package:serv_oeste/src/components/card_technical.dart';
 import 'package:serv_oeste/src/components/search_field.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
