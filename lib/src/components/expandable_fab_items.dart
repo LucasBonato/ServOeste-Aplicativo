@@ -6,8 +6,8 @@ class ExpandableFabItems extends StatelessWidget {
   final String secondHeroTag;
   final String firstRouterName;
   final String secondRouterName;
-  final String firstText;
-  final String secondText;
+  final String firstTooltip;
+  final String secondTooltip;
   final void Function() updateList;
 
   const ExpandableFabItems({
@@ -16,9 +16,9 @@ class ExpandableFabItems extends StatelessWidget {
     required this.secondHeroTag,
     required this.firstRouterName,
     required this.secondRouterName,
-    required this.firstText,
-    required this.secondText,
-    required this.updateList
+    required this.firstTooltip,
+    required this.secondTooltip,
+    required this.updateList,
   });
 
   @override
@@ -26,39 +26,33 @@ class ExpandableFabItems extends StatelessWidget {
     return ExpandableFab(
       distance: 100,
       children: [
-        Column(
-          children: [
-            FloatingActionButton(
-              onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed(firstRouterName).then((value) {
-                if (value == null) {
-                  updateList();
-                }
-              }),
-              heroTag: firstHeroTag,
-              mini: true,
-              shape: const CircleBorder(eccentricity: 0),
-              child: const Icon(Icons.person_add_alt_1),
-            ),
-            Text(firstText)
-          ],
+        FloatingActionButton(
+          onPressed: () => Navigator.of(context, rootNavigator: true)
+              .pushNamed(firstRouterName)
+              .then((value) {
+            if (value == null) {
+              updateList();
+            }
+          }),
+          heroTag: firstHeroTag,
+          mini: true,
+          shape: const CircleBorder(),
+          tooltip: firstTooltip,
         ),
-        Column(
-          children: [
-            FloatingActionButton(
-              onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed(secondRouterName).then((value) {
-                if (value == null) {
-                  updateList();
-                }
-              }),
-              heroTag: secondHeroTag,
-              mini: true,
-              shape: const CircleBorder(eccentricity: 0),
-              child: const Icon(Icons.content_paste)
-            ),
-            Text(secondText)
-          ],
-        )
-      ]
+        FloatingActionButton(
+          onPressed: () => Navigator.of(context, rootNavigator: true)
+              .pushNamed(secondRouterName)
+              .then((value) {
+            if (value == null) {
+              updateList();
+            }
+          }),
+          heroTag: secondHeroTag,
+          mini: true,
+          shape: const CircleBorder(),
+          tooltip: secondTooltip,
+        ),
+      ],
     );
   }
 }

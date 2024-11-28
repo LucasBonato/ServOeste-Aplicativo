@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:masked_text/masked_text.dart';
 
-//ignore: must_be_immutable
 class CustomDatePicker extends StatefulWidget {
   final String? restorationId;
   final String hint;
   final String label;
   final String? mask;
-  final int maxLength;
+  final int? maxLength;
   final TextEditingController controller;
   final String errorMessage;
   final TextInputType type;
@@ -22,40 +21,46 @@ class CustomDatePicker extends StatefulWidget {
     this.restorationId,
     required this.hint,
     required this.label,
-    required this.mask,
+    this.mask,
     required this.errorMessage,
-    required this.maxLength,
     required this.controller,
     required this.type,
     required this.validation,
     this.hide = false,
+    this.maxLength,
     this.onChanged,
     this.leftPadding,
-    this.rightPadding
+    this.rightPadding,
   });
 
   @override
   State<CustomDatePicker> createState() => _CustomDatePickerState();
 }
 
-class _CustomDatePickerState extends State<CustomDatePicker> with RestorationMixin{
+class _CustomDatePickerState extends State<CustomDatePicker>
+    with RestorationMixin {
   @override
   String? get restorationId => widget.restorationId;
+
   String _dateSelected = "";
 
   final RestorableDateTime _selectedDate = RestorableDateTime(DateTime.now());
-  late final RestorableRouteFuture<DateTime?> _restorableDatePickerRouteFuture = RestorableRouteFuture<DateTime?>(
+  late final RestorableRouteFuture<DateTime?> _restorableDatePickerRouteFuture =
+      RestorableRouteFuture<DateTime?>(
     onComplete: _selectDate,
     onPresent: (NavigatorState navigator, Object? arguments) {
-      return navigator.restorablePush(_datePickerRoute, arguments: _selectedDate.value.millisecondsSinceEpoch);
+      return navigator.restorablePush(
+        _datePickerRoute,
+        arguments: _selectedDate.value.millisecondsSinceEpoch,
+      );
     },
   );
 
   @pragma('vm:entry-point')
   static Route<DateTime> _datePickerRoute(
-      BuildContext context,
-      Object? arguments,
-      ) {
+    BuildContext context,
+    Object? arguments,
+  ) {
     return DialogRoute<DateTime>(
       context: context,
       builder: (BuildContext context) {
@@ -73,14 +78,16 @@ class _CustomDatePickerState extends State<CustomDatePicker> with RestorationMix
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
     registerForRestoration(_selectedDate, 'selected_date');
-    registerForRestoration(_restorableDatePickerRouteFuture, 'date_picker_route_future');
+    registerForRestoration(
+        _restorableDatePickerRouteFuture, 'date_picker_route_future');
   }
 
   void _selectDate(DateTime? newSelectedDate) {
     if (newSelectedDate != null) {
       setState(() {
         _selectedDate.value = newSelectedDate;
-        _dateSelected = '${_selectedDate.value.day < 10 ? '0${_selectedDate.value.day}' : _selectedDate.value.day}/${_selectedDate.value.month < 10 ? '0${_selectedDate.value.month}' : _selectedDate.value.month}/${_selectedDate.value.year}';
+        _dateSelected =
+            '${_selectedDate.value.day < 10 ? '0${_selectedDate.value.day}' : _selectedDate.value.day}/${_selectedDate.value.month < 10 ? '0${_selectedDate.value.month}' : _selectedDate.value.month}/${_selectedDate.value.year}';
         widget.controller.text = _dateSelected;
       });
     }
@@ -89,51 +96,74 @@ class _CustomDatePickerState extends State<CustomDatePicker> with RestorationMix
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(widget.leftPadding != null ? widget.leftPadding! : 16, 4, widget.rightPadding != null ? widget.rightPadding! : 16, widget.hide ? 16 : 0),
-      child: MaskedTextField(
+      padding: EdgeInsets.fromLTRB(
+        widget.leftPadding ?? 16,
+        4,
+        widget.rightPadding ?? 16,
+        0,
+      ),
+      child: TextFormField(
         controller: widget.controller,
-        mask: widget.mask,
         maxLength: widget.maxLength,
         keyboardType: widget.type,
         decoration: InputDecoration(
-          counterText: widget.hide ? "" : null,
-          error: (widget.validation) ? Text(widget.errorMessage, textAlign: TextAlign.center, style: const TextStyle(color: Colors.red),) : null,
-          hintText: widget.hint,
-          labelText: widget.label,
+          prefixIcon: const Icon(
+            Icons.calendar_today_outlined,
+            color: Color(0xFFB0A9A9),
+          ),
           isDense: true,
-          fillColor: const Color(0xFFF1F4F8),
-          border: const OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.blueAccent,
-              width: 2
-            )
+          hintText: widget.hint,
+          hintStyle: const TextStyle(
+            color: Color(0xFFB0A9A9),
+            fontSize: 16,
           ),
-          enabledBorder: const OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.blue,
-              width: 2,
+          labelText: widget.label,
+          labelStyle: const TextStyle(
+            color: Color(0xFFB0A9A9),
+          ),
+          filled: true,
+          fillColor: const Color(0xFFFFF8F7),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(
+              color: Color(0xFFEAE6E5),
+              width: 1,
             ),
           ),
-          focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.blueAccent,
-              width: 2,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(
+              color: Color(0xFFEAE6E5),
+              width: 1,
             ),
           ),
-          errorBorder: const OutlineInputBorder(
-            borderSide: BorderSide(
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(
+              color: Color(0xFF6C757D),
+              width: 1,
+            ),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(
               color: Colors.red,
-              width: 2,
+              width: 1,
             ),
           ),
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 16,
+            horizontal: 20,
+          ),
+          errorText: widget.validation ? widget.errorMessage : null,
         ),
-        onChanged: widget.onChanged,
         onTap: () {
           _restorableDatePickerRouteFuture.present();
           setState(() {
             widget.validation = false;
           });
         },
+        onChanged: widget.onChanged,
       ),
     );
   }

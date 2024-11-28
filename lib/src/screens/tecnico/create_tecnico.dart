@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:serv_oeste/src/components/custom_text_form_field.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
@@ -140,7 +141,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F4F0),
+      backgroundColor: const Color(0xFFF9F4FF),
       appBar: AppBar(
         leading: Padding(
           padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
@@ -157,7 +158,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
             ],
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xFCFDFDFF),
         elevation: 0,
       ),
       body: Center(
@@ -203,10 +204,13 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                           child: SizedBox(
                             width: double.infinity,
                             child: CustomTextFormField(
-                              hint: "(99) 99999-9999",
+                              hint: "(99) 9999-9999",
                               label: "Telefone Fixo**",
-                              maxLength: 15,
+                              maxLength: 14,
                               hide: false,
+                              masks: [
+                                MaskTextInputFormatter(mask: '(##) ####-####'),
+                              ],
                               type: TextInputType.phone,
                               valueNotifier: _tecnicoCreateForm.telefoneFixo,
                               controller: _telefoneFixoController,
@@ -225,6 +229,9 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                               label: "Telefone Celular**",
                               maxLength: 15,
                               hide: false,
+                              masks: [
+                                MaskTextInputFormatter(mask: '(##) #####-####'),
+                              ],
                               type: TextInputType.phone,
                               valueNotifier: _tecnicoCreateForm.telefoneCelular,
                               controller: _telefoneCelularController,

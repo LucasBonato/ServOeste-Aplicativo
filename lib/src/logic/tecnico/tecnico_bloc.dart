@@ -12,7 +12,7 @@ part 'tecnico_state.dart';
 
 class TecnicoBloc extends Bloc<TecnicoEvent, TecnicoState> {
   final TecnicoRepository _tecnicoRepository = TecnicoRepository();
-  String? _nome, _situacao, _telefoneFixo, _telefoneCelular;
+  String? _nome, _situacao;
   int? _id;
 
   TecnicoBloc() : super(TecnicoInitialState()) {

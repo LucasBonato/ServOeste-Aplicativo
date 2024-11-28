@@ -14,7 +14,7 @@ class HeaderComponent extends StatelessWidget {
         bottom: 15,
       ),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Color(0xFCFDFDFF),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -39,6 +39,8 @@ class HeaderComponent extends StatelessWidget {
               ),
               child: Image.asset(
                 'assets/servOeste.png',
+                width: 275,
+                height: 40,
                 fit: BoxFit.cover,
                 alignment: Alignment.center,
               ),

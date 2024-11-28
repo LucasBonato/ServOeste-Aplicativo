@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
-import 'package:serv_oeste/src/shared/constants.dart';
 
 class TecnicoForm extends ChangeNotifier {
   int? id;
@@ -27,14 +26,12 @@ class TecnicoForm extends ChangeNotifier {
 
   void setTelefoneFixo(String? telefoneFixo) {
     if (telefoneFixo!.isNotEmpty) {
-      this.telefoneFixo.value = Constants.deTransformarMask(telefoneFixo);
       notifyListeners();
     }
   }
 
   void setTelefoneCelular(String? telefoneCelular) {
     if (telefoneCelular!.isNotEmpty) {
-      this.telefoneCelular.value = Constants.deTransformarMask(telefoneCelular);
       notifyListeners();
     }
   }

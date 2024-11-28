@@ -24,7 +24,7 @@ class CardClient extends StatelessWidget {
       decoration: BoxDecoration(
         color: isSelected
             ? Colors.blue.withOpacity(0.3)
-            : Colors.white, // Usando isSelected para alterar a cor
+            : Color(0xFCFDFDFF), // Usando isSelected para alterar a cor
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(

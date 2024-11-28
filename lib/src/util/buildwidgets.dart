@@ -16,7 +16,7 @@ class BuildWidgets {
       onPressed: () => Navigator.of(context, rootNavigator: true)
           .pushNamed(route)
           .then((value) => value ?? event()),
-      child: const Icon(Icons.add, color: Colors.white, size: 35),
+      child: const Icon(Icons.add, color: Colors.white, size: 36),
     );
   }
 
@@ -38,7 +38,7 @@ class BuildWidgets {
         "Não",
         removeMethod,
       ),
-      child: const Icon(Icons.delete, color: Colors.white, size: 35),
+      child: const Icon(Icons.delete, color: Colors.white, size: 36),
     );
   }
 }

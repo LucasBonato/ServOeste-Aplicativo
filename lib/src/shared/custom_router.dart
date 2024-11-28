@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
+import 'package:serv_oeste/src/screens/servico/filter_servico.dart';
+import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
 
 import '../screens/cliente/cliente.dart';
 import '../screens/cliente/create_cliente.dart';
@@ -12,10 +15,14 @@ class CustomRouter {
     return {
       "/tecnico": (context) => const TecnicoPage(),
       "/createTecnico": (context) => const CreateTecnico(),
+      // "/updateTecnico": (context) => const UpdateTecnico(),
       "/cliente": (context) => const ClientePage(),
       "/createCliente": (context) => const CreateCliente(),
-      "/servico": (context) => const Servico(),
-      "/createServico": (context) => const CreateServico()
+      // "/updateCliente": (context) => const UpdateCliente(),
+      "/servico": (context) => ServicesPage(),
+      "/createServico": (context) => const CreateServico(),
+      // "/updateServico": (context) => const UpdateServico(),
+      "/filterServico": (context) => FilterService()
     };
   }
 

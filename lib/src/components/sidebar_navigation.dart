@@ -20,7 +20,7 @@ class SidebarNavigation extends StatelessWidget {
       width: 175,
       margin: const EdgeInsets.only(right: 25),
       decoration: const BoxDecoration(
-        color: Color.fromARGB(253, 253, 253, 255),
+        color: Color(0xFCFDFDFF),
         boxShadow: [
           BoxShadow(
             color: Colors.black26,

@@ -1,14 +1,6 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:lucid_validation/lucid_validation.dart';
-import 'package:serv_oeste/src/models/cliente/cliente.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
-import 'package:serv_oeste/src/components/dropdown_field.dart';
-import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
-import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
-import 'package:serv_oeste/src/components/search_dropdown_field.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:serv_oeste/src/components/custom_text_form_field.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
 
@@ -20,238 +12,299 @@ class CreateCliente extends StatefulWidget {
 }
 
 class _CreateClienteState extends State<CreateCliente> {
-  final EnderecoBloc _enderecoBloc = EnderecoBloc();
-  final ClienteBloc _clienteBloc = ClienteBloc();
-  final ClienteForm _clienteCreateForm = ClienteForm();
-  final ClienteValidator _clienteCreateValidator = ClienteValidator();
   final GlobalKey<FormState> _clienteFormKey = GlobalKey<FormState>();
-  List<String> _dropdownValuesNomes = [];
-  Timer? _debounce;
+  final ClienteValidator _clienteValidator = ClienteValidator();
+  final ClienteForm _clienteForm = ClienteForm();
 
-  void _onNomeChanged(String nome) {
-    if (_debounce?.isActive?? false) _debounce!.cancel();
+  late TextEditingController _nomeController,
+      _telefoneFixoController,
+      _telefoneCelularController,
+      _cepController,
+      _municipioController,
+      _bairroController,
+      _ruaController,
+      _numeroController,
+      _complementoController;
 
-    _debounce = Timer(Duration(milliseconds: 150), () => _fetchClienteNames(nome));
-  }
-
-  void _fetchClienteNames(String nome) async {
-    _clienteCreateForm.setNome(nome);
-    if (nome == "") return;
-    if (nome.split(" ").length > 1 && _dropdownValuesNomes.isEmpty) return;
-    _clienteBloc.add(ClienteSearchEvent(nome: nome));
-  }
-
-  void _fetchInformationAboutCep(String? cep) async {
-    if(cep?.length != 9) return;
-    _clienteCreateForm.setCep(cep);
-    _enderecoBloc.add(EnderecoSearchCepEvent(cep: cep!));
+  @override
+  void initState() {
+    super.initState();
+    _nomeController = TextEditingController();
+    _telefoneFixoController = TextEditingController();
+    _telefoneCelularController = TextEditingController();
+    _cepController = TextEditingController();
+    _municipioController = TextEditingController();
+    _bairroController = TextEditingController();
+    _ruaController = TextEditingController();
+    _numeroController = TextEditingController();
+    _complementoController = TextEditingController();
   }
 
   bool _isValidForm() {
     _clienteFormKey.currentState?.validate();
-    final ValidationResult response = _clienteCreateValidator.validate(_clienteCreateForm);
+    final ValidationResult response = _clienteValidator.validate(_clienteForm);
     return response.isValid;
   }
 
   void _registerCliente() {
-    if(_isValidForm() == false) {
-      return;
+    if (_isValidForm()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Cliente adicionado com sucesso!')),
+      );
+      Navigator.pop(context);
     }
-
-    List<String> nomes = _clienteCreateForm.nome.value.split(" ");
-    _clienteCreateForm.nome.value = nomes.first;
-    String sobrenome = nomes
-        .sublist(1)
-        .join(" ")
-        .trim();
-
-    _clienteBloc.add(ClienteRegisterEvent(cliente: Cliente.fromForm(_clienteCreateForm), sobrenome: sobrenome));
-    _clienteCreateForm.nome.value = "${nomes.first} $sobrenome";
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF9F4FF),
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context, ""),
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () => Navigator.pop(context, "Back"),
+              ),
+              const Text(
+                "Voltar",
+                style: TextStyle(color: Colors.black, fontSize: 16),
+              ),
+            ],
+          ),
         ),
-        title: const Text("Novo Cliente"),
-        centerTitle: true,
+        backgroundColor: Color(0xFCFDFDFF),
+        elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
-        child: SingleChildScrollView(
-          child: Form(
-            key: _clienteFormKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                BlocListener<ClienteBloc, ClienteState>(
-                  bloc: _clienteBloc,
-                  listener: (context, state) {
-                    if (state is ClienteSearchSuccessState) {
-                      List<String> nomes = state.clientes
-                          .take(5)
-                          .map((cliente) => cliente.nome!)
-                          .toList();
-
-                      if(_dropdownValuesNomes != nomes) {
-                        _dropdownValuesNomes = nomes;
-                        setState(() {});
-                      }
-                    }
-                  },
-                  child: CustomSearchDropDown(
-                    onChanged: _onNomeChanged,
-                    label: "Nome",
-                    maxLength: 40,
-                    dropdownValues: _dropdownValuesNomes,
-                    validator: _clienteCreateValidator.byField(_clienteCreateForm, "nome"),
-                  ),
-                ),
-                CustomTextFormField(
-                  valueNotifier: _clienteCreateForm.telefoneCelular,
-                  hint: "(99) 99999-9999",
-                  label: "Telefone Celular",
-                  masks: Constants.maskTelefone,
-                  maxLength: 15,
-                  type: TextInputType.phone,
-                  hide: false,
-                  validator: _clienteCreateValidator.byField(_clienteCreateForm, "telefoneCelular"),
-                  onChanged: _clienteCreateForm.setTelefoneCelular,
-                ),  // Telefone Celular
-                CustomTextFormField(
-                  valueNotifier: _clienteCreateForm.telefoneFixo,
-                  hint: "(99) 99999-9999",
-                  label: "Telefone Fixo",
-                  masks: Constants.maskTelefone,
-                  maxLength: 15,
-                  type: TextInputType.phone,
-                  hide: false,
-                  validator: _clienteCreateValidator.byField(_clienteCreateForm, "telefoneFixo"),
-                  onChanged: _clienteCreateForm.setTelefoneFixo,
-                ),  // Telefone Fixo
-                BlocListener<EnderecoBloc, EnderecoState>(
-                  bloc: _enderecoBloc,
-                  listener: (context, state) {
-                    if (state is EnderecoSuccessState) {
-                      _clienteCreateForm.setEndereco(state.endereco!);
-                      _clienteCreateForm.setMunicipio(state.municipio!);
-                      _clienteCreateForm.setBairro(state.bairro!);
-                    }
-                  },
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 5,
-                            child: CustomTextFormField(
-                              valueNotifier: _clienteCreateForm.cep,
-                              hint: "00000-000",
-                              label: "CEP",
-                              hide: true,
-                              maxLength: 9,
-                              masks: Constants.maskCep,
-                              rightPadding: 4,
-                              type: TextInputType.number,
-                              validator: _clienteCreateValidator.byField(_clienteCreateForm, "cep"),
-                              onChanged: _fetchInformationAboutCep,
-                            ),
-                          ), // CEP
-                          Expanded(
-                            flex: 8,
-                            child: CustomTextFormField(
-                              valueNotifier: _clienteCreateForm.endereco,
-                              hint: "Rua...",
-                              label: "Endereço, Número e Complemento",
-                              validator: _clienteCreateValidator.byField(_clienteCreateForm, "endereco"),
-                              maxLength: 255,
-                              hide: true,
-                              type: TextInputType.text,
-                              leftPadding: 4,
-                              onChanged: _clienteCreateForm.setEndereco,
-                            ),
-                          ), // Endereço
-                        ],
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: SingleChildScrollView(
+              child: Form(
+                key: _clienteFormKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Adicionar Cliente",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
                       ),
-                      CustomDropdownField(
-                        label: "Município",
-                        dropdownValues: Constants.municipios,
-                        valueNotifier: _clienteCreateForm.municipio,
-                        validator: _clienteCreateValidator.byField(_clienteCreateForm, "municipio"),
-                        onChanged: _clienteCreateForm.setMunicipio,
-                      ),
-                      CustomTextFormField(
-                        valueNotifier: _clienteCreateForm.bairro,
-                        hint: "Bairro...",
-                        label: "Bairro",
-                        validator: _clienteCreateValidator.byField(_clienteCreateForm, "bairro"),
-                        maxLength: 255,
-                        hide: true,
-                        type: TextInputType.text,
-                        onChanged: _clienteCreateForm.setBairro,
-                      ), // Bairro
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 128),
-                        child: BlocListener<ClienteBloc, ClienteState>(
-                          bloc: _clienteBloc,
-                          listener: (context, state) {
-                            if (state is ClienteRegisterSuccessState) {
-                              Navigator.pop(context);
-                            }
-                            else if (state is ClienteErrorState) {
-                              ErrorEntity error = state.error;
-
-                              _clienteCreateValidator.applyBackendError(error);
-                              _clienteFormKey.currentState?.validate();
-                              _clienteCreateValidator.cleanExternalErrors();
-
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text("[ERROR] Informação(ões) inválida(s) ao registrar o Cliente."))
-                              );
-
-                            }
-                          },
-                          child: ElevatedButton(
-                            onPressed: () => _registerCliente(),
-                            style: TextButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              foregroundColor: Colors.white,
-                              textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
-                            ),
-                            child: const Text("Adicionar"),
+                    ),
+                    const SizedBox(height: 48),
+                    CustomTextFormField(
+                      hint: "Nome...",
+                      label: "Nome*",
+                      type: TextInputType.name,
+                      maxLength: 40,
+                      hide: false,
+                      valueNotifier: _clienteForm.nome,
+                      controller: _nomeController,
+                      validator:
+                          _clienteValidator.byField(_clienteForm, "nome"),
+                      onChanged: _clienteForm.setNome,
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextFormField(
+                            hint: "(99) 9999-9999",
+                            label: "Telefone Fixo**",
+                            type: TextInputType.phone,
+                            maxLength: 14,
+                            hide: false,
+                            masks: [
+                              MaskTextInputFormatter(mask: '(##) ####-####'),
+                            ],
+                            valueNotifier: _clienteForm.telefoneFixo,
+                            controller: _telefoneFixoController,
+                            validator: _clienteValidator.byField(
+                                _clienteForm, "telefoneFixo"),
+                            onChanged: _clienteForm.setTelefoneFixo,
                           ),
                         ),
+                        Expanded(
+                          child: CustomTextFormField(
+                            hint: "(99) 99999-9999",
+                            label: "Telefone Celular**",
+                            type: TextInputType.phone,
+                            maxLength: 15,
+                            hide: false,
+                            masks: [
+                              MaskTextInputFormatter(mask: '(##) #####-####'),
+                            ],
+                            valueNotifier: _clienteForm.telefoneCelular,
+                            controller: _telefoneCelularController,
+                            validator: _clienteValidator.byField(
+                                _clienteForm, "telefoneCelular"),
+                            onChanged: _clienteForm.setTelefoneCelular,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomTextFormField(
+                            hint: "00000-000",
+                            label: "CEP",
+                            type: TextInputType.streetAddress,
+                            maxLength: 9,
+                            hide: false,
+                            masks: [
+                              MaskTextInputFormatter(mask: '#####-###'),
+                            ],
+                            valueNotifier: _clienteForm.cep,
+                            controller: _cepController,
+                            validator:
+                                _clienteValidator.byField(_clienteForm, "cep"),
+                            onChanged: _clienteForm.setCep,
+                          ),
+                        ),
+                        Expanded(
+                          child: CustomTextFormField(
+                            hint: "Município",
+                            label: "Município*",
+                            type: TextInputType.text,
+                            maxLength: 40,
+                            hide: false,
+                            valueNotifier: _clienteForm.municipio,
+                            controller: _municipioController,
+                            validator: _clienteValidator.byField(
+                                _clienteForm, "municipio"),
+                            onChanged: _clienteForm.setMunicipio,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    CustomTextFormField(
+                      hint: "Bairro",
+                      label: "Bairro*",
+                      type: TextInputType.text,
+                      maxLength: 40,
+                      hide: false,
+                      valueNotifier: _clienteForm.bairro,
+                      controller: _bairroController,
+                      validator:
+                          _clienteValidator.byField(_clienteForm, "bairro"),
+                      onChanged: _clienteForm.setBairro,
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: CustomTextFormField(
+                            hint: "Rua",
+                            label: "Rua*",
+                            type: TextInputType.text,
+                            maxLength: 40,
+                            hide: false,
+                            valueNotifier: _clienteForm.rua,
+                            controller: _ruaController,
+                            validator:
+                                _clienteValidator.byField(_clienteForm, "rua"),
+                            onChanged: _clienteForm.setRua,
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: CustomTextFormField(
+                            hint: "Número",
+                            label: "Número*",
+                            type: TextInputType.text,
+                            maxLength: 6,
+                            hide: false,
+                            valueNotifier: _clienteForm.numero,
+                            controller: _numeroController,
+                            validator: _clienteValidator.byField(
+                                _clienteForm, "numero"),
+                            onChanged: _clienteForm.setNumero,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    CustomTextFormField(
+                      hint: "Complemento",
+                      label: "Complemento",
+                      type: TextInputType.text,
+                      maxLength: 100,
+                      hide: false,
+                      valueNotifier: _clienteForm.complemento,
+                      controller: _complementoController,
+                      onChanged: _clienteForm.setComplemento,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: const [
+                            Text(
+                              "* - Campos obrigatórios",
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.black),
+                            ),
+                            SizedBox(width: 16),
+                            Text(
+                              "** - Preencha ao menos um destes campos",
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.black),
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
-                )
-              ]
+                    ),
+                    const SizedBox(height: 24),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 750),
+                      child: ElevatedButton(
+                        onPressed: _registerCliente,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF007BFF),
+                          padding: const EdgeInsets.symmetric(vertical: 18),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          minimumSize: const Size(double.infinity, 48),
+                        ),
+                        child: const Text(
+                          "Adicionar Cliente",
+                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
-        )
-      )
+        ),
+      ),
     );
   }
 
   @override
   void dispose() {
-    _enderecoBloc.close();
-    _clienteBloc.close();
-    _debounce?.cancel();
+    _nomeController.dispose();
+    _telefoneFixoController.dispose();
+    _telefoneCelularController.dispose();
+    _cepController.dispose();
+    _municipioController.dispose();
+    _bairroController.dispose();
+    _ruaController.dispose();
+    _numeroController.dispose();
+    _complementoController.dispose();
     super.dispose();
   }
 }

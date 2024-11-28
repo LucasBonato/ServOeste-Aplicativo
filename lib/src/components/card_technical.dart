@@ -23,7 +23,7 @@ class CardTechnical extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: isSelected ? Colors.blue.withOpacity(0.2) : Colors.white,
+        color: isSelected ? Colors.blue.withOpacity(0.2) : Color(0xFCFDFDFF),
         borderRadius: BorderRadius.circular(8.0),
         border: Border.all(
           color: isSelected ? Colors.blue : Colors.grey.shade300,

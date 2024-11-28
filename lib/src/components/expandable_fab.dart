@@ -8,15 +8,15 @@ class ExpandableFab extends StatefulWidget {
   const ExpandableFab({
     super.key,
     required this.distance,
-    required this.children
+    required this.children,
   });
 
   @override
   State<ExpandableFab> createState() => _ExpandableFabState();
 }
 
-class _ExpandableFabState extends State<ExpandableFab> with SingleTickerProviderStateMixin{
-
+class _ExpandableFabState extends State<ExpandableFab>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _expandAnimation;
   bool _open = false;
@@ -27,7 +27,7 @@ class _ExpandableFabState extends State<ExpandableFab> with SingleTickerProvider
     _controller = AnimationController(
       value: _open ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 250),
-      vsync: this
+      vsync: this,
     );
     _expandAnimation = CurvedAnimation(
       curve: Curves.fastOutSlowIn,
@@ -49,35 +49,13 @@ class _ExpandableFabState extends State<ExpandableFab> with SingleTickerProvider
     });
   }
 
-  Widget _buildTapToCloseFab() {
-    return SizedBox(
-      width: 56,
-      height: 56,
-      child: Center(
-        child: Material(
-          shape: const CircleBorder(),
-          clipBehavior: Clip.antiAlias,
-          elevation: 4,
-          child: InkWell(
-            onTap: _toggle,
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Icon(
-                Icons.close,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   List<Widget> _buildExpandingActionButtons() {
     final children = <Widget>[];
     final count = widget.children.length;
     final step = 90.0 / (count - 1);
-    for (var i = 0, angleInDegrees = 0.0; i < count; i++, angleInDegrees += step) {
+    for (var i = 0, angleInDegrees = 0.0;
+        i < count;
+        i++, angleInDegrees += step) {
       children.add(
         _ExpandingActionButton(
           directionInDegrees: angleInDegrees,
@@ -108,8 +86,40 @@ class _ExpandableFabState extends State<ExpandableFab> with SingleTickerProvider
           duration: const Duration(milliseconds: 250),
           child: FloatingActionButton(
             onPressed: _toggle,
-            shape: const CircleBorder(eccentricity: 0),
-            child: const Icon(Icons.add),
+            backgroundColor: Colors.blue,
+            elevation: 8,
+            shape: const CircleBorder(),
+            child: const Icon(
+              Icons.add,
+              size: 36,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTapToCloseFab() {
+    return SizedBox(
+      width: 56,
+      height: 56,
+      child: Center(
+        child: Material(
+          color: Color(0xFC343F54),
+          shape: const CircleBorder(),
+          clipBehavior: Clip.antiAlias,
+          elevation: 8,
+          child: InkWell(
+            onTap: _toggle,
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: const Icon(
+                Icons.close,
+                color: Colors.white,
+                size: 32,
+              ),
+            ),
           ),
         ),
       ),
@@ -123,9 +133,13 @@ class _ExpandableFabState extends State<ExpandableFab> with SingleTickerProvider
         alignment: Alignment.bottomRight,
         clipBehavior: Clip.none,
         children: [
-          _buildTapToCloseFab(),
+          AnimatedOpacity(
+            opacity: _open ? 1.0 : 0.0,
+            duration: const Duration(milliseconds: 250),
+            child: _buildTapToCloseFab(),
+          ),
           ..._buildExpandingActionButtons(),
-          _buildTapToOpenFab()
+          _buildTapToOpenFab(),
         ],
       ),
     );
@@ -142,7 +156,7 @@ class _ExpandingActionButton extends StatelessWidget {
     required this.directionInDegrees,
     required this.maxDistance,
     required this.progress,
-    required this.child
+    required this.child,
   });
 
   @override
@@ -166,54 +180,6 @@ class _ExpandingActionButton extends StatelessWidget {
       child: FadeTransition(
         opacity: progress,
         child: child,
-      ),
-    );
-  }
-}
-
-class ActionButton extends StatelessWidget {
-  final VoidCallback? onPressed;
-  final Widget icon;
-
-  const ActionButton({
-    super.key,
-    this.onPressed,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Material(
-      shape: const CircleBorder(),
-      clipBehavior: Clip.antiAlias,
-      color: theme.colorScheme.secondary,
-      elevation: 4,
-      child: IconButton(
-        onPressed: onPressed,
-        icon: icon,
-        color: theme.colorScheme.onSecondary,
-      ),
-    );
-  }
-}
-
-class FakeItem extends StatelessWidget {
-  final bool isBig;
-
-  const FakeItem({
-    super.key,
-    required this.isBig,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
-      height: isBig ? 128 : 36,
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(8)),
-        color: Colors.grey.shade300,
       ),
     );
   }

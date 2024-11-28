@@ -63,7 +63,7 @@ class CardService extends StatelessWidget {
           child: Container(
             padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Color(0xFCFDFDFF),
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
