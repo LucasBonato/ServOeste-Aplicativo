@@ -150,13 +150,13 @@ class _CreateTecnicoState extends State<CreateTecnico> {
               IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.black),
                 onPressed: () => Navigator.pop(context, "Back"),
-              ),
-              const Text(
-                "Voltar",
-                style: TextStyle(color: Colors.black, fontSize: 16),
-              ),
+              )
             ],
           ),
+        ),
+        title: const Text(
+          "Voltar",
+          style: TextStyle(color: Colors.black, fontSize: 16),
         ),
         backgroundColor: Color(0xFCFDFDFF),
         elevation: 0,
@@ -206,6 +206,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                             child: CustomTextFormField(
                               hint: "(99) 9999-9999",
                               label: "Telefone Fixo**",
+                              rightPadding: 0,
                               maxLength: 14,
                               hide: false,
                               masks: [
@@ -227,6 +228,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                             child: CustomTextFormField(
                               hint: "(99) 99999-9999",
                               label: "Telefone Celular**",
+                              leftPadding: 0,
                               maxLength: 15,
                               hide: false,
                               masks: [
@@ -265,7 +267,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                       padding: EdgeInsets.only(top: 8, left: 16),
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: Row(
+                        child: Wrap(
                           children: [
                             Text(
                               "* - Campos obrigatórios",
