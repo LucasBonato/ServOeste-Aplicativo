@@ -67,13 +67,13 @@ class _CreateClienteState extends State<CreateCliente> {
               IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.black),
                 onPressed: () => Navigator.pop(context, "Back"),
-              ),
-              const Text(
-                "Voltar",
-                style: TextStyle(color: Colors.black, fontSize: 16),
-              ),
+              )
             ],
           ),
+        ),
+        title: const Text(
+          "Voltar",
+          style: TextStyle(color: Colors.black, fontSize: 16),
         ),
         backgroundColor: Color(0xFCFDFDFF),
         elevation: 0,
@@ -118,6 +118,7 @@ class _CreateClienteState extends State<CreateCliente> {
                             hint: "(99) 9999-9999",
                             label: "Telefone Fixo**",
                             type: TextInputType.phone,
+                            rightPadding: 4,
                             maxLength: 14,
                             hide: false,
                             masks: [
@@ -125,8 +126,7 @@ class _CreateClienteState extends State<CreateCliente> {
                             ],
                             valueNotifier: _clienteForm.telefoneFixo,
                             controller: _telefoneFixoController,
-                            validator: _clienteValidator.byField(
-                                _clienteForm, "telefoneFixo"),
+                            validator: _clienteValidator.byField(_clienteForm, "telefoneFixo"),
                             onChanged: _clienteForm.setTelefoneFixo,
                           ),
                         ),
@@ -135,6 +135,7 @@ class _CreateClienteState extends State<CreateCliente> {
                             hint: "(99) 99999-9999",
                             label: "Telefone Celular**",
                             type: TextInputType.phone,
+                            leftPadding: 4,
                             maxLength: 15,
                             hide: false,
                             masks: [
@@ -142,8 +143,7 @@ class _CreateClienteState extends State<CreateCliente> {
                             ],
                             valueNotifier: _clienteForm.telefoneCelular,
                             controller: _telefoneCelularController,
-                            validator: _clienteValidator.byField(
-                                _clienteForm, "telefoneCelular"),
+                            validator: _clienteValidator.byField(_clienteForm, "telefoneCelular"),
                             onChanged: _clienteForm.setTelefoneCelular,
                           ),
                         ),
@@ -157,6 +157,7 @@ class _CreateClienteState extends State<CreateCliente> {
                             hint: "00000-000",
                             label: "CEP",
                             type: TextInputType.streetAddress,
+                            rightPadding: 4,
                             maxLength: 9,
                             hide: false,
                             masks: [
@@ -174,6 +175,7 @@ class _CreateClienteState extends State<CreateCliente> {
                             hint: "Município...",
                             label: "Município*",
                             type: TextInputType.text,
+                            leftPadding: 4,
                             maxLength: 40,
                             hide: false,
                             valueNotifier: _clienteForm.municipio,
@@ -202,12 +204,13 @@ class _CreateClienteState extends State<CreateCliente> {
                     Row(
                       children: [
                         Expanded(
-                          flex: 3,
+                          flex: 5,
                           child: CustomTextFormField(
                             hint: "Rua...",
                             label: "Rua*",
                             type: TextInputType.text,
                             maxLength: 40,
+                            rightPadding: 8,
                             hide: false,
                             valueNotifier: _clienteForm.rua,
                             controller: _ruaController,
@@ -217,11 +220,12 @@ class _CreateClienteState extends State<CreateCliente> {
                           ),
                         ),
                         Expanded(
-                          flex: 1,
+                          flex: 2,
                           child: CustomTextFormField(
                             hint: "Número...",
                             label: "Número*",
                             type: TextInputType.text,
+                            leftPadding: 0,
                             maxLength: 6,
                             hide: false,
                             valueNotifier: _clienteForm.numero,
@@ -248,7 +252,7 @@ class _CreateClienteState extends State<CreateCliente> {
                       padding: const EdgeInsets.only(left: 16),
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: Row(
+                        child: Wrap(
                           children: const [
                             Text(
                               "* - Campos obrigatórios",

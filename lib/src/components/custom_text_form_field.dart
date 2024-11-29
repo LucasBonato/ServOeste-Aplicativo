@@ -67,8 +67,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(widget.leftPadding ?? 16, 4,
-          widget.rightPadding ?? 16, widget.hide ? 16 : 0),
+      padding: EdgeInsetsDirectional.fromSTEB(widget.leftPadding ?? 16, 4, widget.rightPadding ?? 16, widget.hide ? 16 : 0),
       child: ValueListenableBuilder<String>(
         valueListenable: widget.valueNotifier,
         builder: (BuildContext context, String value, Widget? child) =>
