@@ -228,18 +228,29 @@ class _ServicesPageState extends State<ServicesPage> {
                 .pushNamed('/createService')
                 .then((_) => setState(() {})),
             heroTag: 'add_service',
-            mini: true,
             tooltip: 'Adicionar Serviço',
-            child: const Icon(Icons.add),
+            backgroundColor: Colors.blue,
+            shape: CircleBorder(),
+            child: Image.asset(
+              'assets/addService.png',
+              fit: BoxFit.contain,
+              width: 36,
+              height: 36,
+            ),
           ),
           FloatingActionButton(
             onPressed: () => Navigator.of(context)
                 .pushNamed('/createServiceAndClient')
                 .then((_) => setState(() {})),
             heroTag: 'add_service_cliente',
-            mini: true,
             tooltip: 'Adicionar Serviço e Cliente',
-            child: const Icon(Icons.group_add),
+            backgroundColor: Colors.blue, // Cor de fundo azul
+            shape: CircleBorder(),
+            child: const Icon(
+              Icons.group_add,
+              size: 36,
+              color: Colors.white,
+            ),
           ),
         ],
       ),

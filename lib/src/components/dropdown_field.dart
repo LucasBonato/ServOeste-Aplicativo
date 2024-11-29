@@ -27,6 +27,8 @@ class CustomDropdownField extends StatefulWidget {
 
 class _CustomDropdownFieldState extends State<CustomDropdownField> {
   late SingleSelectController<String> _internalController;
+  bool _isHovered = false;
+  bool _hasFocus = false;
 
   @override
   void initState() {
@@ -49,43 +51,54 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
     return Padding(
       padding: EdgeInsets.fromLTRB(
           widget.leftPadding ?? 16, 4, widget.rightPadding ?? 16, 16),
-      child: ValueListenableBuilder<String>(
-        valueListenable: widget.valueNotifier,
-        builder: (BuildContext context, String value, Widget? child) =>
-            CustomDropdown<String>(
-          items: widget.dropdownValues,
-          controller: _internalController,
-          hintText: widget.label,
-          hintBuilder: (context, hint, enabled) => Text(
-            hint,
-            style: const TextStyle(color: Colors.black87, fontSize: 16),
-          ),
-          decoration: CustomDropdownDecoration(
-            closedBorder: Border.all(
-              color: Colors.transparent,
+      child: MouseRegion(
+        onEnter: (_) => setState(() {
+          _isHovered = true;
+        }),
+        onExit: (_) => setState(() {
+          _isHovered = false;
+        }),
+        child: Focus(
+          onFocusChange: (hasFocus) {
+            setState(() {
+              _hasFocus = hasFocus;
+            });
+          },
+          child: ValueListenableBuilder<String>(
+            valueListenable: widget.valueNotifier,
+            builder: (BuildContext context, String value, Widget? child) =>
+                CustomDropdown<String>(
+              items: widget.dropdownValues,
+              controller: _internalController,
+              hintText: widget.label,
+              hintBuilder: (context, hint, enabled) => Text(
+                hint,
+                style: const TextStyle(color: Colors.black87, fontSize: 16),
+              ),
+              decoration: CustomDropdownDecoration(
+                closedFillColor: _isHovered
+                    ? const Color(0xFFF5EEED)
+                    : const Color(0xFFFFF8F7),
+                closedBorderRadius: BorderRadius.circular(12),
+                expandedBorderRadius: BorderRadius.circular(12),
+                closedBorder: Border.all(
+                  color: _hasFocus ? Colors.black : const Color(0xFFEAE6E5),
+                  width: _hasFocus ? 1.5 : 1,
+                ),
+                expandedBorder: Border.all(
+                  color: Colors.blueAccent,
+                  width: 1.5,
+                ),
+              ),
+              closedHeaderPadding: const EdgeInsets.symmetric(
+                vertical: 12,
+                horizontal: 16,
+              ),
+              excludeSelected: false,
+              validator: widget.validator,
+              onChanged: widget.onChanged,
             ),
-            expandedBorder: Border.all(
-              color: Colors.blueAccent,
-              width: 1.5,
-            ),
-            closedFillColor: const Color(0xFFFAF8F6),
-            closedBorderRadius: BorderRadius.circular(10),
-            closedShadow: const [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 6,
-                offset: Offset(2, 2),
-              )
-            ],
-            expandedBorderRadius: BorderRadius.circular(10),
           ),
-          closedHeaderPadding: const EdgeInsets.symmetric(
-            vertical: 12,
-            horizontal: 16,
-          ),
-          excludeSelected: false,
-          validator: widget.validator,
-          onChanged: widget.onChanged,
         ),
       ),
     );

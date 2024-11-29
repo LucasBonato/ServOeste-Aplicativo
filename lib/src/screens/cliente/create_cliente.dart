@@ -171,7 +171,7 @@ class _CreateClienteState extends State<CreateCliente> {
                         ),
                         Expanded(
                           child: CustomTextFormField(
-                            hint: "Município",
+                            hint: "Município...",
                             label: "Município*",
                             type: TextInputType.text,
                             maxLength: 40,
@@ -187,7 +187,7 @@ class _CreateClienteState extends State<CreateCliente> {
                     ),
                     const SizedBox(height: 12),
                     CustomTextFormField(
-                      hint: "Bairro",
+                      hint: "Bairro...",
                       label: "Bairro*",
                       type: TextInputType.text,
                       maxLength: 40,
@@ -204,7 +204,7 @@ class _CreateClienteState extends State<CreateCliente> {
                         Expanded(
                           flex: 3,
                           child: CustomTextFormField(
-                            hint: "Rua",
+                            hint: "Rua...",
                             label: "Rua*",
                             type: TextInputType.text,
                             maxLength: 40,
@@ -219,7 +219,7 @@ class _CreateClienteState extends State<CreateCliente> {
                         Expanded(
                           flex: 1,
                           child: CustomTextFormField(
-                            hint: "Número",
+                            hint: "Número...",
                             label: "Número*",
                             type: TextInputType.text,
                             maxLength: 6,
@@ -235,7 +235,7 @@ class _CreateClienteState extends State<CreateCliente> {
                     ),
                     const SizedBox(height: 12),
                     CustomTextFormField(
-                      hint: "Complemento",
+                      hint: "Complemento...",
                       label: "Complemento",
                       type: TextInputType.text,
                       maxLength: 100,

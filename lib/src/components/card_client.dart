@@ -5,7 +5,7 @@ class CardClient extends StatelessWidget {
   final String phoneNumber;
   final String city;
   final String street;
-  final bool isSelected; // Adicionando o parâmetro isSelected
+  final bool isSelected;
 
   const CardClient({
     super.key,
@@ -13,7 +13,7 @@ class CardClient extends StatelessWidget {
     required this.phoneNumber,
     required this.city,
     required this.street,
-    required this.isSelected, // Incluir no construtor
+    required this.isSelected,
   });
 
   @override
@@ -22,9 +22,7 @@ class CardClient extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isSelected
-            ? Colors.blue.withOpacity(0.3)
-            : Color(0xFCFDFDFF), // Usando isSelected para alterar a cor
+        color: isSelected ? Colors.blue.withOpacity(0.3) : Color(0xFCFDFDFF),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(

@@ -72,7 +72,7 @@ class FilterService extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 30.0),
+                    padding: const EdgeInsets.only(bottom: 120.0),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(15),
                       child: Image.asset(
@@ -98,20 +98,20 @@ class FilterService extends StatelessWidget {
                   CustomSearchDropDown(
                     label: 'Situação...',
                     dropdownValues: [
-                      'Aguardando agendamento',
-                      'Aguardando aprovação do cliente',
-                      'Aguardando atendimento',
-                      'Aguardando cliente retirar',
-                      'Aguardando orçamento',
+                      'Aguardando Agendamento',
+                      'Aguardando Aprovação do Cliente',
+                      'Aguardando Atendimento',
+                      'Aguardando Cliente Retirar',
+                      'Aguardando Orçamento',
                       'Cancelado',
                       'Compra',
                       'Cortesia',
                       'Garantia',
-                      'Não aprovado pelo cliente',
-                      'Não retira há 3 meses',
-                      'Orçamento aprovado',
+                      'Não Aprovado pelo Cliente',
+                      'Não Retira há 3 Meses',
+                      'Orçamento Aprovado',
                       'Resolvido',
-                      'Sem defeito',
+                      'Sem Defeito',
                       'Fechada'
                     ],
                     onChanged: (value) => situacaoNotifier.value = value,
@@ -126,7 +126,6 @@ class FilterService extends StatelessWidget {
                           onChanged: (value) => filialNotifier.value = value,
                         ),
                       ),
-                      const SizedBox(width: 10.0),
                       Expanded(
                         child: CustomSearchDropDown(
                           label: 'Garantia...',
@@ -149,11 +148,9 @@ class FilterService extends StatelessWidget {
                           hint: 'dd/mm/aaaa',
                           mask: '##/##/####',
                           errorMessage: 'Data inválida',
-                          validation: false,
                           type: TextInputType.datetime,
                         ),
                       ),
-                      const SizedBox(width: 10.0),
                       Expanded(
                         child: CustomDatePicker(
                           controller: dataEfetivaController,
@@ -161,7 +158,6 @@ class FilterService extends StatelessWidget {
                           hint: 'dd/mm/aaaa',
                           mask: '##/##/####',
                           errorMessage: 'Data inválida',
-                          validation: false,
                           type: TextInputType.datetime,
                         ),
                       ),
@@ -177,11 +173,9 @@ class FilterService extends StatelessWidget {
                           hint: 'dd/mm/aaaa',
                           mask: '##/##/####',
                           errorMessage: 'Data inválida',
-                          validation: false,
                           type: TextInputType.datetime,
                         ),
                       ),
-                      const SizedBox(width: 10.0),
                       Expanded(
                         child: CustomSearchDropDown(
                           label: 'Horário...',
@@ -191,7 +185,7 @@ class FilterService extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 32.0),
+                  const SizedBox(height: 58.0),
                   ElevatedButton(
                     onPressed: applyFilters,
                     style: ElevatedButton.styleFrom(

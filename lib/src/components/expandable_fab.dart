@@ -91,7 +91,7 @@ class _ExpandableFabState extends State<ExpandableFab>
             shape: const CircleBorder(),
             child: const Icon(
               Icons.add,
-              size: 36,
+              size: 42,
               color: Colors.white,
             ),
           ),
@@ -102,8 +102,8 @@ class _ExpandableFabState extends State<ExpandableFab>
 
   Widget _buildTapToCloseFab() {
     return SizedBox(
-      width: 56,
-      height: 56,
+      width: 64,
+      height: 64,
       child: Center(
         child: Material(
           color: Color(0xFC343F54),
@@ -117,7 +117,7 @@ class _ExpandableFabState extends State<ExpandableFab>
               child: const Icon(
                 Icons.close,
                 color: Colors.white,
-                size: 32,
+                size: 38,
               ),
             ),
           ),

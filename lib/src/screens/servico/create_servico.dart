@@ -412,7 +412,7 @@ class _CreateServicoState extends State<CreateServico> {
                 controller: telefoneFixoController,
                 validation: validationTelefoneFixo,
                 type: TextInputType.phone,
-              ), // Telefone Fixo
+              ),
               Row(
                 children: [
                   Expanded(
@@ -500,7 +500,6 @@ class _CreateServicoState extends State<CreateServico> {
                   maxLength: 10,
                   hide: true,
                   errorMessage: _errorMessage,
-                  validation: dataAtendimentoPrevistaValidation,
                   controller: _dataAtendimentoPrevistaController),
               // CustomDropdownField(
               //   label: "Horário Previsto",

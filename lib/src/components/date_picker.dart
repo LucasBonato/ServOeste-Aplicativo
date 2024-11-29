@@ -12,7 +12,6 @@ class CustomDatePicker extends StatefulWidget {
   final TextInputType type;
   final double? rightPadding;
   final double? leftPadding;
-  late bool validation;
   final Function(String?)? onChanged;
   final bool hide;
 
@@ -25,7 +24,6 @@ class CustomDatePicker extends StatefulWidget {
     required this.errorMessage,
     required this.controller,
     required this.type,
-    required this.validation,
     this.hide = false,
     this.maxLength,
     this.onChanged,
@@ -39,10 +37,10 @@ class CustomDatePicker extends StatefulWidget {
 
 class _CustomDatePickerState extends State<CustomDatePicker>
     with RestorationMixin {
-  @override
   String? get restorationId => widget.restorationId;
 
   String _dateSelected = "";
+  bool _validation = false;
 
   final RestorableDateTime _selectedDate = RestorableDateTime(DateTime.now());
   late final RestorableRouteFuture<DateTime?> _restorableDatePickerRouteFuture =
@@ -91,6 +89,12 @@ class _CustomDatePickerState extends State<CustomDatePicker>
         widget.controller.text = _dateSelected;
       });
     }
+  }
+
+  void _toggleValidation(bool value) {
+    setState(() {
+      _validation = value;
+    });
   }
 
   @override
@@ -155,13 +159,11 @@ class _CustomDatePickerState extends State<CustomDatePicker>
             vertical: 16,
             horizontal: 20,
           ),
-          errorText: widget.validation ? widget.errorMessage : null,
+          errorText: _validation ? widget.errorMessage : null,
         ),
         onTap: () {
           _restorableDatePickerRouteFuture.present();
-          setState(() {
-            widget.validation = false;
-          });
+          _toggleValidation(false);
         },
         onChanged: widget.onChanged,
       ),
