@@ -261,23 +261,37 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                         gridCheckersMap(),
                       ],
                     ),
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.only(top: 8, left: 16),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Row(
                           children: [
-                            Text(
-                              "* - Campos obrigatórios",
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.black),
-                            ),
-                            SizedBox(width: 16),
-                            Text(
-                              "** - Preencha ao menos um destes campos",
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.black),
-                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  "* - Campos obrigatórios",
+                                  style: TextStyle(
+                                    fontSize:
+                                        (MediaQuery.of(context).size.width *
+                                                0.01)
+                                            .clamp(12, 14),
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                SizedBox(width: 16),
+                                Text(
+                                  "** - Preencha ao menos um destes campos",
+                                  style: TextStyle(
+                                    fontSize:
+                                        (MediaQuery.of(context).size.width *
+                                                0.01)
+                                            .clamp(12, 14),
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            )
                           ],
                         ),
                       ),

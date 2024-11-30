@@ -3,7 +3,6 @@ import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
 import 'package:serv_oeste/src/screens/servico/create_cliente_and_servico.dart';
 import 'package:serv_oeste/src/screens/servico/filter_servico.dart';
 import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
-
 import '../screens/cliente/cliente.dart';
 import '../screens/cliente/create_cliente.dart';
 import '../screens/servico/servico.dart';
@@ -22,7 +21,7 @@ class CustomRouter {
       // "/updateCliente": (context) => const UpdateCliente(),
       "/servico": (context) => ServicesPage(),
       "/filterServico": (context) => FilterService(),
-      "/createServico": (context) => const CreateServico(),
+      // "/createServico": (context) => const CreateServico(),
       "/createServiceAndClient": (context) => const CreateServicoAndCliente(),
       // "/updateServico": (context) => const UpdateServico()
     };

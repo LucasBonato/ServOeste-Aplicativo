@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucid_validation/lucid_validation.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:serv_oeste/src/components/custom_text_form_field.dart';
+import 'package:serv_oeste/src/components/search_dropdown_field.dart';
+import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
+import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
+import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 
 class CreateCliente extends StatefulWidget {
   const CreateCliente({super.key});
@@ -26,6 +31,8 @@ class _CreateClienteState extends State<CreateCliente> {
       _numeroController,
       _complementoController;
 
+  final EnderecoBloc _enderecoBloc = EnderecoBloc();
+
   @override
   void initState() {
     super.initState();
@@ -38,6 +45,15 @@ class _CreateClienteState extends State<CreateCliente> {
     _ruaController = TextEditingController();
     _numeroController = TextEditingController();
     _complementoController = TextEditingController();
+
+    _cepController.addListener(_onCepChanged);
+  }
+
+  void _onCepChanged() {
+    final cep = _cepController.text;
+    if (cep.length == 9) {
+      _enderecoBloc.add(EnderecoSearchCepEvent(cep: cep));
+    }
   }
 
   bool _isValidForm() {
@@ -48,243 +64,254 @@ class _CreateClienteState extends State<CreateCliente> {
 
   void _registerCliente() {
     if (_isValidForm()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Cliente adicionado com sucesso!')),
+      final cliente = Cliente(
+        nome: _clienteForm.nome.value,
+        telefoneFixo: _clienteForm.telefoneFixo.value,
+        telefoneCelular: _clienteForm.telefoneCelular.value,
+        cep: _clienteForm.cep.value,
+        municipio: _clienteForm.municipio.value,
+        bairro: _clienteForm.bairro.value,
+        rua: _clienteForm.rua.value,
+        numero: _clienteForm.numero.value,
+        complemento: _clienteForm.complemento.value,
       );
-      Navigator.pop(context);
+
+      context.read<ClienteBloc>().add(
+            ClienteRegisterEvent(
+                cliente: cliente,
+                sobrenome:
+                    "Sobrenome"), // Passe o sobrenome conforme necessário
+          );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF9F4FF),
-      appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
-          child: Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black),
-                onPressed: () => Navigator.pop(context, "Back"),
-              ),
-              const Text(
-                "Voltar",
-                style: TextStyle(color: Colors.black, fontSize: 16),
-              ),
-            ],
+    return BlocProvider(
+      create: (_) => _enderecoBloc,
+      child: BlocListener<EnderecoBloc, EnderecoState>(
+        listener: (context, state) {
+          if (state is EnderecoLoadingState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Buscando endereço...')),
+            );
+          } else if (state is EnderecoSuccessState) {
+            _ruaController.text = state.rua;
+            _bairroController.text = state.bairro;
+            _municipioController.text = state.municipio;
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          } else if (state is EnderecoErrorState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.errorMessage)),
+            );
+          }
+        },
+        child: Scaffold(
+          backgroundColor: const Color(0xFFF9F4FF),
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.black),
+              onPressed: () => Navigator.pop(context),
+            ),
+            backgroundColor: const Color(0xFCFDFDFF),
+            elevation: 0,
           ),
-        ),
-        backgroundColor: Color(0xFCFDFDFF),
-        elevation: 0,
-      ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 800),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: SingleChildScrollView(
-              child: Form(
-                key: _clienteFormKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Adicionar Cliente",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const SizedBox(height: 48),
-                    CustomTextFormField(
-                      hint: "Nome...",
-                      label: "Nome*",
-                      type: TextInputType.name,
-                      maxLength: 40,
-                      hide: false,
-                      valueNotifier: _clienteForm.nome,
-                      controller: _nomeController,
-                      validator:
-                          _clienteValidator.byField(_clienteForm, "nome"),
-                      onChanged: _clienteForm.setNome,
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
+          body: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 800),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: _clienteFormKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Expanded(
-                          child: CustomTextFormField(
-                            hint: "(99) 9999-9999",
-                            label: "Telefone Fixo**",
-                            type: TextInputType.phone,
-                            maxLength: 14,
-                            hide: false,
-                            masks: [
-                              MaskTextInputFormatter(mask: '(##) ####-####'),
-                            ],
-                            valueNotifier: _clienteForm.telefoneFixo,
-                            controller: _telefoneFixoController,
-                            validator: _clienteValidator.byField(
-                                _clienteForm, "telefoneFixo"),
-                            onChanged: _clienteForm.setTelefoneFixo,
+                        const Text(
+                          "Adicionar Cliente",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
                           ),
                         ),
-                        Expanded(
-                          child: CustomTextFormField(
-                            hint: "(99) 99999-9999",
-                            label: "Telefone Celular**",
-                            type: TextInputType.phone,
-                            maxLength: 15,
-                            hide: false,
-                            masks: [
-                              MaskTextInputFormatter(mask: '(##) #####-####'),
-                            ],
-                            valueNotifier: _clienteForm.telefoneCelular,
-                            controller: _telefoneCelularController,
-                            validator: _clienteValidator.byField(
-                                _clienteForm, "telefoneCelular"),
-                            onChanged: _clienteForm.setTelefoneCelular,
-                          ),
+                        const SizedBox(height: 48),
+                        CustomSearchDropDown(
+                          label: "Nome*",
+                          dropdownValues: const [
+                            "João Silva",
+                            "Maria Oliveira",
+                            "Carlos Souza"
+                          ],
+                          controller: _nomeController,
+                          onChanged: (value) => _clienteForm.setNome(value),
+                          validator:
+                              _clienteValidator.byField(_clienteForm, "nome"),
+                          onSaved: (value) => _clienteForm.setNome(value ?? ""),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CustomTextFormField(
-                            hint: "00000-000",
-                            label: "CEP",
-                            type: TextInputType.streetAddress,
-                            maxLength: 9,
-                            hide: false,
-                            masks: [
-                              MaskTextInputFormatter(mask: '#####-###'),
-                            ],
-                            valueNotifier: _clienteForm.cep,
-                            controller: _cepController,
-                            validator:
-                                _clienteValidator.byField(_clienteForm, "cep"),
-                            onChanged: _clienteForm.setCep,
-                          ),
-                        ),
-                        Expanded(
-                          child: CustomTextFormField(
-                            hint: "Município...",
-                            label: "Município*",
-                            type: TextInputType.text,
-                            maxLength: 40,
-                            hide: false,
-                            valueNotifier: _clienteForm.municipio,
-                            controller: _municipioController,
-                            validator: _clienteValidator.byField(
-                                _clienteForm, "municipio"),
-                            onChanged: _clienteForm.setMunicipio,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    CustomTextFormField(
-                      hint: "Bairro...",
-                      label: "Bairro*",
-                      type: TextInputType.text,
-                      maxLength: 40,
-                      hide: false,
-                      valueNotifier: _clienteForm.bairro,
-                      controller: _bairroController,
-                      validator:
-                          _clienteValidator.byField(_clienteForm, "bairro"),
-                      onChanged: _clienteForm.setBairro,
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 3,
-                          child: CustomTextFormField(
-                            hint: "Rua...",
-                            label: "Rua*",
-                            type: TextInputType.text,
-                            maxLength: 40,
-                            hide: false,
-                            valueNotifier: _clienteForm.rua,
-                            controller: _ruaController,
-                            validator:
-                                _clienteValidator.byField(_clienteForm, "rua"),
-                            onChanged: _clienteForm.setRua,
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: CustomTextFormField(
-                            hint: "Número...",
-                            label: "Número*",
-                            type: TextInputType.text,
-                            maxLength: 6,
-                            hide: false,
-                            valueNotifier: _clienteForm.numero,
-                            controller: _numeroController,
-                            validator: _clienteValidator.byField(
-                                _clienteForm, "numero"),
-                            onChanged: _clienteForm.setNumero,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    CustomTextFormField(
-                      hint: "Complemento...",
-                      label: "Complemento",
-                      type: TextInputType.text,
-                      maxLength: 100,
-                      hide: false,
-                      valueNotifier: _clienteForm.complemento,
-                      controller: _complementoController,
-                      onChanged: _clienteForm.setComplemento,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Row(
-                          children: const [
-                            Text(
-                              "* - Campos obrigatórios",
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.black),
+                        const SizedBox(height: 24),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: CustomTextFormField(
+                                hint: "(99) 9999-9999",
+                                label: "Telefone Fixo**",
+                                type: TextInputType.phone,
+                                maxLength: 14,
+                                hide: false,
+                                masks: [
+                                  MaskTextInputFormatter(
+                                      mask: '(##) ####-####'),
+                                ],
+                                valueNotifier: _clienteForm.telefoneFixo,
+                                controller: _telefoneFixoController,
+                                validator: _clienteValidator.byField(
+                                    _clienteForm, "telefoneFixo"),
+                                onChanged: _clienteForm.setTelefoneFixo,
+                              ),
                             ),
-                            SizedBox(width: 16),
-                            Text(
-                              "** - Preencha ao menos um destes campos",
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.black),
+                            Expanded(
+                              child: CustomTextFormField(
+                                hint: "(99) 99999-9999",
+                                label: "Telefone Celular**",
+                                type: TextInputType.phone,
+                                maxLength: 15,
+                                hide: false,
+                                masks: [
+                                  MaskTextInputFormatter(
+                                      mask: '(##) #####-####'),
+                                ],
+                                valueNotifier: _clienteForm.telefoneCelular,
+                                controller: _telefoneCelularController,
+                                validator: _clienteValidator.byField(
+                                    _clienteForm, "telefoneCelular"),
+                                onChanged: _clienteForm.setTelefoneCelular,
+                              ),
                             ),
                           ],
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 750),
-                      child: ElevatedButton(
-                        onPressed: _registerCliente,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF007BFF),
-                          padding: const EdgeInsets.symmetric(vertical: 18),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: CustomTextFormField(
+                                hint: "00000-000",
+                                label: "CEP",
+                                type: TextInputType.streetAddress,
+                                maxLength: 9,
+                                hide: false,
+                                masks: [
+                                  MaskTextInputFormatter(mask: '#####-###'),
+                                ],
+                                valueNotifier: _clienteForm.cep,
+                                controller: _cepController,
+                                validator: _clienteValidator.byField(
+                                    _clienteForm, "cep"),
+                                onChanged: _clienteForm.setCep,
+                              ),
+                            ),
+                            Expanded(
+                              child: CustomSearchDropDown(
+                                label: "Município*",
+                                dropdownValues: const [
+                                  "Osasco",
+                                  "Carapicuíba",
+                                  "Barueri",
+                                  "Cotia",
+                                  "São Paulo",
+                                  "Itapevi",
+                                ],
+                                controller: _municipioController,
+                                onChanged: (value) =>
+                                    _clienteForm.setMunicipio(value),
+                                validator: _clienteValidator.byField(
+                                    _clienteForm, "municipio"),
+                                onSaved: (value) =>
+                                    _clienteForm.setMunicipio(value ?? ""),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        CustomTextFormField(
+                          hint: "Bairro...",
+                          label: "Bairro*",
+                          type: TextInputType.text,
+                          maxLength: 40,
+                          hide: false,
+                          valueNotifier: _clienteForm.bairro,
+                          controller: _bairroController,
+                          validator:
+                              _clienteValidator.byField(_clienteForm, "bairro"),
+                          onChanged: _clienteForm.setBairro,
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: CustomTextFormField(
+                                hint: "Rua...",
+                                label: "Rua*",
+                                type: TextInputType.text,
+                                maxLength: 40,
+                                hide: false,
+                                valueNotifier: _clienteForm.rua,
+                                controller: _ruaController,
+                                validator: _clienteValidator.byField(
+                                    _clienteForm, "rua"),
+                                onChanged: _clienteForm.setRua,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: CustomTextFormField(
+                                hint: "Número...",
+                                label: "Número*",
+                                type: TextInputType.text,
+                                maxLength: 6,
+                                hide: false,
+                                valueNotifier: _clienteForm.numero,
+                                controller: _numeroController,
+                                validator: _clienteValidator.byField(
+                                    _clienteForm, "numero"),
+                                onChanged: _clienteForm.setNumero,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        CustomTextFormField(
+                          hint: "Complemento...",
+                          label: "Complemento",
+                          type: TextInputType.text,
+                          maxLength: 30,
+                          hide: false,
+                          valueNotifier: _clienteForm.complemento,
+                          controller: _complementoController,
+                          validator: _clienteValidator.byField(
+                              _clienteForm, "complemento"),
+                          onChanged: _clienteForm.setComplemento,
+                        ),
+                        const SizedBox(height: 24),
+                        ElevatedButton(
+                          onPressed: _registerCliente,
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(double.infinity, 50),
+                            backgroundColor: Colors.deepPurple,
                           ),
-                          minimumSize: const Size(double.infinity, 48),
+                          child: const Text(
+                            "Salvar",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
-                        child: const Text(
-                          "Adicionar Cliente",
-                          style: TextStyle(fontSize: 18, color: Colors.white),
-                        ),
-                      ),
+                        const SizedBox(height: 24),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -292,19 +319,5 @@ class _CreateClienteState extends State<CreateCliente> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _nomeController.dispose();
-    _telefoneFixoController.dispose();
-    _telefoneCelularController.dispose();
-    _cepController.dispose();
-    _municipioController.dispose();
-    _bairroController.dispose();
-    _ruaController.dispose();
-    _numeroController.dispose();
-    _complementoController.dispose();
-    super.dispose();
   }
 }

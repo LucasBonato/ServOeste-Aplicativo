@@ -6,12 +6,18 @@ sealed class ClienteEvent {}
 final class ClienteLoadingEvent extends ClienteEvent {
   final String? nome;
   final String? telefone;
-  final String? endereco;
+  final String? rua;
+  final String? numero;
+  final String? complemento;
+  final String? cep;
 
   ClienteLoadingEvent({
     this.nome,
     this.telefone,
-    this.endereco
+    this.rua,
+    this.numero,
+    this.complemento,
+    this.cep,
   });
 }
 
@@ -19,19 +25,21 @@ final class ClienteSearchOneEvent extends ClienteEvent {
   final int id;
 
   ClienteSearchOneEvent({
-    required this.id
+    required this.id,
   });
 }
 
 final class ClienteSearchEvent extends ClienteEvent {
   final String? nome;
   final String? telefone;
-  final String? endereco;
+  final String? rua;
+  final String? numero;
 
   ClienteSearchEvent({
     this.nome,
     this.telefone,
-    this.endereco
+    this.rua,
+    this.numero,
   });
 }
 
@@ -41,7 +49,7 @@ final class ClienteRegisterEvent extends ClienteEvent {
 
   ClienteRegisterEvent({
     required this.cliente,
-    required this.sobrenome
+    required this.sobrenome,
   });
 }
 
@@ -51,7 +59,7 @@ final class ClienteUpdateEvent extends ClienteEvent {
 
   ClienteUpdateEvent({
     required this.cliente,
-    required this.sobrenome
+    required this.sobrenome,
   });
 }
 
@@ -59,7 +67,7 @@ final class ClienteDeleteListEvent extends ClienteEvent {
   final List<int> selectedList;
 
   ClienteDeleteListEvent({
-    required this.selectedList
+    required this.selectedList,
   });
 }
 
@@ -68,6 +76,6 @@ final class ClienteToggleItemSelectEvent extends ClienteEvent {
   final int id;
 
   ClienteToggleItemSelectEvent({
-    required this.id
+    required this.id,
   });
 }

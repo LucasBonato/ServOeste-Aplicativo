@@ -6,40 +6,38 @@ import 'package:dio/dio.dart';
 import 'dart:convert';
 
 class ClienteRepository extends DioService {
+  Future<List<Cliente>?> getClientesByFind({
+    String? nome,
+    String? telefone,
+    String? rua,
+    String? numero,
+    String? complemento,
+    String? cep,
+  }) async {
+    final response = await dio.get('/clientes', queryParameters: {
+      'nome': nome,
+      'telefone': telefone,
+      'rua': rua,
+      'numero': numero,
+      'complemento': complemento,
+      'cep': cep,
+    });
 
-  Future<List<Cliente>?> getClientesByFind({String? nome, String? telefone, String? endereco}) async {
-    try {
-      final Response<dynamic> response = await dio.post(
-        ServerEndpoints.clienteFindEndpoint,
-        data: {
-          'nome': nome,
-          'telefone': telefone,
-          'endereco': endereco
-        }
-      );
-
-      if(response.data is List) {
-        return (response.data as List)
-          .map((json) => Cliente.fromJson(json))
-          .toList();
-      }
-
-    } on DioException catch (e) {
-      throw Exception(onRequestError(e));
+    if (response.statusCode == 200) {
+      final List<dynamic> data = response.data;
+      return data.map((e) => Cliente.fromJson(e)).toList();
     }
     return null;
   }
 
   Future<Cliente?> getClienteById({required int id}) async {
     try {
-      final response = await dio.get(
-        "${ServerEndpoints.clienteEndpoint}/$id"
-      );
+      final response = await dio.get("${ServerEndpoints.clienteEndpoint}/$id");
 
-      if(response.data != null && response.data is Map) {
+      if (response.data != null && response.data is Map) {
         return Cliente.fromJson(response.data as Map<String, dynamic>);
       }
-    } on DioException catch(e) {
+    } on DioException catch (e) {
       throw Exception(onRequestError(e));
     }
     return null;
@@ -47,19 +45,19 @@ class ClienteRepository extends DioService {
 
   Future<ErrorEntity?> postCliente(Cliente cliente, String sobrenome) async {
     try {
-      await dio.post(
-        ServerEndpoints.clienteEndpoint,
-        data: {
-          "nome": cliente.nome,
-          "sobrenome": sobrenome,
-          "telefoneFixo": cliente.telefoneFixo,
-          "telefoneCelular": cliente.telefoneCelular,
-          "endereco": cliente.endereco,
-          "bairro": cliente.bairro,
-          "municipio": cliente.municipio
-        }
-      );
-    } on DioException catch(e) {
+      await dio.post(ServerEndpoints.clienteEndpoint, data: {
+        "nome": cliente.nome,
+        "sobrenome": sobrenome,
+        "telefoneFixo": cliente.telefoneFixo,
+        "telefoneCelular": cliente.telefoneCelular,
+        "rua": cliente.rua,
+        "numero": cliente.numero,
+        "complemento": cliente.complemento,
+        "cep": cliente.cep,
+        "bairro": cliente.bairro,
+        "municipio": cliente.municipio
+      });
+    } on DioException catch (e) {
       return onRequestError(e);
     }
     return null;
@@ -67,22 +65,21 @@ class ClienteRepository extends DioService {
 
   Future<ErrorEntity?> putCliente(Cliente cliente, String sobrenome) async {
     try {
-      await dio.put(
-        ServerEndpoints.clienteEndpoint,
-        queryParameters: {
-          "id": cliente.id
-        },
-        data: {
-          "nome": cliente.nome,
-          "sobrenome": sobrenome,
-          "telefoneFixo": cliente.telefoneFixo,
-          "telefoneCelular": cliente.telefoneCelular,
-          "endereco": cliente.endereco,
-          "bairro": cliente.bairro,
-          "municipio": cliente.municipio
-        }
-      );
-    } on DioException catch(e) {
+      await dio.put(ServerEndpoints.clienteEndpoint, queryParameters: {
+        "id": cliente.id
+      }, data: {
+        "nome": cliente.nome,
+        "sobrenome": sobrenome,
+        "telefoneFixo": cliente.telefoneFixo,
+        "telefoneCelular": cliente.telefoneCelular,
+        "rua": cliente.rua,
+        "numero": cliente.numero,
+        "complemento": cliente.complemento,
+        "cep": cliente.cep,
+        "bairro": cliente.bairro,
+        "municipio": cliente.municipio
+      });
+    } on DioException catch (e) {
       return onRequestError(e);
     }
     return null;
@@ -90,11 +87,9 @@ class ClienteRepository extends DioService {
 
   Future<void> deleteClientes(List<int> idClientes) async {
     try {
-      await dio.delete(
-        ServerEndpoints.clienteEndpoint,
-        data: jsonEncode(idClientes)
-      );
-    } on DioException catch(e) {
+      await dio.delete(ServerEndpoints.clienteEndpoint,
+          data: jsonEncode(idClientes));
+    } on DioException catch (e) {
       throw Exception(onRequestError(e));
     }
   }

@@ -3,14 +3,18 @@ import 'package:serv_oeste/src/components/date_picker.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/components/search_field.dart';
 
-class FilterService extends StatelessWidget {
+class FilterService extends StatefulWidget {
+  const FilterService({super.key});
+
+  @override
+  State<FilterService> createState() => _FilterServiceState();
+}
+
+class _FilterServiceState extends State<FilterService> {
   final TextEditingController adressController = TextEditingController();
-  final TextEditingController dataPrevistaController =
-      TextEditingController(); // Controlador para Data Prevista
-  final TextEditingController dataEfetivaController =
-      TextEditingController(); // Controlador para Data Efetiva
-  final TextEditingController dataAberturaController =
-      TextEditingController(); // Controlador para Data Abertura
+  final TextEditingController dataPrevistaController = TextEditingController();
+  final TextEditingController dataEfetivaController = TextEditingController();
+  final TextEditingController dataAberturaController = TextEditingController();
   final ValueNotifier<String> equipamentoNotifier = ValueNotifier<String>('');
   final ValueNotifier<String> situacaoNotifier = ValueNotifier<String>('');
   final ValueNotifier<String> filialNotifier = ValueNotifier<String>('');

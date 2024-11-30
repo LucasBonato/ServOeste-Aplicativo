@@ -18,7 +18,8 @@ class _ClientePageState extends State<ClientePage> {
   final ClienteBloc _clienteBloc = ClienteBloc();
   late final TextEditingController _nomeController,
       _telefoneController,
-      _enderecoController;
+      _ruaController,
+      _numeroController;
   late final List<int> _selectedItems;
   bool isSelected = false;
 
@@ -63,7 +64,8 @@ class _ClientePageState extends State<ClientePage> {
     _clienteBloc.add(ClienteLoadingEvent());
     _nomeController = TextEditingController();
     _telefoneController = TextEditingController();
-    _enderecoController = TextEditingController();
+    _ruaController = TextEditingController();
+    _numeroController = TextEditingController();
     _selectedItems = [];
   }
 
@@ -165,7 +167,10 @@ class _ClientePageState extends State<ClientePage> {
                           ClienteSearchEvent(
                             nome: nome,
                             telefone: _telefoneController.text,
-                            endereco: _enderecoController.text,
+                            rua: _ruaController
+                                .text, // Agora estamos usando _ruaController
+                            numero: _numeroController
+                                .text, // Usando _numeroController
                           ),
                         );
                       },
@@ -183,7 +188,9 @@ class _ClientePageState extends State<ClientePage> {
                           ClienteSearchEvent(
                             nome: _nomeController.text,
                             telefone: telefone,
-                            endereco: _enderecoController.text,
+                            rua: _ruaController.text, // Usando _ruaController
+                            numero: _numeroController
+                                .text, // Usando _numeroController
                           ),
                         );
                       },
@@ -192,15 +199,25 @@ class _ClientePageState extends State<ClientePage> {
                   Expanded(
                     flex: 1,
                     child: SearchTextField(
-                      hint: 'Endereço...',
-                      controller: _enderecoController,
-                      leftPadding: 0,
+                      hint: 'Rua e Número...',
+                      controller:
+                          _ruaController, // Campo único para Rua e Número
                       onChangedAction: (String endereco) {
+                        // Separando Rua e Número
+                        final splitEndereco = endereco.split(',');
+                        final rua = splitEndereco.isNotEmpty
+                            ? splitEndereco[0].trim()
+                            : '';
+                        final numero = splitEndereco.length > 1
+                            ? splitEndereco[1].trim()
+                            : '';
+
                         _clienteBloc.add(
                           ClienteSearchEvent(
                             nome: _nomeController.text,
                             telefone: _telefoneController.text,
-                            endereco: endereco,
+                            rua: rua, // Passando Rua
+                            numero: numero, // Passando Número
                           ),
                         );
                       },
@@ -222,7 +239,10 @@ class _ClientePageState extends State<ClientePage> {
                               ClienteSearchEvent(
                                 nome: nome,
                                 telefone: _telefoneController.text,
-                                endereco: _enderecoController.text,
+                                rua: _ruaController
+                                    .text, // Usando _ruaController
+                                numero: _numeroController
+                                    .text, // Usando _numeroController
                               ),
                             );
                           },
@@ -243,7 +263,10 @@ class _ClientePageState extends State<ClientePage> {
                                     ClienteSearchEvent(
                                       nome: _nomeController.text,
                                       telefone: telefone,
-                                      endereco: _enderecoController.text,
+                                      rua: _ruaController
+                                          .text, // Usando _ruaController
+                                      numero: _numeroController
+                                          .text, // Usando _numeroController
                                     ),
                                   );
                                 },
@@ -253,14 +276,24 @@ class _ClientePageState extends State<ClientePage> {
                           Expanded(
                             flex: 1,
                             child: SearchTextField(
-                              hint: 'Endereço...',
-                              controller: _enderecoController,
+                              hint: 'Rua e Número...',
+                              controller:
+                                  _ruaController, // Campo único para Rua e Número
                               onChangedAction: (String endereco) {
+                                final splitEndereco = endereco.split(',');
+                                final rua = splitEndereco.isNotEmpty
+                                    ? splitEndereco[0].trim()
+                                    : '';
+                                final numero = splitEndereco.length > 1
+                                    ? splitEndereco[1].trim()
+                                    : '';
+
                                 _clienteBloc.add(
                                   ClienteSearchEvent(
                                     nome: _nomeController.text,
                                     telefone: _telefoneController.text,
-                                    endereco: endereco,
+                                    rua: rua, // Passando Rua
+                                    numero: numero, // Passando Número
                                   ),
                                 );
                               },
@@ -283,7 +316,10 @@ class _ClientePageState extends State<ClientePage> {
                               ClienteSearchEvent(
                                 nome: nome,
                                 telefone: _telefoneController.text,
-                                endereco: _enderecoController.text,
+                                rua: _ruaController
+                                    .text, // Usando _ruaController
+                                numero: _numeroController
+                                    .text, // Usando _numeroController
                               ),
                             );
                           },
@@ -300,21 +336,34 @@ class _ClientePageState extends State<ClientePage> {
                               ClienteSearchEvent(
                                 nome: _nomeController.text,
                                 telefone: telefone,
-                                endereco: _enderecoController.text,
+                                rua: _ruaController
+                                    .text, // Usando _ruaController
+                                numero: _numeroController
+                                    .text, // Usando _numeroController
                               ),
                             );
                           },
                         ),
                       ),
                       SearchTextField(
-                        hint: 'Endereço...',
-                        controller: _enderecoController,
+                        hint: 'Rua e Número...',
+                        controller:
+                            _ruaController, // Campo único para Rua e Número
                         onChangedAction: (String endereco) {
+                          final splitEndereco = endereco.split(',');
+                          final rua = splitEndereco.isNotEmpty
+                              ? splitEndereco[0].trim()
+                              : '';
+                          final numero = splitEndereco.length > 1
+                              ? splitEndereco[1].trim()
+                              : '';
+
                           _clienteBloc.add(
                             ClienteSearchEvent(
                               nome: _nomeController.text,
                               telefone: _telefoneController.text,
-                              endereco: endereco,
+                              rua: rua, // Passando Rua
+                              numero: numero, // Passando Número
                             ),
                           );
                         },
@@ -386,7 +435,8 @@ class _ClientePageState extends State<ClientePage> {
     _selectedItems.clear();
     _nomeController.dispose();
     _telefoneController.dispose();
-    _enderecoController.dispose();
+    _ruaController.dispose();
+    _numeroController.dispose();
     _clienteBloc.close();
     super.dispose();
   }

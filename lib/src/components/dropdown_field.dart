@@ -66,39 +66,71 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
           },
           child: ValueListenableBuilder<String>(
             valueListenable: widget.valueNotifier,
-            builder: (BuildContext context, String value, Widget? child) =>
-                CustomDropdown<String>(
-              items: widget.dropdownValues,
-              controller: _internalController,
-              hintText: widget.label,
-              hintBuilder: (context, hint, enabled) => Text(
-                hint,
-                style: const TextStyle(color: Colors.black87, fontSize: 16),
-              ),
-              decoration: CustomDropdownDecoration(
-                closedFillColor: _isHovered
-                    ? const Color(0xFFF5EEED)
-                    : const Color(0xFFFFF8F7),
-                closedBorderRadius: BorderRadius.circular(12),
-                expandedBorderRadius: BorderRadius.circular(12),
-                closedBorder: Border.all(
-                  color: _hasFocus ? Colors.black : const Color(0xFFEAE6E5),
-                  width: _hasFocus ? 1.5 : 1,
+            builder: (BuildContext context, String value, Widget? child) {
+              return CustomDropdown<String>(
+                items: widget.dropdownValues,
+                controller: _internalController,
+                hintText: widget.label,
+                hintBuilder: (context, hint, enabled) => Text(
+                  hint,
+                  style: const TextStyle(color: Colors.black87, fontSize: 16),
                 ),
-                expandedBorder: Border.all(
-                  color: Colors.blueAccent,
-                  width: 1.5,
+                decoration: CustomDropdownDecoration(
+                  closedFillColor: _isHovered
+                      ? const Color(0xFFF5EEED)
+                      : const Color(0xFFFFF8F7),
+                  closedBorderRadius: BorderRadius.circular(12),
+                  expandedBorderRadius: BorderRadius.circular(12),
+                  closedBorder: Border.all(
+                    color: _hasFocus ? Colors.black : const Color(0xFFEAE6E5),
+                    width: _hasFocus ? 1.5 : 1,
+                  ),
+                  expandedBorder: Border.all(
+                    color: Colors.blueAccent,
+                    width: 1.5,
+                  ),
                 ),
-              ),
-              closedHeaderPadding: const EdgeInsets.symmetric(
-                vertical: 12,
-                horizontal: 16,
-              ),
-              excludeSelected: false,
-              validator: widget.validator,
-              onChanged: widget.onChanged,
-            ),
+                closedHeaderPadding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 16,
+                ),
+                excludeSelected: false,
+                validator: widget.validator,
+                onChanged: widget.onChanged,
+              );
+            },
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class ScrollableDropdown extends StatelessWidget {
+  final List<String> items;
+  final void Function(String?) onChanged;
+
+  const ScrollableDropdown({
+    super.key,
+    required this.items,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxHeight: 200),
+      child: SingleChildScrollView(
+        child: Column(
+          children: items
+              .map((item) => ListTile(
+                    title: Text(item),
+                    onTap: () {
+                      onChanged(item);
+                      Navigator.pop(context);
+                    },
+                  ))
+              .toList(),
         ),
       ),
     );

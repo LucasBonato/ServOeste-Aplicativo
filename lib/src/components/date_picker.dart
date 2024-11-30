@@ -14,6 +14,8 @@ class CustomDatePicker extends StatefulWidget {
   final double? leftPadding;
   final Function(String?)? onChanged;
   final bool hide;
+  final ValueNotifier<String>? valueNotifier;
+  final String? Function(String?)? validator;
 
   CustomDatePicker({
     super.key,
@@ -29,6 +31,8 @@ class CustomDatePicker extends StatefulWidget {
     this.onChanged,
     this.leftPadding,
     this.rightPadding,
+    this.valueNotifier,
+    this.validator,
   });
 
   @override
@@ -87,6 +91,11 @@ class _CustomDatePickerState extends State<CustomDatePicker>
         _dateSelected =
             '${_selectedDate.value.day < 10 ? '0${_selectedDate.value.day}' : _selectedDate.value.day}/${_selectedDate.value.month < 10 ? '0${_selectedDate.value.month}' : _selectedDate.value.month}/${_selectedDate.value.year}';
         widget.controller.text = _dateSelected;
+
+        if (widget.valueNotifier != null) {
+          widget.valueNotifier!.value =
+              _dateSelected; // Atualiza o ValueNotifier
+        }
       });
     }
   }
@@ -165,7 +174,16 @@ class _CustomDatePickerState extends State<CustomDatePicker>
           _restorableDatePickerRouteFuture.present();
           _toggleValidation(false);
         },
-        onChanged: widget.onChanged,
+        onChanged: (value) {
+          widget.onChanged?.call(value);
+
+          if (widget.validator != null) {
+            setState(() {
+              _validation = widget.validator!(value) != null;
+            });
+          }
+        },
+        validator: widget.validator,
       ),
     );
   }

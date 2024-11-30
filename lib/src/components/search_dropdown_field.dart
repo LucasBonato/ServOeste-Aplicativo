@@ -16,6 +16,7 @@ class CustomSearchDropDown extends StatefulWidget {
   final void Function(String?)? onSaved;
   final String? Function([String?])? validator;
   final Widget Function(BuildContext, String)? itemWidgetBuilder;
+  final ValueNotifier<String>? valueNotifier;
 
   const CustomSearchDropDown({
     super.key,
@@ -30,6 +31,7 @@ class CustomSearchDropDown extends StatefulWidget {
     this.maxLength,
     this.suggestionVerticalOffset,
     this.itemWidgetBuilder,
+    this.valueNotifier,
     required this.onChanged,
     required this.label,
     required this.dropdownValues,
@@ -44,8 +46,22 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
 
   @override
   void initState() {
-    _customSearchController = widget.controller ?? TextEditingController();
     super.initState();
+    _customSearchController = widget.controller ?? TextEditingController();
+
+    // Sincroniza o valor inicial com o ValueNotifier, se fornecido
+    if (widget.valueNotifier != null) {
+      widget.valueNotifier!.value = _customSearchController.text;
+    }
+  }
+
+  void _updateValue(String value) {
+    print('Atualizando valor: $value');
+    _customSearchController.text = value;
+    widget.onChanged(value);
+
+    // Atualiza o ValueNotifier, se fornecido
+    widget.valueNotifier?.value = value;
   }
 
   @override
@@ -59,12 +75,18 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
       ),
       child: DropDownSearchFormField(
         onSaved: widget.onSaved,
-        validator: widget.validator,
-        displayAllSuggestionWhenTap: false,
+        validator: (value) {
+          print('Validando valor: $value');
+          return widget.validator?.call(value);
+        },
+        displayAllSuggestionWhenTap: true,
         textFieldConfiguration: TextFieldConfiguration(
           maxLength: widget.maxLength,
           controller: _customSearchController,
-          onChanged: widget.onChanged,
+          onChanged: (value) {
+            print('Texto inserido: $value');
+            _updateValue(value);
+          },
           decoration: InputDecoration(
             counterText: widget.hide ? "" : null,
             labelText: widget.label,
@@ -107,19 +129,22 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
           ),
         ),
         suggestionsCallback: (query) async {
-          if (query.isEmpty) return widget.dropdownValues;
+          print('Query digitada: $query');
+          print('Valores disponíveis: ${widget.dropdownValues}');
+
+          if (query.isEmpty) {
+            return widget.dropdownValues;
+          }
           return widget.dropdownValues
               .where((element) =>
                   element.toLowerCase().contains(query.toLowerCase()))
               .toList();
         },
         onSuggestionSelected: (String? suggestion) {
+          print('Sugestão selecionada: $suggestion');
           if (suggestion != null && suggestion.isNotEmpty) {
-            setState(() {
-              _customSearchController.text = suggestion;
-              widget.onChanged(suggestion);
-              widget.onSelected?.call(suggestion);
-            });
+            _updateValue(suggestion);
+            widget.onSelected?.call(suggestion);
             FocusScope.of(context).unfocus();
           }
         },

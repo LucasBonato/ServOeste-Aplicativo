@@ -70,39 +70,51 @@ class ClienteValidator extends LucidValidator<ClienteForm> {
   final String nomeKey = "nome";
   final String telefoneFixoKey = "telefoneFixo";
   final String telefoneCelularKey = "telefoneCelular";
-  final String enderecoKey = "endereco";
   final String municipioKey = "municipio";
   final String bairroKey = "bairro";
+  final String ruaKey = "rua";
+  final String numeroKey = "numero";
+  final String enderecoKey = "endereco";
 
   ClienteValidator() {
     ruleFor((cliente) => cliente.nome.value, key: nomeKey)
-        .must((nome) => nome.isNotEmpty, "O nome é obrigatório!.", nomeKey)
-        .must((nome) => nome.split(" ").length > 1,
-            "É necessário o nome e sobrenome!", nomeKey)
-        .must(
-            (nome) =>
-                (nome.split(" ").length > 1 && nome.split(" ")[1].length > 2),
-            "O sobrenome precisa ter 2 caracteres!",
-            nomeKey);
+        .must((nome) => nome.trim().contains(" "),
+            "Informe o nome e sobrenome!", nomeKey)
+        .must((nome) => nome.split(" ").any((parte) => parte.length > 1),
+            "O sobrenome precisa ter ao menos 2 caracteres!", nomeKey);
 
     ruleFor((cliente) => cliente.telefoneCelular.value, key: telefoneCelularKey)
         .customValidExternalErrors(externalErrors, telefoneCelularKey);
 
+    ruleFor((cliente) => cliente, key: telefoneFixoKey).must(
+        (cliente) =>
+            cliente.telefoneCelular.value.isNotEmpty ||
+            cliente.telefoneFixo.value.isNotEmpty,
+        "Informe pelo menos um telefone (celular ou fixo)!",
+        telefoneFixoKey);
+
     ruleFor((cliente) => cliente.telefoneFixo.value, key: telefoneFixoKey)
         .customValidExternalErrors(externalErrors, telefoneFixoKey);
 
-    ruleFor((cliente) => cliente.endereco.value, key: enderecoKey)
-        .mustHaveNumber();
-
+    ruleFor((cliente) => cliente, key: telefoneCelularKey).must(
+        (cliente) =>
+            cliente.telefoneCelular.value.isNotEmpty ||
+            cliente.telefoneFixo.value.isNotEmpty,
+        "Informe pelo menos um telefone (celular ou fixo)!",
+        telefoneCelularKey);
     ruleFor((cliente) => cliente.municipio.value, key: municipioKey)
         .isNotNull()
-        .must((cliente) => cliente!.isNotEmpty, "Selecione um múnicipio",
-            municipioKey);
+        .must((municipio) => municipio!.isNotEmpty,
+            "O município é obrigatório!", municipioKey);
 
     ruleFor((cliente) => cliente.bairro.value, key: bairroKey).must(
-        (municipio) => municipio.isNotEmpty,
-        "'bairro' cannot be empty",
-        bairroKey);
+        (bairro) => bairro.isNotEmpty, "O bairro é obrigatório!", bairroKey);
+
+    ruleFor((cliente) => cliente.rua.value, key: ruaKey)
+        .must((rua) => rua.isNotEmpty, "A rua é obrigatória!", ruaKey);
+
+    ruleFor((cliente) => cliente.numero.value, key: numeroKey).must(
+        (numero) => numero.isNotEmpty, "O número é obrigatório!", numeroKey);
   }
 
   void applyBackendError(ErrorEntity errorEntity) {
@@ -121,13 +133,14 @@ class ClienteValidator extends LucidValidator<ClienteForm> {
             [telefoneFixoKey, telefoneCelularKey], errorEntity.errorMessage);
         break;
       case 5:
-        _addError(enderecoKey, errorEntity.errorMessage);
-        break;
-      case 6:
         _addError(municipioKey, errorEntity.errorMessage);
         break;
-      case 7:
+      case 6:
         _addError(bairroKey, errorEntity.errorMessage);
+        break;
+      case 7:
+      case 8:
+        _addError(enderecoKey, errorEntity.errorMessage);
         break;
     }
   }
