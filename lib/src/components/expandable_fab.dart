@@ -15,8 +15,7 @@ class ExpandableFab extends StatefulWidget {
   State<ExpandableFab> createState() => _ExpandableFabState();
 }
 
-class _ExpandableFabState extends State<ExpandableFab>
-    with SingleTickerProviderStateMixin {
+class _ExpandableFabState extends State<ExpandableFab> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _expandAnimation;
   bool _open = false;
@@ -91,7 +90,7 @@ class _ExpandableFabState extends State<ExpandableFab>
             shape: const CircleBorder(),
             child: const Icon(
               Icons.add,
-              size: 42,
+              size: 36,
               color: Colors.white,
             ),
           ),
@@ -102,8 +101,8 @@ class _ExpandableFabState extends State<ExpandableFab>
 
   Widget _buildTapToCloseFab() {
     return SizedBox(
-      width: 64,
-      height: 64,
+      width: 56,
+      height: 56,
       child: Center(
         child: Material(
           color: Color(0xFC343F54),
@@ -117,7 +116,7 @@ class _ExpandableFabState extends State<ExpandableFab>
               child: const Icon(
                 Icons.close,
                 color: Colors.white,
-                size: 38,
+                size: 36,
               ),
             ),
           ),
@@ -133,11 +132,7 @@ class _ExpandableFabState extends State<ExpandableFab>
         alignment: Alignment.bottomRight,
         clipBehavior: Clip.none,
         children: [
-          AnimatedOpacity(
-            opacity: _open ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 250),
-            child: _buildTapToCloseFab(),
-          ),
+          _buildTapToCloseFab(),
           ..._buildExpandingActionButtons(),
           _buildTapToOpenFab(),
         ],

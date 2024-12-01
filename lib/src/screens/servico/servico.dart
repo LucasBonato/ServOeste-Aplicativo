@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/src/components/card_service.dart';
 import 'package:serv_oeste/src/components/expandable_fab.dart';
+import 'package:serv_oeste/src/components/expandable_fab_items.dart';
 import 'package:serv_oeste/src/components/grid_view.dart';
 import 'package:serv_oeste/src/components/search_field.dart';
 import 'package:serv_oeste/src/screens/servico/filter_servico.dart';
@@ -220,39 +221,25 @@ class _ServicesPageState extends State<ServicesPage> {
           ],
         ),
       ),
-      floatingActionButton: ExpandableFab(
-        distance: 100,
-        children: [
-          FloatingActionButton(
-            onPressed: () => Navigator.of(context)
-                .pushNamed('/createService')
-                .then((_) => setState(() {})),
-            heroTag: 'add_service',
-            tooltip: 'Adicionar Serviço',
-            backgroundColor: Colors.blue,
-            shape: CircleBorder(),
-            child: Image.asset(
-              'assets/addService.png',
-              fit: BoxFit.contain,
-              width: 36,
-              height: 36,
-            ),
-          ),
-          FloatingActionButton(
-            onPressed: () => Navigator.of(context)
-                .pushNamed('/createServiceAndClient')
-                .then((_) => setState(() {})),
-            heroTag: 'add_service_cliente',
-            tooltip: 'Adicionar Serviço e Cliente',
-            backgroundColor: Colors.blue, // Cor de fundo azul
-            shape: CircleBorder(),
-            child: const Icon(
-              Icons.group_add,
-              size: 36,
-              color: Colors.white,
-            ),
-          ),
-        ],
+      floatingActionButton: ExpandableFabItems(
+        firstHeroTag: 'add_service',
+        secondHeroTag: 'add_service_cliente',
+        firstRouterName: '/createService',
+        secondRouterName: '/createServiceAndClient',
+        firstTooltip: 'Adicionar Serviço',
+        secondTooltip: 'Adicionar Serviço e Cliente',
+        firstChild: Image.asset(
+          'assets/addService.png',
+          fit: BoxFit.contain,
+          width: 36,
+          height: 36,
+        ),
+        secondChild: const Icon(
+          Icons.group_add,
+          size: 36,
+          color: Colors.white,
+        ),
+        updateList: () {}
       ),
     );
   }

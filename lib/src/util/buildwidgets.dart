@@ -2,13 +2,9 @@ import 'package:flutter/material.dart';
 import '../components/dialog_box.dart';
 
 class BuildWidgets {
-  static FloatingActionButton buildFabAdd(
-    BuildContext context,
-    String route,
-    dynamic event, {
-    String tooltip = '',
-  }) {
+  static FloatingActionButton buildFabAdd(BuildContext context, String route, dynamic event, {String tooltip = ''}) {
     return FloatingActionButton(
+      heroTag: "Add_$route",
       backgroundColor: Colors.blue,
       shape: const CircleBorder(eccentricity: 0),
       elevation: 8,
@@ -26,6 +22,7 @@ class BuildWidgets {
     String tooltip = '',
   }) {
     return FloatingActionButton(
+      heroTag: "Remove_$tooltip",
       backgroundColor: Colors.red,
       shape: const CircleBorder(eccentricity: 0),
       elevation: 8,

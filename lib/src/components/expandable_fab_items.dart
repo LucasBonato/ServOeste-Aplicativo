@@ -8,6 +8,8 @@ class ExpandableFabItems extends StatelessWidget {
   final String secondRouterName;
   final String firstTooltip;
   final String secondTooltip;
+  final Widget firstChild;
+  final Widget secondChild;
   final void Function() updateList;
 
   const ExpandableFabItems({
@@ -18,6 +20,8 @@ class ExpandableFabItems extends StatelessWidget {
     required this.secondRouterName,
     required this.firstTooltip,
     required this.secondTooltip,
+    required this.firstChild,
+    required this.secondChild,
     required this.updateList,
   });
 
@@ -35,9 +39,10 @@ class ExpandableFabItems extends StatelessWidget {
             }
           }),
           heroTag: firstHeroTag,
-          mini: true,
+          backgroundColor: Colors.blue,
           shape: const CircleBorder(),
           tooltip: firstTooltip,
+          child: firstChild
         ),
         FloatingActionButton(
           onPressed: () => Navigator.of(context, rootNavigator: true)
@@ -48,9 +53,10 @@ class ExpandableFabItems extends StatelessWidget {
             }
           }),
           heroTag: secondHeroTag,
-          mini: true,
           shape: const CircleBorder(),
           tooltip: secondTooltip,
+          backgroundColor: Colors.blue,
+          child: secondChild,
         ),
       ],
     );
