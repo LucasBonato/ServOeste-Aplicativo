@@ -370,12 +370,12 @@ class _CreateServicoState extends State<CreateServico> {
                 icon: const Icon(Icons.arrow_back, color: Colors.black),
                 onPressed: () => Navigator.pop(context, "Back"),
               ),
-              const Text(
-                "Voltar",
-                style: TextStyle(color: Colors.black, fontSize: 16),
-              ),
             ],
           ),
+        ),
+        title: const Text(
+          "Voltar",
+          style: TextStyle(color: Colors.black, fontSize: 16),
         ),
         backgroundColor: Color(0xFCFDFDFF),
         elevation: 0,
