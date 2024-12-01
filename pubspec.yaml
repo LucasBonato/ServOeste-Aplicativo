@@ -38,5 +38,4 @@ flutter:
     assets:
         - assets/servOeste.png
         - assets/heroImage.png
-        - assets/heroImage2.png
-        - assets/heroImage3.png
+        - assets/addService.png

@@ -20,7 +20,6 @@ import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
 import 'package:serv_oeste/src/components/dropdown_field.dart';
 
-
 class CreateServico extends StatefulWidget {
   final bool isWithAnExistingClient;
   final int? clientId;
@@ -182,12 +181,23 @@ class _CreateServicoState extends State<CreateServico>{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context, ""),
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () => Navigator.pop(context, "Back"),
+              ),
+            ],
+          ),
         ),
-        title: const Text("Novo Serviço"),
-        centerTitle: true,
+        title: const Text(
+          "Voltar",
+          style: TextStyle(color: Colors.black, fontSize: 16),
+        ),
+        backgroundColor: Color(0xFCFDFDFF),
+        elevation: 0,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -254,9 +264,9 @@ class _CreateServicoState extends State<CreateServico>{
                             bloc: _enderecoBloc,
                             listener: (context, state) {
                               if (state is EnderecoSuccessState) {
-                                _clienteCreateForm.setEndereco(state.endereco!);
-                                _clienteCreateForm.setMunicipio(state.municipio!);
-                                _clienteCreateForm.setBairro(state.bairro!);
+                                // _clienteCreateForm.setEndereco(state.endereco!);
+                                _clienteCreateForm.setMunicipio(state.municipio);
+                                _clienteCreateForm.setBairro(state.bairro);
                               }
                             },
                             child: Column(

@@ -65,8 +65,9 @@ class TecnicoBloc extends Bloc<TecnicoEvent, TecnicoState> {
       event.tecnico.sobrenome = event.sobrenome;
       ErrorEntity? error = await _tecnicoRepository.postTecnico(event.tecnico);
       emit((error == null) ? TecnicoRegisterSuccessState() : TecnicoErrorState(error: error));
-    } on DioException {
-      emit(TecnicoErrorState(error: ErrorEntity(id: 0, errorMessage: "Algo não ocorreu como esperado")));
+    } on DioException catch (e) {
+      emit(TecnicoErrorState(
+          error: ErrorEntity(id: 0, errorMessage: e.message ?? "Erro desconhecido")));
     }
   }
 

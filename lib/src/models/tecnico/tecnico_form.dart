@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:lucid_validation/lucid_validation.dart';
+import 'package:serv_oeste/src/models/error/error_entity.dart';
 
 class TecnicoForm extends ChangeNotifier {
   int? id;

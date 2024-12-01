@@ -15,6 +15,7 @@ class CustomSearchDropDown extends StatefulWidget {
   final Function(String)? onSelected;
   final void Function(String?)? onSaved;
   final String? Function([String?])? validator;
+  final Widget Function(BuildContext, String)? itemWidgetBuilder;
 
   const CustomSearchDropDown({
     super.key,
@@ -28,6 +29,7 @@ class CustomSearchDropDown extends StatefulWidget {
     this.validator,
     this.controller,
     this.maxLength,
+    this.itemWidgetBuilder,
     required this.onChanged,
     required this.label,
     required this.dropdownValues,
@@ -42,7 +44,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
 
   @override
   void initState() {
-    _customSearchController = widget.controller?? TextEditingController();
+    _customSearchController = widget.controller ?? TextEditingController();
     super.initState();
   }
 
@@ -59,81 +61,84 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
           maxLength: widget.maxLength,
           controller: _customSearchController,
           onChanged: widget.onChanged,
-          decoration: (widget.searchDecoration)
-            ? InputDecoration(
+          decoration: InputDecoration(
             counterText: widget.hide ? "" : null,
             labelText: widget.label,
+            labelStyle: const TextStyle(
+              color: Color(0xFFB0A9A9),
+              fontSize: 16,
+            ),
             suffixIcon: const Icon(
               Icons.arrow_drop_down_outlined,
-              color: Color(0xFF57636C),
+              color: Color(0xFFB0A9A9),
             ),
-            isDense: false,
-            enabledBorder: OutlineInputBorder(
+            isDense: true,
+            filled: true,
+            fillColor: const Color(0xFFFFF8F7),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(
-                color: Color(0xFFF1F4F8),
-                width: 2,
+                color: Color(0xFFEAE6E5),
+                width: 1,
               ),
-              borderRadius: BorderRadius.circular(8),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                color: Color(0xFFEAE6E5),
+                width: 1,
+              ),
             ),
             focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(
-                color: Color(0xFF4B39EF),
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            filled: true,
-            fillColor: const Color(0xFFF1F4F8),
-          )
-            : InputDecoration(
-            counterText: widget.hide ? "" : null,
-            labelText: widget.label,
-            isDense: true,
-            fillColor: const Color(0xFFF1F4F8),
-            border: const OutlineInputBorder(
-              borderSide: BorderSide(
-                color: Colors.blueAccent,
-                width: 2
-              )
-            ),
-            enabledBorder: const OutlineInputBorder(
-              borderSide: BorderSide(
-                color: Colors.blue,
-                width: 2,
+                color: Color(0xFF6C757D),
+                width: 1,
               ),
             ),
-            focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(
-                color: Colors.blueAccent,
-                width: 2,
-              ),
-            ),
-            errorBorder: const OutlineInputBorder(
-              borderSide: BorderSide(
-                color: Colors.red,
-                width: 2,
-              ),
+            contentPadding: const EdgeInsets.symmetric(
+              vertical: 16,
+              horizontal: 20,
             ),
           ),
         ),
-        suggestionsCallback: (nome) async {
-          return widget.dropdownValues;
+        suggestionsCallback: (query) async {
+          if (query.isEmpty) return widget.dropdownValues;
+          return widget.dropdownValues
+              .where((element) => element
+          .toLowerCase()
+          .contains(query.toLowerCase()))
+          .toList();
         },
         onSuggestionSelected: (String? suggestion) {
-          _customSearchController.text = suggestion!;
-          widget.onChanged(suggestion);
-          if(widget.onSelected != null) {
-            widget.onSelected!(suggestion);
+          if (suggestion != null && suggestion.isNotEmpty) {
+            setState(() {
+              _customSearchController.text = suggestion;
+              widget.onChanged(suggestion);
+              widget.onSelected?.call(suggestion);
+            });
+            FocusScope.of(context).unfocus();
           }
         },
         itemBuilder: (context, suggestion) {
-          return ListTile(
-            title: Text(suggestion)
+          return widget.itemWidgetBuilder != null
+          ? widget.itemWidgetBuilder!(context, suggestion)
+          : ListTile(
+            title: Text(suggestion),
           );
         },
         hideOnEmpty: true,
         debounceDuration: const Duration(milliseconds: 150),
-        transitionBuilder: (context, suggestionBox, animationController) { return suggestionBox; },
+        transitionBuilder: (context, suggestionBox, animationController) {
+          final animation = CurvedAnimation(
+            parent: animationController!,
+            curve: Curves.easeInOut,
+          );
+          return FadeTransition(
+            opacity: animation,
+            child: suggestionBox,
+          );
+        },
         suggestionsBoxVerticalOffset: widget.hide ? 0 : -20,
       ),
     );

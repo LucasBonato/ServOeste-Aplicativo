@@ -1,25 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/src/screens/home.dart';
-import 'package:serv_oeste/src/screens/cliente/cliente.dart';
-import 'package:serv_oeste/src/screens/servico/servico.dart';
-import 'package:serv_oeste/src/screens/tecnico/tecnico.dart';
 
-class SidebarNavigation extends StatefulWidget {
-  const SidebarNavigation({Key? key}) : super(key: key);
+class SidebarNavigation extends StatelessWidget {
+  final int currentIndex;
+  final Function(int) onSelect;
 
-  @override
-  State<SidebarNavigation> createState() => _SidebarNavigationState();
-}
-
-class _SidebarNavigationState extends State<SidebarNavigation> {
-  int _selectedIndex = 0;
-
-  final List<Widget> _screens = [
-    const Home(),
-    const Servico(),
-    const ClientePage(),
-    const TecnicoPage(),
-  ];
+  const SidebarNavigation({
+    super.key,
+    required this.currentIndex,
+    required this.onSelect,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +17,10 @@ class _SidebarNavigationState extends State<SidebarNavigation> {
     if (!isLargeScreen) return const SizedBox.shrink();
 
     return Container(
-      width: 200,
+      width: 175,
       margin: const EdgeInsets.only(right: 25),
       decoration: const BoxDecoration(
-        color: Color.fromARGB(253, 253, 253, 255),
+        color: Color(0xFCFDFDFF),
         boxShadow: [
           BoxShadow(
             color: Colors.black26,
@@ -59,8 +48,8 @@ class _SidebarNavigationState extends State<SidebarNavigation> {
                 const Divider(color: Colors.black),
                 _buildMenuItem(
                   index: 1,
-                  icon: Icons.paste,
-                  label: 'Serviços',
+                  icon: Icons.build,
+                  label: 'Técnicos',
                 ),
                 const Divider(color: Colors.black),
                 _buildMenuItem(
@@ -71,8 +60,8 @@ class _SidebarNavigationState extends State<SidebarNavigation> {
                 const Divider(color: Colors.black),
                 _buildMenuItem(
                   index: 3,
-                  icon: Icons.build,
-                  label: 'Técnicos',
+                  icon: Icons.paste,
+                  label: 'Serviços',
                 ),
               ],
             ),
@@ -97,13 +86,13 @@ class _SidebarNavigationState extends State<SidebarNavigation> {
     required IconData icon,
     required String label,
   }) {
-    final bool isSelected = _selectedIndex == index;
+    final bool isSelected = currentIndex == index;
 
     return ListTile(
       leading: Icon(
         icon,
         color: isSelected ? Colors.blue : Colors.black,
-        size: isSelected ? 30 : 24, // Ícone maior se selecionado
+        size: isSelected ? 30 : 24,
       ),
       title: Text(
         label,
@@ -113,14 +102,9 @@ class _SidebarNavigationState extends State<SidebarNavigation> {
         ),
       ),
       onTap: () {
-        setState(() {
-          _selectedIndex = index;
-        });
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => _screens[index],
-          ),
-        );
+        if (currentIndex != index) {
+          onSelect(index);
+        }
       },
     );
   }

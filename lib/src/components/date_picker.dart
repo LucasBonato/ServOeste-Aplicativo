@@ -93,22 +93,28 @@ class _CustomDatePickerState extends State<CustomDatePicker> with RestorationMix
 
   @override
   Widget build(BuildContext context) {
-    return CustomTextFormField(
-      valueNotifier: widget.valueNotifier,
-      hide: widget.hide,
-      label: widget.label,
-      hint: widget.hint,
-      validator: widget.validator,
-      masks: widget.mask,
-      maxLength: widget.maxLength,
-      type: widget.type,
-      onChanged: widget.onChanged,
-      onTap: () {
-        _restorableDatePickerRouteFuture.present();
-        setState(() {
-          widget.validation = false;
-        });
-      },
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        widget.leftPadding ?? 16, 4,
+        widget.rightPadding ?? 16, 0,
+      ),
+      child: CustomTextFormField(
+        valueNotifier: widget.valueNotifier,
+        hide: widget.hide,
+        label: widget.label,
+        hint: widget.hint,
+        validator: widget.validator,
+        masks: widget.mask,
+        maxLength: widget.maxLength,
+        type: widget.type,
+        onChanged: widget.onChanged,
+        onTap: () {
+          _restorableDatePickerRouteFuture.present();
+          setState(() {
+            widget.validation = false;
+          });
+        },
+      )
     );
   }
 }

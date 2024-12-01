@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:serv_oeste/src/screens/servico/create_servico.dart';
-import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:serv_oeste/src/components/card_client.dart';
+import 'package:serv_oeste/src/components/grid_view.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
-import 'package:super_sliver_list/super_sliver_list.dart';
-import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/components/search_field.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
-import 'package:serv_oeste/src/components/expandable_fab_items.dart';
 
-class ClientePage extends StatefulWidget {
-  const ClientePage({super.key});
+class ClienteScreen extends StatefulWidget {
+  const ClienteScreen({super.key});
 
   @override
-  State<ClientePage> createState() => _ClienteScreenState();
+  State<ClienteScreen> createState() => _ClienteScreenState();
 }
 
-class _ClienteScreenState extends State<ClientePage> {
+class _ClienteScreenState extends State<ClienteScreen> {
   final ClienteBloc _clienteBloc = ClienteBloc();
   late final TextEditingController _nomeController, _telefoneController, _enderecoController;
   late final List<int> _selectedItems;
@@ -55,16 +52,6 @@ class _ClienteScreenState extends State<ClientePage> {
     });
   }
 
-  ExpandableFabItems _buildFab() => ExpandableFabItems(
-    firstHeroTag: "cliente",
-    secondHeroTag: "servico",
-    firstRouterName: "/createCliente",
-    secondRouterName: "/createServico",
-    firstText: "Cliente",
-    secondText: "Serviço",
-    updateList: () => _clienteBloc.add(ClienteSearchEvent()),
-  );
-
   Widget _buildEditableSection(int id) => Row(
     mainAxisAlignment: MainAxisAlignment.end,
     crossAxisAlignment: CrossAxisAlignment.center,
@@ -76,12 +63,16 @@ class _ClienteScreenState extends State<ClientePage> {
             isSelected = false;
             _selectedItems.clear();
           });
-          
-          Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateCliente(id: id)))
-              .then((value) => value?? _clienteBloc.add(ClienteSearchEvent()));
+
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => UpdateCliente(id: id))).then(
+              (value) => value ?? _clienteBloc.add(ClienteSearchEvent()));
         },
         icon: const Icon(Icons.edit, color: Colors.white),
-        style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
+        style: const ButtonStyle(
+            backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
       ),
       const SizedBox(
         width: 16,
@@ -92,155 +83,268 @@ class _ClienteScreenState extends State<ClientePage> {
             isSelected = false;
             _selectedItems.clear();
           });
-
-          Navigator.push(context, MaterialPageRoute(builder: (context) => CreateServico(isWithAnExistingClient: true, clientId: id)))
-              .then((value) => value?? _clienteBloc.add(ClienteSearchEvent()));
         },
         icon: const Icon(Icons.content_paste, color: Colors.white),
-        style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
+        style: const ButtonStyle(
+            backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
       )
     ],
   );
+
+  Widget _buildClienteCard(dynamic data) {
+    final isCardSelected = _selectedItems.contains(data['id']);
+    return GestureDetector(
+      onTap: () => _selectItems(data['id']),
+      child: CardClient(
+        name: data['name'],
+        phoneNumber: data['phoneNumber'],
+        city: data['city'],
+        street: data['street'],
+        isSelected: isCardSelected,
+      ),
+    );
+  }
+
+  Widget _buildSearchInputs(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isLargeScreen = screenWidth >= 1000;
+    final isMediumScreen = screenWidth >= 500 && screenWidth < 1000;
+    final maxContainerWidth = 1200.0;
+
+    return Center(
+      child: Container(
+        width: isLargeScreen ? maxContainerWidth : double.infinity,
+        padding: const EdgeInsets.all(5),
+        child: isLargeScreen
+            ? Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: SearchTextField(
+                hint: "Procure por Clientes...",
+                controller: _nomeController,
+                onChangedAction: (String nome) {
+                  _clienteBloc.add(
+                    ClienteSearchEvent(
+                      nome: nome,
+                      telefone: _telefoneController.text,
+                      endereco: _enderecoController.text,
+                    ),
+                  );
+                },
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: SearchTextField(
+                hint: 'Telefone...',
+                keyboardType: TextInputType.phone,
+                controller: _telefoneController,
+                leftPadding: 0,
+                onChangedAction: (String telefone) {
+                  _clienteBloc.add(
+                    ClienteSearchEvent(
+                      nome: _nomeController.text,
+                      telefone: telefone,
+                      endereco: _enderecoController.text,
+                    ),
+                  );
+                },
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: SearchTextField(
+                hint: 'Endereço...',
+                controller: _enderecoController,
+                leftPadding: 0,
+                onChangedAction: (String endereco) {
+                  _clienteBloc.add(
+                    ClienteSearchEvent(
+                      nome: _nomeController.text,
+                      telefone: _telefoneController.text,
+                      endereco: endereco,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        )
+            : isMediumScreen
+            ? Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              child: SearchTextField(
+                hint: "Procure por Clientes...",
+                controller: _nomeController,
+                onChangedAction: (String nome) {
+                  _clienteBloc.add(
+                    ClienteSearchEvent(
+                      nome: nome,
+                      telefone: _telefoneController.text,
+                      endereco: _enderecoController.text,
+                    ),
+                  );
+                },
+              ),
+            ),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 8),
+                    child: SearchTextField(
+                      hint: 'Telefone...',
+                      keyboardType: TextInputType.phone,
+                      controller: _telefoneController,
+                      onChangedAction: (String telefone) {
+                        _clienteBloc.add(
+                          ClienteSearchEvent(
+                            nome: _nomeController.text,
+                            telefone: telefone,
+                            endereco: _enderecoController.text,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: SearchTextField(
+                    hint: 'Endereço...',
+                    controller: _enderecoController,
+                    onChangedAction: (String endereco) {
+                      _clienteBloc.add(
+                        ClienteSearchEvent(
+                          nome: _nomeController.text,
+                          telefone: _telefoneController.text,
+                          endereco: endereco,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        )
+            : Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              child: SearchTextField(
+                hint: "Procure por Clientes...",
+                controller: _nomeController,
+                onChangedAction: (String nome) {
+                  _clienteBloc.add(
+                    ClienteSearchEvent(
+                      nome: nome,
+                      telefone: _telefoneController.text,
+                      endereco: _enderecoController.text,
+                    ),
+                  );
+                },
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              child: SearchTextField(
+                hint: 'Telefone...',
+                keyboardType: TextInputType.phone,
+                controller: _telefoneController,
+                onChangedAction: (String telefone) {
+                  _clienteBloc.add(
+                    ClienteSearchEvent(
+                      nome: _nomeController.text,
+                      telefone: telefone,
+                      endereco: _enderecoController.text,
+                    ),
+                  );
+                },
+              ),
+            ),
+            SearchTextField(
+              hint: 'Endereço...',
+              controller: _enderecoController,
+              onChangedAction: (String endereco) {
+                _clienteBloc.add(
+                  ClienteSearchEvent(
+                    nome: _nomeController.text,
+                    telefone: _telefoneController.text,
+                    endereco: endereco,
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      floatingActionButton: (!isSelected) ? _buildFab() : BuildWidgets.buildFabRemove(context, _disableClientes),
-      body: Column(
-        children: [
-          SearchTextField(
-            hint: "Procure por Clientes...",
-            controller: _nomeController,
-            onChangedAction: (String nome) => _clienteBloc.add(
-              ClienteSearchEvent(
-                nome: nome,
-                telefone: _telefoneController.text,
-                endereco: _enderecoController.text
-              )
+      floatingActionButton: (!isSelected)
+          ? BuildWidgets.buildFabAdd(
+              context,
+              "/createCliente",
+              () => _clienteBloc.add(ClienteSearchEvent()),
+              tooltip: 'Adicionar um cliente',
             )
-          ),
-          Row(
-            children: [
-              Expanded(
-                flex: 4,
-                child: SearchTextField(
-                  hint: "Telefone...",
-                  controller: _telefoneController,
-                  keyboardType: TextInputType.phone,
-                  rightPadding: 0,
-                  onChangedAction: (String telefone) => _clienteBloc.add(ClienteSearchEvent(
-                    nome: _nomeController.text,
-                    telefone: telefone,
-                    endereco: _enderecoController.text
-                  ))
-                ),
-              ),
-              Expanded(
-                flex: 5,
-                child: SearchTextField(
-                  hint: "Endereço...",
-                  controller: _enderecoController,
-                  leftPadding: 8,
-                  onChangedAction: (String endereco) => _clienteBloc.add(ClienteSearchEvent(
-                    nome: _nomeController.text,
-                    telefone: _telefoneController.text,
-                    endereco: endereco
-                  ))
-                ),
-              )
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                color: Color.fromRGBO(21, 72, 169, 1)
-              ),
-              child: const SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: Row(
-                  children: [
-                    Expanded(flex: 1, child: Text("Id", textAlign: TextAlign.center, style: TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold))),
-                    Expanded(flex: 3, child: Text("Nome", textAlign: TextAlign.start, style: TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold))),
-                    Expanded(flex: 2, child: Text("Município", textAlign: TextAlign.center, style: TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold))),
-                  ],
-                ),
-              ),
+          : BuildWidgets.buildFabRemove(
+              context,
+              _disableClientes,
+              tooltip: 'Excluir clientes selecionados',
             ),
-          ),
-          Flexible(
-            flex: 1,
-            child: BlocBuilder<ClienteBloc, ClienteState>(
-              bloc: _clienteBloc,
-              builder: (context, state) {
-                return switch(state) {
-                  ClienteInitialState() ||
-                  ClienteLoadingState() => const Center(child: CircularProgressIndicator.adaptive()),
-
-                  ClienteSearchSuccessState() => SuperListView.builder(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                    scrollDirection: Axis.vertical,
-                    itemCount: state.clientes.length,
-                    itemBuilder: (context, index) {
-                      final Cliente cliente = state.clientes[index];
-                      final int id = cliente.id!;
-                      final bool editable = (isSelected && _selectedItems.length == 1 && _selectedItems.contains(id));
-                      // TODO - Criar um componente para o ListTile
-                      return Padding(
-                        padding: const EdgeInsets.fromLTRB(8, 5, 8, 0),
-                        child: ListTile(
-                          leading: Text(
-                            "$id",
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold
-                            )
+      body: Row(
+        children: [
+          Expanded(
+            child: Column(
+              children: [
+                _buildSearchInputs(context),
+                Flexible(
+                  flex: 1,
+                  child: BlocBuilder<ClienteBloc, ClienteState>(
+                    bloc: _clienteBloc,
+                    builder: (context, state) {
+                      if (state is ClienteInitialState ||
+                          state is ClienteLoadingState) {
+                        return const Center(
+                            child: CircularProgressIndicator.adaptive());
+                      } else if (state is ClienteSearchSuccessState) {
+                        return Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: GridListView(
+                            dataList: state.clientes,
+                            buildCard: _buildClienteCard,
                           ),
-                          title: Text(
-                            cliente.nome!,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold
-                            )
-                          ),
-                          subtitle: Text(Constants.transformTelefone(cliente: cliente)),
-                          trailing: (editable) ? _buildEditableSection(id) : Text(cliente.municipio?? "UF"),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)
-                          ),
-                          tileColor: const Color.fromRGBO(239, 239, 239, 100),
-                          selectedTileColor: Colors.blue.withOpacity(.5),
-                          selected: _selectedItems.contains(id),
-                          onLongPress: () => _selectItems(id),
-                          onTap: () {
-                            if (_selectedItems.isNotEmpty) {
-                              _selectItems(id);
-                            }
-                            if (_selectedItems.isEmpty) {
-                              isSelected = false;
-                            }
-                          },
-                        ),
-                      );
+                        );
+                      } else {
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.not_interested, size: 30),
+                            const SizedBox(height: 16),
+                            const Text("Aconteceu um erro!!"),
+                          ],
+                        );
+                      }
                     },
                   ),
-
-                  _ => Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.not_interested, size: 30),
-                      const SizedBox(height: 16),
-                      Text("Aconteceu um erro!!")
-                    ],
-                  ),
-                };
-              },
-            )
-          )
-        ]
-      )
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 

@@ -2,7 +2,6 @@ import 'package:serv_oeste/src/components/custom_text_form_field.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -55,6 +54,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
     _telefoneCelularController = TextEditingController();
     _telefoneFixoController = TextEditingController();
     _tecnicoUpdateForm.setId(widget.id);
+    _dropDownSituacaoValue = Constants.situationTecnicoList.first;
     _tecnicoBloc.add(TecnicoSearchOneEvent(id: widget.id));
   }
 
@@ -104,13 +104,18 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                   ),
                   Expanded(
                     flex: 3,
-                    child: Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    child: Text(label,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ],
               );
             }).toList(),
           ),
-          if (field.errorText != null) // Exibe o erro abaixo da GridView
+          if (field.errorText != null)
             Center(
               child: Padding(
                 padding: const EdgeInsets.only(top: 8.0),
@@ -134,7 +139,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
   void _updateTecnico() {
     checkersMap.forEach((label, isChecked) {
       int idConhecimento = (checkersMap.keys.toList().indexOf(label) + 1);
-      if(isChecked){
+      if (isChecked) {
         _tecnicoUpdateForm.addConhecimentos(idConhecimento);
       } else {
         _tecnicoUpdateForm.removeConhecimentos(idConhecimento);
@@ -142,7 +147,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
     });
     _tecnicoUpdateValidator.setConhecimentos(_tecnicoUpdateForm.conhecimentos.value);
 
-    if(_isValidForm() == false) {
+    if (_isValidForm() == false) {
       return;
     }
 
@@ -196,34 +201,36 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
         builder: (context, state) {
           return switch (state) {
             TecnicoSearchOneSuccessState() => Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
-              child: SingleChildScrollView(
-                child: Form(
-                  key: _tecnicoFormKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      DropdownButtonFormField<String>(
-                        validator: _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, "situacao"),
-                        value: _dropDownSituacaoValue,
-                        items: Constants.situationTecnicoList.map((String value) =>
-                          DropdownMenuItem(
-                            value: value,
-                            child: Text(value)
-                          )
-                        ).toList(),
-                        onChanged: (String? value) {
-                          _tecnicoUpdateForm.setSituacao(value);
-                          _dropDownSituacaoValue = value!;
-                          reassemble();
-                        },
-                      ),
-                      Column(
-                        children: [
-                          CustomTextFormField(
-                            hint: "Nome...",
-                            label: "Nome",
-                            type: TextInputType.name,
+                padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: _tecnicoFormKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        DropdownButtonFormField<String>(
+                          validator: _tecnicoUpdateValidator.byField(
+                              _tecnicoUpdateForm, "situacao"),
+                          value: _dropDownSituacaoValue,
+                          items: Constants.situationTecnicoList
+                              .map((String value) => DropdownMenuItem(
+                                    value: value,
+                                    child: Text(value),
+                                  ))
+                              .toList(),
+                          onChanged: (String? value) {
+                            _tecnicoUpdateForm.setSituacao(value);
+                            setState(() {
+                              _dropDownSituacaoValue = value!;
+                            });
+                          },
+                        ),
+                        Column(
+                          children: [
+                            CustomTextFormField(
+                              hint: "Nome...",
+                              label: "Nome",
+                              type: TextInputType.name,
                             maxLength: 40,
                             hide: false,
                             valueNotifier: _tecnicoUpdateForm.nome,
@@ -245,72 +252,36 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                             hint: "(99) 99999-9999",
                             label: "Telefone Fixo",
                             masks: Constants.maskTelefone,
-                            type: TextInputType.phone,
-                            maxLength: 15,
-                            hide: false,
-                            valueNotifier: _tecnicoUpdateForm.telefoneFixo,
-                            validator: _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, "telefoneFixo"),
-                            onChanged: _tecnicoUpdateForm.setTelefoneFixo,
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(0, 32, 0, 0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Selecione os conhecimentos do Técnico:',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 20)
-                            ),
-                            Container(child: gridCheckersMap()),
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
-                              child: BlocListener<TecnicoBloc, TecnicoState>(
-                                bloc: _tecnicoBloc,
-                                listener: (context, state) {
-                                  if (state is TecnicoUpdateSuccessState) {
-                                    Navigator.pop(context);
-                                  }
-                                  else if (state is TecnicoErrorState) {
-                                    ErrorEntity error = state.error;
-
-                                    _tecnicoUpdateValidator.applyBackendError(error);
-                                    _tecnicoFormKey.currentState?.validate();
-                                    _tecnicoUpdateValidator.cleanExternalErrors();
-
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text("[ERROR] Informação(ões) inválida(s) ao atualizar o Técnico: ${error.errorMessage}"))
-                                    );
-                                  }
-                                },
-                                child: ElevatedButton(
-                                  onPressed: _updateTecnico,
-                                  style: TextButton.styleFrom(
-                                    backgroundColor: Colors.blue,
-                                    foregroundColor: Colors.white,
-                                    textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
-                                  ),
-                                  child: const Text("Atualizar"),
-                                ),
-                              ),
+                              type: TextInputType.phone,
+                              maxLength: 15,
+                              hide: false,
+                              valueNotifier: _tecnicoUpdateForm.telefoneFixo,
+                              validator: _tecnicoUpdateValidator.byField(
+                                  _tecnicoUpdateForm, "telefoneFixo"),
+                              onChanged: _tecnicoUpdateForm.setTelefoneFixo,
                             ),
                           ],
                         ),
-                      )
-                    ]
+                        gridCheckersMap(),
+                        ElevatedButton(
+                          onPressed: () {
+                            if (_tecnicoFormKey.currentState!.validate()) {
+                              _updateTecnico();
+                            }
+                          },
+                          child: const Text("Salvar"),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              )
-            ),
-
-            _ => const Center(child: CircularProgressIndicator.adaptive())
+              ),
+            TecnicoErrorState() =>
+              Center(child: Text(state.error.errorMessage)),
+            _ => const Center(child: CircularProgressIndicator()),
           };
         },
-      )
+      ),
     );
   }
 

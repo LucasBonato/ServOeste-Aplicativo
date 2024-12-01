@@ -9,34 +9,41 @@ part 'endereco_state.dart';
 
 class EnderecoBloc extends Bloc<EnderecoEvent, EnderecoState> {
   final EnderecoRepository _enderecoRepository = EnderecoRepository();
-  
+
   EnderecoBloc() : super(EnderecoInitialState()) {
     on<EnderecoSearchCepEvent>(_fetchEnderecoByCep);
   }
 
-  Future<void> _fetchEnderecoByCep(EnderecoSearchCepEvent event, Emitter emit) async {
+  Future<void> _fetchEnderecoByCep(
+      EnderecoSearchCepEvent event, Emitter emit) async {
     emit(EnderecoLoadingState());
     try {
-      Endereco? enderecoEntity = await _enderecoRepository.getEndereco(event.cep);
+      Endereco? enderecoEntity =
+          await _enderecoRepository.getEndereco(event.cep);
 
-      if(enderecoEntity != null && enderecoEntity.endereco != null) {
+      if (enderecoEntity != null && enderecoEntity.endereco != null) {
         List<String> camposSobreEndereco = enderecoEntity.endereco!.split("|");
-        String endereco = camposSobreEndereco[0];
+        String rua = camposSobreEndereco[0];
         String bairro = camposSobreEndereco[1];
         String municipio = camposSobreEndereco[2];
         emit(
           EnderecoSuccessState(
-            endereco: endereco,
+            rua: rua,
+            numero: "",
+            complemento: "",
             bairro: bairro,
-            municipio: municipio
-          )
+            municipio: municipio,
+          ),
         );
         return;
       }
-      emit(EnderecoErrorState(error: ErrorEntity(id: 0, errorMessage: "Endereço não encotrado")));
-    } catch(e) {
-      emit(EnderecoErrorState(error: e as ErrorEntity));
+      emit(EnderecoErrorState(errorMessage: "Endereço não encontrado"));
+    } catch (e) {
+      if (e is ErrorEntity) {
+        emit(EnderecoErrorState(errorMessage: e.errorMessage));
+      } else {
+        emit(EnderecoErrorState(errorMessage: "Erro desconhecido"));
+      }
     }
   }
-
 }
