@@ -69,8 +69,22 @@ class TecnicoValidator extends LucidValidator<TecnicoForm> {
             "O sobrenome precisa ter 2 caracteres!",
             nomeKey);
 
+    ruleFor((cliente) => cliente, key: telefoneCelularKey).must(
+        (cliente) =>
+            cliente.telefoneCelular.value.isNotEmpty ||
+            cliente.telefoneFixo.value.isNotEmpty,
+        "Informe pelo menos um telefone (celular ou fixo)!",
+        telefoneCelularKey);
+
     ruleFor((tecnico) => tecnico.telefoneCelular.value, key: telefoneCelularKey)
         .customValidExternalErrors(externalErrors, telefoneCelularKey);
+
+    ruleFor((cliente) => cliente, key: telefoneFixoKey).must(
+        (cliente) =>
+            cliente.telefoneCelular.value.isNotEmpty ||
+            cliente.telefoneFixo.value.isNotEmpty,
+        "Informe pelo menos um telefone (celular ou fixo)!",
+        telefoneFixoKey);
 
     ruleFor((tecnico) => tecnico.telefoneFixo.value, key: telefoneFixoKey)
         .customValidExternalErrors(externalErrors, telefoneFixoKey);

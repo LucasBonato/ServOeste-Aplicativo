@@ -77,10 +77,7 @@ class _CreateClienteState extends State<CreateCliente> {
       );
 
       context.read<ClienteBloc>().add(
-            ClienteRegisterEvent(
-                cliente: cliente,
-                sobrenome:
-                    "Sobrenome"), // Passe o sobrenome conforme necessário
+            ClienteRegisterEvent(cliente: cliente, sobrenome: "Sobrenome"),
           );
     }
   }
@@ -92,15 +89,19 @@ class _CreateClienteState extends State<CreateCliente> {
       child: BlocListener<EnderecoBloc, EnderecoState>(
         listener: (context, state) {
           if (state is EnderecoLoadingState) {
+            print("Buscando endereço...");
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Buscando endereço...')),
             );
           } else if (state is EnderecoSuccessState) {
+            print(
+                "Endereço encontrado: ${state.rua}, ${state.bairro}, ${state.municipio}");
             _ruaController.text = state.rua;
             _bairroController.text = state.bairro;
             _municipioController.text = state.municipio;
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
           } else if (state is EnderecoErrorState) {
+            print("Erro ao buscar endereço: ${state.errorMessage}");
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.errorMessage)),
             );
@@ -109,9 +110,20 @@ class _CreateClienteState extends State<CreateCliente> {
         child: Scaffold(
           backgroundColor: const Color(0xFFF9F4FF),
           appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.black),
-              onPressed: () => Navigator.pop(context),
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.black),
+                    onPressed: () => Navigator.pop(context, "Back"),
+                  ),
+                  const Text(
+                    "Voltar",
+                    style: TextStyle(color: Colors.black, fontSize: 16),
+                  ),
+                ],
+              ),
             ),
             backgroundColor: const Color(0xFCFDFDFF),
             elevation: 0,
@@ -174,6 +186,7 @@ class _CreateClienteState extends State<CreateCliente> {
                               child: CustomTextFormField(
                                 hint: "(99) 99999-9999",
                                 label: "Telefone Celular**",
+                                leftPadding: 0,
                                 type: TextInputType.phone,
                                 maxLength: 15,
                                 hide: false,
@@ -192,6 +205,7 @@ class _CreateClienteState extends State<CreateCliente> {
                         ),
                         const SizedBox(height: 12),
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Expanded(
                               child: CustomTextFormField(
@@ -222,6 +236,7 @@ class _CreateClienteState extends State<CreateCliente> {
                                   "Itapevi",
                                 ],
                                 controller: _municipioController,
+                                leftPadding: 0,
                                 onChanged: (value) =>
                                     _clienteForm.setMunicipio(value),
                                 validator: _clienteValidator.byField(
@@ -268,6 +283,7 @@ class _CreateClienteState extends State<CreateCliente> {
                               child: CustomTextFormField(
                                 hint: "Número...",
                                 label: "Número*",
+                                leftPadding: 0,
                                 type: TextInputType.text,
                                 maxLength: 6,
                                 hide: false,
@@ -298,13 +314,14 @@ class _CreateClienteState extends State<CreateCliente> {
                           onPressed: _registerCliente,
                           style: ElevatedButton.styleFrom(
                             minimumSize: const Size(double.infinity, 50),
-                            backgroundColor: Colors.deepPurple,
+                            backgroundColor: Colors.blue,
                           ),
                           child: const Text(
-                            "Salvar",
+                            "Adicionar Cliente",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
+                              fontSize: 18,
                             ),
                           ),
                         ),

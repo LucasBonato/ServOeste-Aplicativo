@@ -6,6 +6,7 @@ import 'package:serv_oeste/src/components/dropdown_field.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
 import 'package:serv_oeste/src/models/servico/servico_form.dart';
+import 'package:serv_oeste/src/screens/servico/table_tecnico.dart';
 
 class CreateServicoAndCliente extends StatefulWidget {
   const CreateServicoAndCliente({super.key});
@@ -101,8 +102,14 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
                             ],
                           ),
                     const SizedBox(height: 48),
-                    _buildButton(
-                        'Verificar disponibilidade', Colors.blue, () {}),
+                    _buildButton('Verificar disponibilidade', Colors.blue, () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return const TableTecnicosModal();
+                        },
+                      );
+                    }),
                     const SizedBox(height: 16),
                     _buildButton('Adicionar Cliente e Serviço', Colors.blue,
                         () {
@@ -345,6 +352,8 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
   }
 
   Widget _buildServiceForm() {
+    const double spacing = 24;
+
     return Column(
       children: [
         CustomSearchDropDown(
@@ -354,7 +363,7 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
           validator: _servicoValidator.byField(_servicoForm, "equipamento"),
           onChanged: _servicoForm.setEquipamento,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: spacing),
         CustomSearchDropDown(
           dropdownValues: ['Marca 1', 'Marca 2', 'Marca 3'],
           valueNotifier: _servicoForm.marca,
@@ -362,7 +371,7 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
           validator: _servicoValidator.byField(_servicoForm, "marca"),
           onChanged: _servicoForm.setMarca,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: spacing),
         CustomDropdownField(
           dropdownValues: ['Osasco', 'Carapicuíba'],
           valueNotifier: _servicoForm.filial,
@@ -370,7 +379,7 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
           validator: _servicoValidator.byField(_servicoForm, "filial"),
           onChanged: _servicoForm.setFilial,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 6),
         CustomTextFormField(
           hint: "Nome do Técnico...",
           label: "Nome do Técnico*",
@@ -381,8 +390,9 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
           validator: _servicoValidator.byField(_servicoForm, "tecnico"),
           onChanged: _servicoForm.setTecnico,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 6),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               flex: 2,
@@ -405,13 +415,14 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
                 dropdownValues: ['Manhã', 'Tarde'],
                 valueNotifier: _servicoForm.horario,
                 label: "Horário*",
+                leftPadding: 0,
                 validator: _servicoValidator.byField(_servicoForm, "horario"),
                 onChanged: _servicoForm.setHorario,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 6),
         CustomTextFormField(
           hint: "Descrição...",
           label: "Descrição*",

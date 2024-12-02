@@ -2,8 +2,12 @@ import 'dart:convert';
 
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
 
-List<Cliente> clienteFromJson(String str) =>
-    List<Cliente>.from(json.decode(str));
+List<Cliente> clienteFromJson(String str) {
+  final List<dynamic> jsonData = json.decode(str);
+  return jsonData
+      .map((e) => Cliente.fromJson(e as Map<String, dynamic>))
+      .toList();
+}
 
 class Cliente {
   int? id;
@@ -33,8 +37,8 @@ class Cliente {
   Cliente.fromForm(ClienteForm clienteForm) {
     id = clienteForm.id;
     nome = clienteForm.nome.value;
-    telefoneFixo = transformTelefoneMask(clienteForm.telefoneFixo.value);
-    telefoneCelular = transformTelefoneMask(clienteForm.telefoneCelular.value);
+    telefoneFixo = _transformTelefone(clienteForm.telefoneFixo.value);
+    telefoneCelular = _transformTelefone(clienteForm.telefoneCelular.value);
     cep = clienteForm.cep.value;
     bairro = clienteForm.bairro.value;
     municipio = clienteForm.municipio.value;
@@ -43,24 +47,25 @@ class Cliente {
     complemento = clienteForm.complemento.value;
   }
 
-  String transformTelefoneMask(String telefone) {
-    if (telefone.length != 15) return "";
-    return telefone.substring(1, 3) +
-        telefone.substring(5, 10) +
-        telefone.substring(11);
+  String _transformTelefone(String telefone) {
+    final cleanTelefone = telefone.replaceAll(RegExp(r'\D'), '');
+    if (cleanTelefone.length == 10 || cleanTelefone.length == 11) {
+      return cleanTelefone;
+    }
+    throw FormatException("Número de telefone inválido: $telefone");
   }
 
   factory Cliente.fromJson(Map<String, dynamic> json) => Cliente(
-        id: json["id"],
-        nome: json["nome"],
-        telefoneFixo: json["telefoneFixo"],
-        telefoneCelular: json["telefoneCelular"],
-        bairro: json["bairro"],
-        cep: json["cep"],
-        municipio: json["municipio"],
-        rua: json["rua"],
-        numero: json["numero"],
-        complemento: json["complemento"],
+        id: json["id"] as int?,
+        nome: json["nome"] as String?,
+        telefoneFixo: json["telefoneFixo"] as String?,
+        telefoneCelular: json["telefoneCelular"] as String?,
+        bairro: json["bairro"] as String?,
+        cep: json["cep"] as String?,
+        municipio: json["municipio"] as String?,
+        rua: json["rua"] as String?,
+        numero: json["numero"] as String?,
+        complemento: json["complemento"] as String?,
       );
 
   Map<String, dynamic> toJson() => {

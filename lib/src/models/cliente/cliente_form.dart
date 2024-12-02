@@ -9,7 +9,7 @@ class ClienteForm extends ChangeNotifier {
   ValueNotifier<String> telefoneFixo = ValueNotifier("");
   ValueNotifier<String> cep = ValueNotifier("");
   ValueNotifier<String> endereco = ValueNotifier("");
-  ValueNotifier<String> municipio = ValueNotifier("Osasco");
+  ValueNotifier<String> municipio = ValueNotifier("");
   ValueNotifier<String> bairro = ValueNotifier("");
   ValueNotifier<String> rua = ValueNotifier("");
   ValueNotifier<String> numero = ValueNotifier("");
@@ -83,6 +83,13 @@ class ClienteValidator extends LucidValidator<ClienteForm> {
         .must((nome) => nome.split(" ").any((parte) => parte.length > 1),
             "O sobrenome precisa ter ao menos 2 caracteres!", nomeKey);
 
+    ruleFor((cliente) => cliente, key: telefoneCelularKey).must(
+        (cliente) =>
+            cliente.telefoneCelular.value.isNotEmpty ||
+            cliente.telefoneFixo.value.isNotEmpty,
+        "Informe pelo menos um telefone (celular ou fixo)!",
+        telefoneCelularKey);
+
     ruleFor((cliente) => cliente.telefoneCelular.value, key: telefoneCelularKey)
         .customValidExternalErrors(externalErrors, telefoneCelularKey);
 
@@ -96,12 +103,6 @@ class ClienteValidator extends LucidValidator<ClienteForm> {
     ruleFor((cliente) => cliente.telefoneFixo.value, key: telefoneFixoKey)
         .customValidExternalErrors(externalErrors, telefoneFixoKey);
 
-    ruleFor((cliente) => cliente, key: telefoneCelularKey).must(
-        (cliente) =>
-            cliente.telefoneCelular.value.isNotEmpty ||
-            cliente.telefoneFixo.value.isNotEmpty,
-        "Informe pelo menos um telefone (celular ou fixo)!",
-        telefoneCelularKey);
     ruleFor((cliente) => cliente.municipio.value, key: municipioKey)
         .isNotNull()
         .must((municipio) => municipio!.isNotEmpty,

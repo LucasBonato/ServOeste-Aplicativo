@@ -93,8 +93,7 @@ class _CustomDatePickerState extends State<CustomDatePicker>
         widget.controller.text = _dateSelected;
 
         if (widget.valueNotifier != null) {
-          widget.valueNotifier!.value =
-              _dateSelected; // Atualiza o ValueNotifier
+          widget.valueNotifier!.value = _dateSelected;
         }
       });
     }

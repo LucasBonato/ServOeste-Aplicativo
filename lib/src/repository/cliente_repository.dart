@@ -57,6 +57,8 @@ class ClienteRepository extends DioService {
         "bairro": cliente.bairro,
         "municipio": cliente.municipio
       });
+
+      print(cliente);
     } on DioException catch (e) {
       return onRequestError(e);
     }

@@ -48,6 +48,7 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
         rua: event.rua,
         numero: event.numero,
       );
+
       emit(ClienteSearchSuccessState(clientes: response ?? []));
     } on DioException catch (e) {
       emit(ClienteErrorState(
@@ -60,6 +61,7 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
     _telefone = event.telefone?.isNotEmpty == true ? event.telefone : null;
     _rua = event.rua?.isNotEmpty == true ? event.rua : null;
     _numero = event.numero?.isNotEmpty == true ? event.numero : null;
+
     await _fetchAllClients(
       ClienteLoadingEvent(
         nome: _nome,

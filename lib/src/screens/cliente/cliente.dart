@@ -23,41 +23,6 @@ class _ClientePageState extends State<ClientePage> {
   late final List<int> _selectedItems;
   bool isSelected = false;
 
-  final List<dynamic> clienteList = [
-    {
-      "id": 1,
-      "name": "Jefferson Tavares",
-      "phoneNumber": "(11)9999-9999",
-      "cellPhoneNumber": "(11)99999-9999",
-      "city": "Osasco",
-      "street": "Rua ABC, 123",
-    },
-    {
-      "id": 2,
-      "name": "João Silva",
-      "phoneNumber": "(11)8888-8888",
-      "cellPhoneNumber": "(11)88888-8888",
-      "city": "Osasco",
-      "street": "Rua XYZ, 456",
-    },
-    {
-      "id": 3,
-      "name": "Maria Oliveira",
-      "phoneNumber": "(11)7777-7777",
-      "cellPhoneNumber": "(11)77777-7777",
-      "city": "Osasco",
-      "street": "Avenida Rio, 789",
-    },
-    {
-      "id": 4,
-      "name": "Carlos Souza",
-      "phoneNumber": "(11)6666-6666",
-      "cellPhoneNumber": "(11)66666-6666",
-      "city": "Osasco",
-      "street": "Rua Paraná, 1011",
-    },
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -76,6 +41,11 @@ class _ClientePageState extends State<ClientePage> {
       _selectedItems.clear();
       isSelected = false;
     });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+          content: Text('Clientes selecionados deletados com sucesso!')),
+    );
   }
 
   void _selectItems(int id) {
@@ -91,54 +61,30 @@ class _ClientePageState extends State<ClientePage> {
     });
   }
 
-  Widget _buildEditableSection(int id) => Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                isSelected = false;
-                _selectedItems.clear();
-              });
-
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => UpdateCliente(id: id))).then(
-                  (value) => value ?? _clienteBloc.add(ClienteSearchEvent()));
-            },
-            icon: const Icon(Icons.edit, color: Colors.white),
-            style: const ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
-          ),
-          const SizedBox(
-            width: 16,
-          ),
-          IconButton(
-            onPressed: () {
-              setState(() {
-                isSelected = false;
-                _selectedItems.clear();
-              });
-            },
-            icon: const Icon(Icons.content_paste, color: Colors.white),
-            style: const ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
-          )
-        ],
-      );
-
   Widget _buildClienteCard(dynamic data) {
     final isCardSelected = _selectedItems.contains(data['id']);
     return GestureDetector(
-      onTap: () => _selectItems(data['id']),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => UpdateCliente(id: data['id']),
+          ),
+        );
+      },
+      onDoubleTap: () {
+        _selectItems(data['id']);
+      },
+      onLongPress: () {
+        _selectItems(data['id']);
+      },
       child: CardClient(
-        name: data['name'],
-        phoneNumber: data['phoneNumber'],
-        city: data['city'],
-        street: data['street'],
+        nome: data['nome'],
+        telefone: data['telefone'],
+        celular: data['celular'],
+        cidade: data['cidade'],
+        rua: data['rua'],
+        numero: data['numero'],
         isSelected: isCardSelected,
       ),
     );
@@ -167,10 +113,8 @@ class _ClientePageState extends State<ClientePage> {
                           ClienteSearchEvent(
                             nome: nome,
                             telefone: _telefoneController.text,
-                            rua: _ruaController
-                                .text, // Agora estamos usando _ruaController
-                            numero: _numeroController
-                                .text, // Usando _numeroController
+                            rua: _ruaController.text,
+                            numero: _numeroController.text,
                           ),
                         );
                       },
@@ -188,9 +132,8 @@ class _ClientePageState extends State<ClientePage> {
                           ClienteSearchEvent(
                             nome: _nomeController.text,
                             telefone: telefone,
-                            rua: _ruaController.text, // Usando _ruaController
-                            numero: _numeroController
-                                .text, // Usando _numeroController
+                            rua: _ruaController.text,
+                            numero: _numeroController.text,
                           ),
                         );
                       },
@@ -199,11 +142,10 @@ class _ClientePageState extends State<ClientePage> {
                   Expanded(
                     flex: 1,
                     child: SearchTextField(
-                      hint: 'Rua e Número...',
-                      controller:
-                          _ruaController, // Campo único para Rua e Número
+                      hint: 'Endereço...',
+                      leftPadding: 0,
+                      controller: _ruaController,
                       onChangedAction: (String endereco) {
-                        // Separando Rua e Número
                         final splitEndereco = endereco.split(',');
                         final rua = splitEndereco.isNotEmpty
                             ? splitEndereco[0].trim()
@@ -216,8 +158,8 @@ class _ClientePageState extends State<ClientePage> {
                           ClienteSearchEvent(
                             nome: _nomeController.text,
                             telefone: _telefoneController.text,
-                            rua: rua, // Passando Rua
-                            numero: numero, // Passando Número
+                            rua: rua,
+                            numero: numero,
                           ),
                         );
                       },
@@ -239,10 +181,8 @@ class _ClientePageState extends State<ClientePage> {
                               ClienteSearchEvent(
                                 nome: nome,
                                 telefone: _telefoneController.text,
-                                rua: _ruaController
-                                    .text, // Usando _ruaController
-                                numero: _numeroController
-                                    .text, // Usando _numeroController
+                                rua: _ruaController.text,
+                                numero: _numeroController.text,
                               ),
                             );
                           },
@@ -263,10 +203,8 @@ class _ClientePageState extends State<ClientePage> {
                                     ClienteSearchEvent(
                                       nome: _nomeController.text,
                                       telefone: telefone,
-                                      rua: _ruaController
-                                          .text, // Usando _ruaController
-                                      numero: _numeroController
-                                          .text, // Usando _numeroController
+                                      rua: _ruaController.text,
+                                      numero: _numeroController.text,
                                     ),
                                   );
                                 },
@@ -276,9 +214,9 @@ class _ClientePageState extends State<ClientePage> {
                           Expanded(
                             flex: 1,
                             child: SearchTextField(
-                              hint: 'Rua e Número...',
-                              controller:
-                                  _ruaController, // Campo único para Rua e Número
+                              hint: 'Endereço...',
+                              leftPadding: 0,
+                              controller: _ruaController,
                               onChangedAction: (String endereco) {
                                 final splitEndereco = endereco.split(',');
                                 final rua = splitEndereco.isNotEmpty
@@ -292,8 +230,8 @@ class _ClientePageState extends State<ClientePage> {
                                   ClienteSearchEvent(
                                     nome: _nomeController.text,
                                     telefone: _telefoneController.text,
-                                    rua: rua, // Passando Rua
-                                    numero: numero, // Passando Número
+                                    rua: rua,
+                                    numero: numero,
                                   ),
                                 );
                               },
@@ -316,10 +254,8 @@ class _ClientePageState extends State<ClientePage> {
                               ClienteSearchEvent(
                                 nome: nome,
                                 telefone: _telefoneController.text,
-                                rua: _ruaController
-                                    .text, // Usando _ruaController
-                                numero: _numeroController
-                                    .text, // Usando _numeroController
+                                rua: _ruaController.text,
+                                numero: _numeroController.text,
                               ),
                             );
                           },
@@ -336,19 +272,17 @@ class _ClientePageState extends State<ClientePage> {
                               ClienteSearchEvent(
                                 nome: _nomeController.text,
                                 telefone: telefone,
-                                rua: _ruaController
-                                    .text, // Usando _ruaController
-                                numero: _numeroController
-                                    .text, // Usando _numeroController
+                                rua: _ruaController.text,
+                                numero: _numeroController.text,
                               ),
                             );
                           },
                         ),
                       ),
                       SearchTextField(
-                        hint: 'Rua e Número...',
-                        controller:
-                            _ruaController, // Campo único para Rua e Número
+                        hint: 'Endereço...',
+                        leftPadding: 0,
+                        controller: _ruaController,
                         onChangedAction: (String endereco) {
                           final splitEndereco = endereco.split(',');
                           final rua = splitEndereco.isNotEmpty
@@ -362,8 +296,8 @@ class _ClientePageState extends State<ClientePage> {
                             ClienteSearchEvent(
                               nome: _nomeController.text,
                               telefone: _telefoneController.text,
-                              rua: rua, // Passando Rua
-                              numero: numero, // Passando Número
+                              rua: rua,
+                              numero: numero,
                             ),
                           );
                         },
@@ -376,9 +310,46 @@ class _ClientePageState extends State<ClientePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        resizeToAvoidBottomInset: true,
-        floatingActionButton: (!isSelected)
+    return BlocBuilder<ClienteBloc, ClienteState>(
+      bloc: _clienteBloc,
+      builder: (context, state) {
+        Widget content;
+
+        if (state is ClienteLoadingState) {
+          content = Column(
+            children: [
+              _buildSearchInputs(context),
+              const Expanded(
+                child: Center(child: CircularProgressIndicator()),
+              ),
+            ],
+          );
+        } else if (state is ClienteSearchSuccessState) {
+          content = ListView(
+            padding: const EdgeInsets.all(8.0),
+            children: [
+              _buildSearchInputs(context),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: GridListView(
+                  dataList: state.clientes,
+                  buildCard: (data) => _buildClienteCard(data),
+                ),
+              ),
+            ],
+          );
+        } else {
+          content = Column(
+            children: [
+              _buildSearchInputs(context),
+              const Expanded(
+                child: Center(child: Text('Erro ao carregar dados.')),
+              ),
+            ],
+          );
+        }
+
+        final floatingActionButton = (!isSelected)
             ? BuildWidgets.buildFabAdd(
                 context,
                 "/createCliente",
@@ -389,45 +360,14 @@ class _ClientePageState extends State<ClientePage> {
                 context,
                 _disableClientes,
                 tooltip: 'Excluir clientes selecionados',
-              ),
-        body: Row(
-          children: [
-            Expanded(
-                child: Column(children: [
-              _buildSearchInputs(context),
-              Flexible(
-                flex: 1,
-                child: BlocBuilder<ClienteBloc, ClienteState>(
-                  bloc: _clienteBloc,
-                  builder: (context, state) {
-                    if (state is ClienteInitialState ||
-                        state is ClienteLoadingState) {
-                      return const Center(
-                          child: CircularProgressIndicator.adaptive());
-                    } else if (state is ClienteSearchSuccessState) {
-                      return Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: GridListView(
-                          dataList: clienteList,
-                          buildCard: _buildClienteCard,
-                        ),
-                      );
-                    } else {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.not_interested, size: 30),
-                          const SizedBox(height: 16),
-                          const Text("Aconteceu um erro!!"),
-                        ],
-                      );
-                    }
-                  },
-                ),
-              )
-            ]))
-          ],
-        ));
+              );
+
+        return Scaffold(
+          floatingActionButton: floatingActionButton,
+          body: content,
+        );
+      },
+    );
   }
 
   @override

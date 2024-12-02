@@ -27,6 +27,7 @@ dependencies:
     lucid_validation: ^1.1.0
     mask_text_input_formatter: ^2.9.0
     provider: ^6.1.2
+    pluto_grid: ^8.0.0
 
 dev_dependencies:
     flutter_test:

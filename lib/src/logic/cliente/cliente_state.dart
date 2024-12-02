@@ -10,17 +10,13 @@ final class ClienteLoadingState extends ClienteState {}
 final class ClienteSearchOneSuccessState extends ClienteState {
   final Cliente cliente;
 
-  ClienteSearchOneSuccessState({
-    required this.cliente
-  });
+  ClienteSearchOneSuccessState({required this.cliente});
 }
 
 final class ClienteSearchSuccessState extends ClienteState {
   final List<Cliente> clientes;
 
-  ClienteSearchSuccessState({
-    required this.clientes
-  });
+  ClienteSearchSuccessState({required this.clientes});
 }
 
 final class ClienteRegisterSuccessState extends ClienteState {}
@@ -38,7 +34,5 @@ final class ClienteUpdateSuccessState extends ClienteState {}
 final class ClienteErrorState extends ClienteState {
   final ErrorEntity error;
 
-  ClienteErrorState({
-    required this.error
-  });
+  ClienteErrorState({required this.error});
 }

@@ -49,19 +49,18 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
     super.initState();
     _customSearchController = widget.controller ?? TextEditingController();
 
-    // Sincroniza o valor inicial com o ValueNotifier, se fornecido
     if (widget.valueNotifier != null) {
       widget.valueNotifier!.value = _customSearchController.text;
     }
   }
 
   void _updateValue(String value) {
-    print('Atualizando valor: $value');
-    _customSearchController.text = value;
-    widget.onChanged(value);
+    if (_customSearchController.text != value) {
+      _customSearchController.text = value;
+      widget.onChanged(value);
 
-    // Atualiza o ValueNotifier, se fornecido
-    widget.valueNotifier?.value = value;
+      widget.valueNotifier?.value = value;
+    }
   }
 
   @override
@@ -141,7 +140,6 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
               .toList();
         },
         onSuggestionSelected: (String? suggestion) {
-          print('Sugestão selecionada: $suggestion');
           if (suggestion != null && suggestion.isNotEmpty) {
             _updateValue(suggestion);
             widget.onSelected?.call(suggestion);

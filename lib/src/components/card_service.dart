@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CardService extends StatelessWidget {
+class CardService extends StatefulWidget {
   final String cliente;
   final String equipamento;
   final String marca;
@@ -8,6 +8,7 @@ class CardService extends StatelessWidget {
   final String local;
   final String data;
   final String status;
+  final bool isSelected;
 
   const CardService({
     super.key,
@@ -18,7 +19,15 @@ class CardService extends StatelessWidget {
     required this.local,
     required this.data,
     required this.status,
+    this.isSelected = false,
   });
+
+  @override
+  State<CardService> createState() => _CardServiceState();
+}
+
+class _CardServiceState extends State<CardService> {
+  bool _isHovered = false;
 
   Color _getStatusColor(String status) {
     switch (status) {
@@ -59,12 +68,24 @@ class CardService extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        return Center(
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        return MouseRegion(
+          onEnter: (_) => setState(() => _isHovered = true),
+          onExit: (_) => setState(() => _isHovered = false),
+          cursor: SystemMouseCursors.click, // Cursor de ponteiro no hover
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
             decoration: BoxDecoration(
-              color: Color(0xFCFDFDFF),
+              color: widget.isSelected
+                  ? const Color.fromARGB(255, 207, 211, 211).withOpacity(0.2)
+                  : const Color(0xFCFDFDFF),
               borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: (widget.isSelected || _isHovered)
+                    ? Color.fromARGB(255, 70, 71, 71)
+                    : Colors.grey.shade300,
+                width: (widget.isSelected || _isHovered) ? 1 : 1,
+              ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.2),
@@ -84,7 +105,7 @@ class CardService extends StatelessWidget {
                       padding:
                           EdgeInsets.only(left: constraints.maxWidth * 0.05),
                       child: Text(
-                        cliente,
+                        widget.cliente,
                         style: TextStyle(
                           fontSize: constraints.maxWidth * 0.05,
                           fontWeight: FontWeight.bold,
@@ -99,7 +120,7 @@ class CardService extends StatelessWidget {
                       child: SizedBox(
                         width: constraints.maxWidth * 0.5,
                         child: Text(
-                          "$equipamento - $marca",
+                          "${widget.equipamento} - ${widget.marca}",
                           style: TextStyle(
                             fontSize: constraints.maxWidth * 0.045,
                             color: Colors.black,
@@ -114,7 +135,7 @@ class CardService extends StatelessWidget {
                           left: constraints.maxWidth * 0.1,
                           top: constraints.maxWidth * 0.035),
                       child: Text(
-                        "Técnico - $tecnico",
+                        "Técnico - ${widget.tecnico}",
                         style: TextStyle(
                           fontSize: constraints.maxWidth * 0.045,
                           fontWeight: FontWeight.bold,
@@ -127,7 +148,7 @@ class CardService extends StatelessWidget {
                       padding:
                           EdgeInsets.only(left: constraints.maxWidth * 0.15),
                       child: Text(
-                        local,
+                        widget.local,
                         style: TextStyle(
                           fontSize: constraints.maxWidth * 0.04,
                           color: Colors.black,
@@ -140,7 +161,7 @@ class CardService extends StatelessWidget {
                         left: constraints.maxWidth * 0.15,
                       ),
                       child: Text(
-                        data,
+                        widget.data,
                         style: TextStyle(
                           fontSize: constraints.maxWidth * 0.04,
                           color: Colors.black,
@@ -156,11 +177,11 @@ class CardService extends StatelessWidget {
                     child: SizedBox(
                       width: constraints.maxWidth * 0.4,
                       child: Text(
-                        status,
+                        widget.status,
                         style: TextStyle(
                           fontSize: constraints.maxWidth * 0.045,
                           fontWeight: FontWeight.bold,
-                          color: _getStatusColor(status),
+                          color: _getStatusColor(widget.status),
                         ),
                         maxLines: 3,
                         textAlign: TextAlign.center,
