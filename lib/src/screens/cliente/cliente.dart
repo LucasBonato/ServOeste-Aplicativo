@@ -23,7 +23,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
   @override
   void initState() {
     super.initState();
-    _clienteBloc.add(ClienteLoadingEvent());
+    //_clienteBloc.add(ClienteLoadingEvent());
     _nomeController = TextEditingController();
     _telefoneController = TextEditingController();
     _enderecoController = TextEditingController();

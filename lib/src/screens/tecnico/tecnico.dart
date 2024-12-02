@@ -25,7 +25,7 @@ class _TecnicoScreenState extends State<TecnicoPage> {
   @override
   void initState() {
     super.initState();
-    _tecnicoBloc.add(TecnicoLoadingEvent());
+    //_tecnicoBloc.add(TecnicoLoadingEvent());
     _idController = TextEditingController();
     _nomeController = TextEditingController();
     _situacaoController = TextEditingController();

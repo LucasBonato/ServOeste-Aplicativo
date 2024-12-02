@@ -19,7 +19,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     _servicoBloc.add(ServicoLoadingEvent(filterRequest: ServicoFilterRequest(
-      dataAtendimentoPrevistoAntes: DateTime.now().toUtc()
+      //dataAtendimentoPrevistoAntes: DateTime.now().toUtc()
     )));
     super.initState();
   }
@@ -87,23 +87,9 @@ class _HomeState extends State<Home> {
             bloc: _servicoBloc,
             builder: (context, state) {
               if (state is ServicoSearchSuccessState) {
-                return GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: 10,
-                    childAspectRatio: 1.5,
-                  ),
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: state.servicos.length,
-                  itemBuilder: (context, index) => _buildAgendaCard(state.servicos[index]),
-                );
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Center(child: CircularProgressIndicator.adaptive()),
-                  ],
+                return GridListView(
+                    dataList: state.servicos,
+                    buildCard: (servico) => _buildAgendaCard(servico as Servico),
                 );
               }
               else {

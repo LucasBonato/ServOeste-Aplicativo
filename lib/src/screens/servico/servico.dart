@@ -33,7 +33,7 @@ class ServicesScreenState extends State<ServicesScreen> {
   @override
   void initState() {
     super.initState();
-    _servicoBloc.add(ServicoLoadingEvent(filterRequest: ServicoFilterRequest()));
+    //_servicoBloc.add(ServicoLoadingEvent(filterRequest: ServicoFilterRequest()));
   }
 
   @override
