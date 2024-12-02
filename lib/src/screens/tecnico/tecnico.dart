@@ -5,6 +5,7 @@ import 'package:serv_oeste/src/components/card_technical.dart';
 import 'package:serv_oeste/src/components/search_field.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
+import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
@@ -25,7 +26,7 @@ class _TecnicoScreenState extends State<TecnicoPage> {
   @override
   void initState() {
     super.initState();
-    //_tecnicoBloc.add(TecnicoLoadingEvent());
+    _tecnicoBloc.add(TecnicoLoadingEvent());
     _idController = TextEditingController();
     _nomeController = TextEditingController();
     _situacaoController = TextEditingController();
@@ -72,23 +73,7 @@ class _TecnicoScreenState extends State<TecnicoPage> {
     style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
   );
 
-  Widget _buildTechnicalCard(dynamic data) {
-    //final isCardSelected = _selectedItems.contains(data['id']);
-    return GestureDetector(
-      onTap: () => _selectItems(data['id']),
-      // child: CardTechnical(
-      //   // id: data['id'],
-      //   // name: data['name'],
-      //   // phoneNumber: data['phoneNumber'],
-      //   // cellPhoneNumber: data['cellPhoneNumber'],
-      //   // status: data['status'],
-      //   //isSelected: isCardSelected,
-      // ),
-      child: Center(child: CircularProgressIndicator.adaptive()),
-    );
-  }
-
-  Widget _buildSearchInputs(BuildContext context) {
+  Widget _buildSearchInputs() {
     final screenWidth = MediaQuery.of(context).size.width;
     final isLargeScreen = screenWidth >= 1000;
     final isMediumScreen = screenWidth >= 500 && screenWidth < 1000;
@@ -284,18 +269,18 @@ class _TecnicoScreenState extends State<TecnicoPage> {
           tooltip: 'Excluir técnicos selecionados',
         ),
       body: Row(
-          children: [
-            Expanded(
-              child: Column(
-                children: [
-                  _buildSearchInputs(context),
-                  Flexible(
-                    flex: 1,
+        children: [
+          Expanded(
+            child: Column(
+              children: [
+                _buildSearchInputs(),
+                Flexible(
+                  flex: 1,
+                  child: SingleChildScrollView(
                     child: BlocBuilder<TecnicoBloc, TecnicoState>(
                       bloc: _tecnicoBloc,
                       builder: (context, state) {
-                        if (state is TecnicoInitialState ||
-                            state is TecnicoLoadingState) {
+                        if (state is TecnicoInitialState || state is TecnicoLoadingState) {
                           return const Center(child: CircularProgressIndicator.adaptive());
                         }
                         else if (state is TecnicoSearchSuccessState) {
@@ -303,7 +288,17 @@ class _TecnicoScreenState extends State<TecnicoPage> {
                             padding: const EdgeInsets.all(16.0),
                             child: GridListView(
                               dataList: state.tecnicos,
-                              buildCard: _buildTechnicalCard,
+                              buildCard: (tecnico) => GestureDetector(
+                                onTap: () => _selectItems(tecnico.id!),
+                                child: CardTechnical(
+                                  id: (tecnico as Tecnico).id!,
+                                  name: tecnico.nome!,
+                                  phoneNumber: tecnico.telefoneFixo!,
+                                  cellPhoneNumber: tecnico.telefoneCelular!,
+                                  status: tecnico.situacao!,
+                                  isSelected: _selectedItems.contains(tecnico.id),
+                                ),
+                              ),
                             ),
                           );
                         }
@@ -319,12 +314,13 @@ class _TecnicoScreenState extends State<TecnicoPage> {
                         }
                       },
                     ),
-                  )
-                ]
-              )
+                  ),
+                )
+              ]
             )
-          ],
-        )
+          )
+        ],
+      )
     );
   }
 
@@ -337,3 +333,5 @@ class _TecnicoScreenState extends State<TecnicoPage> {
     super.dispose();
   }
 }
+
+//TODO - Na área de pesquisa dos ténicos o campos de situação não pode ser digitavel, precisa ter só as três escolhas (Ativo, Desativado, licença)

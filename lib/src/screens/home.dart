@@ -88,8 +88,16 @@ class _HomeState extends State<Home> {
             builder: (context, state) {
               if (state is ServicoSearchSuccessState) {
                 return GridListView(
-                    dataList: state.servicos,
-                    buildCard: (servico) => _buildAgendaCard(servico as Servico),
+                  dataList: state.servicos,
+                  buildCard: (dynamic servico) => CardService(
+                    cliente: (servico as Servico).idCliente.toString(),
+                    tecnico: servico.idTecnico.toString(),
+                    equipamento: servico.equipamento,
+                    marca: servico.marca,
+                    local: servico.filial,
+                    data: servico.dataAtendimentoPrevisto,
+                    status: servico.situacao
+                  ),
                 );
               }
               else {
@@ -102,15 +110,10 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget _buildAgendaCard(Servico servico) {
-    return CardService(
-      cliente: servico.idCliente.toString(),
-      tecnico: servico.idTecnico.toString(),
-      equipamento: servico.equipamento,
-      marca: servico.marca,
-      local: servico.filial,
-      data: servico.dataAtendimentoPrevisto,
-      status: servico.situacao,
-    );
+  @override
+  void dispose() {
+    _servicoBloc.close();
+    super.dispose();
   }
 }
+//TODO - Mostrar alguma menssagem quando não tiver serviços no dia, ou mostrar os da semana.

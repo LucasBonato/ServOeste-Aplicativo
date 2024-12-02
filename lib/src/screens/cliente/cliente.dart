@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/card_client.dart';
 import 'package:serv_oeste/src/components/grid_view.dart';
+import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
 import 'package:serv_oeste/src/components/search_field.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
@@ -23,7 +24,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
   @override
   void initState() {
     super.initState();
-    //_clienteBloc.add(ClienteLoadingEvent());
+    _clienteBloc.add(ClienteLoadingEvent());
     _nomeController = TextEditingController();
     _telefoneController = TextEditingController();
     _enderecoController = TextEditingController();
@@ -90,21 +91,6 @@ class _ClienteScreenState extends State<ClienteScreen> {
       )
     ],
   );
-
-  Widget _buildClienteCard(dynamic data) {
-    // final isCardSelected = _selectedItems.contains(data['id']);
-    return GestureDetector(
-      onTap: () => _selectItems(data['id']),
-      // child: CardClient(
-      //   name: data['name'],
-      //   phoneNumber: data['phoneNumber'],
-      //   city: data['city'],
-      //   street: data['street'],
-      //   isSelected: true,
-      // ),
-      child: Center(child: CircularProgressIndicator.adaptive()),
-    );
-  }
 
   Widget _buildSearchInputs(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -313,32 +299,43 @@ class _ClienteScreenState extends State<ClienteScreen> {
                 _buildSearchInputs(context),
                 Flexible(
                   flex: 1,
-                  child: BlocBuilder<ClienteBloc, ClienteState>(
-                    bloc: _clienteBloc,
-                    builder: (context, state) {
-                      if (state is ClienteInitialState ||
-                          state is ClienteLoadingState) {
-                        return const Center(
-                            child: CircularProgressIndicator.adaptive());
-                      } else if (state is ClienteSearchSuccessState) {
-                        return Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: GridListView(
-                            dataList: state.clientes,
-                            buildCard: _buildClienteCard,
-                          ),
-                        );
-                      } else {
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.not_interested, size: 30),
-                            const SizedBox(height: 16),
-                            const Text("Aconteceu um erro!!"),
-                          ],
-                        );
-                      }
-                    },
+                  child: SingleChildScrollView(
+                    child: BlocBuilder<ClienteBloc, ClienteState>(
+                      bloc: _clienteBloc,
+                      builder: (context, state) {
+                        if (state is ClienteInitialState || state is ClienteLoadingState) {
+                          return const Center(child: CircularProgressIndicator.adaptive());
+                        }
+                        else if (state is ClienteSearchSuccessState) {
+                          return Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: GridListView(
+                              dataList: state.clientes,
+                              buildCard: (cliente) => GestureDetector(
+                                onTap: () => _selectItems(cliente.id!),
+                                child: CardClient(
+                                  name: (cliente as Cliente).nome!,
+                                  phoneNumber: cliente.telefoneFixo!,
+                                  city: cliente.municipio!,
+                                  street: cliente.endereco!,
+                                  isSelected: _selectedItems.contains(cliente.id)
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                        else {
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.not_interested, size: 30),
+                              const SizedBox(height: 16),
+                              const Text("Aconteceu um erro!!"),
+                            ],
+                          );
+                        }
+                      },
+                    ),
                   ),
                 ),
               ],
