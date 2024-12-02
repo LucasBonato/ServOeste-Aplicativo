@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/card_service.dart';
 import 'package:serv_oeste/src/components/expandable_fab_items.dart';
+import 'package:serv_oeste/src/components/grid_view.dart';
 import 'package:serv_oeste/src/components/search_field.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
@@ -33,7 +34,7 @@ class ServicesScreenState extends State<ServicesScreen> {
   @override
   void initState() {
     super.initState();
-    //_servicoBloc.add(ServicoLoadingEvent(filterRequest: ServicoFilterRequest()));
+    _servicoBloc.add(ServicoLoadingEvent(filterRequest: ServicoFilterRequest()));
   }
 
   @override
@@ -64,7 +65,7 @@ class ServicesScreenState extends State<ServicesScreen> {
     );
   }
 
-  Widget _buildSearchInputs(BuildContext context) {
+  Widget _buildSearchInputs() {
     final screenWidth = MediaQuery.of(context).size.width;
     final isLargeScreen = screenWidth >= 1000;
 
@@ -73,22 +74,22 @@ class ServicesScreenState extends State<ServicesScreen> {
         width: isLargeScreen ? 1200.0 : double.infinity,
         padding: const EdgeInsets.all(5),
         child: isLargeScreen
-            ? Row(
-          children: [
-            _buildSearchField(
-              hint: 'Nome do Cliente...',
-              controller: clientController,
-              onChanged: _applyFilters,
-            ),
-            _buildSearchField(
-              hint: 'Nome do Técnico...',
-              controller: technicianController,
-              onChanged: _applyFilters,
-            ),
-            _buildFilterIcon(),
-          ],
-        )
-            : Column(
+        ? Row(
+      children: [
+        _buildSearchField(
+          hint: 'Nome do Cliente...',
+          controller: clientController,
+          onChanged: _applyFilters,
+        ),
+        _buildSearchField(
+          hint: 'Nome do Técnico...',
+          controller: technicianController,
+          onChanged: _applyFilters,
+        ),
+        _buildFilterIcon(),
+      ],
+    )
+        : Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _buildSearchField(
@@ -105,7 +106,10 @@ class ServicesScreenState extends State<ServicesScreen> {
                     onChanged: _applyFilters,
                   ),
                 ),
-                _buildFilterIcon(),
+                Padding(
+                  padding: EdgeInsets.only(right: 8),
+                  child: _buildFilterIcon(),
+                ),
               ],
             ),
           ],
@@ -115,14 +119,12 @@ class ServicesScreenState extends State<ServicesScreen> {
   }
 
   Widget _buildSearchField({required String hint, required TextEditingController controller, required VoidCallback onChanged}) {
-    return Expanded(
-      child: SearchTextField(
-        hint: hint,
-        controller: controller,
-        onChangedAction: (value) => onChanged(),
-        leftPadding: 8,
-        rightPadding: 8,
-      ),
+    return SearchTextField(
+      hint: hint,
+      controller: controller,
+      onChangedAction: (value) => onChanged(),
+      leftPadding: 8,
+      rightPadding: 8,
     );
   }
 
@@ -155,8 +157,8 @@ class ServicesScreenState extends State<ServicesScreen> {
 
   Widget _buildServiceCard(Servico servico) {
     return CardService(
-      cliente: nomeCliente!,
-      tecnico: nomeTecnico!,
+      cliente: servico.idCliente.toString(),
+      tecnico: servico.idTecnico.toString(),
       equipamento: servico.equipamento,
       marca: servico.marca,
       local: servico.filial,
@@ -191,23 +193,23 @@ class ServicesScreenState extends State<ServicesScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            //_buildSearchInputs(context),
+            _buildSearchInputs(),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: BlocBuilder<ServicoBloc, ServicoState>(
                 bloc: _servicoBloc,
                 builder: (context, state) {
-                  // if (state is ServicoSearchSuccessState) {
-                  //   return GridListView(
-                  //     dataList: state.servicos,
-                  //     buildCard: (data) => _buildServiceCard(data as Servico),
-                  //   );
-                  // }
-                  // else {
+                  if (state is ServicoSearchSuccessState) {
+                    return GridListView(
+                      dataList: state.servicos,
+                      buildCard: (data) => _buildServiceCard(data as Servico),
+                    );
+                  }
+                  else {
                     return const Center(
                       child: CircularProgressIndicator.adaptive(),
                     );
-                  // }
+                  }
                 },
               ),
             ),
