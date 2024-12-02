@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/grid_view.dart';
 import 'package:serv_oeste/src/components/card_service.dart';
+import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
+import 'package:serv_oeste/src/models/servico/servico.dart';
+import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -10,108 +14,15 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final List<dynamic> serviceDayList = [
-    {
-      'id': 1,
-      'cliente': "Jefferson Oliveira",
-      'equipamento': "Geladeira",
-      'marca': "Consul",
-      'tecnico': "Lucas Adriano",
-      'local': "Osasco",
-      'data': "11/11/2024 - Tarde",
-      'status': "Aguardando Orçamento"
-    },
-    {
-      'id': 2,
-      'cliente': "Carlos Silva",
-      'equipamento': "Ar Condicionado",
-      'marca': "Samsung",
-      'tecnico': "João",
-      'local': "Osasco",
-      'data': "12/11/2024 - Manhã",
-      'status': "Orçamento Aprovado"
-    },
-    {
-      'id': 3,
-      'cliente': "Maria Souza",
-      'equipamento': "Micro-ondas",
-      'marca': "LG",
-      'tecnico': "Pedro",
-      'local': "Carapicuíba",
-      'data': "12/11/2024 - Tarde",
-      'status': "Aguardando Agendamento"
-    },
-    {
-      'id': 4,
-      'cliente': "Luciana Mendes",
-      'equipamento': "Máquina de Lavar",
-      'marca': "Brastemp",
-      'tecnico': "Marcos",
-      'local': "Osasco",
-      'data': "13/11/2024 - Manhã",
-      'status': "Aguardando Aprovação do Cliente"
-    },
-    {
-      'id': 5,
-      'cliente': "Gustavo Lima",
-      'equipamento': "Secadora de Roupas",
-      'marca': "Electrolux",
-      'tecnico': "Ana Paula",
-      'local': "Osasco",
-      'data': "13/11/2024 - Tarde",
-      'status': "Aguardando Orçamento"
-    },
-    {
-      'id': 6,
-      'cliente': "Fabiana Rocha",
-      'equipamento': "Geladeira",
-      'marca': "Eletrolux",
-      'tecnico': "João",
-      'local': "Osasco",
-      'data': "14/11/2024 - Manhã",
-      'status': "Orçamento Aprovado"
-    },
-    {
-      'id': 7,
-      'cliente': "José Almeida",
-      'equipamento': "Fogão",
-      'marca': "Atlas",
-      'tecnico': "Carlos",
-      'local': "Carapicuíba",
-      'data': "14/11/2024 - Tarde",
-      'status': "Aguardando Atendimento"
-    },
-    {
-      'id': 8,
-      'cliente': "Patricia Lima",
-      'equipamento': "Micro-ondas",
-      'marca': "Panasonic",
-      'tecnico': "Luana",
-      'local': "Carapicuíba",
-      'data': "15/11/2024 - Manhã",
-      'status': "Aguardando Cliente Retirar"
-    },
-    {
-      'id': 9,
-      'cliente': "Roberto Oliveira",
-      'equipamento': "Ar Condicionado",
-      'marca': "Midea",
-      'tecnico': "Bruno",
-      'local': "Carapicuíba",
-      'data': "15/11/2024 - Tarde",
-      'status': "Resolvido"
-    },
-    {
-      'id': 10,
-      'cliente': "Ana Costa",
-      'equipamento': "Máquina de Lavar",
-      'marca': "Samsung",
-      'tecnico': "Ricardo",
-      'local': "Carapicuíba",
-      'data': "16/11/2024 - Manhã",
-      'status': "Aguardando Orçamento"
-    },
-  ];
+  final ServicoBloc _servicoBloc = ServicoBloc();
+
+  @override
+  void initState() {
+    _servicoBloc.add(ServicoLoadingEvent(filterRequest: ServicoFilterRequest(
+      dataAtendimentoPrevistoAntes: DateTime.now().toUtc()
+    )));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -172,24 +83,48 @@ class _HomeState extends State<Home> {
             ),
           ),
           const SizedBox(height: 10),
-          GridListView(
-            dataList: serviceDayList,
-            buildCard: _buildAgendaCard,
-          ),
+          BlocBuilder<ServicoBloc, ServicoState>(
+            bloc: _servicoBloc,
+            builder: (context, state) {
+              if (state is ServicoSearchSuccessState) {
+                return GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
+                    childAspectRatio: 1.5,
+                  ),
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: state.servicos.length,
+                  itemBuilder: (context, index) => _buildAgendaCard(state.servicos[index]),
+                );
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(child: CircularProgressIndicator.adaptive()),
+                  ],
+                );
+              }
+              else {
+                return const Center(child: CircularProgressIndicator.adaptive());
+              }
+            },
+          )
         ],
       ),
     );
   }
 
-  Widget _buildAgendaCard(dynamic data) {
+  Widget _buildAgendaCard(Servico servico) {
     return CardService(
-      cliente: data['cliente'],
-      equipamento: data['equipamento'],
-      marca: data['marca'],
-      tecnico: data['tecnico'],
-      local: data['local'],
-      data: data['data'],
-      status: data['status'],
+      cliente: servico.idCliente.toString(),
+      tecnico: servico.idTecnico.toString(),
+      equipamento: servico.equipamento,
+      marca: servico.marca,
+      local: servico.filial,
+      data: servico.dataAtendimentoPrevisto,
+      status: servico.situacao,
     );
   }
 }

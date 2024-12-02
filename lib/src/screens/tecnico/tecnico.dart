@@ -73,17 +73,18 @@ class _TecnicoScreenState extends State<TecnicoPage> {
   );
 
   Widget _buildTechnicalCard(dynamic data) {
-    final isCardSelected = _selectedItems.contains(data['id']);
+    //final isCardSelected = _selectedItems.contains(data['id']);
     return GestureDetector(
       onTap: () => _selectItems(data['id']),
-      child: CardTechnical(
-        id: data['id'],
-        name: data['name'],
-        phoneNumber: data['phoneNumber'],
-        cellPhoneNumber: data['cellPhoneNumber'],
-        status: data['status'],
-        isSelected: isCardSelected,
-      ),
+      // child: CardTechnical(
+      //   // id: data['id'],
+      //   // name: data['name'],
+      //   // phoneNumber: data['phoneNumber'],
+      //   // cellPhoneNumber: data['cellPhoneNumber'],
+      //   // status: data['status'],
+      //   //isSelected: isCardSelected,
+      // ),
+      child: Center(child: CircularProgressIndicator.adaptive()),
     );
   }
 

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/card_service.dart';
 import 'package:serv_oeste/src/components/expandable_fab_items.dart';
-import 'package:serv_oeste/src/components/grid_view.dart';
 import 'package:serv_oeste/src/components/search_field.dart';
+import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
+import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
+import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/screens/servico/filter_servico.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
@@ -16,23 +19,42 @@ class ServicesScreen extends StatefulWidget {
 
 class ServicesScreenState extends State<ServicesScreen> {
   final ServicoBloc _servicoBloc = ServicoBloc();
+  final ClienteBloc _clienteBloc = ClienteBloc();
+  final TecnicoBloc _tecnicoBloc = TecnicoBloc();
+
+  String? nomeCliente;
+  String? nomeTecnico;
+
+  final TextEditingController clientController = TextEditingController();
+  final TextEditingController technicianController = TextEditingController();
+
   bool _isHovered = false;
 
-  TextEditingController clientController = TextEditingController();
-  TextEditingController technicianController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    _servicoBloc.add(ServicoLoadingEvent(filterRequest: ServicoFilterRequest()));
+  }
+
+  @override
+  void dispose() {
+    clientController.dispose();
+    technicianController.dispose();
+    _servicoBloc.close();
+    _clienteBloc.close();
+    _tecnicoBloc.close();
+    super.dispose();
+  }
 
   void _applyFilters() {
-    setState(() {
-      // serviceList = serviceList.where((service) {
-      //   bool matchesClient = service['cliente']!
-      //       .toLowerCase()
-      //       .contains(clientController.text.toLowerCase());
-      //   bool matchesTechnician = service['tecnico']!
-      //       .toLowerCase()
-      //       .contains(technicianController.text.toLowerCase());
-      //   return matchesClient && matchesTechnician;
-      // }).toList();
-    });
+    // _servicoBloc.add(
+    //   ServicoFilterEvent(
+    //     filterRequest: ServicoFilterRequest(
+    //       cliente: clientController.text,
+    //       tecnico: technicianController.text,
+    //     ),
+    //   ),
+    // );
   }
 
   void _navigateToFilterPage(BuildContext context) {
@@ -51,173 +73,101 @@ class ServicesScreenState extends State<ServicesScreen> {
         width: isLargeScreen ? 1200.0 : double.infinity,
         padding: const EdgeInsets.all(5),
         child: isLargeScreen
-          ? Row(
-            children: [
-              Expanded(
-                flex: 3,
-                child: SearchTextField(
-                  hint: 'Nome do Cliente...',
-                  controller: clientController,
-                  onChangedAction: (value) => _applyFilters(),
-                  leftPadding: 8,
-                  rightPadding: 8,
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: SearchTextField(
-                  hint: 'Nome do Técnico...',
-                  controller: technicianController,
-                  onChangedAction: (value) => _applyFilters(),
-                  leftPadding: 8,
-                  rightPadding: 8,
-                ),
-              ),
-              const SizedBox(width: 8),
-              InkWell(
-                onTap: () => _navigateToFilterPage(context),
-                borderRadius: BorderRadius.circular(10),
-                child: MouseRegion(
-                  onEnter: (_) {
-                    setState(() {
-                      _isHovered = true;
-                    });
-                  },
-                  onExit: (_) {
-                    setState(() {
-                      _isHovered = false;
-                    });
-                  },
-                  child: Ink(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: _isHovered
-                          ? const Color(0xFFF5EEED)
-                          : const Color(0xFFFFF8F7),
-                      border: Border.all(
-                        color: _isHovered
-                            ? const Color(0xFF6C757D)
-                            : const Color(0xFFEAE6E5),
-                        width: 1,
-                      ),
-                    ),
-                    child: const Icon(
-                      Icons.filter_list,
-                      size: 30.0,
-                      color: Colors.black,
-                    ),
+            ? Row(
+          children: [
+            _buildSearchField(
+              hint: 'Nome do Cliente...',
+              controller: clientController,
+              onChanged: _applyFilters,
+            ),
+            _buildSearchField(
+              hint: 'Nome do Técnico...',
+              controller: technicianController,
+              onChanged: _applyFilters,
+            ),
+            _buildFilterIcon(),
+          ],
+        )
+            : Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildSearchField(
+              hint: 'Nome do Cliente...',
+              controller: clientController,
+              onChanged: _applyFilters,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildSearchField(
+                    hint: 'Nome do Técnico...',
+                    controller: technicianController,
+                    onChanged: _applyFilters,
                   ),
                 ),
-              )
-            ],
-          )
-          : Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                margin: const EdgeInsets.only(bottom: 10),
-                child: SearchTextField(
-                  hint: 'Nome do Cliente...',
-                  controller: clientController,
-                  onChangedAction: (value) => _applyFilters(),
-                  leftPadding: 8,
-                  rightPadding: 8,
-                ),
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 4,
-                    child: SearchTextField(
-                      hint: 'Nome do Técnico...',
-                      controller: technicianController,
-                      onChangedAction: (value) => _applyFilters(),
-                      leftPadding: 8,
-                      rightPadding: 8,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  InkWell(
-                    onTap: () => _navigateToFilterPage(context),
-                    borderRadius: BorderRadius.circular(10),
-                    child: MouseRegion(
-                      onEnter: (_) {
-                        setState(() {
-                          _isHovered = true;
-                        });
-                      },
-                      onExit: (_) {
-                        setState(() {
-                          _isHovered = false;
-                        });
-                      },
-                      child: Ink(
-                        padding: EdgeInsets.only(top: 8, right: 8, bottom: 8, left: 8),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: _isHovered
-                              ? const Color(0xFFF5EEED)
-                              : const Color(0xFFFFF8F7),
-                          border: Border.all(
-                            color: _isHovered
-                                ? const Color(0xFF6C757D)
-                                : const Color(0xFFEAE6E5),
-                            width: 1,
-                          ),
-                        ),
-                        child: const Icon(
-                          Icons.filter_list,
-                          size: 30.0,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                ],
-              ),
-            ],
-          ),
+                _buildFilterIcon(),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildServiceCard(dynamic data) {
-    return CardService(
-      cliente: data['cliente'],
-      equipamento: data['equipamento'],
-      marca: data['marca'],
-      tecnico: data['tecnico'],
-      local: data['local'],
-      data: data['data'],
-      status: data['status'],
+  Widget _buildSearchField({required String hint, required TextEditingController controller, required VoidCallback onChanged}) {
+    return Expanded(
+      child: SearchTextField(
+        hint: hint,
+        controller: controller,
+        onChangedAction: (value) => onChanged(),
+        leftPadding: 8,
+        rightPadding: 8,
+      ),
     );
   }
 
-  @override
-  void initState() {
-    _servicoBloc.add(ServicoLoadingEvent(filterRequest: ServicoFilterRequest()));
-    super.initState();
+  Widget _buildFilterIcon() {
+    return InkWell(
+      onTap: () => _navigateToFilterPage(context),
+      borderRadius: BorderRadius.circular(10),
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        child: Ink(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: _isHovered ? const Color(0xFFF5EEED) : const Color(0xFFFFF8F7),
+            border: Border.all(
+              color: _isHovered ? const Color(0xFF6C757D) : const Color(0xFFEAE6E5),
+              width: 1,
+            ),
+          ),
+          child: const Icon(
+            Icons.filter_list,
+            size: 30.0,
+            color: Colors.black,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildServiceCard(Servico servico) {
+    return CardService(
+      cliente: nomeCliente!,
+      tecnico: nomeTecnico!,
+      equipamento: servico.equipamento,
+      marca: servico.marca,
+      local: servico.filial,
+      data: servico.dataAtendimentoPrevisto,
+      status: servico.situacao,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildSearchInputs(context),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: GridListView(
-                dataList: [],
-                buildCard: _buildServiceCard,
-              ),
-            ),
-          ],
-        ),
-      ),
       floatingActionButton: ExpandableFabItems(
         firstHeroTag: 'add_service',
         secondHeroTag: 'add_service_cliente',
@@ -236,7 +186,33 @@ class ServicesScreenState extends State<ServicesScreen> {
           size: 36,
           color: Colors.white,
         ),
-        updateList: () {}
+        updateList: () => _applyFilters(),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            //_buildSearchInputs(context),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: BlocBuilder<ServicoBloc, ServicoState>(
+                bloc: _servicoBloc,
+                builder: (context, state) {
+                  // if (state is ServicoSearchSuccessState) {
+                  //   return GridListView(
+                  //     dataList: state.servicos,
+                  //     buildCard: (data) => _buildServiceCard(data as Servico),
+                  //   );
+                  // }
+                  // else {
+                    return const Center(
+                      child: CircularProgressIndicator.adaptive(),
+                    );
+                  // }
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

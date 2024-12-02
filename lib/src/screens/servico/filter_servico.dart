@@ -19,15 +19,15 @@ class FilterService extends StatelessWidget {
   FilterService({super.key});
 
   void applyFilters() {
-    final endereco = addressController.text;
-    final equipamento = equipamentoNotifier.value;
-    final situacao = situacaoNotifier.value;
-    final filial = filialNotifier.value;
-    final garantia = garantiaNotifier.value;
-    final horario = horarioNotifier.value;
-    final dataPrevista = dataPrevistaNotifier.value;
-    final dataEfetiva = dataEfetivaNotifier.value;
-    final dataAbertura = dataAberturaNotifier.value;
+    // final endereco = addressController.text;
+    // final equipamento = equipamentoNotifier.value;
+    // final situacao = situacaoNotifier.value;
+    // final filial = filialNotifier.value;
+    // final garantia = garantiaNotifier.value;
+    // final horario = horarioNotifier.value;
+    // final dataPrevista = dataPrevistaNotifier.value;
+    // final dataEfetiva = dataEfetivaNotifier.value;
+    // final dataAbertura = dataAberturaNotifier.value;
   }
 
   @override

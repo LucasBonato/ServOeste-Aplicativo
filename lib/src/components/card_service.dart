@@ -6,8 +6,8 @@ class CardService extends StatelessWidget {
   final String marca;
   final String tecnico;
   final String local;
-  final String data;
   final String status;
+  final DateTime data;
 
   const CardService({
     super.key,
@@ -20,6 +20,7 @@ class CardService extends StatelessWidget {
     required this.status,
   });
 
+  //TODO - Criar um enum para cada status
   Color _getStatusColor(String status) {
     switch (status) {
       case "Aguardando Agendamento":
@@ -58,121 +59,123 @@ class CardService extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-      builder: (context, constraints) {
-        return Center(
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-            decoration: BoxDecoration(
-              color: Color(0xFCFDFDFF),
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  spreadRadius: 2,
-                  blurRadius: 6,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Stack(
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding:
-                          EdgeInsets.only(left: constraints.maxWidth * 0.05),
-                      child: Text(
-                        cliente,
-                        style: TextStyle(
-                          fontSize: constraints.maxWidth * 0.05,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Padding(
-                      padding:
-                          EdgeInsets.only(left: constraints.maxWidth * 0.1),
-                      child: SizedBox(
-                        width: constraints.maxWidth * 0.5,
-                        child: Text(
-                          "$equipamento - $marca",
-                          style: TextStyle(
-                            fontSize: constraints.maxWidth * 0.045,
-                            color: Colors.black,
-                          ),
-                          maxLines: 2,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: constraints.maxWidth * 0.1,
-                          top: constraints.maxWidth * 0.035),
-                      child: Text(
-                        "Técnico - $tecnico",
-                        style: TextStyle(
-                          fontSize: constraints.maxWidth * 0.045,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Padding(
-                      padding:
-                          EdgeInsets.only(left: constraints.maxWidth * 0.15),
-                      child: Text(
-                        local,
-                        style: TextStyle(
-                          fontSize: constraints.maxWidth * 0.04,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        left: constraints.maxWidth * 0.15,
-                      ),
-                      child: Text(
-                        data,
-                        style: TextStyle(
-                          fontSize: constraints.maxWidth * 0.04,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 0),
-                    child: SizedBox(
-                      width: constraints.maxWidth * 0.4,
-                      child: Text(
-                        status,
-                        style: TextStyle(
-                          fontSize: constraints.maxWidth * 0.045,
-                          fontWeight: FontWeight.bold,
-                          color: _getStatusColor(status),
-                        ),
-                        maxLines: 3,
-                        textAlign: TextAlign.center,
+      builder: (context, constraints) => ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: 100,
+          maxHeight: 200,
+          maxWidth: constraints.maxWidth
+        ),
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+          decoration: BoxDecoration(
+            color: Color(0xFCFDFDFF),
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                spreadRadius: 2,
+                blurRadius: 6,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Stack(
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: constraints.maxWidth * 0.05),
+                    child: Text(
+                      cliente,
+                      style: TextStyle(
+                        fontSize: constraints.maxWidth * 0.05,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
                       ),
                     ),
                   ),
+                  const SizedBox(height: 5),
+                  Padding(
+                    padding:
+                    EdgeInsets.only(left: constraints.maxWidth * 0.1),
+                    child: SizedBox(
+                      width: constraints.maxWidth * 0.5,
+                      child: Text(
+                        "$equipamento - $marca",
+                        style: TextStyle(
+                          fontSize: constraints.maxWidth * 0.045,
+                          color: Colors.black,
+                        ),
+                        maxLines: 2,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: constraints.maxWidth * 0.1,
+                        top: constraints.maxWidth * 0.035),
+                    child: Text(
+                      "Técnico - $tecnico",
+                      style: TextStyle(
+                        fontSize: constraints.maxWidth * 0.045,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Padding(
+                    padding:
+                    EdgeInsets.only(left: constraints.maxWidth * 0.15),
+                    child: Text(
+                      local,
+                      style: TextStyle(
+                        fontSize: constraints.maxWidth * 0.04,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: constraints.maxWidth * 0.15,
+                    ),
+                    child: Text(
+                      data.toString(),
+                      style: TextStyle(
+                        fontSize: constraints.maxWidth * 0.04,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 0),
+                  child: SizedBox(
+                    width: constraints.maxWidth * 0.4,
+                    child: Text(
+                      status,
+                      style: TextStyle(
+                        fontSize: constraints.maxWidth * 0.045,
+                        fontWeight: FontWeight.bold,
+                        color: _getStatusColor(status),
+                      ),
+                      maxLines: 3,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

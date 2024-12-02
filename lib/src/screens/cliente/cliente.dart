@@ -92,16 +92,17 @@ class _ClienteScreenState extends State<ClienteScreen> {
   );
 
   Widget _buildClienteCard(dynamic data) {
-    final isCardSelected = _selectedItems.contains(data['id']);
+    // final isCardSelected = _selectedItems.contains(data['id']);
     return GestureDetector(
       onTap: () => _selectItems(data['id']),
-      child: CardClient(
-        name: data['name'],
-        phoneNumber: data['phoneNumber'],
-        city: data['city'],
-        street: data['street'],
-        isSelected: isCardSelected,
-      ),
+      // child: CardClient(
+      //   name: data['name'],
+      //   phoneNumber: data['phoneNumber'],
+      //   city: data['city'],
+      //   street: data['street'],
+      //   isSelected: true,
+      // ),
+      child: Center(child: CircularProgressIndicator.adaptive()),
     );
   }
 
