@@ -58,11 +58,8 @@ class ServicesScreenState extends State<ServicesScreen> {
     // );
   }
 
-  void _navigateToFilterPage(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => FilterService()),
-    );
+  void _navigateToFilterPage() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => FilterService()));
   }
 
   Widget _buildSearchInputs() {
@@ -130,7 +127,7 @@ class ServicesScreenState extends State<ServicesScreen> {
 
   Widget _buildFilterIcon() {
     return InkWell(
-      onTap: () => _navigateToFilterPage(context),
+      onTap: _navigateToFilterPage,
       borderRadius: BorderRadius.circular(10),
       child: MouseRegion(
         onEnter: (_) => setState(() => _isHovered = true),
@@ -152,18 +149,6 @@ class ServicesScreenState extends State<ServicesScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildServiceCard(Servico servico) {
-    return CardService(
-      cliente: servico.idCliente.toString(),
-      tecnico: servico.idTecnico.toString(),
-      equipamento: servico.equipamento,
-      marca: servico.marca,
-      local: servico.filial,
-      data: servico.dataAtendimentoPrevisto,
-      status: servico.situacao,
     );
   }
 
@@ -202,13 +187,19 @@ class ServicesScreenState extends State<ServicesScreen> {
                   if (state is ServicoSearchSuccessState) {
                     return GridListView(
                       dataList: state.servicos,
-                      buildCard: (data) => _buildServiceCard(data as Servico),
+                      buildCard: (servico) => CardService(
+                        cliente: (servico as Servico).idCliente.toString(),
+                        tecnico: servico.idTecnico.toString(),
+                        equipamento: servico.equipamento,
+                        marca: servico.marca,
+                        local: servico.filial,
+                        data: servico.dataAtendimentoPrevisto,
+                        status: servico.situacao,
+                      ),
                     );
                   }
                   else {
-                    return const Center(
-                      child: CircularProgressIndicator.adaptive(),
-                    );
+                    return const Center(child: CircularProgressIndicator.adaptive());
                   }
                 },
               ),

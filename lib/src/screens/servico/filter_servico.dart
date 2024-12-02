@@ -37,18 +37,14 @@ class FilterService extends StatelessWidget {
       appBar: AppBar(
         leading: Padding(
           padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
-          child: Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black),
-                onPressed: () => Navigator.pop(context, "Back"),
-              ),
-              const Text(
-                "Voltar",
-                style: TextStyle(color: Colors.black, fontSize: 16),
-              ),
-            ],
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () => Navigator.pop(context, "Back"),
           ),
+        ),
+        title: const Text(
+          "Voltar",
+          style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFCFDFDFF),
         elevation: 0,
@@ -60,7 +56,6 @@ class FilterService extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: SingleChildScrollView(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(bottom: 120.0),
@@ -113,7 +108,8 @@ class FilterService extends StatelessWidget {
                       Expanded(
                         child: CustomSearchDropDown(
                           label: 'Filial...',
-                          dropdownValues: ['Osasco', 'Carapicuíba'],
+                          dropdownValues: Constants.filiais,
+                          rightPadding: 4,
                           onChanged: (value) => filialNotifier.value = value,
                         ),
                       ),
@@ -124,6 +120,7 @@ class FilterService extends StatelessWidget {
                             'Dentro do período de garantia',
                             'Fora do período de garantia'
                           ],
+                          leftPadding: 4,
                           onChanged: (value) => garantiaNotifier.value = value,
                         ),
                       ),
@@ -133,19 +130,23 @@ class FilterService extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
+                        flex: 1,
                         child: CustomDatePicker(
                           label: 'Data Atendimento Previsto...',
                           hint: 'dd/mm/aaaa',
                           mask: Constants.maskData,
+                          rightPadding: 4,
                           type: TextInputType.datetime,
                           maxLength: 10,
                           valueNotifier: dataPrevistaNotifier,
                         ),
                       ),
                       Expanded(
+                        flex: 1,
                         child: CustomDatePicker(
                           label: 'Data Atendimento Efetivo...',
                           hint: 'dd/mm/aaaa',
+                          leftPadding: 4,
                           mask: Constants.maskData,
                           type: TextInputType.datetime,
                           maxLength: 10,
@@ -163,12 +164,15 @@ class FilterService extends StatelessWidget {
                           hint: 'dd/mm/aaaa',
                           mask: Constants.maskData,
                           type: TextInputType.datetime,
+                          rightPadding: 4,
                           maxLength: 10,
                           valueNotifier: dataAberturaNotifier,
                         ),
                       ),
                       Expanded(
                         child: CustomSearchDropDown(
+                          hide: true,
+                          leftPadding: 4,
                           label: 'Horário...',
                           dropdownValues: ['Manhã', 'Tarde'],
                           onChanged: (value) => horarioNotifier.value = value,

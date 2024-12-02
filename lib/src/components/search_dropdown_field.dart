@@ -106,9 +106,9 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
           if (query.isEmpty) return widget.dropdownValues;
           return widget.dropdownValues
               .where((element) => element
-          .toLowerCase()
-          .contains(query.toLowerCase()))
-          .toList();
+                .toLowerCase()
+                .contains(query.toLowerCase())
+              ).toList();
         },
         onSuggestionSelected: (String? suggestion) {
           if (suggestion != null && suggestion.isNotEmpty) {
@@ -139,7 +139,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
             child: suggestionBox,
           );
         },
-        suggestionsBoxVerticalOffset: widget.hide ? 0 : -20,
+        suggestionsBoxVerticalOffset: widget.hide ? -20 : 0,
       ),
     );
   }
