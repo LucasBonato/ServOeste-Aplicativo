@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/bottom_nav_bar.dart';
 import 'package:serv_oeste/src/components/sidebar_navigation.dart';
 import 'package:serv_oeste/src/components/header.dart';
@@ -27,12 +28,6 @@ class BaseLayoutState extends State<BaseLayout> {
   late int _currentIndex;
   late final List<GlobalKey<NavigatorState>> _navigatorKeys;
   late final List<Widget?> _screens;
-  final Map<int, Widget> _screenMap = {
-    0: Home(),
-    1: TecnicoScreen(),
-    2: ClienteScreen(),
-    3: ServicesScreen(),
-  };
 
   final ServicoBloc _servicoBloc = ServicoBloc();
   final TecnicoBloc _tecnicoBloc = TecnicoBloc();
@@ -48,7 +43,13 @@ class BaseLayoutState extends State<BaseLayout> {
   }
 
   Widget _getScreen(int index) {
-    _screens[index] ??= _screenMap[index] ?? Container();
+    _screens[index] ??= switch (index) {
+      0 => BlocProvider.value(value: _servicoBloc, child: Home()),
+      1 => BlocProvider.value(value: _tecnicoBloc, child: TecnicoScreen()),
+      2 => BlocProvider.value(value: _clienteBloc, child: ClienteScreen()),
+      3 => BlocProvider.value(value: _servicoBloc, child: ServicesScreen()),
+      _ => Container()
+    };
     return _screens[index]!;
   }
 

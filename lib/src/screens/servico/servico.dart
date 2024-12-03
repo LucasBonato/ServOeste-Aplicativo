@@ -20,9 +20,7 @@ class ServicesScreen extends StatefulWidget {
 }
 
 class ServicesScreenState extends State<ServicesScreen> {
-  final ServicoBloc _servicoBloc = ServicoBloc();
-  final ClienteBloc _clienteBloc = ClienteBloc();
-  final TecnicoBloc _tecnicoBloc = TecnicoBloc();
+  late final ServicoBloc _servicoBloc;
 
   late final TextEditingController _nomeClienteController;
   late final TextEditingController _nomeTecnicoController;
@@ -31,6 +29,7 @@ class ServicesScreenState extends State<ServicesScreen> {
   @override
   void initState() {
     super.initState();
+    _servicoBloc = context.read<ServicoBloc>();
     _nomeClienteController = TextEditingController();
     _nomeTecnicoController = TextEditingController();
     //_servicoBloc.add(ServicoLoadingEvent(filterRequest: ServicoFilterRequest()));
@@ -169,7 +168,6 @@ class ServicesScreenState extends State<ServicesScreen> {
           _buildSearchInputs(),
           Expanded(
             child: BlocBuilder<ServicoBloc, ServicoState>(
-              bloc: _servicoBloc,
               builder: (context, state) {
                 if (state is ServicoSearchSuccessState) {
                   return SingleChildScrollView(
@@ -198,9 +196,6 @@ class ServicesScreenState extends State<ServicesScreen> {
 
   @override
   void dispose() {
-    _servicoBloc.close();
-    _clienteBloc.close();
-    _tecnicoBloc.close();
     _debounce?.cancel();
     super.dispose();
   }

@@ -22,7 +22,7 @@ class TecnicoScreen extends StatefulWidget {
 }
 
 class _TecnicoScreenState extends State<TecnicoScreen> {
-  final TecnicoBloc _tecnicoBloc = TecnicoBloc();
+  late final TecnicoBloc _tecnicoBloc;
   late TextEditingController _idController,
       _nomeController,
       _situacaoController;
@@ -34,6 +34,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
   @override
   void initState() {
     super.initState();
+    _tecnicoBloc = context.read<TecnicoBloc>();
     _idController = TextEditingController();
     _nomeController = TextEditingController();
     _situacaoController = TextEditingController();
@@ -248,7 +249,6 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
           _buildSearchInputs(),
           Expanded(
             child: BlocBuilder<TecnicoBloc, TecnicoState>(
-              bloc: _tecnicoBloc,
               builder: (context, state) {
                 if (state is TecnicoInitialState || state is TecnicoLoadingState) {
                   return const Center(child: CircularProgressIndicator.adaptive());
@@ -293,7 +293,6 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     _nomeController.dispose();
     _situacaoController.dispose();
     _situacaoNotifier.dispose();
-    _tecnicoBloc.close();
     _debounce?.cancel();
     super.dispose();
   }

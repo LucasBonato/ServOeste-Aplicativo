@@ -18,7 +18,7 @@ class ClienteScreen extends StatefulWidget {
 }
 
 class _ClienteScreenState extends State<ClienteScreen> {
-  final ClienteBloc _clienteBloc = ClienteBloc();
+  late final ClienteBloc _clienteBloc;
   late final TextEditingController _nomeController,
       _telefoneController,
       _enderecoController;
@@ -29,6 +29,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
   @override
   void initState() {
     super.initState();
+    _clienteBloc = context.read<ClienteBloc>();
     _nomeController = TextEditingController();
     _telefoneController = TextEditingController();
     _enderecoController = TextEditingController();
@@ -278,7 +279,6 @@ class _ClienteScreenState extends State<ClienteScreen> {
     _nomeController.dispose();
     _telefoneController.dispose();
     _enderecoController.dispose();
-    _clienteBloc.close();
     super.dispose();
   }
 }

@@ -14,13 +14,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final ServicoBloc _servicoBloc = ServicoBloc();
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -81,7 +74,6 @@ class _HomeState extends State<Home> {
         const SizedBox(height: 10),
         Expanded(
           child: BlocBuilder<ServicoBloc, ServicoState>(
-            bloc: _servicoBloc,
             builder: (context, state) {
               if (state is ServicoSearchSuccessState) {
                 return SingleChildScrollView(
@@ -102,15 +94,9 @@ class _HomeState extends State<Home> {
               return const Center(child: CircularProgressIndicator.adaptive());
             },
           ),
-        )
+        ),
       ],
     );
-  }
-
-  @override
-  void dispose() {
-    _servicoBloc.close();
-    super.dispose();
   }
 }
 //TODO - Mostrar alguma menssagem quando não tiver serviços no dia, ou mostrar os da semana.
