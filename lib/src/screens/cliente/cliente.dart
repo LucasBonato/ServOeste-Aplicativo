@@ -202,16 +202,14 @@ class _ClienteScreenState extends State<ClienteScreen> {
       ],
     );
 
-    return Center(
-      child: Container(
-        width: isLargeScreen ? maxContainerWidth : double.infinity,
-        padding: const EdgeInsets.all(5),
-        child: (isLargeScreen)
-            ? buildLargeScreenLayout()
-            : (isMediumScreen)
-              ? buildMediumScreenLayout()
-              : buildSmallScreenLayout(),
-      ),
+    return Container(
+      width: isLargeScreen ? maxContainerWidth : double.infinity,
+      padding: const EdgeInsets.all(5),
+      child: (isLargeScreen)
+          ? buildLargeScreenLayout()
+          : (isMediumScreen)
+            ? buildMediumScreenLayout()
+            : buildSmallScreenLayout(),
     );
   }
 

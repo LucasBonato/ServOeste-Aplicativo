@@ -53,83 +53,93 @@ class ServicesScreenState extends State<ServicesScreen> {
   }
 
   Widget _buildSearchInputs() {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final bool isLargeScreen = screenWidth >= 1000;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isLargeScreen = screenWidth >= 1000;
+    final isMediumScreen = screenWidth >= 500 && screenWidth < 1000;
+    final maxContainerWidth = 1200.0;
 
-    return Container(
-      width: isLargeScreen ? 1200.0 : double.infinity,
-      padding: const EdgeInsets.all(5),
-      child: isLargeScreen
-          ? _buildLargeScreenLayout()
-          : _buildSmallScreenLayout(),
+    Widget buildSearchField({required String hint, TextEditingController? controller}) => CustomSearchTextField(
+      hint: hint,
+      leftPadding: 8,
+      rightPadding: 8,
+      controller: controller,
+      onChangedAction: (value) => _onNomeChanged(),
     );
-  }
 
-  Widget _buildLargeScreenLayout() => Row(
-    children: [
-      _buildSearchField(
-        hint: 'Nome do Cliente...',
-        controller: _nomeClienteController,
-      ),
-      _buildSearchField(
-        hint: 'Nome do Técnico...',
-        controller: _nomeTecnicoController,
-      ),
-      _buildFilterIcon(),
-    ],
-  );
-
-  Widget _buildSmallScreenLayout() => Column(
-    children: [
-      _buildSearchField(
-        hint: 'Nome do Cliente...',
-        controller: _nomeClienteController,
-      ),
-      Row(
-        children: [
-          Expanded(
-            child: _buildSearchField(
-              hint: 'Nome do Técnico...',
-              controller: _nomeTecnicoController,
-            ),
+    Widget buildFilterIcon() => InkWell(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FilterService())),
+      hoverColor: const Color(0xFFF5EEED),
+      borderRadius: BorderRadius.circular(10),
+      child: Ink(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: const Color(0xFFFFF8F7),
+          border: Border.all(
+            color: const Color(0xFFEAE6E5),
           ),
-          Padding(
-            padding: EdgeInsets.only(right: 8, top: 4),
-            child: _buildFilterIcon(),
-          ),
-        ],
-      ),
-    ],
-  );
-
-  Widget _buildFilterIcon() => InkWell(
-    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FilterService())),
-    hoverColor: const Color(0xFFF5EEED),
-    borderRadius: BorderRadius.circular(10),
-    child: Ink(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: const Color(0xFFFFF8F7),
-        border: Border.all(
-          color: const Color(0xFFEAE6E5),
+        ),
+        child: const Icon(
+          Icons.filter_list,
+          size: 30.0,
+          color: Colors.black,
         ),
       ),
-      child: const Icon(
-        Icons.filter_list,
-        size: 30.0,
-        color: Colors.black,
-      ),
-    ),
-  );
+    );
 
-  Widget _buildSearchField({required String hint, TextEditingController? controller}) => CustomSearchTextField(
-    hint: hint,
-    leftPadding: 8,
-    rightPadding: 8,
-    controller: controller,
-    onChangedAction: (value) => _onNomeChanged(),
-  );
+    Widget buildLargeScreenLayout() => Row(
+      children: [
+        Expanded(
+          flex: 7,
+          child: buildSearchField(
+            hint: 'Nome do Cliente...',
+            controller: _nomeClienteController,
+          ),
+        ),
+        Expanded(
+          flex: 7,
+          child: buildSearchField(
+            hint: 'Nome do Técnico...',
+            controller: _nomeTecnicoController,
+          ),
+        ),
+        Expanded(
+          child: buildFilterIcon()
+        ),
+      ],
+    );
+
+    Widget buildSmallScreenLayout() => Column(
+      children: [
+        buildSearchField(
+          hint: 'Nome do Cliente...',
+          controller: _nomeClienteController,
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: buildSearchField(
+                hint: 'Nome do Técnico...',
+                controller: _nomeTecnicoController,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(right: 8, top: 4),
+              child: buildFilterIcon(),
+            ),
+          ],
+        ),
+      ],
+    );
+
+    return Container(
+      width: isLargeScreen ? maxContainerWidth : double.infinity,
+      padding: const EdgeInsets.all(5),
+      child: isLargeScreen
+          ? buildLargeScreenLayout()
+          : buildSmallScreenLayout(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
