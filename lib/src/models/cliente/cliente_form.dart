@@ -6,9 +6,8 @@ class ClienteForm extends ChangeNotifier {
   ValueNotifier<String> telefoneCelular = ValueNotifier("");
   ValueNotifier<String> telefoneFixo = ValueNotifier("");
   ValueNotifier<String> cep = ValueNotifier("");
-  ValueNotifier<String> municipio = ValueNotifier("Osasco");
+  ValueNotifier<String> municipio = ValueNotifier("");
   ValueNotifier<String> bairro = ValueNotifier("");
-  ValueNotifier<String> endereco = ValueNotifier("");
   ValueNotifier<String> rua = ValueNotifier("");
   ValueNotifier<String> numero = ValueNotifier("");
   ValueNotifier<String> complemento = ValueNotifier("");
@@ -44,11 +43,6 @@ class ClienteForm extends ChangeNotifier {
 
   void setBairro(String? bairro) {
     this.bairro.value = bairro ?? "";
-    notifyListeners();
-  }
-
-  void setEndereco(String? endereco) {
-    this.endereco.value = endereco?? "";
     notifyListeners();
   }
 

@@ -8,7 +8,6 @@ import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
 import 'package:serv_oeste/src/components/custom_search_field.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
-import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
 
 class ClienteScreen extends StatefulWidget {
   const ClienteScreen({super.key});

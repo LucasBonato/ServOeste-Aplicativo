@@ -16,11 +16,7 @@ class BuildWidgets {
     );
   }
 
-  static FloatingActionButton buildFabRemove(
-    BuildContext context,
-    dynamic removeMethod, {
-    String tooltip = '',
-  }) {
+  static FloatingActionButton buildFabRemove(BuildContext context, dynamic removeMethod, {String tooltip = ''}) {
     return FloatingActionButton(
       heroTag: "Remove_$tooltip",
       backgroundColor: Colors.red,

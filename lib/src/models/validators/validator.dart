@@ -136,9 +136,13 @@ class ClienteValidator extends LucidValidator<ClienteForm> with BackendErrorsVal
     ruleFor((cliente) => cliente.telefoneFixo.value, key: ErrorCodeKey.telefoneFixo.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.telefoneFixo.name);
 
-    ruleFor((cliente) => cliente.endereco.value, key: ErrorCodeKey.endereco.name)
-        .mustHaveNumber()
+    ruleFor((cliente) => cliente.rua.value, key: ErrorCodeKey.endereco.name)
+        .notEmpty()
         .customValidExternalErrors(externalErrors, ErrorCodeKey.endereco.name);
+
+    ruleFor((cliente) => cliente.numero.value, key: ErrorCodeKey.numero.name)
+        .notEmpty()
+        .mustHaveNumber();
 
     ruleFor((cliente) => cliente.municipio.value, key: ErrorCodeKey.municipio.name)
         .must((cliente) => cliente.isNotEmpty, "Selecione um múnicipio", ErrorCodeKey.municipio.name)
@@ -250,5 +254,7 @@ enum ErrorCodeKey {
   filial,
   horario,
   data,
-  conhecimento
+  conhecimento,
+  numero,
+  complemento
 }
