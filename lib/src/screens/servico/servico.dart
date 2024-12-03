@@ -33,23 +33,23 @@ class ServicesScreenState extends State<ServicesScreen> {
     super.initState();
     _nomeClienteController = TextEditingController();
     _nomeTecnicoController = TextEditingController();
-    _servicoBloc.add(ServicoLoadingEvent(filterRequest: ServicoFilterRequest()));
+    _servicoBloc
+        .add(ServicoLoadingEvent(filterRequest: ServicoFilterRequest()));
   }
 
   void _onNomeChanged() {
-    if (_debounce?.isActive?? false) _debounce!.cancel();
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
 
     _debounce = Timer(
-      Duration(milliseconds: 150),
-      () => _servicoBloc.add(
-        ServicoLoadingEvent(
-          filterRequest: ServicoFilterRequest(
-            clienteNome: _nomeClienteController.text,
-            tecnicoNome: _nomeTecnicoController.text,
-          ),
-        ),
-      )
-    );
+        Duration(milliseconds: 150),
+        () => _servicoBloc.add(
+              ServicoLoadingEvent(
+                filterRequest: ServicoFilterRequest(
+                  clienteNome: _nomeClienteController.text,
+                  tecnicoNome: _nomeTecnicoController.text,
+                ),
+              ),
+            ));
   }
 
   Widget _buildSearchInputs() {
@@ -58,86 +58,86 @@ class ServicesScreenState extends State<ServicesScreen> {
     final isMediumScreen = screenWidth >= 500 && screenWidth < 1000;
     final maxContainerWidth = 1200.0;
 
-    Widget buildSearchField({required String hint, TextEditingController? controller}) => CustomSearchTextField(
-      hint: hint,
-      leftPadding: 8,
-      rightPadding: 8,
-      controller: controller,
-      onChangedAction: (value) => _onNomeChanged(),
-    );
+    Widget buildSearchField(
+            {required String hint, TextEditingController? controller}) =>
+        CustomSearchTextField(
+          hint: hint,
+          leftPadding: 8,
+          rightPadding: 8,
+          controller: controller,
+          onChangedAction: (value) => _onNomeChanged(),
+        );
 
     Widget buildFilterIcon() => InkWell(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FilterService())),
-      hoverColor: const Color(0xFFF5EEED),
-      borderRadius: BorderRadius.circular(10),
-      child: Ink(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
+          onTap: () => Navigator.push(context,
+              MaterialPageRoute(builder: (context) => FilterService())),
+          hoverColor: const Color(0xFFF5EEED),
           borderRadius: BorderRadius.circular(10),
-          color: const Color(0xFFFFF8F7),
-          border: Border.all(
-            color: const Color(0xFFEAE6E5),
+          child: Ink(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: const Color(0xFFFFF8F7),
+              border: Border.all(
+                color: const Color(0xFFEAE6E5),
+              ),
+            ),
+            child: const Icon(
+              Icons.filter_list,
+              size: 30.0,
+              color: Colors.black,
+            ),
           ),
-        ),
-        child: const Icon(
-          Icons.filter_list,
-          size: 30.0,
-          color: Colors.black,
-        ),
-      ),
-    );
+        );
 
     Widget buildLargeScreenLayout() => Row(
-      children: [
-        Expanded(
-          flex: 7,
-          child: buildSearchField(
-            hint: 'Nome do Cliente...',
-            controller: _nomeClienteController,
-          ),
-        ),
-        Expanded(
-          flex: 7,
-          child: buildSearchField(
-            hint: 'Nome do Técnico...',
-            controller: _nomeTecnicoController,
-          ),
-        ),
-        Expanded(
-          child: buildFilterIcon()
-        ),
-      ],
-    );
-
-    Widget buildSmallScreenLayout() => Column(
-      children: [
-        buildSearchField(
-          hint: 'Nome do Cliente...',
-          controller: _nomeClienteController,
-        ),
-        Row(
           children: [
             Expanded(
+              flex: 7,
+              child: buildSearchField(
+                hint: 'Nome do Cliente...',
+                controller: _nomeClienteController,
+              ),
+            ),
+            Expanded(
+              flex: 7,
               child: buildSearchField(
                 hint: 'Nome do Técnico...',
                 controller: _nomeTecnicoController,
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(right: 8, top: 4),
-              child: buildFilterIcon(),
+            Expanded(child: buildFilterIcon()),
+          ],
+        );
+
+    Widget buildSmallScreenLayout() => Column(
+          children: [
+            buildSearchField(
+              hint: 'Nome do Cliente...',
+              controller: _nomeClienteController,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: buildSearchField(
+                    hint: 'Nome do Técnico...',
+                    controller: _nomeTecnicoController,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(right: 8, top: 4),
+                  child: buildFilterIcon(),
+                ),
+              ],
             ),
           ],
-        ),
-      ],
-    );
+        );
 
     return Container(
       width: isLargeScreen ? maxContainerWidth : double.infinity,
       padding: const EdgeInsets.all(5),
-      child: isLargeScreen
-          ? buildLargeScreenLayout()
-          : buildSmallScreenLayout(),
+      child:
+          isLargeScreen ? buildLargeScreenLayout() : buildSmallScreenLayout(),
     );
   }
 
@@ -185,7 +185,8 @@ class ServicesScreenState extends State<ServicesScreen> {
                     ),
                   );
                 }
-                return const Center(child: CircularProgressIndicator.adaptive());
+                return const Center(
+                    child: CircularProgressIndicator.adaptive());
               },
             )
           ],

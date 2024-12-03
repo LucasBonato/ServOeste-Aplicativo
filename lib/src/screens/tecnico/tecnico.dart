@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/src/components/dropdown_field.dart';
 import 'package:serv_oeste/src/components/grid_view.dart';
 import 'package:serv_oeste/src/components/card_technical.dart';
 import 'package:serv_oeste/src/components/custom_search_field.dart';
@@ -12,16 +14,19 @@ import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
 
-class TecnicoPage extends StatefulWidget {
-  const TecnicoPage({super.key});
+class TecnicoScreen extends StatefulWidget {
+  const TecnicoScreen({super.key});
 
   @override
-  State<TecnicoPage> createState() => _TecnicoScreenState();
+  State<TecnicoScreen> createState() => _TecnicoScreenState();
 }
 
-class _TecnicoScreenState extends State<TecnicoPage> {
+class _TecnicoScreenState extends State<TecnicoScreen> {
   final TecnicoBloc _tecnicoBloc = TecnicoBloc();
-  late TextEditingController _idController, _nomeController, _situacaoController;
+  late TextEditingController _idController,
+      _nomeController,
+      _situacaoController;
+  late ValueNotifier<String> _situacaoNotifier;
   late final List<int> _selectedItems;
   bool isSelected = false;
   Timer? _debounce;
@@ -29,7 +34,6 @@ class _TecnicoScreenState extends State<TecnicoPage> {
   @override
   void initState() {
     super.initState();
-    _tecnicoBloc.add(TecnicoLoadingEvent());
     _idController = TextEditingController();
     _nomeController = TextEditingController();
     _situacaoController = TextEditingController();
@@ -37,18 +41,17 @@ class _TecnicoScreenState extends State<TecnicoPage> {
   }
 
   void _onSearchFieldChanged() {
-    if (_debounce?.isActive?? false) _debounce!.cancel();
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
 
     _debounce = Timer(
-      Duration(milliseconds: 150),
-      () => _tecnicoBloc.add(
-        TecnicoSearchEvent(
-          nome: _nomeController.text,
-          id: int.tryParse(_idController.text),
-          situacao: _situacaoController.text,
-        ),
-      )
-    );
+        Duration(milliseconds: 150),
+        () => _tecnicoBloc.add(
+              TecnicoSearchEvent(
+                nome: _nomeController.text,
+                id: int.tryParse(_idController.text),
+                situacao: _situacaoController.text,
+              ),
+            ));
   }
 
   void _disableTecnicos() {
@@ -97,61 +100,28 @@ class _TecnicoScreenState extends State<TecnicoPage> {
     final isMediumScreen = screenWidth >= 500 && screenWidth < 1000;
     final maxContainerWidth = 1200.0;
 
-    Widget buildSearchField({required String hint, TextEditingController? controller, TextInputType? keyboardType}) => CustomSearchTextField(
-      hint: hint,
-      leftPadding: 8,
-      rightPadding: 8,
-      controller: controller,
-      keyboardType: keyboardType,
-      onChangedAction: (value) => _onSearchFieldChanged(),
-    );
+    Widget buildSearchField(
+            {required String hint,
+            TextEditingController? controller,
+            TextInputType? keyboardType}) =>
+        CustomSearchTextField(
+          hint: hint,
+          leftPadding: 8,
+          rightPadding: 8,
+          controller: controller,
+          keyboardType: keyboardType,
+          onChangedAction: (value) => _onSearchFieldChanged(),
+        );
 
     Widget buildLargeScreenLayout() => Row(
-      children: [
-        Expanded(
-          flex: 2,
-          child: buildSearchField(
-            hint: "Procure por Técnicos...",
-            controller: _nomeController,
-          ),
-        ),
-        Expanded(
-          flex: 1,
-          child: buildSearchField(
-            hint: 'ID...',
-            keyboardType: TextInputType.number,
-            controller: _idController,
-          ),
-        ),
-        Expanded(
-          flex: 1,
-          child: CustomSearchDropDown(
-            label: "Situação...",
-            dropdownValues: Constants.situationTecnicoList,
-            controller: _situacaoController,
-            searchDecoration: true,
-            leftPadding: 0,
-            onChanged: (situacao) => _tecnicoBloc.add(
-              TecnicoSearchEvent(
-                id: int.tryParse(_idController.text),
-                nome: _nomeController.text,
-                situacao: situacao,
+          children: [
+            Expanded(
+              flex: 2,
+              child: buildSearchField(
+                hint: "Procure por Técnicos...",
+                controller: _nomeController,
               ),
             ),
-          ),
-        ),
-      ],
-    );
-
-    Widget buildMediumScreenLayout() => Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        buildSearchField(
-          hint: "Procure por Técnicos...",
-          controller: _nomeController,
-        ),
-        Row(
-          children: [
             Expanded(
               flex: 1,
               child: buildSearchField(
@@ -168,57 +138,95 @@ class _TecnicoScreenState extends State<TecnicoPage> {
                 controller: _situacaoController,
                 searchDecoration: true,
                 leftPadding: 0,
-                onChanged: (situacao) => _tecnicoBloc.add(TecnicoSearchEvent(
-                  id: int.tryParse(_idController.text),
-                  nome: _nomeController.text,
-                  situacao: situacao,
-                ),
+                onChanged: (situacao) => _tecnicoBloc.add(
+                  TecnicoSearchEvent(
+                    id: int.tryParse(_idController.text),
+                    nome: _nomeController.text,
+                    situacao: situacao,
+                  ),
                 ),
               ),
             ),
           ],
-        ),
-      ],
-    );
+        );
+
+    Widget buildMediumScreenLayout() => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            buildSearchField(
+              hint: "Procure por Técnicos...",
+              controller: _nomeController,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: buildSearchField(
+                    hint: 'ID...',
+                    keyboardType: TextInputType.number,
+                    controller: _idController,
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: CustomSearchDropDown(
+                    label: "Situação...",
+                    dropdownValues: Constants.situationTecnicoList,
+                    controller: _situacaoController,
+                    searchDecoration: true,
+                    leftPadding: 0,
+                    onChanged: (situacao) => _tecnicoBloc.add(
+                      TecnicoSearchEvent(
+                        id: int.tryParse(_idController.text),
+                        nome: _nomeController.text,
+                        situacao: situacao,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
 
     Widget buildSmallScreenLayout() => Column(
-      children: [
-        buildSearchField(
-          hint: "Procure por Técnicos...",
-          controller: _nomeController,
-        ),
-        buildSearchField(
-          hint: 'ID...',
-          keyboardType: TextInputType.number,
-          controller: _idController,
-        ),
-        CustomSearchDropDown(
-          label: "Situação...",
-          rightPadding: 8,
-          leftPadding: 8,
-          dropdownValues: Constants.situationTecnicoList,
-          controller: _situacaoController,
-          searchDecoration: true,
-          onChanged: (situacao) => _tecnicoBloc.add(
-            TecnicoSearchEvent(
-              id: int.tryParse(_idController.text),
-              nome: _nomeController.text,
-              situacao: situacao,
+          children: [
+            buildSearchField(
+              hint: "Procure por Técnicos...",
+              controller: _nomeController,
             ),
-          ),
-        ),
-      ],
-    );
+            buildSearchField(
+              hint: 'ID...',
+              keyboardType: TextInputType.number,
+              controller: _idController,
+            ),
+            CustomSearchDropDown(
+              label: "Situação...",
+              rightPadding: 8,
+              leftPadding: 8,
+              dropdownValues: Constants.situationTecnicoList,
+              controller: _situacaoController,
+              searchDecoration: true,
+              onChanged: (situacao) => _tecnicoBloc.add(
+                TecnicoSearchEvent(
+                  id: int.tryParse(_idController.text),
+                  nome: _nomeController.text,
+                  situacao: situacao,
+                ),
+              ),
+            ),
+          ],
+        );
 
     return Center(
       child: Container(
         width: isLargeScreen ? maxContainerWidth : double.infinity,
         padding: const EdgeInsets.all(5),
         child: isLargeScreen
-          ? buildLargeScreenLayout()
-          : isMediumScreen
-            ? buildMediumScreenLayout()
-            : buildSmallScreenLayout(),
+            ? buildLargeScreenLayout()
+            : isMediumScreen
+                ? buildMediumScreenLayout()
+                : buildSmallScreenLayout(),
       ),
     );
   }
@@ -226,31 +234,31 @@ class _TecnicoScreenState extends State<TecnicoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
-      floatingActionButton: (!isSelected)
-        ? BuildWidgets.buildFabAdd(
-          context,
-          "/createTecnico",
-          () => _tecnicoBloc.add(TecnicoSearchEvent()),
-          tooltip: 'Adicionar um técnico',
-        )
-        : BuildWidgets.buildFabRemove(
-          context,
-          _disableTecnicos,
-          tooltip: 'Excluir técnicos selecionados',
-        ),
-      body: Column(
-        children: [
+        resizeToAvoidBottomInset: true,
+        floatingActionButton: (!isSelected)
+            ? BuildWidgets.buildFabAdd(
+                context,
+                "/createTecnico",
+                () => _tecnicoBloc.add(TecnicoSearchEvent()),
+                tooltip: 'Adicionar um técnico',
+              )
+            : BuildWidgets.buildFabRemove(
+                context,
+                _disableTecnicos,
+                tooltip: 'Excluir técnicos selecionados',
+              ),
+        body: Column(children: [
           _buildSearchInputs(),
           Flexible(
             child: SingleChildScrollView(
               child: BlocBuilder<TecnicoBloc, TecnicoState>(
                 bloc: _tecnicoBloc,
                 builder: (context, state) {
-                  if (state is TecnicoInitialState || state is TecnicoLoadingState) {
-                    return const Center(child: CircularProgressIndicator.adaptive());
-                  }
-                  else if (state is TecnicoSearchSuccessState) {
+                  if (state is TecnicoInitialState ||
+                      state is TecnicoLoadingState) {
+                    return const Center(
+                        child: CircularProgressIndicator.adaptive());
+                  } else if (state is TecnicoSearchSuccessState) {
                     return GridListView(
                       dataList: state.tecnicos,
                       buildCard: (tecnico) => GestureDetector(
@@ -278,9 +286,7 @@ class _TecnicoScreenState extends State<TecnicoPage> {
               ),
             ),
           )
-        ]
-      )
-    );
+        ]));
   }
 
   @override
@@ -288,6 +294,7 @@ class _TecnicoScreenState extends State<TecnicoPage> {
     _idController.dispose();
     _nomeController.dispose();
     _situacaoController.dispose();
+    _situacaoNotifier.dispose();
     _tecnicoBloc.close();
     _debounce?.cancel();
     super.dispose();

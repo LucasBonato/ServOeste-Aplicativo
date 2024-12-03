@@ -11,7 +11,7 @@ import '../screens/tecnico/create_tecnico.dart';
 class CustomRouter {
   static Map<String, WidgetBuilder> getRoutes(BuildContext context) {
     return {
-      "/tecnico": (context) => const TecnicoPage(),
+      "/tecnico": (context) => const TecnicoScreen(),
       "/createTecnico": (context) => const CreateTecnico(),
       "/cliente": (context) => const ClienteScreen(),
       "/createCliente": (context) => const CreateCliente(),

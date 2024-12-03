@@ -9,6 +9,7 @@ class CustomDropdownField extends StatefulWidget {
   final ValueNotifier<String> valueNotifier;
   final String? Function([String?])? validator;
   final void Function(String?) onChanged;
+  final SingleSelectController<String>? controller;
 
   const CustomDropdownField({
     super.key,
@@ -19,6 +20,7 @@ class CustomDropdownField extends StatefulWidget {
     this.rightPadding,
     this.leftPadding,
     this.validator,
+    this.controller,
   });
 
   @override
@@ -27,29 +29,35 @@ class CustomDropdownField extends StatefulWidget {
 
 class _CustomDropdownFieldState extends State<CustomDropdownField> {
   late SingleSelectController<String> _internalController;
+  late SingleSelectController<String> _effectiveController;
   bool _isHovered = false;
   bool _hasFocus = false;
 
   @override
   void initState() {
+    super.initState();
+
+    // Inicializa o controlador interno apenas se nenhum for fornecido
     _internalController = SingleSelectController(
       (widget.dropdownValues.contains(widget.valueNotifier.value))
           ? widget.valueNotifier.value
           : widget.dropdownValues.first,
     );
 
+    _effectiveController = widget.controller ?? _internalController;
+
     widget.valueNotifier.addListener(() {
-      if (_internalController.value != widget.valueNotifier.value) {
-        _internalController.value = widget.valueNotifier.value;
+      if (_effectiveController.value != widget.valueNotifier.value) {
+        _effectiveController.value = widget.valueNotifier.value;
       }
     });
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(widget.leftPadding ?? 16, 4, widget.rightPadding ?? 16, 16),
+      padding: EdgeInsets.fromLTRB(
+          widget.leftPadding ?? 16, 4, widget.rightPadding ?? 16, 16),
       child: MouseRegion(
         onEnter: (_) => setState(() {
           _isHovered = true;
@@ -65,9 +73,10 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
           },
           child: ValueListenableBuilder<String>(
             valueListenable: widget.valueNotifier,
-            builder: (BuildContext context, String value, Widget? child) => CustomDropdown<String>(
+            builder: (BuildContext context, String value, Widget? child) =>
+                CustomDropdown<String>(
               items: widget.dropdownValues,
-              controller: _internalController,
+              controller: _effectiveController,
               hintText: widget.label,
               hintBuilder: (context, hint, enabled) => Text(
                 hint,
@@ -89,7 +98,7 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
                 ),
               ),
               closedHeaderPadding: const EdgeInsets.symmetric(
-                vertical: 12,
+                vertical: 16,
                 horizontal: 16,
               ),
               excludeSelected: false,
@@ -100,5 +109,13 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    if (widget.controller == null) {
+      _internalController.dispose();
+    }
+    super.dispose();
   }
 }
