@@ -40,7 +40,7 @@ class BaseLayoutState extends State<BaseLayout> {
     _tecnicoBloc = context.read<TecnicoBloc>();
     _clienteBloc = context.read<ClienteBloc>();
 
-    _currentIndex = widget.initialIndex?? 0;
+    _currentIndex = widget.initialIndex ?? 0;
     _navigatorKeys = List.generate(4, (_) => GlobalKey<NavigatorState>());
     _screens = List.filled(4, null);
     _loadTab(_currentIndex);
@@ -80,8 +80,8 @@ class BaseLayoutState extends State<BaseLayout> {
     _servicoBloc.add(
       ServicoLoadingEvent(
         filterRequest: ServicoFilterRequest(
-          // dataAtendimentoPrevistoAntes: DateTime.now().toUtc()
-        ),
+            // dataAtendimentoPrevistoAntes: DateTime.now().toUtc()
+            ),
       ),
     );
   }

@@ -58,7 +58,7 @@ class ServicoScreenState extends State<ServicoScreen> {
             {required String hint, TextEditingController? controller}) =>
         CustomSearchTextField(
           hint: hint,
-          leftPadding: 8,
+          leftPadding: 0,
           rightPadding: 8,
           controller: controller,
           onChangedAction: (value) => _onNomeChanged(),
@@ -89,14 +89,14 @@ class ServicoScreenState extends State<ServicoScreen> {
     Widget buildLargeScreenLayout() => Row(
           children: [
             Expanded(
-              flex: 7,
+              flex: 8,
               child: buildSearchField(
                 hint: 'Nome do Cliente...',
                 controller: _nomeClienteController,
               ),
             ),
             Expanded(
-              flex: 7,
+              flex: 8,
               child: buildSearchField(
                 hint: 'Nome do Técnico...',
                 controller: _nomeTecnicoController,
@@ -182,7 +182,8 @@ class ServicoScreenState extends State<ServicoScreen> {
                     ),
                   );
                 }
-                return const Center(child: CircularProgressIndicator.adaptive());
+                return const Center(
+                    child: CircularProgressIndicator.adaptive());
               },
             ),
           )

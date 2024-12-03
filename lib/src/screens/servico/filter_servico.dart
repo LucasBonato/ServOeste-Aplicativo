@@ -44,7 +44,8 @@ class FilterService extends StatelessWidget {
         ),
         title: const Text(
           "Voltar",
-          style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFCFDFDFF),
         elevation: 0,
@@ -77,7 +78,20 @@ class FilterService extends StatelessWidget {
                   const SizedBox(height: 16.0),
                   CustomSearchDropDown(
                     label: 'Equipamento...',
-                    dropdownValues: ['Equipamento 1', 'Equipamento 2'],
+                    dropdownValues: [
+                      'Adega de Vinho',
+                      'Ar Condicionado',
+                      'Bebedouro',
+                      'Climatizador',
+                      'Cooler Elétrico',
+                      'Frigobar',
+                      'Geladeira',
+                      'Lava Louças',
+                      'Máquina de Lavar',
+                      'Micro-ondas',
+                      'Purificador de Água',
+                      'Secadora',
+                    ],
                     onChanged: (value) => equipamentoNotifier.value = value,
                   ),
                   const SizedBox(height: 16.0),

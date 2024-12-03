@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/src/components/dropdown_field.dart';
 import 'package:serv_oeste/src/components/grid_view.dart';
 import 'package:serv_oeste/src/components/card_technical.dart';
 import 'package:serv_oeste/src/components/custom_search_field.dart';
@@ -19,9 +21,8 @@ class TecnicoScreen extends StatefulWidget {
 
 class _TecnicoScreenState extends State<TecnicoScreen> {
   late final TecnicoBloc _tecnicoBloc;
-  late TextEditingController _idController,
-      _nomeController,
-      _situacaoController;
+  late TextEditingController _idController, _nomeController;
+  late SingleSelectController<String> _situacaoController;
   late ValueNotifier<String> _situacaoNotifier;
   late final List<int> _selectedItems;
   bool isSelected = false;
@@ -33,7 +34,8 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     _tecnicoBloc = context.read<TecnicoBloc>();
     _idController = TextEditingController();
     _nomeController = TextEditingController();
-    _situacaoController = TextEditingController();
+    _situacaoController = SingleSelectController<String>('Ativo');
+    _situacaoNotifier = ValueNotifier<String>('Ativo');
     _selectedItems = [];
   }
 
@@ -46,7 +48,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
               TecnicoSearchEvent(
                 nome: _nomeController.text,
                 id: int.tryParse(_idController.text),
-                situacao: _situacaoController.text,
+                situacao: _situacaoNotifier.value,
               ),
             ));
   }
@@ -97,16 +99,43 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     final isMediumScreen = screenWidth >= 500 && screenWidth < 1000;
     final maxContainerWidth = 1200.0;
 
-    Widget buildSearchField({required String hint, TextEditingController? controller, TextInputType? keyboardType}) => CustomSearchTextField(
-      hint: hint,
-      leftPadding: 8,
-      rightPadding: 8,
-      controller: controller,
-      keyboardType: keyboardType,
-      onChangedAction: (value) => _onSearchFieldChanged(),
-    );
+    Widget buildSearchField(
+            {required String hint,
+            TextEditingController? controller,
+            TextInputType? keyboardType}) =>
+        CustomSearchTextField(
+          hint: hint,
+          leftPadding: 0,
+          rightPadding: 8,
+          controller: controller,
+          keyboardType: keyboardType,
+          onChangedAction: (value) => _onSearchFieldChanged(),
+        );
+
+    Widget buildDropdownField({
+      required String hint,
+      required SingleSelectController<String> controller,
+      required ValueNotifier<String> valueNotifier,
+      required List<String> dropdownValues,
+    }) =>
+        CustomDropdownField(
+          label: hint,
+          dropdownValues: dropdownValues,
+          controller: controller,
+          valueNotifier: valueNotifier,
+          leftPadding: 0,
+          rightPadding: 8,
+          onChanged: (situacao) => _tecnicoBloc.add(
+            TecnicoSearchEvent(
+              id: int.tryParse(_idController.text),
+              nome: _nomeController.text,
+              situacao: situacao,
+            ),
+          ),
+        );
 
     Widget buildLargeScreenLayout() => Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               flex: 2,
@@ -125,19 +154,11 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
             ),
             Expanded(
               flex: 1,
-              child: CustomSearchDropDown(
-                label: "Situação...",
+              child: buildDropdownField(
+                hint: "Situação...",
                 dropdownValues: Constants.situationTecnicoList,
                 controller: _situacaoController,
-                searchDecoration: true,
-                leftPadding: 0,
-                onChanged: (situacao) => _tecnicoBloc.add(
-                  TecnicoSearchEvent(
-                    id: int.tryParse(_idController.text),
-                    nome: _nomeController.text,
-                    situacao: situacao,
-                  ),
-                ),
+                valueNotifier: _situacaoNotifier,
               ),
             ),
           ],
@@ -151,6 +172,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
               controller: _nomeController,
             ),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   flex: 1,
@@ -162,19 +184,11 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                 ),
                 Expanded(
                   flex: 1,
-                  child: CustomSearchDropDown(
-                    label: "Situação...",
+                  child: buildDropdownField(
+                    hint: "Situação...",
                     dropdownValues: Constants.situationTecnicoList,
                     controller: _situacaoController,
-                    searchDecoration: true,
-                    leftPadding: 0,
-                    onChanged: (situacao) => _tecnicoBloc.add(
-                      TecnicoSearchEvent(
-                        id: int.tryParse(_idController.text),
-                        nome: _nomeController.text,
-                        situacao: situacao,
-                      ),
-                    ),
+                    valueNotifier: _situacaoNotifier,
                   ),
                 ),
               ],
@@ -193,20 +207,11 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
               keyboardType: TextInputType.number,
               controller: _idController,
             ),
-            CustomSearchDropDown(
-              label: "Situação...",
-              rightPadding: 8,
-              leftPadding: 8,
+            buildDropdownField(
+              hint: "Situação...",
               dropdownValues: Constants.situationTecnicoList,
               controller: _situacaoController,
-              searchDecoration: true,
-              onChanged: (situacao) => _tecnicoBloc.add(
-                TecnicoSearchEvent(
-                  id: int.tryParse(_idController.text),
-                  nome: _nomeController.text,
-                  situacao: situacao,
-                ),
-              ),
+              valueNotifier: _situacaoNotifier,
             ),
           ],
         );
@@ -229,27 +234,28 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       floatingActionButton: (!isSelected)
-        ? BuildWidgets.buildFabAdd(
-            context,
-            "/createTecnico",
-            () => _tecnicoBloc.add(TecnicoSearchEvent()),
-            tooltip: 'Adicionar um técnico',
-          )
-        : BuildWidgets.buildFabRemove(
-            context,
-            _disableTecnicos,
-            tooltip: 'Excluir técnicos selecionados',
-          ),
+          ? BuildWidgets.buildFabAdd(
+              context,
+              "/createTecnico",
+              () => _tecnicoBloc.add(TecnicoSearchEvent()),
+              tooltip: 'Adicionar um técnico',
+            )
+          : BuildWidgets.buildFabRemove(
+              context,
+              _disableTecnicos,
+              tooltip: 'Excluir técnicos selecionados',
+            ),
       body: Column(
         children: [
           _buildSearchInputs(),
           Expanded(
             child: BlocBuilder<TecnicoBloc, TecnicoState>(
               builder: (context, state) {
-                if (state is TecnicoInitialState || state is TecnicoLoadingState) {
-                  return const Center(child: CircularProgressIndicator.adaptive());
-                }
-                else if (state is TecnicoSearchSuccessState) {
+                if (state is TecnicoInitialState ||
+                    state is TecnicoLoadingState) {
+                  return const Center(
+                      child: CircularProgressIndicator.adaptive());
+                } else if (state is TecnicoSearchSuccessState) {
                   return SingleChildScrollView(
                     child: GridListView(
                       dataList: state.tecnicos,
@@ -293,6 +299,5 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     super.dispose();
   }
 }
-//TODO - Na área de pesquisa dos ténicos o campos de situação não pode ser digitavel, precisa ter só as três escolhas (Ativo, Desativado, licença)
 //TODO - Arrumar a parte de selecionar um card em que o Floating Action Button não volta para o estado padrão de adicianar quando nada está selecionado
 //TODO - Tentar passar toda a lógica de selecionamento de cards para um Bloc/Cubit

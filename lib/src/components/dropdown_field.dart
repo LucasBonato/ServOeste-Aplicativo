@@ -37,7 +37,6 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
   void initState() {
     super.initState();
 
-    // Inicializa o controlador interno apenas se nenhum for fornecido
     _internalController = SingleSelectController(
       (widget.dropdownValues.contains(widget.valueNotifier.value))
           ? widget.valueNotifier.value
@@ -98,7 +97,7 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
                 ),
               ),
               closedHeaderPadding: const EdgeInsets.symmetric(
-                vertical: 16,
+                vertical: 12,
                 horizontal: 16,
               ),
               excludeSelected: false,
