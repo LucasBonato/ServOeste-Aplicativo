@@ -46,7 +46,7 @@ class ExpandableFabItems extends StatelessWidget {
         ),
         FloatingActionButton(
           onPressed: () => Navigator.of(context, rootNavigator: true)
-              .pushNamed(secondRouterName)
+              .pushNamed(secondRouterName, arguments: true)
               .then((value) {
             if (value == null) {
               updateList();

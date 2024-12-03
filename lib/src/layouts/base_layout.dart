@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/src/components/bottom_navBar.dart';
+import 'package:serv_oeste/src/components/bottom_nav_bar.dart';
 import 'package:serv_oeste/src/components/sidebar_navigation.dart';
 import 'package:serv_oeste/src/components/header.dart';
 
@@ -14,10 +14,10 @@ class BaseLayout extends StatefulWidget {
   });
 
   @override
-  _BaseLayoutState createState() => _BaseLayoutState();
+  BaseLayoutState createState() => BaseLayoutState();
 }
 
-class _BaseLayoutState extends State<BaseLayout> {
+class BaseLayoutState extends State<BaseLayout> {
   late int _currentIndex;
 
   @override

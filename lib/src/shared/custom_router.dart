@@ -13,13 +13,16 @@ class CustomRouter {
     return {
       "/tecnico": (context) => const TecnicoPage(),
       "/createTecnico": (context) => const CreateTecnico(),
-      // "/updateTecnico": (context) => const UpdateTecnico(),
       "/cliente": (context) => const ClienteScreen(),
       "/createCliente": (context) => const CreateCliente(),
-      // "/updateCliente": (context) => const UpdateCliente(),
       "/servico": (context) => ServicesScreen(),
       "/filterServico": (context) => FilterService(),
-      "/createServico": (context) => const CreateServico(),
+      "/createServico": (context) {
+        final bool? args = ModalRoute.of(context)?.settings.arguments as bool?;
+        return CreateServico(isWithAnExistingClient: args?? false);
+      },
+      // "/updateTecnico": (context) => const UpdateTecnico(),
+      // "/updateCliente": (context) => const UpdateCliente(),
       // "/updateServico": (context) => const UpdateServico()
     };
   }

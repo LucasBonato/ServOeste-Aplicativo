@@ -137,8 +137,8 @@ class ServicesScreenState extends State<ServicesScreen> {
       floatingActionButton: ExpandableFabItems(
         firstHeroTag: 'add_service',
         secondHeroTag: 'add_service_cliente',
-        firstRouterName: '/createService',
-        secondRouterName: '/createServiceAndClient',
+        firstRouterName: '/createServico',
+        secondRouterName: '/createServico',
         firstTooltip: 'Adicionar Serviço',
         secondTooltip: 'Adicionar Serviço e Cliente',
         firstChild: Image.asset(
@@ -165,8 +165,8 @@ class ServicesScreenState extends State<ServicesScreen> {
                   return GridListView(
                     dataList: state.servicos,
                     buildCard: (servico) => CardService(
-                      cliente: (servico as Servico).idCliente.toString(),
-                      tecnico: servico.idTecnico.toString(),
+                      cliente: (servico as Servico).nomeCliente,
+                      tecnico: servico.nomeTecnico,
                       equipamento: servico.equipamento,
                       marca: servico.marca,
                       local: servico.filial,

@@ -76,15 +76,15 @@ class BottomNavBar extends StatelessWidget {
               icon,
               key: ValueKey<int>(index),
               color: isSelected ? Colors.blue : Colors.black,
-              size: isSelected ? 35 : 30,
+              size: 30,
             ),
           ),
           Text(
             label,
             style: TextStyle(
               color: isSelected ? Colors.blue : Colors.black,
-              fontSize: isSelected ? 16 : 14,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],

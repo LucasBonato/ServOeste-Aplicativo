@@ -90,8 +90,8 @@ class _HomeState extends State<Home> {
                 return GridListView(
                   dataList: state.servicos,
                   buildCard: (dynamic servico) => CardService(
-                    cliente: (servico as Servico).idCliente.toString(),
-                    tecnico: servico.idTecnico.toString(),
+                    cliente: (servico as Servico).nomeCliente,
+                    tecnico: servico.nomeTecnico,
                     equipamento: servico.equipamento,
                     marca: servico.marca,
                     local: servico.filial,
