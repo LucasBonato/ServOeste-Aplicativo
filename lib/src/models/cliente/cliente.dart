@@ -28,7 +28,7 @@ class Cliente {
     nome = clienteForm.nome.value;
     telefoneFixo = transformTelefoneMask(clienteForm.telefoneFixo.value);
     telefoneCelular = transformTelefoneMask(clienteForm.telefoneCelular.value);
-    endereco = clienteForm.endereco.value;
+    endereco = "${clienteForm.rua.value}, ${clienteForm.numero.value}${(clienteForm.complemento.value.isNotEmpty) ? ", ${clienteForm.complemento.value}" : ""}";
     bairro = clienteForm.bairro.value;
     municipio = clienteForm.municipio.value;
   }

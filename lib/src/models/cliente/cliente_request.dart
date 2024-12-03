@@ -23,7 +23,7 @@ class ClienteRequest {
     nome = cliente.nome.value;
     telefoneFixo = transformTelefoneMask(cliente.telefoneFixo.value);
     telefoneCelular = transformTelefoneMask(cliente.telefoneCelular.value);
-    endereco = cliente.endereco.value;
+    endereco = "${cliente.rua.value}, ${cliente.numero.value}${(cliente.complemento.value.isNotEmpty) ? ", ${cliente.complemento.value}" : ""}";
     bairro = cliente.bairro.value;
     municipio = cliente.municipio.value;
   }

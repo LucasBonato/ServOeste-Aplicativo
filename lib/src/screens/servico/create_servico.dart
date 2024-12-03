@@ -291,7 +291,7 @@ class _CreateServicoState extends State<CreateServico>{
                                     Expanded(
                                       flex: 8,
                                       child: CustomTextFormField(
-                                        valueNotifier: _clienteCreateForm.endereco,
+                                        valueNotifier: _clienteCreateForm.rua,
                                         hint: "Rua...",
                                         label: "Endereço, Número e Complemento",
                                         validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.endereco.name),
@@ -299,7 +299,7 @@ class _CreateServicoState extends State<CreateServico>{
                                         hide: true,
                                         type: TextInputType.text,
                                         leftPadding: 4,
-                                        onChanged: _clienteCreateForm.setEndereco,
+                                        onChanged: _clienteCreateForm.setRua,
                                       ),
                                     ), // Endereço
                                   ],
