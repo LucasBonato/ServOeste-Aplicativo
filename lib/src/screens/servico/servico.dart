@@ -4,8 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/grid_view.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/components/card_service.dart';
-import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
-import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/components/custom_search_field.dart';
 import 'package:serv_oeste/src/screens/servico/filter_servico.dart';
@@ -32,7 +30,6 @@ class ServicesScreenState extends State<ServicesScreen> {
     _servicoBloc = context.read<ServicoBloc>();
     _nomeClienteController = TextEditingController();
     _nomeTecnicoController = TextEditingController();
-    //_servicoBloc.add(ServicoLoadingEvent(filterRequest: ServicoFilterRequest()));
   }
 
   void _onNomeChanged() {
@@ -200,3 +197,4 @@ class ServicesScreenState extends State<ServicesScreen> {
     super.dispose();
   }
 }
+//TODO - Criar um jeito de selecionar o card para possível edição ou mais ações no futuro

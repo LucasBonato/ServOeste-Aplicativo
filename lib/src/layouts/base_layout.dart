@@ -142,3 +142,4 @@ class BaseLayoutState extends State<BaseLayout> {
     );
   }
 }
+//TODO - no `_loadHome` ou passar o mesmo dia ou passar uma semana inteira de intervalo

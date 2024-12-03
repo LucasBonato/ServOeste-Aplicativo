@@ -282,3 +282,5 @@ class _ClienteScreenState extends State<ClienteScreen> {
     super.dispose();
   }
 }
+//TODO - Arrumar a parte de selecionar um card em que o Floating Action Button não volta para o estado padrão de adicianar quando nada está selecionado
+//TODO - Tentar passar toda a lógica de selecionamento de cards para um Bloc/Cubit
