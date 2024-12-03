@@ -65,9 +65,9 @@ class CardTechnical extends StatelessWidget {
               status,
               style: TextStyle(
                 fontSize: 14,
-                color: status == "Ativo"
+                color: status.toLowerCase() == "ativo"
                     ? const Color.fromARGB(255, 4, 80, 16)
-                    : status == "Licença"
+                    : status.toLowerCase() == "licença"
                         ? const Color.fromARGB(255, 25, 6, 199)
                         : Colors.red,
                 fontWeight: FontWeight.bold,
