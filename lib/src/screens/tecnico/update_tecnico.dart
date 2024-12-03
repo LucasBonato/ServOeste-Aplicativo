@@ -1,4 +1,4 @@
-import 'package:serv_oeste/src/components/custom_text_form_field.dart';
+import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';

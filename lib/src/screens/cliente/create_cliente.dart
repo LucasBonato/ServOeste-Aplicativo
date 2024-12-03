@@ -12,7 +12,7 @@ import 'package:serv_oeste/src/models/validators/validator.dart';
 import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:serv_oeste/src/components/custom_text_form_field.dart';
+import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 
 class CreateCliente extends StatefulWidget {

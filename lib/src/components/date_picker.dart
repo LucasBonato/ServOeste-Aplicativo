@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:serv_oeste/src/components/custom_text_form_field.dart';
+import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 
 //ignore: must_be_immutable
 class CustomDatePicker extends StatefulWidget {
