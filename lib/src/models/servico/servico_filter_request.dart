@@ -3,6 +3,8 @@ class ServicoFilterRequest {
   final DateTime? dataAtendimentoPrevistoDepois;
   final int? clienteId;
   final int? tecnicoId;
+  final String? clienteNome;
+  final String? tecnicoNome;
   final String? filial;
   final String? periodo;
 
@@ -11,6 +13,8 @@ class ServicoFilterRequest {
     this.dataAtendimentoPrevistoDepois,
     this.clienteId,
     this.tecnicoId,
+    this.clienteNome,
+    this.tecnicoNome,
     this.filial,
     this.periodo
   });

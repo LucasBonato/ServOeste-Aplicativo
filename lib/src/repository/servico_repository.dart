@@ -19,6 +19,8 @@ class ServicoRepository extends DioService {
           'dataAtendimentoPrevistoDepois': (servicoFilter.dataAtendimentoPrevistoDepois != null) ? servicoFilter.dataAtendimentoPrevistoDepois!.toIso8601String() : null,
           'clienteId': servicoFilter.clienteId,
           'tecnicoId': servicoFilter.tecnicoId,
+          'clienteNome': servicoFilter.clienteNome,
+          'tecnicoNome': servicoFilter.tecnicoNome,
           'filial': servicoFilter.filial,
           'periodo': servicoFilter.periodo,
         }

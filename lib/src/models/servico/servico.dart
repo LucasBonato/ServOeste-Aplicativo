@@ -1,8 +1,9 @@
-
 class Servico {
   final int id;
   final int idCliente;
   final int idTecnico;
+  final String nomeCliente;
+  final String nomeTecnico;
   final String equipamento;
   final String filial;
   final String horarioPrevisto;
@@ -14,6 +15,8 @@ class Servico {
     required this.id,
     required this.idCliente,
     required this.idTecnico,
+    required this.nomeCliente,
+    required this.nomeTecnico,
     required this.equipamento,
     required this.filial,
     required this.horarioPrevisto,
@@ -26,6 +29,8 @@ class Servico {
     id: json["id"],
     idCliente: json["idCliente"],
     idTecnico: json["idTecnico"],
+    nomeCliente: json["nomeCliente"],
+    nomeTecnico: json["nomeTecnico"],
     equipamento: json["equipamento"],
     filial: json["filial"],
     horarioPrevisto: json["horarioPrevisto"],

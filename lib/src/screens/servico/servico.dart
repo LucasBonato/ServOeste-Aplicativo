@@ -44,8 +44,8 @@ class ServicesScreenState extends State<ServicesScreen> {
       () => _servicoBloc.add(
         ServicoLoadingEvent(
           filterRequest: ServicoFilterRequest(
-            // nomeCliente: _nomeClienteController.text,
-            // nomeTecnico: _nomeTecnicoController.text,
+            clienteNome: _nomeClienteController.text,
+            tecnicoNome: _nomeTecnicoController.text,
           ),
         ),
       )
@@ -105,6 +105,7 @@ class ServicesScreenState extends State<ServicesScreen> {
   Widget _buildFilterIcon() => InkWell(
     onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FilterService())),
     hoverColor: const Color(0xFFF5EEED),
+    borderRadius: BorderRadius.circular(10),
     child: Ink(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
