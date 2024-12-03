@@ -72,7 +72,6 @@ class _BaseLayoutState extends State<BaseLayout> {
         _currentIndex = index;
       });
 
-      // Disparar a requisição ao mudar de aba
       _handleTabLoad(index);
     }
   }
