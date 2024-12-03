@@ -1,28 +1,36 @@
 import 'package:flutter/material.dart';
 
-class SearchTextField extends StatefulWidget {
+class CustomSearchTextField extends StatefulWidget {
   final String hint;
   final TextInputType? keyboardType;
-  final TextEditingController controller;
-  final Function(String) onChangedAction;
+  final TextEditingController? controller;
+  final Function(String)? onChangedAction;
   final double? leftPadding;
   final double? rightPadding;
 
-  const SearchTextField({
+  const CustomSearchTextField({
     super.key,
     required this.hint,
-    required this.onChangedAction,
-    required this.controller,
+    this.onChangedAction,
+    this.controller,
     this.keyboardType,
     this.leftPadding,
     this.rightPadding,
   });
 
   @override
-  State<SearchTextField> createState() => _SearchTextFieldState();
+  State<CustomSearchTextField> createState() => _CustomSearchTextFieldState();
 }
 
-class _SearchTextFieldState extends State<SearchTextField> {
+class _CustomSearchTextFieldState extends State<CustomSearchTextField> {
+  late final TextEditingController _internalController;
+
+  @override
+  void initState() {
+    _internalController = widget.controller?? TextEditingController();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -34,7 +42,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
       ),
       child: TextFormField(
         obscureText: false,
-        controller: widget.controller,
+        controller: _internalController,
         keyboardType: widget.keyboardType ?? TextInputType.text,
         decoration: InputDecoration(
           prefixIcon: const Icon(
@@ -75,9 +83,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
             horizontal: 20,
           ),
         ),
-        onChanged: (value) => setState(() {
-          widget.onChangedAction(value);
-        }),
+        onChanged: widget.onChangedAction,
       ),
     );
   }

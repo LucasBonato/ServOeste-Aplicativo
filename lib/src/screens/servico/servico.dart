@@ -1,14 +1,15 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:serv_oeste/src/components/card_service.dart';
-import 'package:serv_oeste/src/components/expandable_fab_items.dart';
 import 'package:serv_oeste/src/components/grid_view.dart';
-import 'package:serv_oeste/src/components/search_field.dart';
+import 'package:serv_oeste/src/models/servico/servico.dart';
+import 'package:serv_oeste/src/components/card_service.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
-import 'package:serv_oeste/src/models/servico/servico.dart';
-import 'package:serv_oeste/src/screens/servico/filter_servico.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
+import 'package:serv_oeste/src/components/custom_search_field.dart';
+import 'package:serv_oeste/src/screens/servico/filter_servico.dart';
+import 'package:serv_oeste/src/components/expandable_fab_items.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 
 class ServicesScreen extends StatefulWidget {
@@ -23,134 +24,111 @@ class ServicesScreenState extends State<ServicesScreen> {
   final ClienteBloc _clienteBloc = ClienteBloc();
   final TecnicoBloc _tecnicoBloc = TecnicoBloc();
 
-  String? nomeCliente;
-  String? nomeTecnico;
-
-  final TextEditingController clientController = TextEditingController();
-  final TextEditingController technicianController = TextEditingController();
-
-  bool _isHovered = false;
+  late final TextEditingController _nomeClienteController;
+  late final TextEditingController _nomeTecnicoController;
+  Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
+    _nomeClienteController = TextEditingController();
+    _nomeTecnicoController = TextEditingController();
     _servicoBloc.add(ServicoLoadingEvent(filterRequest: ServicoFilterRequest()));
   }
 
-  @override
-  void dispose() {
-    clientController.dispose();
-    technicianController.dispose();
-    _servicoBloc.close();
-    _clienteBloc.close();
-    _tecnicoBloc.close();
-    super.dispose();
-  }
+  void _onNomeChanged() {
+    if (_debounce?.isActive?? false) _debounce!.cancel();
 
-  void _applyFilters() {
-    // _servicoBloc.add(
-    //   ServicoFilterEvent(
-    //     filterRequest: ServicoFilterRequest(
-    //       cliente: clientController.text,
-    //       tecnico: technicianController.text,
-    //     ),
-    //   ),
-    // );
-  }
-
-  void _navigateToFilterPage() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => FilterService()));
+    _debounce = Timer(
+      Duration(milliseconds: 150),
+      () => _servicoBloc.add(
+        ServicoLoadingEvent(
+          filterRequest: ServicoFilterRequest(
+            // nomeCliente: _nomeClienteController.text,
+            // nomeTecnico: _nomeTecnicoController.text,
+          ),
+        ),
+      )
+    );
   }
 
   Widget _buildSearchInputs() {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isLargeScreen = screenWidth >= 1000;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isLargeScreen = screenWidth >= 1000;
 
-    return Center(
-      child: Container(
-        width: isLargeScreen ? 1200.0 : double.infinity,
-        padding: const EdgeInsets.all(5),
-        child: isLargeScreen
-        ? Row(
-      children: [
-        _buildSearchField(
-          hint: 'Nome do Cliente...',
-          controller: clientController,
-          onChanged: _applyFilters,
-        ),
-        _buildSearchField(
-          hint: 'Nome do Técnico...',
-          controller: technicianController,
-          onChanged: _applyFilters,
-        ),
-        _buildFilterIcon(),
-      ],
-    )
-        : Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildSearchField(
-              hint: 'Nome do Cliente...',
-              controller: clientController,
-              onChanged: _applyFilters,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildSearchField(
-                    hint: 'Nome do Técnico...',
-                    controller: technicianController,
-                    onChanged: _applyFilters,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(right: 8),
-                  child: _buildFilterIcon(),
-                ),
-              ],
-            ),
-          ],
-        ),
+    return Container(
+      width: isLargeScreen ? 1200.0 : double.infinity,
+      padding: const EdgeInsets.all(5),
+      child: isLargeScreen
+          ? _buildLargeScreenLayout()
+          : _buildSmallScreenLayout(),
+    );
+  }
+
+  Widget _buildLargeScreenLayout() => Row(
+    children: [
+      _buildSearchField(
+        hint: 'Nome do Cliente...',
+        controller: _nomeClienteController,
       ),
-    );
-  }
+      _buildSearchField(
+        hint: 'Nome do Técnico...',
+        controller: _nomeTecnicoController,
+      ),
+      _buildFilterIcon(),
+    ],
+  );
 
-  Widget _buildSearchField({required String hint, required TextEditingController controller, required VoidCallback onChanged}) {
-    return SearchTextField(
-      hint: hint,
-      controller: controller,
-      onChangedAction: (value) => onChanged(),
-      leftPadding: 8,
-      rightPadding: 8,
-    );
-  }
-
-  Widget _buildFilterIcon() {
-    return InkWell(
-      onTap: _navigateToFilterPage,
-      borderRadius: BorderRadius.circular(10),
-      child: MouseRegion(
-        onEnter: (_) => setState(() => _isHovered = true),
-        onExit: (_) => setState(() => _isHovered = false),
-        child: Ink(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: _isHovered ? const Color(0xFFF5EEED) : const Color(0xFFFFF8F7),
-            border: Border.all(
-              color: _isHovered ? const Color(0xFF6C757D) : const Color(0xFFEAE6E5),
-              width: 1,
+  Widget _buildSmallScreenLayout() => Column(
+    children: [
+      _buildSearchField(
+        hint: 'Nome do Cliente...',
+        controller: _nomeClienteController,
+      ),
+      Row(
+        children: [
+          Expanded(
+            child: _buildSearchField(
+              hint: 'Nome do Técnico...',
+              controller: _nomeTecnicoController,
             ),
           ),
-          child: const Icon(
-            Icons.filter_list,
-            size: 30.0,
-            color: Colors.black,
+          Padding(
+            padding: EdgeInsets.only(right: 8, top: 4),
+            child: _buildFilterIcon(),
           ),
+        ],
+      ),
+    ],
+  );
+
+  Widget _buildFilterIcon() => InkWell(
+    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FilterService())),
+    hoverColor: const Color(0xFFF5EEED),
+    child: Ink(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: const Color(0xFFFFF8F7),
+        border: Border.all(
+          color: const Color(0xFFEAE6E5),
         ),
       ),
-    );
-  }
+      child: const Icon(
+        Icons.filter_list,
+        size: 30.0,
+        color: Colors.black,
+      ),
+    ),
+  );
+
+  Widget _buildSearchField({required String hint, TextEditingController? controller}) => CustomSearchTextField(
+    hint: hint,
+    leftPadding: 8,
+    rightPadding: 8,
+    controller: controller,
+    onChangedAction: (value) => _onNomeChanged(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -173,40 +151,44 @@ class ServicesScreenState extends State<ServicesScreen> {
           size: 36,
           color: Colors.white,
         ),
-        updateList: () => _applyFilters(),
+        updateList: _onNomeChanged,
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             _buildSearchInputs(),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: BlocBuilder<ServicoBloc, ServicoState>(
-                bloc: _servicoBloc,
-                builder: (context, state) {
-                  if (state is ServicoSearchSuccessState) {
-                    return GridListView(
-                      dataList: state.servicos,
-                      buildCard: (servico) => CardService(
-                        cliente: (servico as Servico).idCliente.toString(),
-                        tecnico: servico.idTecnico.toString(),
-                        equipamento: servico.equipamento,
-                        marca: servico.marca,
-                        local: servico.filial,
-                        data: servico.dataAtendimentoPrevisto,
-                        status: servico.situacao,
-                      ),
-                    );
-                  }
-                  else {
-                    return const Center(child: CircularProgressIndicator.adaptive());
-                  }
-                },
-              ),
-            ),
+            BlocBuilder<ServicoBloc, ServicoState>(
+              bloc: _servicoBloc,
+              builder: (context, state) {
+                if (state is ServicoSearchSuccessState) {
+                  return GridListView(
+                    dataList: state.servicos,
+                    buildCard: (servico) => CardService(
+                      cliente: (servico as Servico).idCliente.toString(),
+                      tecnico: servico.idTecnico.toString(),
+                      equipamento: servico.equipamento,
+                      marca: servico.marca,
+                      local: servico.filial,
+                      data: servico.dataAtendimentoPrevisto,
+                      status: servico.situacao,
+                    ),
+                  );
+                }
+                return const Center(child: CircularProgressIndicator.adaptive());
+              },
+            )
           ],
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _servicoBloc.close();
+    _clienteBloc.close();
+    _tecnicoBloc.close();
+    _debounce?.cancel();
+    super.dispose();
   }
 }

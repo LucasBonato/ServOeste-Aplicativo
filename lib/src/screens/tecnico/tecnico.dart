@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/grid_view.dart';
 import 'package:serv_oeste/src/components/card_technical.dart';
-import 'package:serv_oeste/src/components/search_field.dart';
+import 'package:serv_oeste/src/components/custom_search_field.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
@@ -88,7 +88,7 @@ class _TecnicoScreenState extends State<TecnicoPage> {
             children: [
               Expanded(
                 flex: 2,
-                child: SearchTextField(
+                child: CustomSearchTextField(
                   hint: "Procure por Técnicos...",
                   controller: _nomeController,
                   onChangedAction: (String nome) => _tecnicoBloc.add(
@@ -102,7 +102,7 @@ class _TecnicoScreenState extends State<TecnicoPage> {
               ),
               Expanded(
                 flex: 1,
-                child: SearchTextField(
+                child: CustomSearchTextField(
                   hint: 'ID...',
                   keyboardType: TextInputType.number,
                   controller: _idController,
@@ -141,7 +141,7 @@ class _TecnicoScreenState extends State<TecnicoPage> {
               children: [
                 Container(
                   margin: const EdgeInsets.only(bottom: 10),
-                  child: SearchTextField(
+                  child: CustomSearchTextField(
                     hint: "Procure por Técnicos...",
                     controller: _nomeController,
                     onChangedAction: (String nome) {
@@ -161,7 +161,7 @@ class _TecnicoScreenState extends State<TecnicoPage> {
                       flex: 1,
                       child: Container(
                         margin: const EdgeInsets.only(right: 8),
-                        child: SearchTextField(
+                        child: CustomSearchTextField(
                           hint: 'ID...',
                           keyboardType: TextInputType.number,
                           controller: _idController,
@@ -202,7 +202,7 @@ class _TecnicoScreenState extends State<TecnicoPage> {
               children: [
                 Container(
                   margin: const EdgeInsets.only(bottom: 10),
-                  child: SearchTextField(
+                  child: CustomSearchTextField(
                     hint: "Procure por Técnicos...",
                     controller: _nomeController,
                     onChangedAction: (String nome) {
@@ -218,7 +218,7 @@ class _TecnicoScreenState extends State<TecnicoPage> {
                 ),
                 Container(
                   margin: const EdgeInsets.only(bottom: 8),
-                  child: SearchTextField(
+                  child: CustomSearchTextField(
                     hint: 'ID...',
                     keyboardType: TextInputType.number,
                     controller: _idController,

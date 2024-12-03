@@ -4,7 +4,7 @@ import 'package:serv_oeste/src/components/card_client.dart';
 import 'package:serv_oeste/src/components/grid_view.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
-import 'package:serv_oeste/src/components/search_field.dart';
+import 'package:serv_oeste/src/components/custom_search_field.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
 
@@ -107,7 +107,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
           children: [
             Expanded(
               flex: 2,
-              child: SearchTextField(
+              child: CustomSearchTextField(
                 hint: "Procure por Clientes...",
                 controller: _nomeController,
                 onChangedAction: (String nome) {
@@ -123,7 +123,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
             ),
             Expanded(
               flex: 1,
-              child: SearchTextField(
+              child: CustomSearchTextField(
                 hint: 'Telefone...',
                 keyboardType: TextInputType.phone,
                 controller: _telefoneController,
@@ -141,7 +141,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
             ),
             Expanded(
               flex: 1,
-              child: SearchTextField(
+              child: CustomSearchTextField(
                 hint: 'Endereço...',
                 controller: _enderecoController,
                 leftPadding: 0,
@@ -164,7 +164,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
           children: [
             Container(
               margin: const EdgeInsets.only(bottom: 10),
-              child: SearchTextField(
+              child: CustomSearchTextField(
                 hint: "Procure por Clientes...",
                 controller: _nomeController,
                 onChangedAction: (String nome) {
@@ -184,7 +184,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
                   flex: 1,
                   child: Container(
                     margin: const EdgeInsets.only(right: 8),
-                    child: SearchTextField(
+                    child: CustomSearchTextField(
                       hint: 'Telefone...',
                       keyboardType: TextInputType.phone,
                       controller: _telefoneController,
@@ -202,7 +202,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
                 ),
                 Expanded(
                   flex: 1,
-                  child: SearchTextField(
+                  child: CustomSearchTextField(
                     hint: 'Endereço...',
                     controller: _enderecoController,
                     onChangedAction: (String endereco) {
@@ -225,7 +225,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
           children: [
             Container(
               margin: const EdgeInsets.only(bottom: 10),
-              child: SearchTextField(
+              child: CustomSearchTextField(
                 hint: "Procure por Clientes...",
                 controller: _nomeController,
                 onChangedAction: (String nome) {
@@ -241,7 +241,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
             ),
             Container(
               margin: const EdgeInsets.only(bottom: 8),
-              child: SearchTextField(
+              child: CustomSearchTextField(
                 hint: 'Telefone...',
                 keyboardType: TextInputType.phone,
                 controller: _telefoneController,
@@ -256,7 +256,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
                 },
               ),
             ),
-            SearchTextField(
+            CustomSearchTextField(
               hint: 'Endereço...',
               controller: _enderecoController,
               onChangedAction: (String endereco) {

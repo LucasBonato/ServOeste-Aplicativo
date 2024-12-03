@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/src/components/date_picker.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
-import 'package:serv_oeste/src/components/search_field.dart';
+import 'package:serv_oeste/src/components/custom_search_field.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 
 class FilterService extends StatelessWidget {
@@ -69,7 +69,7 @@ class FilterService extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SearchTextField(
+                  CustomSearchTextField(
                     hint: 'Digite o Endereço do Cliente...',
                     controller: addressController,
                     onChangedAction: (value) {},
