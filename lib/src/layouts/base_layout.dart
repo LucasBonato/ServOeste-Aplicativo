@@ -12,11 +12,11 @@ import 'package:serv_oeste/src/screens/servico/servico.dart';
 import 'package:serv_oeste/src/screens/tecnico/tecnico.dart';
 
 class BaseLayout extends StatefulWidget {
-  final int initialIndex;
+  final int? initialIndex;
 
   const BaseLayout({
     super.key,
-    required this.initialIndex,
+    this.initialIndex,
   });
 
   @override
@@ -25,42 +25,30 @@ class BaseLayout extends StatefulWidget {
 
 class BaseLayoutState extends State<BaseLayout> {
   late int _currentIndex;
-  final List<GlobalKey<NavigatorState>> _navigatorKeys = [];
-  late List<Widget?> _screens;
+  late final List<GlobalKey<NavigatorState>> _navigatorKeys;
+  late final List<Widget?> _screens;
+  final Map<int, Widget> _screenMap = {
+    0: Home(),
+    1: TecnicoScreen(),
+    2: ClienteScreen(),
+    3: ServicesScreen(),
+  };
 
-  final _servicoBloc = ServicoBloc();
-  final _tecnicoBloc = TecnicoBloc();
-  final _clienteBloc = ClienteBloc();
+  final ServicoBloc _servicoBloc = ServicoBloc();
+  final TecnicoBloc _tecnicoBloc = TecnicoBloc();
+  final ClienteBloc _clienteBloc = ClienteBloc();
 
   @override
   void initState() {
     super.initState();
-    _currentIndex = widget.initialIndex;
-    _navigatorKeys.addAll(List.generate(4, (_) => GlobalKey<NavigatorState>()));
+    _currentIndex = widget.initialIndex?? 0;
+    _navigatorKeys = List.generate(4, (_) => GlobalKey<NavigatorState>());
     _screens = List.filled(4, null);
-
-    _handleTabLoad(_currentIndex);
+    _loadTab(_currentIndex);
   }
 
-  Widget _buildScreen(int index) {
-    if (_screens[index] == null) {
-      switch (index) {
-        case 0:
-          _screens[index] = Home();
-          break;
-        case 1:
-          _screens[index] = TecnicoScreen();
-          break;
-        case 2:
-          _screens[index] = ClienteScreen();
-          break;
-        case 3:
-          _screens[index] = ServicesScreen();
-          break;
-        default:
-          _screens[index] = Container();
-      }
-    }
+  Widget _getScreen(int index) {
+    _screens[index] ??= _screenMap[index] ?? Container();
     return _screens[index]!;
   }
 
@@ -68,28 +56,24 @@ class BaseLayoutState extends State<BaseLayout> {
     if (_currentIndex == index) {
       _navigatorKeys[index].currentState?.popUntil((route) => route.isFirst);
     } else {
-      setState(() {
-        _currentIndex = index;
-      });
-
-      _handleTabLoad(index);
+      setState(() => _currentIndex = index);
+      _loadTab(index);
     }
   }
 
-  void _handleTabLoad(int index) {
-    if (index == 0) {
-      _onNavigateToHome();
-    } else if (index == 1) {
-      _onNavigateToTecnico();
-    } else if (index == 2) {
-      _onNavigateToCliente();
-    } else if (index == 3) {
-      _onNavigateToServico();
-    }
+  void _loadTab(int index) {
+    final Map<int, VoidCallback> tabLoadAction = {
+      0: _loadHome,
+      1: _loadTecnico,
+      2: _loadCliente,
+      3: _loadServico
+    };
+    tabLoadAction[index]?.call();
   }
 
-  void _onNavigateToHome() {
-    _servicoBloc.add(ServicoLoadingEvent(
+  void _loadHome() {
+    _servicoBloc.add(
+      ServicoLoadingEvent(
         filterRequest: ServicoFilterRequest(
           // dataAtendimentoPrevistoAntes: DateTime.now().toUtc()
         ),
@@ -97,15 +81,15 @@ class BaseLayoutState extends State<BaseLayout> {
     );
   }
 
-  void _onNavigateToTecnico() {
+  void _loadTecnico() {
     _tecnicoBloc.add(TecnicoLoadingEvent());
   }
 
-  void _onNavigateToCliente() {
+  void _loadCliente() {
     _clienteBloc.add(ClienteLoadingEvent());
   }
 
-  void _onNavigateToServico() {
+  void _loadServico() {
     _servicoBloc.add(ServicoLoadingEvent(
       filterRequest: ServicoFilterRequest(),
     ));
@@ -136,7 +120,7 @@ class BaseLayoutState extends State<BaseLayout> {
                         child: Navigator(
                           key: _navigatorKeys[index],
                           onGenerateRoute: (_) => MaterialPageRoute(
-                            builder: (context) => _buildScreen(index),
+                            builder: (context) => _getScreen(index),
                           ),
                         ),
                       );
