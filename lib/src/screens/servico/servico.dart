@@ -10,14 +10,14 @@ import 'package:serv_oeste/src/screens/servico/filter_servico.dart';
 import 'package:serv_oeste/src/components/expandable_fab_items.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 
-class ServicesScreen extends StatefulWidget {
-  const ServicesScreen({super.key});
+class ServicoScreen extends StatefulWidget {
+  const ServicoScreen({super.key});
 
   @override
-  ServicesScreenState createState() => ServicesScreenState();
+  ServicoScreenState createState() => ServicoScreenState();
 }
 
-class ServicesScreenState extends State<ServicesScreen> {
+class ServicoScreenState extends State<ServicoScreen> {
   late final ServicoBloc _servicoBloc;
 
   late final TextEditingController _nomeClienteController;
@@ -51,7 +51,7 @@ class ServicesScreenState extends State<ServicesScreen> {
   Widget _buildSearchInputs() {
     final screenWidth = MediaQuery.of(context).size.width;
     final isLargeScreen = screenWidth >= 1000;
-    final isMediumScreen = screenWidth >= 500 && screenWidth < 1000;
+    //final isMediumScreen = screenWidth >= 500 && screenWidth < 1000;
     final maxContainerWidth = 1200.0;
 
     Widget buildSearchField(
