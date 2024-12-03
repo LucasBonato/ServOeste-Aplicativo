@@ -4,7 +4,7 @@ import 'package:serv_oeste/src/components/grid_view.dart';
 import 'package:serv_oeste/src/components/card_service.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
-import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
+// import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -18,9 +18,10 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    _servicoBloc.add(ServicoLoadingEvent(filterRequest: ServicoFilterRequest(
-      //dataAtendimentoPrevistoAntes: DateTime.now().toUtc()
-    )));
+    // _servicoBloc.add(ServicoLoadingEvent(
+    //     filterRequest: ServicoFilterRequest(
+    //         //dataAtendimentoPrevistoAntes: DateTime.now().toUtc()
+    //         )));
     super.initState();
   }
 
@@ -90,18 +91,17 @@ class _HomeState extends State<Home> {
                 return GridListView(
                   dataList: state.servicos,
                   buildCard: (dynamic servico) => CardService(
-                    cliente: (servico as Servico).idCliente.toString(),
-                    tecnico: servico.idTecnico.toString(),
-                    equipamento: servico.equipamento,
-                    marca: servico.marca,
-                    local: servico.filial,
-                    data: servico.dataAtendimentoPrevisto,
-                    status: servico.situacao
-                  ),
+                      cliente: (servico as Servico).idCliente.toString(),
+                      tecnico: servico.idTecnico.toString(),
+                      equipamento: servico.equipamento,
+                      marca: servico.marca,
+                      local: servico.filial,
+                      data: servico.dataAtendimentoPrevisto,
+                      status: servico.situacao),
                 );
-              }
-              else {
-                return const Center(child: CircularProgressIndicator.adaptive());
+              } else {
+                return const Center(
+                    child: CircularProgressIndicator.adaptive());
               }
             },
           )

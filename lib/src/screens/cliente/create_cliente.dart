@@ -32,9 +32,10 @@ class _CreateClienteState extends State<CreateCliente> {
   Timer? _debounce;
 
   void _onNomeChanged(String nome) {
-    if (_debounce?.isActive?? false) _debounce!.cancel();
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
 
-    _debounce = Timer(Duration(milliseconds: 150), () => _fetchClienteNames(nome));
+    _debounce =
+        Timer(Duration(milliseconds: 150), () => _fetchClienteNames(nome));
   }
 
   void _fetchClienteNames(String nome) async {
@@ -45,30 +46,29 @@ class _CreateClienteState extends State<CreateCliente> {
   }
 
   void _fetchInformationAboutCep(String? cep) async {
-    if(cep?.length != 9) return;
+    if (cep?.length != 9) return;
     _clienteCreateForm.setCep(cep);
     _enderecoBloc.add(EnderecoSearchCepEvent(cep: cep!));
   }
 
   bool _isValidForm() {
     _clienteFormKey.currentState?.validate();
-    final ValidationResult response = _clienteCreateValidator.validate(_clienteCreateForm);
+    final ValidationResult response =
+        _clienteCreateValidator.validate(_clienteCreateForm);
     return response.isValid;
   }
 
   void _registerCliente() {
-    if(_isValidForm() == false) {
+    if (_isValidForm() == false) {
       return;
     }
 
     List<String> nomes = _clienteCreateForm.nome.value.split(" ");
     _clienteCreateForm.nome.value = nomes.first;
-    String sobrenome = nomes
-        .sublist(1)
-        .join(" ")
-        .trim();
+    String sobrenome = nomes.sublist(1).join(" ").trim();
 
-    _clienteBloc.add(ClienteRegisterEvent(cliente: Cliente.fromForm(_clienteCreateForm), sobrenome: sobrenome));
+    _clienteBloc.add(ClienteRegisterEvent(
+        cliente: Cliente.fromForm(_clienteCreateForm), sobrenome: sobrenome));
     _clienteCreateForm.nome.value = "${nomes.first} $sobrenome";
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Cliente adicionado com sucesso!')),
@@ -127,7 +127,7 @@ class _CreateClienteState extends State<CreateCliente> {
                               .map((cliente) => cliente.nome!)
                               .toList();
 
-                          if(_dropdownValuesNomes != nomes) {
+                          if (_dropdownValuesNomes != nomes) {
                             _dropdownValuesNomes = nomes;
                             setState(() {});
                           }
@@ -138,7 +138,8 @@ class _CreateClienteState extends State<CreateCliente> {
                         label: "Nome*",
                         maxLength: 40,
                         dropdownValues: _dropdownValuesNomes,
-                        validator: _clienteCreateValidator.byField(_clienteCreateForm, "nome"),
+                        validator: _clienteCreateValidator.byField(
+                            _clienteCreateForm, "nome"),
                         onChanged: _onNomeChanged,
                       ),
                     ),
@@ -157,7 +158,8 @@ class _CreateClienteState extends State<CreateCliente> {
                               MaskTextInputFormatter(mask: '(##) ####-####'),
                             ],
                             valueNotifier: _clienteCreateForm.telefoneFixo,
-                            validator: _clienteCreateValidator.byField(_clienteCreateForm, "telefoneFixo"),
+                            validator: _clienteCreateValidator.byField(
+                                _clienteCreateForm, "telefoneFixo"),
                             onChanged: _clienteCreateForm.setTelefoneFixo,
                           ),
                         ),
@@ -171,7 +173,8 @@ class _CreateClienteState extends State<CreateCliente> {
                             maxLength: 15,
                             type: TextInputType.phone,
                             hide: false,
-                            validator: _clienteCreateValidator.byField(_clienteCreateForm, "telefoneCelular"),
+                            validator: _clienteCreateValidator.byField(
+                                _clienteCreateForm, "telefoneCelular"),
                             onChanged: _clienteCreateForm.setTelefoneCelular,
                           ),
                         ),
@@ -179,6 +182,7 @@ class _CreateClienteState extends State<CreateCliente> {
                     ),
                     const SizedBox(height: 12),
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: CustomTextFormField(
@@ -190,18 +194,19 @@ class _CreateClienteState extends State<CreateCliente> {
                             hide: false,
                             masks: Constants.maskCep,
                             valueNotifier: _clienteCreateForm.cep,
-                            validator: _clienteCreateValidator.byField(_clienteCreateForm, "cep"),
+                            validator: _clienteCreateValidator.byField(
+                                _clienteCreateForm, "cep"),
                             onChanged: _fetchInformationAboutCep,
                           ),
                         ),
                         Expanded(
-                          child: CustomDropdownField(
+                          child: CustomSearchDropDown(
                             // hint: "Município...",
                             label: "Município*",
                             leftPadding: 4,
                             dropdownValues: Constants.municipios,
-                            valueNotifier: _clienteCreateForm.municipio,
-                            validator: _clienteCreateValidator.byField(_clienteCreateForm, "municipio"),
+                            validator: _clienteCreateValidator.byField(
+                                _clienteCreateForm, "municipio"),
                             onChanged: _clienteCreateForm.setMunicipio,
                           ),
                         ),
@@ -215,7 +220,8 @@ class _CreateClienteState extends State<CreateCliente> {
                       maxLength: 40,
                       hide: true,
                       valueNotifier: _clienteCreateForm.bairro,
-                      validator: _clienteCreateValidator.byField(_clienteCreateForm, "bairro"),
+                      validator: _clienteCreateValidator.byField(
+                          _clienteCreateForm, "bairro"),
                       onChanged: _clienteCreateForm.setBairro,
                     ),
                     const SizedBox(height: 12),
@@ -231,7 +237,8 @@ class _CreateClienteState extends State<CreateCliente> {
                             rightPadding: 8,
                             hide: false,
                             valueNotifier: _clienteCreateForm.rua,
-                            validator: _clienteCreateValidator.byField(_clienteCreateForm, "endereco"),
+                            validator: _clienteCreateValidator.byField(
+                                _clienteCreateForm, "endereco"),
                             onChanged: _clienteCreateForm.setRua,
                           ),
                         ),
@@ -245,7 +252,8 @@ class _CreateClienteState extends State<CreateCliente> {
                             maxLength: 6,
                             hide: false,
                             valueNotifier: _clienteCreateForm.numero,
-                            validator: _clienteCreateValidator.byField(_clienteCreateForm, "numero"),
+                            validator: _clienteCreateValidator.byField(
+                                _clienteCreateForm, "numero"),
                             onChanged: _clienteCreateForm.setNumero,
                           ),
                         ),
@@ -259,7 +267,8 @@ class _CreateClienteState extends State<CreateCliente> {
                       maxLength: 100,
                       hide: false,
                       valueNotifier: _clienteCreateForm.complemento,
-                      validator: _clienteCreateValidator.byField(_clienteCreateForm, "complemento"),
+                      validator: _clienteCreateValidator.byField(
+                          _clienteCreateForm, "complemento"),
                       onChanged: _clienteCreateForm.setComplemento,
                     ),
                     Padding(
@@ -292,37 +301,41 @@ class _CreateClienteState extends State<CreateCliente> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 128),
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                0, 16, 0, 128),
                             child: BlocListener<ClienteBloc, ClienteState>(
                               bloc: _clienteBloc,
                               listener: (context, state) {
                                 if (state is ClienteRegisterSuccessState) {
                                   Navigator.pop(context);
-                                }
-                                else if (state is ClienteErrorState) {
+                                } else if (state is ClienteErrorState) {
                                   ErrorEntity error = state.error;
 
-                                  _clienteCreateValidator.applyBackendError(error);
+                                  _clienteCreateValidator
+                                      .applyBackendError(error);
                                   _clienteFormKey.currentState?.validate();
                                   _clienteCreateValidator.cleanExternalErrors();
 
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text("[ERROR] Informação(ões) inválida(s) ao registrar o Cliente."))
-                                  );
-
+                                      SnackBar(
+                                          content: Text(
+                                              "[ERROR] Informação(ões) inválida(s) ao registrar o Cliente.")));
                                 }
                               },
                               child: ElevatedButton(
                                 onPressed: _registerCliente,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFF007BFF),
-                                  padding: const EdgeInsets.symmetric(vertical: 18),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 18),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   minimumSize: const Size(double.infinity, 48),
                                 ),
-                                child: const Text("Adicionar", style: TextStyle(fontSize: 18, color: Colors.white)),
+                                child: const Text("Adicionar",
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.white)),
                               ),
                             ),
                           ),

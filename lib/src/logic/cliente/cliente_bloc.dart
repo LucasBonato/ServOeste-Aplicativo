@@ -22,10 +22,12 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
     //on<ClienteToggleItemSelectEvent>(_toggleItemsSelected);
   }
 
-  Future<void> _fetchOneClient(ClienteSearchOneEvent event, Emitter emit) async {
+  Future<void> _fetchOneClient(
+      ClienteSearchOneEvent event, Emitter emit) async {
     emit(ClienteLoadingState());
     try {
-      final Cliente? cliente = await _clienteRepository.getClienteById(id: event.id);
+      final Cliente? cliente =
+          await _clienteRepository.getClienteById(id: event.id);
       if (cliente != null) {
         emit(ClienteSearchOneSuccessState(cliente: cliente));
         return;
@@ -39,14 +41,15 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
   Future<void> _fetchAllClients(ClienteLoadingEvent event, Emitter emit) async {
     emit(ClienteLoadingState());
     try {
-      final List<Cliente>? response = await _clienteRepository.getClientesByFind(
-        nome: event.nome,
-        telefone: event.telefone,
-        endereco: event.endereco
-      );
-      emit(ClienteSearchSuccessState(clientes: response?? []));
+      final List<Cliente>? response =
+          await _clienteRepository.getClientesByFind(
+              nome: event.nome,
+              telefone: event.telefone,
+              endereco: event.endereco);
+      emit(ClienteSearchSuccessState(clientes: response ?? []));
     } on DioException catch (e) {
-      emit(ClienteErrorState(error: ErrorEntity(id: 0, errorMessage: e.toString())));
+      emit(ClienteErrorState(
+          error: ErrorEntity(id: 0, errorMessage: e.toString())));
     }
   }
 
@@ -54,35 +57,50 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
     _nome = event.nome?.isNotEmpty == true ? event.nome : null;
     _telefone = event.telefone?.isNotEmpty == true ? event.telefone : null;
     _endereco = event.endereco?.isNotEmpty == true ? event.endereco : null;
-    await _fetchAllClients(ClienteLoadingEvent(nome: _nome, telefone: _telefone, endereco: _endereco), emit);
+    await _fetchAllClients(
+        ClienteLoadingEvent(
+            nome: _nome, telefone: _telefone, endereco: _endereco),
+        emit);
   }
 
   Future<void> _registerClient(ClienteRegisterEvent event, Emitter emit) async {
     emit(ClienteLoadingState());
     try {
-      ErrorEntity? error = await _clienteRepository.postCliente(event.cliente, event.sobrenome);
-      emit((error == null)? ClienteRegisterSuccessState() : ClienteErrorState(error: error));
+      ErrorEntity? error =
+          await _clienteRepository.postCliente(event.cliente, event.sobrenome);
+      emit((error == null)
+          ? ClienteRegisterSuccessState()
+          : ClienteErrorState(error: error));
     } catch (e) {
-      emit(ClienteErrorState(error: ErrorEntity(id: 0, errorMessage: "Algo deu errado!")));
+      emit(ClienteErrorState(
+          error: ErrorEntity(id: 0, errorMessage: "Algo deu errado!")));
     }
   }
 
   Future<void> _updateClient(ClienteUpdateEvent event, Emitter emit) async {
     emit(ClienteLoadingState());
     try {
-      ErrorEntity? error = await _clienteRepository.putCliente(event.cliente, event.sobrenome);
-      emit(error == null ? ClienteUpdateSuccessState() : ClienteErrorState(error: error));
+      ErrorEntity? error =
+          await _clienteRepository.putCliente(event.cliente, event.sobrenome);
+      emit(error == null
+          ? ClienteUpdateSuccessState()
+          : ClienteErrorState(error: error));
     } catch (e) {
-      emit(ClienteErrorState(error: ErrorEntity(id: 0, errorMessage: "Algo deu errado!")));
+      emit(ClienteErrorState(
+          error: ErrorEntity(id: 0, errorMessage: "Algo deu errado!")));
     }
   }
 
-  Future<void> _deleteListClients(ClienteDeleteListEvent event, Emitter emit) async {
+  Future<void> _deleteListClients(
+      ClienteDeleteListEvent event, Emitter emit) async {
     emit(ClienteLoadingState());
     try {
       await _clienteRepository.deleteClientes(event.selectedList);
-      await _fetchAllClients(ClienteLoadingEvent(nome: _nome, telefone: _telefone, endereco: _endereco), emit);
-    } catch(e) {
+      await _fetchAllClients(
+          ClienteLoadingEvent(
+              nome: _nome, telefone: _telefone, endereco: _endereco),
+          emit);
+    } catch (e) {
       emit(ClienteErrorState(error: ErrorEntity(id: 0, errorMessage: "")));
     }
   }

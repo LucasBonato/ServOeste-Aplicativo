@@ -24,12 +24,6 @@ class MyApp extends StatelessWidget {
       ),
       home: BaseLayout(
         initialIndex: 0,
-        screens: const [
-          Home(),
-          TecnicoPage(),
-          ClienteScreen(),
-          ServicesScreen(),
-        ],
       ),
       routes: CustomRouter.getRoutes(context),
     );
