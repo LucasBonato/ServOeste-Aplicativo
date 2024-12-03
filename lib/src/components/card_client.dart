@@ -20,7 +20,7 @@ class CardClient extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isSelected ? Colors.blue.withOpacity(0.3) : Color(0xFCFDFDFF),
         borderRadius: BorderRadius.circular(12),

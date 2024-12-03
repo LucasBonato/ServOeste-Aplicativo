@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/card_client.dart';
@@ -6,7 +8,7 @@ import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
 import 'package:serv_oeste/src/components/custom_search_field.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
-import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
+//import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
 
 class ClienteScreen extends StatefulWidget {
   const ClienteScreen({super.key});
@@ -20,6 +22,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
   late final TextEditingController _nomeController, _telefoneController, _enderecoController;
   late final List<int> _selectedItems;
   bool isSelected = false;
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -29,6 +32,21 @@ class _ClienteScreenState extends State<ClienteScreen> {
     _telefoneController = TextEditingController();
     _enderecoController = TextEditingController();
     _selectedItems = [];
+  }
+
+  void _onSearchFieldChanged() {
+    if (_debounce?.isActive?? false) _debounce!.cancel();
+
+    _debounce = Timer(
+      Duration(milliseconds: 150),
+        () => _clienteBloc.add(
+          ClienteSearchEvent(
+            nome: _nomeController.text,
+            telefone: _telefoneController.text,
+            endereco: _enderecoController.text,
+          ),
+        )
+    );
   }
 
   void _disableClientes() {
@@ -53,224 +71,146 @@ class _ClienteScreenState extends State<ClienteScreen> {
     });
   }
 
-  Widget _buildEditableSection(int id) => Row(
-    mainAxisAlignment: MainAxisAlignment.end,
-    crossAxisAlignment: CrossAxisAlignment.center,
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      IconButton(
-        onPressed: () {
-          setState(() {
-            isSelected = false;
-            _selectedItems.clear();
-          });
+  // Widget _buildEditableSection(int id) => Row(
+  //   mainAxisAlignment: MainAxisAlignment.end,
+  //   crossAxisAlignment: CrossAxisAlignment.center,
+  //   mainAxisSize: MainAxisSize.min,
+  //   children: [
+  //     IconButton(
+  //       onPressed: () {
+  //         setState(() {
+  //           isSelected = false;
+  //           _selectedItems.clear();
+  //         });
+  //
+  //         Navigator.push(
+  //             context,
+  //             MaterialPageRoute(
+  //                 builder: (context) => UpdateCliente(id: id))).then(
+  //             (value) => value ?? _clienteBloc.add(ClienteSearchEvent()));
+  //       },
+  //       icon: const Icon(Icons.edit, color: Colors.white),
+  //       style: const ButtonStyle(
+  //           backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
+  //     ),
+  //     const SizedBox(
+  //       width: 16,
+  //     ),
+  //     IconButton(
+  //       onPressed: () {
+  //         setState(() {
+  //           isSelected = false;
+  //           _selectedItems.clear();
+  //         });
+  //       },
+  //       icon: const Icon(Icons.content_paste, color: Colors.white),
+  //       style: const ButtonStyle(
+  //           backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
+  //     )
+  //   ],
+  // );
 
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => UpdateCliente(id: id))).then(
-              (value) => value ?? _clienteBloc.add(ClienteSearchEvent()));
-        },
-        icon: const Icon(Icons.edit, color: Colors.white),
-        style: const ButtonStyle(
-            backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
-      ),
-      const SizedBox(
-        width: 16,
-      ),
-      IconButton(
-        onPressed: () {
-          setState(() {
-            isSelected = false;
-            _selectedItems.clear();
-          });
-        },
-        icon: const Icon(Icons.content_paste, color: Colors.white),
-        style: const ButtonStyle(
-            backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
-      )
-    ],
-  );
-
-  Widget _buildSearchInputs(BuildContext context) {
+  Widget _buildSearchInputs() {
     final screenWidth = MediaQuery.of(context).size.width;
     final isLargeScreen = screenWidth >= 1000;
     final isMediumScreen = screenWidth >= 500 && screenWidth < 1000;
     final maxContainerWidth = 1200.0;
 
+    Widget buildSearchField({required String hint, TextEditingController? controller, TextInputType? keyboardType}) => CustomSearchTextField(
+      hint: hint,
+      leftPadding: 8,
+      rightPadding: 8,
+      controller: controller,
+      keyboardType: keyboardType,
+      onChangedAction: (value) => _onSearchFieldChanged(),
+    );
+
+    Widget buildLargeScreenLayout() => Row(
+      children: [
+        Expanded(
+          flex: 2,
+          child: buildSearchField(
+            hint: "Procure por Clientes...",
+            controller: _nomeController,
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: buildSearchField(
+            hint: 'Telefone...',
+            keyboardType: TextInputType.phone,
+            controller: _telefoneController,
+          ),
+        ),
+        Expanded(
+          flex: 2,
+          child: buildSearchField(
+            hint: 'Endereço...',
+            controller: _enderecoController,
+          ),
+        ),
+      ],
+    );
+
+    Widget buildMediumScreenLayout() => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          margin: const EdgeInsets.only(bottom: 10),
+          child: buildSearchField(
+            hint: "Procure por Clientes...",
+            controller: _nomeController,
+          ),
+        ),
+        Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: buildSearchField(
+                hint: 'Telefone...',
+                keyboardType: TextInputType.phone,
+                controller: _telefoneController,
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: buildSearchField(
+                hint: 'Endereço...',
+                controller: _enderecoController,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+
+    Widget buildSmallScreenLayout() => Column(
+      children: [
+        buildSearchField(
+          hint: "Procure por Clientes...",
+          controller: _nomeController,
+        ),
+        buildSearchField(
+          hint: 'Telefone...',
+          keyboardType: TextInputType.phone,
+          controller: _telefoneController,
+        ),
+        buildSearchField(
+          hint: 'Endereço...',
+          controller: _enderecoController,
+        ),
+      ],
+    );
+
     return Center(
       child: Container(
         width: isLargeScreen ? maxContainerWidth : double.infinity,
         padding: const EdgeInsets.all(5),
-        child: isLargeScreen
-            ? Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: CustomSearchTextField(
-                hint: "Procure por Clientes...",
-                controller: _nomeController,
-                onChangedAction: (String nome) {
-                  _clienteBloc.add(
-                    ClienteSearchEvent(
-                      nome: nome,
-                      telefone: _telefoneController.text,
-                      endereco: _enderecoController.text,
-                    ),
-                  );
-                },
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: CustomSearchTextField(
-                hint: 'Telefone...',
-                keyboardType: TextInputType.phone,
-                controller: _telefoneController,
-                leftPadding: 0,
-                onChangedAction: (String telefone) {
-                  _clienteBloc.add(
-                    ClienteSearchEvent(
-                      nome: _nomeController.text,
-                      telefone: telefone,
-                      endereco: _enderecoController.text,
-                    ),
-                  );
-                },
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: CustomSearchTextField(
-                hint: 'Endereço...',
-                controller: _enderecoController,
-                leftPadding: 0,
-                onChangedAction: (String endereco) {
-                  _clienteBloc.add(
-                    ClienteSearchEvent(
-                      nome: _nomeController.text,
-                      telefone: _telefoneController.text,
-                      endereco: endereco,
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        )
-            : isMediumScreen
-            ? Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Container(
-              margin: const EdgeInsets.only(bottom: 10),
-              child: CustomSearchTextField(
-                hint: "Procure por Clientes...",
-                controller: _nomeController,
-                onChangedAction: (String nome) {
-                  _clienteBloc.add(
-                    ClienteSearchEvent(
-                      nome: nome,
-                      telefone: _telefoneController.text,
-                      endereco: _enderecoController.text,
-                    ),
-                  );
-                },
-              ),
-            ),
-            Row(
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    margin: const EdgeInsets.only(right: 8),
-                    child: CustomSearchTextField(
-                      hint: 'Telefone...',
-                      keyboardType: TextInputType.phone,
-                      controller: _telefoneController,
-                      onChangedAction: (String telefone) {
-                        _clienteBloc.add(
-                          ClienteSearchEvent(
-                            nome: _nomeController.text,
-                            telefone: telefone,
-                            endereco: _enderecoController.text,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: CustomSearchTextField(
-                    hint: 'Endereço...',
-                    controller: _enderecoController,
-                    onChangedAction: (String endereco) {
-                      _clienteBloc.add(
-                        ClienteSearchEvent(
-                          nome: _nomeController.text,
-                          telefone: _telefoneController.text,
-                          endereco: endereco,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ],
-        )
-            : Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Container(
-              margin: const EdgeInsets.only(bottom: 10),
-              child: CustomSearchTextField(
-                hint: "Procure por Clientes...",
-                controller: _nomeController,
-                onChangedAction: (String nome) {
-                  _clienteBloc.add(
-                    ClienteSearchEvent(
-                      nome: nome,
-                      telefone: _telefoneController.text,
-                      endereco: _enderecoController.text,
-                    ),
-                  );
-                },
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              child: CustomSearchTextField(
-                hint: 'Telefone...',
-                keyboardType: TextInputType.phone,
-                controller: _telefoneController,
-                onChangedAction: (String telefone) {
-                  _clienteBloc.add(
-                    ClienteSearchEvent(
-                      nome: _nomeController.text,
-                      telefone: telefone,
-                      endereco: _enderecoController.text,
-                    ),
-                  );
-                },
-              ),
-            ),
-            CustomSearchTextField(
-              hint: 'Endereço...',
-              controller: _enderecoController,
-              onChangedAction: (String endereco) {
-                _clienteBloc.add(
-                  ClienteSearchEvent(
-                    nome: _nomeController.text,
-                    telefone: _telefoneController.text,
-                    endereco: endereco,
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
+        child: (isLargeScreen)
+            ? buildLargeScreenLayout()
+            : (isMediumScreen)
+              ? buildMediumScreenLayout()
+              : buildSmallScreenLayout(),
       ),
     );
   }
@@ -291,54 +231,42 @@ class _ClienteScreenState extends State<ClienteScreen> {
               _disableClientes,
               tooltip: 'Excluir clientes selecionados',
             ),
-      body: Row(
+      body: Column(
         children: [
-          Expanded(
-            child: Column(
-              children: [
-                _buildSearchInputs(context),
-                Flexible(
-                  flex: 1,
-                  child: SingleChildScrollView(
-                    child: BlocBuilder<ClienteBloc, ClienteState>(
-                      bloc: _clienteBloc,
-                      builder: (context, state) {
-                        if (state is ClienteInitialState || state is ClienteLoadingState) {
-                          return const Center(child: CircularProgressIndicator.adaptive());
-                        }
-                        else if (state is ClienteSearchSuccessState) {
-                          return Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: GridListView(
-                              dataList: state.clientes,
-                              buildCard: (cliente) => GestureDetector(
-                                onTap: () => _selectItems(cliente.id!),
-                                child: CardClient(
-                                  name: (cliente as Cliente).nome!,
-                                  phoneNumber: cliente.telefoneFixo!,
-                                  city: cliente.municipio!,
-                                  street: cliente.endereco!,
-                                  isSelected: _selectedItems.contains(cliente.id)
-                                ),
-                              ),
-                            ),
-                          );
-                        }
-                        else {
-                          return Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.not_interested, size: 30),
-                              const SizedBox(height: 16),
-                              const Text("Aconteceu um erro!!"),
-                            ],
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                ),
-              ],
+          _buildSearchInputs(),
+          Flexible(
+            child: SingleChildScrollView(
+              child: BlocBuilder<ClienteBloc, ClienteState>(
+                bloc: _clienteBloc,
+                builder: (context, state) {
+                  if (state is ClienteInitialState || state is ClienteLoadingState) {
+                    return const Center(child: CircularProgressIndicator.adaptive());
+                  }
+                  else if (state is ClienteSearchSuccessState) {
+                    return GridListView(
+                      dataList: state.clientes,
+                      buildCard: (cliente) => GestureDetector(
+                        onTap: () => _selectItems(cliente.id!),
+                        child: CardClient(
+                          name: (cliente as Cliente).nome!,
+                          phoneNumber: cliente.telefoneFixo!,
+                          city: cliente.municipio!,
+                          street: cliente.endereco!,
+                          isSelected: _selectedItems.contains(cliente.id)
+                        ),
+                      ),
+                    );
+                  }
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.not_interested, size: 30),
+                      const SizedBox(height: 16),
+                      const Text("Aconteceu um erro!!"),
+                    ],
+                  );
+                },
+              ),
             ),
           ),
         ],

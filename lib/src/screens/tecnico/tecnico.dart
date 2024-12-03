@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/grid_view.dart';
@@ -6,7 +8,7 @@ import 'package:serv_oeste/src/components/custom_search_field.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
-import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
+//import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
 
@@ -22,6 +24,7 @@ class _TecnicoScreenState extends State<TecnicoPage> {
   late TextEditingController _idController, _nomeController, _situacaoController;
   late final List<int> _selectedItems;
   bool isSelected = false;
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -31,6 +34,21 @@ class _TecnicoScreenState extends State<TecnicoPage> {
     _nomeController = TextEditingController();
     _situacaoController = TextEditingController();
     _selectedItems = [];
+  }
+
+  void _onSearchFieldChanged() {
+    if (_debounce?.isActive?? false) _debounce!.cancel();
+
+    _debounce = Timer(
+      Duration(milliseconds: 150),
+      () => _tecnicoBloc.add(
+        TecnicoSearchEvent(
+          nome: _nomeController.text,
+          id: int.tryParse(_idController.text),
+          situacao: _situacaoController.text,
+        ),
+      )
+    );
   }
 
   void _disableTecnicos() {
@@ -55,23 +73,23 @@ class _TecnicoScreenState extends State<TecnicoPage> {
     });
   }
 
-  Widget _buildEditableSection(int id) => IconButton(
-    onPressed: () {
-      setState(() {
-        _selectedItems.clear();
-        isSelected = false;
-      });
-      Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateTecnico(id: id)))
-        .then((value) {
-          if(value == null) {
-            _tecnicoBloc.add(TecnicoSearchEvent());
-          }
-        }
-      );
-    },
-    icon: const Icon(Icons.edit, color: Colors.white),
-    style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
-  );
+  // Widget _buildEditableSection(int id) => IconButton(
+  //   onPressed: () {
+  //     setState(() {
+  //       _selectedItems.clear();
+  //       isSelected = false;
+  //     });
+  //     Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateTecnico(id: id)))
+  //       .then((value) {
+  //         if(value == null) {
+  //           _tecnicoBloc.add(TecnicoSearchEvent());
+  //         }
+  //       }
+  //     );
+  //   },
+  //   icon: const Icon(Icons.edit, color: Colors.white),
+  //   style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
+  // );
 
   Widget _buildSearchInputs() {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -79,175 +97,128 @@ class _TecnicoScreenState extends State<TecnicoPage> {
     final isMediumScreen = screenWidth >= 500 && screenWidth < 1000;
     final maxContainerWidth = 1200.0;
 
+    Widget buildSearchField({required String hint, TextEditingController? controller, TextInputType? keyboardType}) => CustomSearchTextField(
+      hint: hint,
+      leftPadding: 8,
+      rightPadding: 8,
+      controller: controller,
+      keyboardType: keyboardType,
+      onChangedAction: (value) => _onSearchFieldChanged(),
+    );
+
+    Widget buildLargeScreenLayout() => Row(
+      children: [
+        Expanded(
+          flex: 2,
+          child: buildSearchField(
+            hint: "Procure por Técnicos...",
+            controller: _nomeController,
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: buildSearchField(
+            hint: 'ID...',
+            keyboardType: TextInputType.number,
+            controller: _idController,
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: CustomSearchDropDown(
+            label: "Situação...",
+            dropdownValues: Constants.situationTecnicoList,
+            controller: _situacaoController,
+            searchDecoration: true,
+            leftPadding: 0,
+            onChanged: (situacao) => _tecnicoBloc.add(
+              TecnicoSearchEvent(
+                id: int.tryParse(_idController.text),
+                nome: _nomeController.text,
+                situacao: situacao,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+
+    Widget buildMediumScreenLayout() => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        buildSearchField(
+          hint: "Procure por Técnicos...",
+          controller: _nomeController,
+        ),
+        Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: buildSearchField(
+                hint: 'ID...',
+                keyboardType: TextInputType.number,
+                controller: _idController,
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: CustomSearchDropDown(
+                label: "Situação...",
+                dropdownValues: Constants.situationTecnicoList,
+                controller: _situacaoController,
+                searchDecoration: true,
+                leftPadding: 0,
+                onChanged: (situacao) => _tecnicoBloc.add(TecnicoSearchEvent(
+                  id: int.tryParse(_idController.text),
+                  nome: _nomeController.text,
+                  situacao: situacao,
+                ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+
+    Widget buildSmallScreenLayout() => Column(
+      children: [
+        buildSearchField(
+          hint: "Procure por Técnicos...",
+          controller: _nomeController,
+        ),
+        buildSearchField(
+          hint: 'ID...',
+          keyboardType: TextInputType.number,
+          controller: _idController,
+        ),
+        CustomSearchDropDown(
+          label: "Situação...",
+          rightPadding: 8,
+          leftPadding: 8,
+          dropdownValues: Constants.situationTecnicoList,
+          controller: _situacaoController,
+          searchDecoration: true,
+          onChanged: (situacao) => _tecnicoBloc.add(
+            TecnicoSearchEvent(
+              id: int.tryParse(_idController.text),
+              nome: _nomeController.text,
+              situacao: situacao,
+            ),
+          ),
+        ),
+      ],
+    );
+
     return Center(
       child: Container(
         width: isLargeScreen ? maxContainerWidth : double.infinity,
         padding: const EdgeInsets.all(5),
         child: isLargeScreen
-          ? Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: CustomSearchTextField(
-                  hint: "Procure por Técnicos...",
-                  controller: _nomeController,
-                  onChangedAction: (String nome) => _tecnicoBloc.add(
-                    TecnicoSearchEvent(
-                      nome: nome,
-                      id: int.tryParse(_idController.text),
-                      situacao: _situacaoController.text,
-                    ),
-                  )
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: CustomSearchTextField(
-                  hint: 'ID...',
-                  keyboardType: TextInputType.number,
-                  controller: _idController,
-                  leftPadding: 0,
-                  onChangedAction: (String id) => _tecnicoBloc.add(
-                    TecnicoSearchEvent(
-                      nome: _nomeController.text,
-                      id: int.tryParse(id),
-                      situacao: _situacaoController.text,
-                    ),
-                  )
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: CustomSearchDropDown(
-                  label: "Situação...",
-                  dropdownValues: Constants.situationTecnicoList,
-                  controller: _situacaoController,
-                  searchDecoration: true,
-                  leftPadding: 0,
-                  onChanged: (situacao) => _tecnicoBloc.add(
-                    TecnicoSearchEvent(
-                      id: int.tryParse(_idController.text),
-                      nome: _nomeController.text,
-                      situacao: situacao,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          )
+          ? buildLargeScreenLayout()
           : isMediumScreen
-            ? Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(bottom: 10),
-                  child: CustomSearchTextField(
-                    hint: "Procure por Técnicos...",
-                    controller: _nomeController,
-                    onChangedAction: (String nome) {
-                      _tecnicoBloc.add(
-                        TecnicoSearchEvent(
-                          nome: nome,
-                          id: int.tryParse(_idController.text),
-                          situacao: _situacaoController.text,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        margin: const EdgeInsets.only(right: 8),
-                        child: CustomSearchTextField(
-                          hint: 'ID...',
-                          keyboardType: TextInputType.number,
-                          controller: _idController,
-                          onChangedAction: (String id) {
-                            _tecnicoBloc.add(
-                              TecnicoSearchEvent(
-                                nome: _nomeController.text,
-                                id: int.tryParse(id),
-                                situacao: _situacaoController.text,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: CustomSearchDropDown(
-                        label: "Situação...",
-                        dropdownValues: Constants.situationTecnicoList,
-                        controller: _situacaoController,
-                        searchDecoration: true,
-                        leftPadding: 0,
-                        onChanged: (situacao) => _tecnicoBloc.add(TecnicoSearchEvent(
-                          id: int.tryParse(_idController.text),
-                          nome: _nomeController.text,
-                          situacao: situacao,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            )
-            : Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(bottom: 10),
-                  child: CustomSearchTextField(
-                    hint: "Procure por Técnicos...",
-                    controller: _nomeController,
-                    onChangedAction: (String nome) {
-                      _tecnicoBloc.add(
-                        TecnicoSearchEvent(
-                          nome: nome,
-                          id: int.tryParse(_idController.text),
-                          situacao: _situacaoController.text,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  child: CustomSearchTextField(
-                    hint: 'ID...',
-                    keyboardType: TextInputType.number,
-                    controller: _idController,
-                    onChangedAction: (String id) {
-                      _tecnicoBloc.add(
-                        TecnicoSearchEvent(
-                          nome: _nomeController.text,
-                          id: int.tryParse(id),
-                          situacao: _situacaoController.text,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                CustomSearchDropDown(
-                  label: "Situação...",
-                  dropdownValues: Constants.situationTecnicoList,
-                  controller: _situacaoController,
-                  searchDecoration: true,
-                  onChanged: (situacao) => _tecnicoBloc.add(
-                    TecnicoSearchEvent(
-                      id: int.tryParse(_idController.text),
-                      nome: _nomeController.text,
-                      situacao: situacao,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            ? buildMediumScreenLayout()
+            : buildSmallScreenLayout(),
       ),
     );
   }
@@ -268,58 +239,46 @@ class _TecnicoScreenState extends State<TecnicoPage> {
           _disableTecnicos,
           tooltip: 'Excluir técnicos selecionados',
         ),
-      body: Row(
+      body: Column(
         children: [
-          Expanded(
-            child: Column(
-              children: [
-                _buildSearchInputs(),
-                Flexible(
-                  flex: 1,
-                  child: SingleChildScrollView(
-                    child: BlocBuilder<TecnicoBloc, TecnicoState>(
-                      bloc: _tecnicoBloc,
-                      builder: (context, state) {
-                        if (state is TecnicoInitialState || state is TecnicoLoadingState) {
-                          return const Center(child: CircularProgressIndicator.adaptive());
-                        }
-                        else if (state is TecnicoSearchSuccessState) {
-                          return Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: GridListView(
-                              dataList: state.tecnicos,
-                              buildCard: (tecnico) => GestureDetector(
-                                onTap: () => _selectItems(tecnico.id!),
-                                child: CardTechnical(
-                                  id: (tecnico as Tecnico).id!,
-                                  name: tecnico.nome!,
-                                  phoneNumber: tecnico.telefoneFixo!,
-                                  cellPhoneNumber: tecnico.telefoneCelular!,
-                                  status: tecnico.situacao!,
-                                  isSelected: _selectedItems.contains(tecnico.id),
-                                ),
-                              ),
-                            ),
-                          );
-                        }
-                        else {
-                          return Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.not_interested, size: 30),
-                              const SizedBox(height: 16),
-                              const Text("Aconteceu um erro!!"),
-                            ],
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                )
-              ]
-            )
+          _buildSearchInputs(),
+          Flexible(
+            child: SingleChildScrollView(
+              child: BlocBuilder<TecnicoBloc, TecnicoState>(
+                bloc: _tecnicoBloc,
+                builder: (context, state) {
+                  if (state is TecnicoInitialState || state is TecnicoLoadingState) {
+                    return const Center(child: CircularProgressIndicator.adaptive());
+                  }
+                  else if (state is TecnicoSearchSuccessState) {
+                    return GridListView(
+                      dataList: state.tecnicos,
+                      buildCard: (tecnico) => GestureDetector(
+                        onTap: () => _selectItems(tecnico.id!),
+                        child: CardTechnical(
+                          id: (tecnico as Tecnico).id!,
+                          name: tecnico.nome!,
+                          phoneNumber: tecnico.telefoneFixo!,
+                          cellPhoneNumber: tecnico.telefoneCelular!,
+                          status: tecnico.situacao!,
+                          isSelected: _selectedItems.contains(tecnico.id),
+                        ),
+                      ),
+                    );
+                  }
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.not_interested, size: 30),
+                      const SizedBox(height: 16),
+                      const Text("Aconteceu um erro!!"),
+                    ],
+                  );
+                },
+              ),
+            ),
           )
-        ],
+        ]
       )
     );
   }
@@ -330,6 +289,7 @@ class _TecnicoScreenState extends State<TecnicoPage> {
     _nomeController.dispose();
     _situacaoController.dispose();
     _tecnicoBloc.close();
+    _debounce?.cancel();
     super.dispose();
   }
 }
