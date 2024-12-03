@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:serv_oeste/src/components/custom_text_form_field.dart';
+import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
+import 'package:serv_oeste/src/components/formFields/custom_grid_checkers_form_field.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
@@ -18,7 +19,7 @@ class CreateTecnico extends StatefulWidget {
 }
 
 class _CreateTecnicoState extends State<CreateTecnico> {
-  final TecnicoBloc _tecnicoBloc = TecnicoBloc();
+  late final TecnicoBloc _tecnicoBloc;
   final TecnicoForm _tecnicoCreateForm = TecnicoForm();
   final TecnicoValidator _tecnicoCreateValidator = TecnicoValidator();
   final GlobalKey<FormState> _tecnicoFormKey = GlobalKey<FormState>();
@@ -47,66 +48,10 @@ class _CreateTecnicoState extends State<CreateTecnico> {
   @override
   void initState() {
     super.initState();
+    _tecnicoBloc = context.read<TecnicoBloc>();
     _nomeController = TextEditingController();
     _telefoneCelularController = TextEditingController();
     _telefoneFixoController = TextEditingController();
-  }
-
-  Widget gridCheckersMap() {
-    return FormField(
-      validator: _tecnicoCreateValidator.byField(_tecnicoCreateForm, "conhecimentos"),
-      builder: (field) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey, width: 1.5),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            padding: const EdgeInsets.all(16),
-            child: GridView.count(
-              shrinkWrap: true,
-              crossAxisCount: 2,
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 12,
-              childAspectRatio: 6,
-              physics: const NeverScrollableScrollPhysics(),
-              children: checkersMap.keys.map((label) {
-                return Row(
-                  children: [
-                    Checkbox(
-                      value: checkersMap[label] ?? false,
-                      activeColor: Colors.blue,
-                      onChanged: (value) {
-                        setState(() {
-                          checkersMap[label] = value ?? false;
-                        });
-                        field.reset();
-                      },
-                    ),
-                    Text(
-                      label,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                );
-              }).toList(),
-            ),
-          ),
-          if (field.errorText != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Text(
-                field.errorText!,
-                style: const TextStyle(color: Colors.red, fontSize: 12),
-              ),
-            ),
-        ],
-      ),
-    );
   }
 
   bool _isValidForm() {
@@ -185,77 +130,71 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    SizedBox(
-                      width: double.infinity,
-                      child: CustomTextFormField(
-                        hint: "Nome...",
-                        label: "Nome*",
-                        type: TextInputType.name,
-                        maxLength: 40,
-                        hide: false,
-                        valueNotifier: _tecnicoCreateForm.nome,
-                        validator: _tecnicoCreateValidator.byField(_tecnicoCreateForm, "nome"),
-                        onChanged: _tecnicoCreateForm.setNome,
-                      ),
+                    CustomTextFormField(
+                      hint: "Nome...",
+                      label: "Nome*",
+                      type: TextInputType.name,
+                      maxLength: 40,
+                      rightPadding: 0,
+                      leftPadding: 0,
+                      hide: false,
+                      valueNotifier: _tecnicoCreateForm.nome,
+                      validator: _tecnicoCreateValidator.byField(_tecnicoCreateForm, ErrorCodeKey.nomeESobrenome.name),
+                      onChanged: _tecnicoCreateForm.setNome,
                     ),
-                    const SizedBox(height: 16),
                     Row(
                       children: [
                         Expanded(
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: CustomTextFormField(
-                              hint: "(99) 9999-9999",
-                              label: "Telefone Fixo**",
-                              rightPadding: 0,
-                              maxLength: 14,
-                              hide: false,
-                              masks: [
-                                MaskTextInputFormatter(mask: '(##) ####-####'),
-                              ],
-                              type: TextInputType.phone,
-                              valueNotifier: _tecnicoCreateForm.telefoneFixo,
-                              validator: _tecnicoCreateValidator.byField(_tecnicoCreateForm, "telefoneFixo"),
-                              onChanged: _tecnicoCreateForm.setTelefoneFixo,
-                            ),
+                          child: CustomTextFormField(
+                            hint: "(99) 9999-9999",
+                            label: "Telefone Fixo**",
+                            rightPadding: 0,
+                            leftPadding: 0,
+                            maxLength: 14,
+                            hide: false,
+                            masks: [
+                              MaskTextInputFormatter(mask: '(##) ####-####'),
+                            ],
+                            type: TextInputType.phone,
+                            valueNotifier: _tecnicoCreateForm.telefoneFixo,
+                            validator: _tecnicoCreateValidator.byField(_tecnicoCreateForm, ErrorCodeKey.telefoneFixo.name),
+                            onChanged: _tecnicoCreateForm.setTelefoneFixo,
                           ),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: CustomTextFormField(
-                              hint: "(99) 99999-9999",
-                              label: "Telefone Celular**",
-                              leftPadding: 0,
-                              maxLength: 15,
-                              hide: false,
-                              masks: Constants.maskTelefone,
-                              type: TextInputType.phone,
-                              valueNotifier: _tecnicoCreateForm.telefoneCelular,
-                              validator: _tecnicoCreateValidator.byField(_tecnicoCreateForm, "telefoneCelular"),
-                              onChanged: _tecnicoCreateForm.setTelefoneCelular,
-                            ),
+                          child: CustomTextFormField(
+                            hint: "(99) 99999-9999",
+                            label: "Telefone Celular**",
+                            leftPadding: 0,
+                            rightPadding: 0,
+                            maxLength: 15,
+                            hide: false,
+                            masks: Constants.maskTelefone,
+                            type: TextInputType.phone,
+                            valueNotifier: _tecnicoCreateForm.telefoneCelular,
+                            validator: _tecnicoCreateValidator.byField(_tecnicoCreateForm, ErrorCodeKey.telefoneCelular.name),
+                            onChanged: _tecnicoCreateForm.setTelefoneCelular,
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 24),
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 18),
-                          child: const Text(
-                            "Conhecimentos*",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        const Text(
+                          "Conhecimentos*",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 8),
-                        gridCheckersMap(),
+                        CustomGridCheckersFormField(
+                          validator: _tecnicoCreateValidator.byField(_tecnicoCreateForm, ErrorCodeKey.conhecimento.name),
+                          checkersMap: checkersMap
+                        ),
                       ],
                     ),
                     const Padding(
@@ -266,14 +205,12 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                           children: [
                             Text(
                               "* - Campos obrigatórios",
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.black),
+                              style: TextStyle(fontSize: 14, color: Colors.black),
                             ),
                             SizedBox(width: 16),
                             Text(
                               "** - Preencha ao menos um destes campos",
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.black),
+                              style: TextStyle(fontSize: 14, color: Colors.black),
                             ),
                           ],
                         ),
@@ -332,7 +269,6 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     _nomeController.dispose();
     _telefoneCelularController.dispose();
     _telefoneFixoController.dispose();
-    _tecnicoBloc.close();
     _tecnicoCreateForm.dispose();
     super.dispose();
   }

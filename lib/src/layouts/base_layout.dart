@@ -29,13 +29,17 @@ class BaseLayoutState extends State<BaseLayout> {
   late final List<GlobalKey<NavigatorState>> _navigatorKeys;
   late final List<Widget?> _screens;
 
-  final ServicoBloc _servicoBloc = ServicoBloc();
-  final TecnicoBloc _tecnicoBloc = TecnicoBloc();
-  final ClienteBloc _clienteBloc = ClienteBloc();
+  late final ServicoBloc _servicoBloc;
+  late final TecnicoBloc _tecnicoBloc;
+  late final ClienteBloc _clienteBloc;
 
   @override
   void initState() {
     super.initState();
+    _servicoBloc = context.read<ServicoBloc>();
+    _tecnicoBloc = context.read<TecnicoBloc>();
+    _clienteBloc = context.read<ClienteBloc>();
+
     _currentIndex = widget.initialIndex?? 0;
     _navigatorKeys = List.generate(4, (_) => GlobalKey<NavigatorState>());
     _screens = List.filled(4, null);
@@ -47,7 +51,7 @@ class BaseLayoutState extends State<BaseLayout> {
       0 => BlocProvider.value(value: _servicoBloc, child: Home()),
       1 => BlocProvider.value(value: _tecnicoBloc, child: TecnicoScreen()),
       2 => BlocProvider.value(value: _clienteBloc, child: ClienteScreen()),
-      3 => BlocProvider.value(value: _servicoBloc, child: ServicesScreen()),
+      3 => BlocProvider.value(value: _servicoBloc, child: ServicoScreen()),
       _ => Container()
     };
     return _screens[index]!;

@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
+import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
+import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/screens/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/servico/filter_servico.dart';
 import 'package:serv_oeste/src/screens/servico/servico.dart';
@@ -10,16 +14,40 @@ import '../screens/tecnico/create_tecnico.dart';
 
 class CustomRouter {
   static Map<String, WidgetBuilder> getRoutes(BuildContext context) {
+    final TecnicoBloc tecnicoBloc = context.read<TecnicoBloc>();
+    final ClienteBloc clienteBloc = context.read<ClienteBloc>();
+    final ServicoBloc servicoBloc = context.read<ServicoBloc>();
+
     return {
-      "/tecnico": (context) => const TecnicoScreen(),
-      "/createTecnico": (context) => const CreateTecnico(),
-      "/cliente": (context) => const ClienteScreen(),
-      "/createCliente": (context) => const CreateCliente(),
-      "/servico": (context) => ServicesScreen(),
+      "/tecnico": (context) => BlocProvider.value(
+        value: tecnicoBloc,
+        child: const TecnicoScreen(),
+      ),
+      "/createTecnico": (context) => BlocProvider.value(
+        value: tecnicoBloc,
+        child: const CreateTecnico(),
+      ),
+
+      "/cliente": (context) => BlocProvider.value(
+        value: clienteBloc,
+        child: const ClienteScreen(),
+      ),
+      "/createCliente": (context) => BlocProvider.value(
+        value: clienteBloc,
+        child: const CreateCliente(),
+      ),
+
+      "/servico": (context) => BlocProvider.value(
+        value: servicoBloc,
+        child: const ServicoScreen(),
+      ),
       "/filterServico": (context) => FilterService(),
       "/createServico": (context) {
         final bool? args = ModalRoute.of(context)?.settings.arguments as bool?;
-        return CreateServico(isWithAnExistingClient: args?? false);
+        return BlocProvider.value(
+          value: servicoBloc,
+          child: CreateServico(isWithAnExistingClient: args ?? false),
+        );
       },
       // "/updateTecnico": (context) => const UpdateTecnico(),
       // "/updateCliente": (context) => const UpdateCliente(),
