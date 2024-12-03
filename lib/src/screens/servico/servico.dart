@@ -33,23 +33,23 @@ class ServicesScreenState extends State<ServicesScreen> {
     super.initState();
     _nomeClienteController = TextEditingController();
     _nomeTecnicoController = TextEditingController();
-    _servicoBloc
-        .add(ServicoLoadingEvent(filterRequest: ServicoFilterRequest()));
+    //_servicoBloc.add(ServicoLoadingEvent(filterRequest: ServicoFilterRequest()));
   }
 
   void _onNomeChanged() {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
     _debounce = Timer(
-        Duration(milliseconds: 150),
-        () => _servicoBloc.add(
-              ServicoLoadingEvent(
-                filterRequest: ServicoFilterRequest(
-                  clienteNome: _nomeClienteController.text,
-                  tecnicoNome: _nomeTecnicoController.text,
-                ),
-              ),
-            ));
+      Duration(milliseconds: 150),
+      () => _servicoBloc.add(
+        ServicoLoadingEvent(
+          filterRequest: ServicoFilterRequest(
+            clienteNome: _nomeClienteController.text,
+            tecnicoNome: _nomeTecnicoController.text,
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildSearchInputs() {
@@ -164,33 +164,34 @@ class ServicesScreenState extends State<ServicesScreen> {
         ),
         updateList: _onNomeChanged,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildSearchInputs(),
-            BlocBuilder<ServicoBloc, ServicoState>(
+      body: Column(
+        children: [
+          _buildSearchInputs(),
+          Expanded(
+            child: BlocBuilder<ServicoBloc, ServicoState>(
               bloc: _servicoBloc,
               builder: (context, state) {
                 if (state is ServicoSearchSuccessState) {
-                  return GridListView(
-                    dataList: state.servicos,
-                    buildCard: (servico) => CardService(
-                      cliente: (servico as Servico).nomeCliente,
-                      tecnico: servico.nomeTecnico,
-                      equipamento: servico.equipamento,
-                      marca: servico.marca,
-                      local: servico.filial,
-                      data: servico.dataAtendimentoPrevisto,
-                      status: servico.situacao,
+                  return SingleChildScrollView(
+                    child: GridListView(
+                      dataList: state.servicos,
+                      buildCard: (servico) => CardService(
+                        cliente: (servico as Servico).nomeCliente,
+                        tecnico: servico.nomeTecnico,
+                        equipamento: servico.equipamento,
+                        marca: servico.marca,
+                        local: servico.filial,
+                        data: servico.dataAtendimentoPrevisto,
+                        status: servico.situacao,
+                      ),
                     ),
                   );
                 }
-                return const Center(
-                    child: CircularProgressIndicator.adaptive());
+                return const Center(child: CircularProgressIndicator.adaptive());
               },
-            )
-          ],
-        ),
+            ),
+          )
+        ],
       ),
     );
   }

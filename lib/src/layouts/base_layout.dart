@@ -91,8 +91,10 @@ class BaseLayoutState extends State<BaseLayout> {
   void _onNavigateToHome() {
     _servicoBloc.add(ServicoLoadingEvent(
         filterRequest: ServicoFilterRequest(
-            // dataAtendimentoPrevistoAntes: DateTime.now().toUtc()
-            )));
+          // dataAtendimentoPrevistoAntes: DateTime.now().toUtc()
+        ),
+      ),
+    );
   }
 
   void _onNavigateToTecnico() {

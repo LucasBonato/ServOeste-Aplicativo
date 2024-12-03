@@ -39,14 +39,15 @@ class _ClienteScreenState extends State<ClienteScreen> {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
     _debounce = Timer(
-        Duration(milliseconds: 150),
-        () => _clienteBloc.add(
-              ClienteSearchEvent(
-                nome: _nomeController.text,
-                telefone: _telefoneController.text,
-                endereco: _enderecoController.text,
-              ),
-            ));
+      Duration(milliseconds: 150),
+      () => _clienteBloc.add(
+        ClienteSearchEvent(
+          nome: _nomeController.text,
+          telefone: _telefoneController.text,
+          endereco: _enderecoController.text,
+        ),
+      ),
+    );
   }
 
   void _disableClientes() {
@@ -116,28 +117,54 @@ class _ClienteScreenState extends State<ClienteScreen> {
     final isMediumScreen = screenWidth >= 500 && screenWidth < 1000;
     final maxContainerWidth = 1200.0;
 
-    Widget buildSearchField(
-            {required String hint,
-            TextEditingController? controller,
-            TextInputType? keyboardType}) =>
-        CustomSearchTextField(
-          hint: hint,
-          leftPadding: 8,
-          rightPadding: 8,
-          controller: controller,
-          keyboardType: keyboardType,
-          onChangedAction: (value) => _onSearchFieldChanged(),
-        );
+    Widget buildSearchField({required String hint, TextEditingController? controller, TextInputType? keyboardType}) => CustomSearchTextField(
+      hint: hint,
+      leftPadding: 8,
+      rightPadding: 8,
+      controller: controller,
+      keyboardType: keyboardType,
+      onChangedAction: (value) => _onSearchFieldChanged(),
+    );
 
     Widget buildLargeScreenLayout() => Row(
+      children: [
+        Expanded(
+          flex: 2,
+          child: buildSearchField(
+            hint: "Procure por Clientes...",
+            controller: _nomeController,
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: buildSearchField(
+            hint: 'Telefone...',
+            keyboardType: TextInputType.phone,
+            controller: _telefoneController,
+          ),
+        ),
+        Expanded(
+          flex: 2,
+          child: buildSearchField(
+            hint: 'Endereço...',
+            controller: _enderecoController,
+          ),
+        ),
+      ],
+    );
+
+    Widget buildMediumScreenLayout() => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          margin: const EdgeInsets.only(bottom: 10),
+          child: buildSearchField(
+            hint: "Procure por Clientes...",
+            controller: _nomeController,
+          ),
+        ),
+        Row(
           children: [
-            Expanded(
-              flex: 2,
-              child: buildSearchField(
-                hint: "Procure por Clientes...",
-                controller: _nomeController,
-              ),
-            ),
             Expanded(
               flex: 1,
               child: buildSearchField(
@@ -147,64 +174,34 @@ class _ClienteScreenState extends State<ClienteScreen> {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 1,
               child: buildSearchField(
                 hint: 'Endereço...',
                 controller: _enderecoController,
               ),
             ),
           ],
-        );
-
-    Widget buildMediumScreenLayout() => Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Container(
-              margin: const EdgeInsets.only(bottom: 10),
-              child: buildSearchField(
-                hint: "Procure por Clientes...",
-                controller: _nomeController,
-              ),
-            ),
-            Row(
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: buildSearchField(
-                    hint: 'Telefone...',
-                    keyboardType: TextInputType.phone,
-                    controller: _telefoneController,
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: buildSearchField(
-                    hint: 'Endereço...',
-                    controller: _enderecoController,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        );
+        ),
+      ],
+    );
 
     Widget buildSmallScreenLayout() => Column(
-          children: [
-            buildSearchField(
-              hint: "Procure por Clientes...",
-              controller: _nomeController,
-            ),
-            buildSearchField(
-              hint: 'Telefone...',
-              keyboardType: TextInputType.phone,
-              controller: _telefoneController,
-            ),
-            buildSearchField(
-              hint: 'Endereço...',
-              controller: _enderecoController,
-            ),
-          ],
-        );
+      children: [
+        buildSearchField(
+          hint: "Procure por Clientes...",
+          controller: _nomeController,
+        ),
+        buildSearchField(
+          hint: 'Telefone...',
+          keyboardType: TextInputType.phone,
+          controller: _telefoneController,
+        ),
+        buildSearchField(
+          hint: 'Endereço...',
+          controller: _enderecoController,
+        ),
+      ],
+    );
 
     return Container(
       width: isLargeScreen ? maxContainerWidth : double.infinity,
@@ -235,52 +232,39 @@ class _ClienteScreenState extends State<ClienteScreen> {
             ),
       body: Column(
         children: [
+          _buildSearchInputs(),
           Expanded(
-            child: Column(
-              children: [
-                _buildSearchInputs(),
-                Flexible(
-                  flex: 1,
-                  child: SingleChildScrollView(
-                    child: BlocBuilder<ClienteBloc, ClienteState>(
-                      bloc: _clienteBloc,
-                      builder: (context, state) {
-                        if (state is ClienteInitialState ||
-                            state is ClienteLoadingState) {
-                          return const Center(
-                              child: CircularProgressIndicator.adaptive());
-                        } else if (state is ClienteSearchSuccessState) {
-                          return Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: GridListView(
-                              dataList: state.clientes,
-                              buildCard: (cliente) => GestureDetector(
-                                onTap: () => _selectItems(cliente.id!),
-                                child: CardClient(
-                                    name: (cliente as Cliente).nome!,
-                                    phoneNumber: cliente.telefoneFixo!,
-                                    city: cliente.municipio!,
-                                    street: cliente.endereco!,
-                                    isSelected:
-                                        _selectedItems.contains(cliente.id)),
-                              ),
-                            ),
-                          );
-                        } else {
-                          return Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.not_interested, size: 30),
-                              const SizedBox(height: 16),
-                              const Text("Aconteceu um erro!!"),
-                            ],
-                          );
-                        }
-                      },
+            child: BlocBuilder<ClienteBloc, ClienteState>(
+              bloc: _clienteBloc,
+              builder: (context, state) {
+                if (state is ClienteInitialState || state is ClienteLoadingState) {
+                  return const Center(child: CircularProgressIndicator.adaptive());
+                } 
+                else if (state is ClienteSearchSuccessState) {
+                  return SingleChildScrollView(
+                    child: GridListView(
+                      dataList: state.clientes,
+                      buildCard: (cliente) => GestureDetector(
+                        onTap: () => _selectItems(cliente.id!),
+                        child: CardClient(
+                          name: (cliente as Cliente).nome!,
+                          phoneNumber: cliente.telefoneFixo!,
+                          city: cliente.municipio!,
+                          street: cliente.endereco!,
+                          isSelected: _selectedItems.contains(cliente.id)),
+                      ),
                     ),
-                  ),
-                ),
-              ],
+                  );
+                }
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.not_interested, size: 30),
+                    const SizedBox(height: 16),
+                    const Text("Aconteceu um erro!!"),
+                  ],
+                );
+              },
             ),
           ),
         ],

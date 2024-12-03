@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/src/screens/home.dart';
-import 'package:serv_oeste/src/screens/cliente/cliente.dart';
-import 'package:serv_oeste/src/screens/servico/servico.dart';
-import 'package:serv_oeste/src/screens/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/layouts/base_layout.dart';
 import 'package:serv_oeste/src/shared/custom_router.dart';
 

@@ -100,18 +100,14 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     final isMediumScreen = screenWidth >= 500 && screenWidth < 1000;
     final maxContainerWidth = 1200.0;
 
-    Widget buildSearchField(
-            {required String hint,
-            TextEditingController? controller,
-            TextInputType? keyboardType}) =>
-        CustomSearchTextField(
-          hint: hint,
-          leftPadding: 8,
-          rightPadding: 8,
-          controller: controller,
-          keyboardType: keyboardType,
-          onChangedAction: (value) => _onSearchFieldChanged(),
-        );
+    Widget buildSearchField({required String hint, TextEditingController? controller, TextInputType? keyboardType}) => CustomSearchTextField(
+      hint: hint,
+      leftPadding: 8,
+      rightPadding: 8,
+      controller: controller,
+      keyboardType: keyboardType,
+      onChangedAction: (value) => _onSearchFieldChanged(),
+    );
 
     Widget buildLargeScreenLayout() => Row(
           children: [
@@ -234,32 +230,32 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: true,
-        floatingActionButton: (!isSelected)
-            ? BuildWidgets.buildFabAdd(
-                context,
-                "/createTecnico",
-                () => _tecnicoBloc.add(TecnicoSearchEvent()),
-                tooltip: 'Adicionar um técnico',
-              )
-            : BuildWidgets.buildFabRemove(
-                context,
-                _disableTecnicos,
-                tooltip: 'Excluir técnicos selecionados',
-              ),
-        body: Column(children: [
+      resizeToAvoidBottomInset: true,
+      floatingActionButton: (!isSelected)
+        ? BuildWidgets.buildFabAdd(
+            context,
+            "/createTecnico",
+            () => _tecnicoBloc.add(TecnicoSearchEvent()),
+            tooltip: 'Adicionar um técnico',
+          )
+        : BuildWidgets.buildFabRemove(
+            context,
+            _disableTecnicos,
+            tooltip: 'Excluir técnicos selecionados',
+          ),
+      body: Column(
+        children: [
           _buildSearchInputs(),
-          Flexible(
-            child: SingleChildScrollView(
-              child: BlocBuilder<TecnicoBloc, TecnicoState>(
-                bloc: _tecnicoBloc,
-                builder: (context, state) {
-                  if (state is TecnicoInitialState ||
-                      state is TecnicoLoadingState) {
-                    return const Center(
-                        child: CircularProgressIndicator.adaptive());
-                  } else if (state is TecnicoSearchSuccessState) {
-                    return GridListView(
+          Expanded(
+            child: BlocBuilder<TecnicoBloc, TecnicoState>(
+              bloc: _tecnicoBloc,
+              builder: (context, state) {
+                if (state is TecnicoInitialState || state is TecnicoLoadingState) {
+                  return const Center(child: CircularProgressIndicator.adaptive());
+                }
+                else if (state is TecnicoSearchSuccessState) {
+                  return SingleChildScrollView(
+                    child: GridListView(
                       dataList: state.tecnicos,
                       buildCard: (tecnico) => GestureDetector(
                         onTap: () => _selectItems(tecnico.id!),
@@ -272,21 +268,23 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                           isSelected: _selectedItems.contains(tecnico.id),
                         ),
                       ),
-                    );
-                  }
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.not_interested, size: 30),
-                      const SizedBox(height: 16),
-                      const Text("Aconteceu um erro!!"),
-                    ],
+                    ),
                   );
-                },
-              ),
+                }
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.not_interested, size: 30),
+                    const SizedBox(height: 16),
+                    const Text("Aconteceu um erro!!"),
+                  ],
+                );
+              },
             ),
-          )
-        ]));
+          ),
+        ],
+      ),
+    );
   }
 
   @override
