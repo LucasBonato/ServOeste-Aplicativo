@@ -24,10 +24,8 @@ class TecnicoForm extends ChangeNotifier {
   }
 
   void setTelefoneFixo(String? telefoneFixo) {
-    if (telefoneFixo!.isNotEmpty) {
-      this.telefoneFixo.value = Constants.deTransformarMask(telefoneFixo);
-      notifyListeners();
-    }
+    this.telefoneFixo.value = telefoneFixo?? "";
+    notifyListeners();
   }
 
   void setTelefoneCelular(String? telefoneCelular) {
