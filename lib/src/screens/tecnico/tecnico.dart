@@ -6,7 +6,6 @@ import 'package:serv_oeste/src/components/dropdown_field.dart';
 import 'package:serv_oeste/src/components/grid_view.dart';
 import 'package:serv_oeste/src/components/card_technical.dart';
 import 'package:serv_oeste/src/components/custom_search_field.dart';
-import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
@@ -63,15 +62,14 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
   }
 
   void _selectItems(int id) {
-    if (_selectedItems.contains(id)) {
-      setState(() {
-        _selectedItems.remove(id);
-      });
-      return;
-    }
-    _selectedItems.add(id);
     setState(() {
-      if (!isSelected) isSelected = true;
+      if (_selectedItems.contains(id)) {
+        _selectedItems.remove(id);
+      } else {
+        _selectedItems.add(id);
+      }
+
+      isSelected = _selectedItems.isNotEmpty;
     });
   }
 
@@ -258,9 +256,11 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                 } else if (state is TecnicoSearchSuccessState) {
                   return SingleChildScrollView(
                     child: GridListView(
+                      aspectRatio: 2.5,
                       dataList: state.tecnicos,
                       buildCard: (tecnico) => GestureDetector(
-                        onTap: () => _selectItems(tecnico.id!),
+                        onDoubleTap: () => _selectItems(tecnico.id!),
+                        onLongPress: () => _selectItems(tecnico.id!),
                         child: CardTechnical(
                           id: (tecnico as Tecnico).id!,
                           name: tecnico.nome!,
@@ -299,5 +299,4 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     super.dispose();
   }
 }
-//TODO - Arrumar a parte de selecionar um card em que o Floating Action Button não volta para o estado padrão de adicianar quando nada está selecionado
 //TODO - Tentar passar toda a lógica de selecionamento de cards para um Bloc/Cubit

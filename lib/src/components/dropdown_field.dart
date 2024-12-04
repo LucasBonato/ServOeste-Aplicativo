@@ -58,6 +58,7 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
       padding: EdgeInsets.fromLTRB(
           widget.leftPadding ?? 16, 4, widget.rightPadding ?? 16, 16),
       child: MouseRegion(
+        cursor: SystemMouseCursors.click,
         onEnter: (_) => setState(() {
           _isHovered = true;
         }),

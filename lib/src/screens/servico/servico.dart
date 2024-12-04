@@ -19,10 +19,11 @@ class ServicoScreen extends StatefulWidget {
 
 class ServicoScreenState extends State<ServicoScreen> {
   late final ServicoBloc _servicoBloc;
-
   late final TextEditingController _nomeClienteController;
   late final TextEditingController _nomeTecnicoController;
   Timer? _debounce;
+  late final List<int> _selectedItems;
+  bool isSelected = false;
 
   @override
   void initState() {
@@ -48,10 +49,30 @@ class ServicoScreenState extends State<ServicoScreen> {
     );
   }
 
+  void _disableServico() {
+    final List<int> selectedItemsCopy = List<int>.from(_selectedItems);
+    // _servicoBloc.add(_deleteService(selectedList: selectedItemsCopy));
+    setState(() {
+      _selectedItems.clear();
+      isSelected = false;
+    });
+  }
+
+  void _selectItems(int id) {
+    setState(() {
+      if (_selectedItems.contains(id)) {
+        _selectedItems.remove(id);
+      } else {
+        _selectedItems.add(id);
+      }
+
+      isSelected = _selectedItems.isNotEmpty;
+    });
+  }
+
   Widget _buildSearchInputs() {
     final screenWidth = MediaQuery.of(context).size.width;
     final isLargeScreen = screenWidth >= 1000;
-    //final isMediumScreen = screenWidth >= 500 && screenWidth < 1000;
     final maxContainerWidth = 1200.0;
 
     Widget buildSearchField(
@@ -169,6 +190,7 @@ class ServicoScreenState extends State<ServicoScreen> {
                 if (state is ServicoSearchSuccessState) {
                   return SingleChildScrollView(
                     child: GridListView(
+                      aspectRatio: 1.5,
                       dataList: state.servicos,
                       buildCard: (servico) => CardService(
                         cliente: (servico as Servico).nomeCliente,
