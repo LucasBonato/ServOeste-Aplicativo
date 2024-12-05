@@ -16,6 +16,7 @@ class CustomSearchDropDown extends StatefulWidget {
   final void Function(String?)? onSaved;
   final String? Function([String?])? validator;
   final Widget Function(BuildContext, String)? itemWidgetBuilder;
+  final ValueNotifier<String?>? valueNotifier; // Agora opcional
 
   const CustomSearchDropDown({
     super.key,
@@ -33,6 +34,7 @@ class CustomSearchDropDown extends StatefulWidget {
     required this.onChanged,
     required this.label,
     required this.dropdownValues,
+    this.valueNotifier, // Agora opcional
   });
 
   @override
@@ -45,13 +47,27 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
   @override
   void initState() {
     _customSearchController = widget.controller ?? TextEditingController();
+    // Inicializa o controlador com o valor do ValueNotifier (se existir)
+    if (widget.valueNotifier?.value != null) {
+      _customSearchController.text = widget.valueNotifier!.value!;
+    }
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // Libera o controlador apenas se ele for criado internamente
+    if (widget.controller == null) {
+      _customSearchController.dispose();
+    }
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(widget.leftPadding?? 16, 4, widget.rightPadding?? 16, widget.hide ? 16 : 0),
+      padding: EdgeInsetsDirectional.fromSTEB(widget.leftPadding ?? 16, 4,
+          widget.rightPadding ?? 16, widget.hide ? 16 : 0),
       child: DropDownSearchFormField(
         onSaved: widget.onSaved,
         validator: widget.validator,
@@ -60,7 +76,11 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
           enabled: widget.enabled,
           maxLength: widget.maxLength,
           controller: _customSearchController,
-          onChanged: widget.onChanged,
+          onChanged: (value) {
+            widget.onChanged(value);
+            // Atualiza o ValueNotifier, se fornecido
+            widget.valueNotifier?.value = value;
+          },
           decoration: InputDecoration(
             counterText: widget.hide ? "" : null,
             labelText: widget.label,
@@ -105,16 +125,17 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
         suggestionsCallback: (query) async {
           if (query.isEmpty) return widget.dropdownValues;
           return widget.dropdownValues
-              .where((element) => element
-                .toLowerCase()
-                .contains(query.toLowerCase())
-              ).toList();
+              .where((element) =>
+                  element.toLowerCase().contains(query.toLowerCase()))
+              .toList();
         },
         onSuggestionSelected: (String? suggestion) {
           if (suggestion != null && suggestion.isNotEmpty) {
             setState(() {
               _customSearchController.text = suggestion;
               widget.onChanged(suggestion);
+
+              widget.valueNotifier?.value = suggestion;
               widget.onSelected?.call(suggestion);
             });
             FocusScope.of(context).unfocus();
@@ -122,10 +143,10 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
         },
         itemBuilder: (context, suggestion) {
           return widget.itemWidgetBuilder != null
-          ? widget.itemWidgetBuilder!(context, suggestion)
-          : ListTile(
-            title: Text(suggestion),
-          );
+              ? widget.itemWidgetBuilder!(context, suggestion)
+              : ListTile(
+                  title: Text(suggestion),
+                );
         },
         hideOnEmpty: true,
         debounceDuration: const Duration(milliseconds: 150),

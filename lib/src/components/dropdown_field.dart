@@ -6,7 +6,7 @@ class CustomDropdownField extends StatefulWidget {
   final bool? enabled;
   final double? leftPadding;
   final double? rightPadding;
-  final List<String> dropdownValues;
+  final List<String>  dropdownValues;
   final ValueNotifier<String> valueNotifier;
   final String? Function([String?])? validator;
   final void Function(String?) onChanged;
@@ -39,10 +39,9 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
   void initState() {
     super.initState();
 
-    _internalController = SingleSelectController(
-      (widget.dropdownValues.contains(widget.valueNotifier.value))
+    _internalController = SingleSelectController(widget.dropdownValues.contains(widget.valueNotifier.value)
           ? widget.valueNotifier.value
-          : widget.dropdownValues.first,
+          : null, // Passivo de erro
     );
 
     _effectiveController = widget.controller ?? _internalController;

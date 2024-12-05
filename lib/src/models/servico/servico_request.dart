@@ -10,25 +10,25 @@ class ServicoRequest {
   String horarioPrevisto;
   String descricao;
 
-  ServicoRequest({
-    this.idCliente,
-    required this.idTecnico,
-    required this.equipamento,
-    required this.marca,
-    required this.filial,
-    required this.dataAtendimento,
-    required this.horarioPrevisto,
-    required this.descricao
-  });
+  ServicoRequest(
+      {this.idCliente,
+      required this.idTecnico,
+      required this.equipamento,
+      required this.marca,
+      required this.filial,
+      required this.dataAtendimento,
+      required this.horarioPrevisto,
+      required this.descricao});
 
-  factory ServicoRequest.fromServicoForm({required ServicoForm servico}) => ServicoRequest(
-    idCliente: servico.idCliente.value,
-    idTecnico: servico.idTecnico.value!,
-    equipamento: servico.equipamento.value,
-    marca: servico.marca.value,
-    filial: servico.filial.value,
-    dataAtendimento: servico.dataAtendimentoPrevisto.value,
-    horarioPrevisto: servico.horarioPrevisto.value.toLowerCase().replaceAll("ã", "a"),
-    descricao: servico.descricao.value
-  );
+  factory ServicoRequest.fromServicoForm({required ServicoForm servico}) =>
+      ServicoRequest(
+          idCliente: servico.idCliente.value,
+          idTecnico: servico.idTecnico.value!,
+          equipamento: servico.equipamento.value,
+          marca: servico.marca.value,
+          filial: servico.filial.value,
+          dataAtendimento: servico.dataPrevista.value,
+          horarioPrevisto:
+              servico.horario.value.toLowerCase().replaceAll("ã", "a"),
+          descricao: servico.descricao.value);
 }
