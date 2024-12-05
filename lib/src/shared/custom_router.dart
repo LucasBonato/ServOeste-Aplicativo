@@ -4,6 +4,7 @@ import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/screens/cliente/cliente.dart';
+// import 'package:serv_oeste/src/screens/servico/create_cliente_and_servico.dart';
 import 'package:serv_oeste/src/screens/servico/filter_servico.dart';
 import 'package:serv_oeste/src/screens/servico/servico.dart';
 
@@ -41,13 +42,15 @@ class CustomRouter {
             value: servicoBloc,
             child: const ServicoScreen(),
           ),
-      "/filterServico": (context) => FilterService(),
-      "/createServico": (context) {
-        return BlocProvider.value(
-          value: servicoBloc,
-          child: CreateServicoAndCliente(),
-        );
-      },
+      "/filterServico": (context) => BlocProvider.value(
+            value: servicoBloc,
+            child: FilterService(),
+          ),
+      "/createServico": (context) => BlocProvider.value(
+            value: servicoBloc,
+            child: CreateServicoAndCliente(),
+          ),
+
       // "/updateTecnico": (context) => const UpdateTecnico(),
       // "/updateCliente": (context) => const UpdateCliente(),
       // "/updateServico": (context) => const UpdateServico()

@@ -31,7 +31,7 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F4FF),
+      backgroundColor: const Color(0xFFF9F9FF),
       appBar: AppBar(
         leading: Padding(
           padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
@@ -288,6 +288,7 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
               child: CustomSearchDropDown(
                 label: "Município*",
                 dropdownValues: Constants.municipios,
+                leftPadding: 0,
                 maxLength: 20,
                 controller: TextEditingController(),
                 valueNotifier: _clienteForm.municipio,
@@ -318,6 +319,7 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
               child: CustomTextFormField(
                 hint: "Número...",
                 label: "Número*",
+                leftPadding: 0,
                 type: TextInputType.number,
                 maxLength: 6,
                 hide: false,
@@ -391,7 +393,6 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
                 label: "Data Atendimento Previsto*",
                 hint: 'dd/mm/aaaa',
                 mask: Constants.maskData,
-                rightPadding: 4,
                 type: TextInputType.datetime,
                 maxLength: 10,
                 valueNotifier: _servicoForm.dataPrevista,

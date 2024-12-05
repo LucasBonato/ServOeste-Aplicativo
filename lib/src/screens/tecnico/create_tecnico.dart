@@ -56,7 +56,8 @@ class _CreateTecnicoState extends State<CreateTecnico> {
 
   bool _isValidForm() {
     _tecnicoFormKey.currentState?.validate();
-    final ValidationResult response = _tecnicoCreateValidator.validate(_tecnicoCreateForm);
+    final ValidationResult response =
+        _tecnicoCreateValidator.validate(_tecnicoCreateForm);
     return response.isValid;
   }
 
@@ -69,7 +70,8 @@ class _CreateTecnicoState extends State<CreateTecnico> {
         _tecnicoCreateForm.removeConhecimentos(idConhecimento);
       }
     });
-    _tecnicoCreateValidator.setConhecimentos(_tecnicoCreateForm.conhecimentos.value);
+    _tecnicoCreateValidator
+        .setConhecimentos(_tecnicoCreateForm.conhecimentos.value);
 
     if (_isValidForm() == false) {
       return;
@@ -77,19 +79,17 @@ class _CreateTecnicoState extends State<CreateTecnico> {
 
     List<String> nomes = _tecnicoCreateForm.nome.value.split(" ");
     _tecnicoCreateForm.nome.value = nomes.first;
-    String sobrenome = nomes
-        .sublist(1)
-        .join(" ")
-        .trim();
+    String sobrenome = nomes.sublist(1).join(" ").trim();
 
-    _tecnicoBloc.add(TecnicoRegisterEvent(tecnico: Tecnico.fromForm(_tecnicoCreateForm), sobrenome: sobrenome));
+    _tecnicoBloc.add(TecnicoRegisterEvent(
+        tecnico: Tecnico.fromForm(_tecnicoCreateForm), sobrenome: sobrenome));
     _tecnicoCreateForm.nome.value = "${nomes.first} $sobrenome";
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F4FF),
+      backgroundColor: const Color(0xFFF9F9FF),
       appBar: AppBar(
         leading: Padding(
           padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
@@ -139,7 +139,8 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                       leftPadding: 0,
                       hide: false,
                       valueNotifier: _tecnicoCreateForm.nome,
-                      validator: _tecnicoCreateValidator.byField(_tecnicoCreateForm, ErrorCodeKey.nomeESobrenome.name),
+                      validator: _tecnicoCreateValidator.byField(
+                          _tecnicoCreateForm, ErrorCodeKey.nomeESobrenome.name),
                       onChanged: _tecnicoCreateForm.setNome,
                     ),
                     Row(
@@ -148,7 +149,6 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                           child: CustomTextFormField(
                             hint: "(99) 9999-9999",
                             label: "Telefone Fixo**",
-                            rightPadding: 0,
                             leftPadding: 0,
                             maxLength: 14,
                             hide: false,
@@ -157,7 +157,9 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                             ],
                             type: TextInputType.phone,
                             valueNotifier: _tecnicoCreateForm.telefoneFixo,
-                            validator: _tecnicoCreateValidator.byField(_tecnicoCreateForm, ErrorCodeKey.telefoneFixo.name),
+                            validator: _tecnicoCreateValidator.byField(
+                                _tecnicoCreateForm,
+                                ErrorCodeKey.telefoneFixo.name),
                             onChanged: _tecnicoCreateForm.setTelefoneFixo,
                           ),
                         ),
@@ -167,13 +169,14 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                             hint: "(99) 99999-9999",
                             label: "Telefone Celular**",
                             leftPadding: 0,
-                            rightPadding: 0,
                             maxLength: 15,
                             hide: false,
                             masks: Constants.maskTelefone,
                             type: TextInputType.phone,
                             valueNotifier: _tecnicoCreateForm.telefoneCelular,
-                            validator: _tecnicoCreateValidator.byField(_tecnicoCreateForm, ErrorCodeKey.telefoneCelular.name),
+                            validator: _tecnicoCreateValidator.byField(
+                                _tecnicoCreateForm,
+                                ErrorCodeKey.telefoneCelular.name),
                             onChanged: _tecnicoCreateForm.setTelefoneCelular,
                           ),
                         ),
@@ -192,9 +195,10 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                         ),
                         const SizedBox(height: 8),
                         CustomGridCheckersFormField(
-                          validator: _tecnicoCreateValidator.byField(_tecnicoCreateForm, ErrorCodeKey.conhecimento.name),
-                          checkersMap: checkersMap
-                        ),
+                            validator: _tecnicoCreateValidator.byField(
+                                _tecnicoCreateForm,
+                                ErrorCodeKey.conhecimento.name),
+                            checkersMap: checkersMap),
                       ],
                     ),
                     const Padding(
@@ -205,12 +209,14 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                           children: [
                             Text(
                               "* - Campos obrigatórios",
-                              style: TextStyle(fontSize: 14, color: Colors.black),
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.black),
                             ),
                             SizedBox(width: 16),
                             Text(
                               "** - Preencha ao menos um destes campos",
-                              style: TextStyle(fontSize: 14, color: Colors.black),
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.black),
                             ),
                           ],
                         ),
@@ -222,18 +228,16 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                       listener: (context, state) {
                         if (state is TecnicoRegisterSuccessState) {
                           Navigator.pop(context);
-                        }
-                        else if (state is TecnicoErrorState) {
+                        } else if (state is TecnicoErrorState) {
                           ErrorEntity error = state.error;
 
                           _tecnicoCreateValidator.applyBackendError(error);
                           _tecnicoFormKey.currentState?.validate();
                           _tecnicoCreateValidator.cleanExternalErrors();
 
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("[ERROR] Informação(ões) inválida(s) ao registrar o Técnico: ${error.errorMessage}"))
-                          );
-
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                  "[ERROR] Informação(ões) inválida(s) ao registrar o Técnico: ${error.errorMessage}")));
                         }
                       },
                       child: Center(

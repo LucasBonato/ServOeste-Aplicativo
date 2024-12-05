@@ -85,7 +85,7 @@ class _CreateClienteState extends State<CreateCliente> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F4FF),
+      backgroundColor: const Color(0xFFF9F9FF),
       appBar: AppBar(
         leading: Padding(
           padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),

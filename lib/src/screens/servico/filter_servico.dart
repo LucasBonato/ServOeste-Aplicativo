@@ -28,7 +28,7 @@ class FilterService extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F4FF),
+      backgroundColor: const Color(0xFFF9F9FF),
       appBar: AppBar(
         leading: Padding(
           padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
@@ -39,8 +39,7 @@ class FilterService extends StatelessWidget {
         ),
         title: const Text(
           "Voltar",
-          style: TextStyle(
-              color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.black, fontSize: 16),
         ),
         backgroundColor: const Color(0xFCFDFDFF),
         elevation: 0,
@@ -70,21 +69,21 @@ class FilterService extends StatelessWidget {
                     controller: addressController,
                     onChangedAction: (value) {},
                   ),
-                  const SizedBox(height: 16.0),
+                  const SizedBox(height: 20),
                   CustomSearchDropDown(
                     label: 'Equipamento...',
                     dropdownValues: Constants.equipamentos,
                     onChanged: (value) => equipamentoNotifier.value = value,
                     valueNotifier: equipamentoNotifier,
                   ),
-                  const SizedBox(height: 16.0),
+                  const SizedBox(height: 20),
                   CustomDropdownField(
                     label: 'Situação...',
                     dropdownValues: Constants.situationServiceList,
                     onChanged: (value) => situacaoNotifier.value = value!,
                     valueNotifier: situacaoNotifier,
                   ),
-                  const SizedBox(height: 16.0),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       Expanded(
@@ -107,7 +106,7 @@ class FilterService extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16.0),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       Expanded(
@@ -136,7 +135,7 @@ class FilterService extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16.0),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       Expanded(

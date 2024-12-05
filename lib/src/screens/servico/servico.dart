@@ -86,8 +86,8 @@ class ServicoScreenState extends State<ServicoScreen> {
         );
 
     Widget buildFilterIcon() => InkWell(
-          onTap: () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => FilterService())),
+          onTap: () => Navigator.of(context, rootNavigator: true)
+              .push(MaterialPageRoute(builder: (context) => FilterService())),
           hoverColor: const Color(0xFFF5EEED),
           borderRadius: BorderRadius.circular(10),
           child: Ink(

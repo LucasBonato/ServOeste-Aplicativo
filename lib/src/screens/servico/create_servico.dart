@@ -31,7 +31,7 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F4FF),
+      backgroundColor: const Color(0xFFF9F9FF),
       appBar: AppBar(
         leading: Padding(
           padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
@@ -40,15 +40,15 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
               IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.black),
                 onPressed: () => Navigator.pop(context, "Back"),
-              ),
-              const Text(
-                "Voltar",
-                style: TextStyle(color: Colors.black, fontSize: 16),
-              ),
+              )
             ],
           ),
         ),
-        backgroundColor: const Color(0xFCFDFDFF),
+        title: const Text(
+          "Voltar",
+          style: TextStyle(color: Colors.black, fontSize: 16),
+        ),
+        backgroundColor: Color(0xFCFDFDFF),
         elevation: 0,
       ),
       body: LayoutBuilder(
@@ -273,6 +273,7 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
               child: CustomTextFormField(
                 hint: "00000-000",
                 label: "CEP",
+                rightPadding: 8,
                 type: TextInputType.number,
                 maxLength: 9,
                 hide: false,
@@ -288,6 +289,7 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
               child: CustomSearchDropDown(
                 label: "Município*",
                 dropdownValues: Constants.municipios,
+                leftPadding: 0,
                 maxLength: 20,
                 controller: TextEditingController(),
                 valueNotifier: _clienteForm.municipio,
@@ -305,6 +307,7 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
               child: CustomTextFormField(
                 hint: "Rua...",
                 label: "Rua*",
+                rightPadding: 8,
                 type: TextInputType.text,
                 maxLength: 100,
                 hide: false,
@@ -318,6 +321,7 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
               child: CustomTextFormField(
                 hint: "Número...",
                 label: "Número*",
+                leftPadding: 0,
                 type: TextInputType.number,
                 maxLength: 6,
                 hide: false,
@@ -390,8 +394,8 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
               child: CustomDatePicker(
                 label: "Data Atendimento Previsto*",
                 hint: 'dd/mm/aaaa',
+                rightPadding: 8,
                 mask: Constants.maskData,
-                rightPadding: 4,
                 type: TextInputType.datetime,
                 maxLength: 10,
                 valueNotifier: _servicoForm.dataPrevista,
@@ -404,9 +408,9 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
               flex: 1,
               child: CustomDropdownField(
                 dropdownValues: Constants.dataAtendimento,
-                valueNotifier: _servicoForm.horario,
                 label: "Horário*",
                 leftPadding: 0,
+                valueNotifier: _servicoForm.horario,
                 validator: _servicoValidator.byField(_servicoForm, "horario"),
                 onChanged: _servicoForm.setHorario,
               ),
