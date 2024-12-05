@@ -6,6 +6,9 @@ import 'package:serv_oeste/src/shared/constants.dart';
 
 class FilterService extends StatelessWidget {
   final TextEditingController addressController = TextEditingController();
+  final TextEditingController dataPrevistaController = TextEditingController();
+  final TextEditingController dataEfetivaController = TextEditingController();
+  final TextEditingController dataAberturaController = TextEditingController();
   final ValueNotifier<String> equipamentoNotifier = ValueNotifier<String>('');
   final ValueNotifier<String> situacaoNotifier = ValueNotifier<String>('');
   final ValueNotifier<String> filialNotifier = ValueNotifier<String>('');

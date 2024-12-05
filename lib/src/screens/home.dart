@@ -77,6 +77,7 @@ class _HomeState extends State<Home> {
               if (state is ServicoSearchSuccessState) {
                 return SingleChildScrollView(
                   child: GridListView(
+                    aspectRatio: 1.5,
                     dataList: state.servicos,
                     buildCard: (dynamic servico) => CardService(
                       cliente: (servico as Servico).nomeCliente,

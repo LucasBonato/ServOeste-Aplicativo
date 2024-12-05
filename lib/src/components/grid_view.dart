@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 class GridListView extends StatelessWidget {
+  final double aspectRatio;
   final List<dynamic> dataList;
   final Widget Function(dynamic data) buildCard;
 
   const GridListView({
     super.key,
+    required this.aspectRatio,
     required this.dataList,
     required this.buildCard,
   });
@@ -33,7 +35,7 @@ class GridListView extends StatelessWidget {
                       : 1,
           mainAxisSpacing: 15,
           crossAxisSpacing: 15,
-          childAspectRatio: 1.5,
+          childAspectRatio: aspectRatio,
         ),
         itemBuilder: (context, index) {
           return buildCard(dataList[index]);

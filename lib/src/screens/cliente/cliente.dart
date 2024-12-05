@@ -60,15 +60,14 @@ class _ClienteScreenState extends State<ClienteScreen> {
   }
 
   void _selectItems(int id) {
-    if (_selectedItems.contains(id)) {
-      setState(() {
-        _selectedItems.remove(id);
-      });
-      return;
-    }
-    _selectedItems.add(id);
     setState(() {
-      if (!isSelected) isSelected = true;
+      if (_selectedItems.contains(id)) {
+        _selectedItems.remove(id);
+      } else {
+        _selectedItems.add(id);
+      }
+
+      isSelected = _selectedItems.isNotEmpty;
     });
   }
 
@@ -248,12 +247,15 @@ class _ClienteScreenState extends State<ClienteScreen> {
                 } else if (state is ClienteSearchSuccessState) {
                   return SingleChildScrollView(
                     child: GridListView(
+                      aspectRatio: 2.25,
                       dataList: state.clientes,
                       buildCard: (cliente) => GestureDetector(
-                        onTap: () => _selectItems(cliente.id!),
+                        onDoubleTap: () => _selectItems(cliente.id!),
+                        onLongPress: () => _selectItems(cliente.id!),
                         child: CardClient(
                             name: (cliente as Cliente).nome!,
                             phoneNumber: cliente.telefoneFixo!,
+                            cellphone: cliente.telefoneCelular!,
                             city: cliente.municipio!,
                             street: cliente.endereco!,
                             isSelected: _selectedItems.contains(cliente.id)),
