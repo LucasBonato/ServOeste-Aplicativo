@@ -1,6 +1,4 @@
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
-import 'package:serv_oeste/src/models/cliente/cliente.dart';
 
 class Constants {
   static const bool isDev = true;
@@ -87,28 +85,12 @@ class Constants {
   ];
 
   // TODO - Retirar os métodos de transformar Mask das Constants
-  static String deTransformarMask(String telefone) {
+  static String applyTelefoneMask(String telefone) {
     return "(${telefone.substring(0, 2)}) ${telefone.substring(2, 7)}-${telefone.substring(7)}";
   }
 
   static String transformTelefoneMask(String telefone){
     if(telefone.length < 14 || telefone.length > 15) return "";
     return telefone.replaceAll("(", "").replaceAll(")", "").replaceAll(" ", "").replaceAll("-", "");
-  }
-
-  static String transformTelefone({Tecnico? tecnico, Cliente? cliente}) {
-    String telefoneC;
-    String telefoneF;
-    if (tecnico == null) {
-      telefoneC = cliente?.telefoneCelular ?? "";
-      telefoneF = cliente?.telefoneFixo ?? "";
-    } else {
-      telefoneC = tecnico.telefoneCelular ?? "";
-      telefoneF = tecnico.telefoneFixo ?? "";
-    }
-    String telefone = (telefoneC.isNotEmpty) ? telefoneC : telefoneF;
-    String telefoneFormatado =
-        "Telefone: (${telefone.substring(0, 2)}) ${telefone.substring(2, 7)}-${telefone.substring(7)}";
-    return telefoneFormatado;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:serv_oeste/src/shared/constants.dart';
 
 class CardTechnical extends StatelessWidget {
   final int id;
@@ -67,7 +68,7 @@ class CardTechnical extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(left: 28),
+                        padding: const EdgeInsets.only(left: 20),
                         child: Text(
                           name,
                           style: TextStyle(
@@ -82,9 +83,9 @@ class CardTechnical extends StatelessWidget {
                       SizedBox(height: 4),
                       if (phoneNumber != null && phoneNumber!.isNotEmpty)
                         Padding(
-                          padding: const EdgeInsets.only(left: 32),
+                          padding: const EdgeInsets.only(left: 24),
                           child: Text(
-                            "Telefone fixo: $phoneNumber",
+                            "Telefone fixo: ${Constants.applyTelefoneMask(phoneNumber!)}",
                             style: TextStyle(
                               fontSize: MediaQuery.of(context)
                                   .size
@@ -93,17 +94,13 @@ class CardTechnical extends StatelessWidget {
                             ),
                           ),
                         ),
-                      if (cellPhoneNumber != null &&
-                          cellPhoneNumber!.isNotEmpty)
+                      if (cellPhoneNumber != null && cellPhoneNumber!.isNotEmpty)
                         Padding(
-                          padding: const EdgeInsets.only(left: 32),
+                          padding: const EdgeInsets.only(left: 24),
                           child: Text(
-                            "Celular: $cellPhoneNumber",
+                            "Celular: ${Constants.applyTelefoneMask(cellPhoneNumber!)}",
                             style: TextStyle(
-                              fontSize: MediaQuery.of(context)
-                                  .size
-                                  .width
-                                  .clamp(13.0, 15.0),
+                              fontSize: MediaQuery.of(context).size.width.clamp(13.0, 15.0),
                             ),
                           ),
                         ),
