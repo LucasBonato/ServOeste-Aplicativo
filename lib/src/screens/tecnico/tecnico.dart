@@ -33,8 +33,8 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     _tecnicoBloc = context.read<TecnicoBloc>();
     _idController = TextEditingController();
     _nomeController = TextEditingController();
-    _situacaoController = SingleSelectController<String>('Ativo');
-    _situacaoNotifier = ValueNotifier<String>('Ativo');
+    _situacaoController = SingleSelectController<String>('');
+    _situacaoNotifier = ValueNotifier<String>('');
     _selectedItems = [];
   }
 

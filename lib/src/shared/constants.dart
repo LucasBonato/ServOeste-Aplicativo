@@ -6,6 +6,7 @@ class Constants {
   static const bool isDev = true;
 
   static const List<String> situationTecnicoList = [
+    '',
     'Ativo',
     'Licença',
     'Desativado'

@@ -30,7 +30,6 @@ class CardClient extends StatelessWidget {
         valueListenable: isHovered,
         builder: (context, hovered, child) {
           return Container(
-            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: isSelected

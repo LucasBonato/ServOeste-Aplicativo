@@ -10,17 +10,13 @@ final class TecnicoLoadingState extends TecnicoState {}
 final class TecnicoSearchOneSuccessState extends TecnicoState {
   final Tecnico tecnico;
 
-  TecnicoSearchOneSuccessState({
-    required this.tecnico
-  });
+  TecnicoSearchOneSuccessState({required this.tecnico});
 }
 
 final class TecnicoSearchSuccessState extends TecnicoState {
   final List<Tecnico> tecnicos;
 
-  TecnicoSearchSuccessState({
-    required this.tecnicos
-  });
+  TecnicoSearchSuccessState({required this.tecnicos});
 }
 
 final class TecnicoRegisterSuccessState extends TecnicoState {}
@@ -30,7 +26,5 @@ final class TecnicoUpdateSuccessState extends TecnicoState {}
 final class TecnicoErrorState extends TecnicoState {
   final ErrorEntity error;
 
-  TecnicoErrorState({
-    required this.error
-  });
+  TecnicoErrorState({required this.error});
 }

@@ -24,21 +24,22 @@ class TecnicoBloc extends Bloc<TecnicoEvent, TecnicoState> {
     on<TecnicoDisableListEvent>(_disableListOfTecnicos);
   }
 
-  Future<void> _fetchAllTecnicos(TecnicoLoadingEvent event, Emitter emit) async {
+  Future<void> _fetchAllTecnicos(
+      TecnicoLoadingEvent event, Emitter emit) async {
     emit(TecnicoLoadingState());
     try {
-      final List<Tecnico>? tecnicos = await _tecnicoRepository.getTecnicosByFind(
-        id: event.id,
-        nome: event.nome,
-        situacao: event.situacao
-      );
-      emit(TecnicoSearchSuccessState(tecnicos: tecnicos?? []));
+      final List<Tecnico>? tecnicos =
+          await _tecnicoRepository.getTecnicosByFind(
+              id: event.id, nome: event.nome, situacao: event.situacao);
+      emit(TecnicoSearchSuccessState(tecnicos: tecnicos ?? []));
     } on DioException catch (e) {
-      emit(TecnicoErrorState(error: ErrorEntity(id: 0, errorMessage: e.message?? "")));
+      emit(TecnicoErrorState(
+          error: ErrorEntity(id: 0, errorMessage: e.message ?? "")));
     }
   }
-  
-  Future<void> _fetchOneTecnico(TecnicoSearchOneEvent event, Emitter emit) async {
+
+  Future<void> _fetchOneTecnico(
+      TecnicoSearchOneEvent event, Emitter emit) async {
     emit(TecnicoLoadingState());
     try {
       Tecnico? tecnico = await _tecnicoRepository.getTecnicoById(event.id);
@@ -46,28 +47,37 @@ class TecnicoBloc extends Bloc<TecnicoEvent, TecnicoState> {
         emit(TecnicoSearchOneSuccessState(tecnico: tecnico));
         return;
       }
-      emit(TecnicoErrorState(error: ErrorEntity(id: 0, errorMessage: "Não foi possível encontrar o técnico!")));
+      emit(TecnicoErrorState(
+          error: ErrorEntity(
+              id: 0, errorMessage: "Não foi possível encontrar o técnico!")));
     } on DioException catch (e) {
       emit(TecnicoErrorState(error: e as ErrorEntity));
     }
   }
-  
+
   Future<void> _searchTecnicos(TecnicoSearchEvent event, Emitter emit) async {
     _id = event.id;
     _nome = event.nome?.isNotEmpty == true ? event.nome : null;
-    _situacao = event.situacao?.isNotEmpty == true && event.situacao != null ? event.situacao!.toLowerCase() : null;
-    await _fetchAllTecnicos(TecnicoLoadingEvent(id: _id, nome: _nome, situacao: _situacao), emit);
+    _situacao = event.situacao?.isNotEmpty == true && event.situacao != null
+        ? event.situacao!.toLowerCase()
+        : null;
+    await _fetchAllTecnicos(
+        TecnicoLoadingEvent(id: _id, nome: _nome, situacao: _situacao), emit);
   }
 
-  Future<void> _registerTecnico(TecnicoRegisterEvent event, Emitter emit) async {
+  Future<void> _registerTecnico(
+      TecnicoRegisterEvent event, Emitter emit) async {
     emit(TecnicoLoadingState());
     try {
       event.tecnico.sobrenome = event.sobrenome;
       ErrorEntity? error = await _tecnicoRepository.postTecnico(event.tecnico);
-      emit((error == null) ? TecnicoRegisterSuccessState() : TecnicoErrorState(error: error));
+      emit((error == null)
+          ? TecnicoRegisterSuccessState()
+          : TecnicoErrorState(error: error));
     } on DioException catch (e) {
       emit(TecnicoErrorState(
-          error: ErrorEntity(id: 0, errorMessage: e.message ?? "Erro desconhecido")));
+          error: ErrorEntity(
+              id: 0, errorMessage: e.message ?? "Erro desconhecido")));
     }
   }
 
@@ -76,17 +86,21 @@ class TecnicoBloc extends Bloc<TecnicoEvent, TecnicoState> {
     try {
       event.tecnico.sobrenome = event.sobrenome;
       ErrorEntity? error = await _tecnicoRepository.putTecnico(event.tecnico);
-      emit(error == null ? TecnicoUpdateSuccessState() : TecnicoErrorState(error: error));
+      emit(error == null
+          ? TecnicoUpdateSuccessState()
+          : TecnicoErrorState(error: error));
     } catch (e) {
       emit(TecnicoErrorState(error: e as ErrorEntity));
     }
   }
 
-  Future<void> _disableListOfTecnicos(TecnicoDisableListEvent event, Emitter emit) async {
+  Future<void> _disableListOfTecnicos(
+      TecnicoDisableListEvent event, Emitter emit) async {
     emit(TecnicoLoadingState());
     try {
       await _tecnicoRepository.disableListOfTecnicos(event.selectedList);
-      await _fetchAllTecnicos(TecnicoLoadingEvent(id: _id, nome: _nome, situacao: _situacao), emit);
+      await _fetchAllTecnicos(
+          TecnicoLoadingEvent(id: _id, nome: _nome, situacao: _situacao), emit);
     } catch (e) {
       emit(TecnicoErrorState(error: ErrorEntity(id: 0, errorMessage: "")));
     }

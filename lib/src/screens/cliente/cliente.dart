@@ -247,7 +247,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
                 } else if (state is ClienteSearchSuccessState) {
                   return SingleChildScrollView(
                     child: GridListView(
-                      aspectRatio: 1.75,
+                      aspectRatio: 1.65,
                       dataList: state.clientes,
                       buildCard: (cliente) => GestureDetector(
                         onDoubleTap: () => _selectItems(cliente.id!),
