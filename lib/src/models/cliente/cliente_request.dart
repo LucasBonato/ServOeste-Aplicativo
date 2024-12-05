@@ -1,4 +1,5 @@
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
+import 'package:serv_oeste/src/shared/constants.dart';
 
 class ClienteRequest {
   late String nome;
@@ -21,15 +22,10 @@ class ClienteRequest {
 
   ClienteRequest.fromClienteForm({required ClienteForm cliente, required this.sobrenome}) {
     nome = cliente.nome.value;
-    telefoneFixo = transformTelefoneMask(cliente.telefoneFixo.value);
-    telefoneCelular = transformTelefoneMask(cliente.telefoneCelular.value);
+    telefoneFixo = Constants.transformTelefoneMask(cliente.telefoneFixo.value);
+    telefoneCelular = Constants.transformTelefoneMask(cliente.telefoneCelular.value);
     endereco = "${cliente.rua.value}, ${cliente.numero.value}${(cliente.complemento.value.isNotEmpty) ? ", ${cliente.complemento.value}" : ""}";
     bairro = cliente.bairro.value;
     municipio = cliente.municipio.value;
-  }
-
-  String transformTelefoneMask(String telefone){
-    if(telefone.length != 15) return "";
-    return telefone.substring(1, 3) + telefone.substring(5, 10) + telefone.substring(11);
   }
 }

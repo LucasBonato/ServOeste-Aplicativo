@@ -240,25 +240,22 @@ class _ClienteScreenState extends State<ClienteScreen> {
             child: BlocBuilder<ClienteBloc, ClienteState>(
               bloc: _clienteBloc,
               builder: (context, state) {
-                if (state is ClienteInitialState ||
-                    state is ClienteLoadingState) {
-                  return const Center(
-                      child: CircularProgressIndicator.adaptive());
-                } else if (state is ClienteSearchSuccessState) {
+                if (state is ClienteInitialState || state is ClienteLoadingState) {
+                  return const Center(child: CircularProgressIndicator.adaptive());
+                }
+                else if (state is ClienteSearchSuccessState) {
                   return SingleChildScrollView(
                     child: GridListView(
                       aspectRatio: 1.65,
                       dataList: state.clientes,
-                      buildCard: (cliente) => GestureDetector(
-                        onDoubleTap: () => _selectItems(cliente.id!),
-                        onLongPress: () => _selectItems(cliente.id!),
-                        child: CardClient(
-                            name: (cliente as Cliente).nome!,
-                            phoneNumber: cliente.telefoneFixo!,
-                            cellphone: cliente.telefoneCelular!,
-                            city: cliente.municipio!,
-                            street: cliente.endereco!,
-                            isSelected: _selectedItems.contains(cliente.id)),
+                      buildCard: (cliente) => CardClient(
+                        name: (cliente as Cliente).nome!,
+                        onTap: () => _selectItems((cliente).id!),
+                        phoneNumber: cliente.telefoneFixo!,
+                        cellphone: cliente.telefoneCelular!,
+                        city: cliente.municipio!,
+                        street: cliente.endereco!,
+                        isSelected: _selectedItems.contains(cliente.id),
                       ),
                     ),
                   );

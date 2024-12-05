@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
+import 'package:serv_oeste/src/shared/constants.dart';
 
 List<Cliente> clienteFromJson(String str) => List<Cliente>.from(json.decode(str));
 
@@ -26,16 +27,11 @@ class Cliente {
   Cliente.fromForm(ClienteForm clienteForm) {
     id = clienteForm.id;
     nome = clienteForm.nome.value;
-    telefoneFixo = transformTelefoneMask(clienteForm.telefoneFixo.value);
-    telefoneCelular = transformTelefoneMask(clienteForm.telefoneCelular.value);
+    telefoneFixo = Constants.transformTelefoneMask(clienteForm.telefoneFixo.value);
+    telefoneCelular = Constants.transformTelefoneMask(clienteForm.telefoneCelular.value);
     endereco = "${clienteForm.rua.value}, ${clienteForm.numero.value}${(clienteForm.complemento.value.isNotEmpty) ? ", ${clienteForm.complemento.value}" : ""}";
     bairro = clienteForm.bairro.value;
     municipio = clienteForm.municipio.value;
-  }
-
-  String transformTelefoneMask(String telefone){
-    if(telefone.length != 15) return "";
-    return telefone.substring(1, 3) + telefone.substring(5, 10) + telefone.substring(11);
   }
 
   factory Cliente.fromJson(Map<String, dynamic> json) => Cliente(
