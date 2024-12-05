@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/src/shared/constants.dart';
 
 class TecnicoForm extends ChangeNotifier {
   int? id;

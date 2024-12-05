@@ -10,6 +10,7 @@ class CustomDatePicker extends StatefulWidget {
   final List<MaskTextInputFormatter>? mask;
   final int maxLength;
   final TextInputType type;
+  final bool? enabled;
   final double? rightPadding;
   final double? leftPadding;
   late bool? validation;
@@ -21,6 +22,7 @@ class CustomDatePicker extends StatefulWidget {
   CustomDatePicker({
     super.key,
     this.hide = false,
+    this.enabled,
     this.validation,
     this.onChanged,
     this.validator,
@@ -94,6 +96,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> with RestorationMix
   @override
   Widget build(BuildContext context) {
     return CustomTextFormField(
+      enabled: widget.enabled,
       rightPadding: widget.rightPadding,
       leftPadding: widget.leftPadding,
       valueNotifier: widget.valueNotifier,

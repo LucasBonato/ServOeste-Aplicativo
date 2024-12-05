@@ -139,7 +139,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
             child: suggestionBox,
           );
         },
-        suggestionsBoxVerticalOffset: widget.hide ? -20 : 0,
+        suggestionsBoxVerticalOffset: widget.hide ? 0 : -20,
       ),
     );
   }

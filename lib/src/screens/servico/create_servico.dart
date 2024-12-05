@@ -54,7 +54,6 @@ class _CreateServicoState extends State<CreateServico>{
 
   late final EnderecoBloc _enderecoBloc = EnderecoBloc();
 
-
   late int dayOfTheWeek;
 
   TextStyle textStyle = const TextStyle(
@@ -205,39 +204,39 @@ class _CreateServicoState extends State<CreateServico>{
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
-              Visibility(
-                visible: !widget.isWithAnExistingClient,
+              Form(
+                key: _clienteFormKey,
                 child: Column(
+                  mainAxisSize: MainAxisSize.max,
                   children: [
-                    Form(
-                      key: _clienteFormKey,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          BlocListener<ClienteBloc, ClienteState>(
-                            bloc: _clienteBloc,
-                            listener: (context, state) {
-                              if (state is ClienteSearchSuccessState) {
-                                List<String> nomes = state.clientes
-                                    .take(5)
-                                    .map((cliente) => cliente.nome!)
-                                    .toList();
+                    BlocListener<ClienteBloc, ClienteState>(
+                      bloc: _clienteBloc,
+                      listener: (context, state) {
+                        if (state is ClienteSearchSuccessState) {
+                          List<String> nomes = state.clientes
+                              .take(5)
+                              .map((cliente) => cliente.nome!)
+                              .toList();
 
-                                if(_dropdownClienteValuesNomes != nomes) {
-                                  _dropdownClienteValuesNomes = nomes;
-                                  setState(() {});
-                                }
-                              }
-                            },
-                            child: CustomSearchDropDown(
-                              label: "Nome",
-                              maxLength: 40,
-                              onChanged: _onNomeClienteChanged,
-                              onSelected: _onNomeClienteChanged,
-                              dropdownValues: _dropdownClienteValuesNomes,
-                              validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.nomeESobrenome.name),
-                            ),
-                          ),
+                          if(_dropdownClienteValuesNomes != nomes) {
+                            _dropdownClienteValuesNomes = nomes;
+                            setState(() {});
+                          }
+                        }
+                      },
+                      child: CustomSearchDropDown(
+                        label: "Nome",
+                        maxLength: 40,
+                        onChanged: _onNomeClienteChanged,
+                        onSelected: _onNomeClienteChanged,
+                        dropdownValues: _dropdownClienteValuesNomes,
+                        validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.nomeESobrenome.name),
+                      ),
+                    ),
+                    Visibility(
+                      visible: !widget.isWithAnExistingClient,
+                      child: Column(
+                        children: [
                           CustomTextFormField(
                             valueNotifier: _clienteCreateForm.telefoneCelular,
                             hint: "(99) 99999-9999",
@@ -324,7 +323,7 @@ class _CreateServicoState extends State<CreateServico>{
                               ],
                             ),
                           ),
-                        ]
+                        ],
                       ),
                     ),
                     Padding(
@@ -335,8 +334,8 @@ class _CreateServicoState extends State<CreateServico>{
                       ),
                       child: const Divider(),
                     ),
-                  ],
-                )
+                  ]
+                ),
               ), // Cliente Form
 
               Form(
@@ -344,6 +343,7 @@ class _CreateServicoState extends State<CreateServico>{
                 child: Column(
                   children: [
                     CustomSearchDropDown(
+                      enabled: (!widget.isWithAnExistingClient && widget.clientId != null),
                       label: "Equipamento",
                       maxLength: 80,
                       dropdownValues: Constants.equipamentos,
@@ -352,6 +352,7 @@ class _CreateServicoState extends State<CreateServico>{
                       validator: _servicoCreateValidator.byField(_servicoCreateForm, ErrorCodeKey.equipamento.name),
                     ),
                     CustomSearchDropDown(
+                      enabled: (!widget.isWithAnExistingClient && widget.clientId != null),
                       label: "Marca",
                       maxLength: 40,
                       dropdownValues: Constants.marcas,
@@ -360,6 +361,7 @@ class _CreateServicoState extends State<CreateServico>{
                       validator: _servicoCreateValidator.byField(_servicoCreateForm, ErrorCodeKey.marca.name),
                     ),
                     CustomDropdownField(
+                      enabled: (!widget.isWithAnExistingClient && widget.clientId != null),
                       label: "Filial",
                       dropdownValues: Constants.filiais,
                       valueNotifier: _servicoCreateForm.filial,
@@ -367,8 +369,9 @@ class _CreateServicoState extends State<CreateServico>{
                       validator: _servicoCreateValidator.byField(_servicoCreateForm, ErrorCodeKey.filial.name),
                     ),
                     CustomDatePicker(
+                      enabled: (!widget.isWithAnExistingClient && widget.clientId != null),
                       label: "Data Atendimento Previsto",
-                      hint: "",
+                      hint: "dd/mm/aaaa",
                       mask: Constants.maskData,
                       type: TextInputType.datetime,
                       maxLength: 10,
@@ -376,6 +379,7 @@ class _CreateServicoState extends State<CreateServico>{
                       valueNotifier: _servicoCreateForm.dataAtendimentoPrevisto,
                     ),
                     CustomDropdownField(
+                      enabled: (!widget.isWithAnExistingClient && widget.clientId != null),
                       label: "Horário Previsto",
                       dropdownValues: Constants.dataAtendimento,
                       valueNotifier: _servicoCreateForm.horarioPrevisto,
@@ -402,7 +406,7 @@ class _CreateServicoState extends State<CreateServico>{
                       child: ValueListenableBuilder(
                         valueListenable: _servicoCreateForm.equipamento,
                         builder: (context, value, child) {
-                          bool isFieldEnabled = value.isNotEmpty;
+                          bool isFieldEnabled = value.isNotEmpty || (!widget.isWithAnExistingClient && widget.clientId != null);
 
                           return CustomSearchDropDown(
                             label: "Técnico",
@@ -417,6 +421,7 @@ class _CreateServicoState extends State<CreateServico>{
                       ),
                     ),
                     CustomTextFormField(
+                      enabled: (!widget.isWithAnExistingClient && widget.clientId != null),
                       hint: "Descrição...",
                       label: "Descrição",
                       masks: [],

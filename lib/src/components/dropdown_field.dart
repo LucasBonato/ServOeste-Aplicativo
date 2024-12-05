@@ -3,6 +3,7 @@ import 'package:animated_custom_dropdown/custom_dropdown.dart';
 
 class CustomDropdownField extends StatefulWidget {
   final String label;
+  final bool? enabled;
   final double? leftPadding;
   final double? rightPadding;
   final List<String> dropdownValues;
@@ -15,12 +16,13 @@ class CustomDropdownField extends StatefulWidget {
     super.key,
     required this.dropdownValues,
     required this.valueNotifier,
-    required this.label,
     required this.onChanged,
+    required this.label,
     this.rightPadding,
     this.leftPadding,
-    this.validator,
     this.controller,
+    this.validator,
+    this.enabled,
   });
 
   @override
@@ -72,8 +74,8 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
           },
           child: ValueListenableBuilder<String>(
             valueListenable: widget.valueNotifier,
-            builder: (BuildContext context, String value, Widget? child) =>
-                CustomDropdown<String>(
+            builder: (BuildContext context, String value, Widget? child) => CustomDropdown<String>(
+              enabled: widget.enabled?? true,
               items: widget.dropdownValues,
               controller: _effectiveController,
               hintText: widget.label,

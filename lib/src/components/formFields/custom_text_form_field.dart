@@ -7,6 +7,7 @@ class CustomTextFormField extends StatefulWidget {
   final String label;
   final int maxLength;
   final TextInputType type;
+  final bool? enabled;
   final String? initialValue;
   final double? rightPadding;
   final double? leftPadding;
@@ -32,6 +33,7 @@ class CustomTextFormField extends StatefulWidget {
     this.validator,
     this.onChanged,
     this.maxLines,
+    this.enabled,
     this.onSaved,
     this.onTap,
     this.masks,
@@ -70,8 +72,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       padding: EdgeInsetsDirectional.fromSTEB(widget.leftPadding ?? 16, 4, widget.rightPadding ?? 16, widget.hide ? 16 : 0),
       child: ValueListenableBuilder<String>(
         valueListenable: widget.valueNotifier,
-        builder: (BuildContext context, String value, Widget? child) =>
-            TextFormField(
+        builder: (BuildContext context, String value, Widget? child) => TextFormField(
+          enabled: widget.enabled,
           controller: _internalController,
           inputFormatters: widget.masks,
           maxLength: widget.maxLength,
