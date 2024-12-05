@@ -125,7 +125,7 @@ class ServicoValidator extends LucidValidator<ServicoForm>
             "Insira ao menos 3 palavras!", ErrorCodeKey.descricao.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.descricao.name);
 
-    ruleFor((servico) => servico.idTecnico.value,
+    ruleFor((servico) => servico.id,
             key: ErrorCodeKey.tecnico.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.tecnico.name)
         .must((id) => id != null, "Selecione um técnico",

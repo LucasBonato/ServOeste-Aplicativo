@@ -50,7 +50,7 @@ class ServicoScreenState extends State<ServicoScreen> {
   }
 
   void _disableServico() {
-    final List<int> selectedItemsCopy = List<int>.from(_selectedItems);
+    // final List<int> selectedItemsCopy = List<int>.from(_selectedItems);
     // _servicoBloc.add(_deleteService(selectedList: selectedItemsCopy));
     setState(() {
       _selectedItems.clear();

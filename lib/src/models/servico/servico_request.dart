@@ -21,14 +21,13 @@ class ServicoRequest {
       required this.descricao});
 
   factory ServicoRequest.fromServicoForm({required ServicoForm servico}) =>
-      ServicoRequest(
-          idCliente: servico.idCliente.value,
-          idTecnico: servico.idTecnico.value!,
-          equipamento: servico.equipamento.value,
-          marca: servico.marca.value,
-          filial: servico.filial.value,
-          dataAtendimento: servico.dataPrevista.value,
-          horarioPrevisto:
-              servico.horario.value.toLowerCase().replaceAll("ã", "a"),
-          descricao: servico.descricao.value);
+    ServicoRequest(
+      idTecnico: servico.id!,
+      equipamento: servico.equipamento.value,
+      marca: servico.marca.value,
+      filial: servico.filial.value,
+      dataAtendimento: servico.dataPrevista.value,
+      horarioPrevisto: servico.horario.value.toLowerCase().replaceAll("ã", "a"),
+      descricao: servico.descricao.value,
+    );
 }

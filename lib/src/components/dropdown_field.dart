@@ -6,7 +6,7 @@ class CustomDropdownField extends StatefulWidget {
   final bool? enabled;
   final double? leftPadding;
   final double? rightPadding;
-  final List<String>  dropdownValues;
+  final List<String> dropdownValues;
   final ValueNotifier<String> valueNotifier;
   final String? Function([String?])? validator;
   final void Function(String?) onChanged;

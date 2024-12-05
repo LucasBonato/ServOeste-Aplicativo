@@ -8,11 +8,11 @@ import 'package:serv_oeste/src/shared/constants.dart';
 class FilterService extends StatelessWidget {
   final TextEditingController addressController = TextEditingController();
 
-  final ValueNotifier<String?> equipamentoNotifier = ValueNotifier<String?>('');
-  final ValueNotifier<String?> situacaoNotifier = ValueNotifier<String?>('');
-  final ValueNotifier<String?> filialNotifier = ValueNotifier<String?>('');
-  final ValueNotifier<String?> garantiaNotifier = ValueNotifier<String?>('');
-  final ValueNotifier<String?> horarioNotifier = ValueNotifier<String?>('');
+  final ValueNotifier<String> equipamentoNotifier = ValueNotifier<String>('');
+  final ValueNotifier<String> situacaoNotifier = ValueNotifier<String>('');
+  final ValueNotifier<String> filialNotifier = ValueNotifier<String>('');
+  final ValueNotifier<String> garantiaNotifier = ValueNotifier<String>('');
+  final ValueNotifier<String> horarioNotifier = ValueNotifier<String>('');
 
   final ValueNotifier<String> dataPrevistaNotifier = ValueNotifier<String>('');
   final ValueNotifier<String> dataEfetivaNotifier = ValueNotifier<String>('');
@@ -81,7 +81,7 @@ class FilterService extends StatelessWidget {
                   CustomDropdownField(
                     label: 'Situação...',
                     dropdownValues: Constants.situationServiceList,
-                    onChanged: (value) => situacaoNotifier.value = value,
+                    onChanged: (value) => situacaoNotifier.value = value!,
                     valueNotifier: situacaoNotifier,
                   ),
                   const SizedBox(height: 16.0),
@@ -92,7 +92,7 @@ class FilterService extends StatelessWidget {
                           label: 'Filial...',
                           dropdownValues: Constants.filiais,
                           rightPadding: 4,
-                          onChanged: (value) => filialNotifier.value = value,
+                          onChanged: (value) => filialNotifier.value = value!,
                           valueNotifier: filialNotifier,
                         ),
                       ),
@@ -101,7 +101,7 @@ class FilterService extends StatelessWidget {
                           label: 'Garantia...',
                           dropdownValues: Constants.garantias,
                           leftPadding: 4,
-                          onChanged: (value) => garantiaNotifier.value = value,
+                          onChanged: (value) => garantiaNotifier.value = value!,
                           valueNotifier: garantiaNotifier,
                         ),
                       ),
@@ -155,7 +155,7 @@ class FilterService extends StatelessWidget {
                           leftPadding: 4,
                           label: 'Horário...',
                           dropdownValues: ['Manhã', 'Tarde'],
-                          onChanged: (value) => horarioNotifier.value = value,
+                          onChanged: (value) => horarioNotifier.value = value!,
                           valueNotifier: horarioNotifier,
                         ),
                       ),
@@ -186,3 +186,4 @@ class FilterService extends StatelessWidget {
     );
   }
 }
+//TODO - Refatorar tela por completo, criar um model para o formulário e não ficar dependendo de valueNotifiers no mesmo contexto.
