@@ -6,7 +6,7 @@ class CustomDropdownField extends StatefulWidget {
   final double? leftPadding;
   final double? rightPadding;
   final List<String> dropdownValues;
-  final ValueNotifier<String> valueNotifier;
+  final ValueNotifier<String?> valueNotifier;
   final String? Function([String?])? validator;
   final void Function(String?) onChanged;
   final SingleSelectController<String>? controller;
@@ -38,9 +38,10 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
     super.initState();
 
     _internalController = SingleSelectController(
-      (widget.dropdownValues.contains(widget.valueNotifier.value))
+      widget.valueNotifier.value != null &&
+              widget.dropdownValues.contains(widget.valueNotifier.value)
           ? widget.valueNotifier.value
-          : widget.dropdownValues.first,
+          : null,
     );
 
     _effectiveController = widget.controller ?? _internalController;
@@ -71,9 +72,9 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
               _hasFocus = hasFocus;
             });
           },
-          child: ValueListenableBuilder<String>(
+          child: ValueListenableBuilder<String?>(
             valueListenable: widget.valueNotifier,
-            builder: (BuildContext context, String value, Widget? child) =>
+            builder: (BuildContext context, String? value, Widget? child) =>
                 CustomDropdown<String>(
               items: widget.dropdownValues,
               controller: _effectiveController,

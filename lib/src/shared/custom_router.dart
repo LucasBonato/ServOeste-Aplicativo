@@ -20,33 +20,32 @@ class CustomRouter {
 
     return {
       "/tecnico": (context) => BlocProvider.value(
-        value: tecnicoBloc,
-        child: const TecnicoScreen(),
-      ),
+            value: tecnicoBloc,
+            child: const TecnicoScreen(),
+          ),
       "/createTecnico": (context) => BlocProvider.value(
-        value: tecnicoBloc,
-        child: const CreateTecnico(),
-      ),
+            value: tecnicoBloc,
+            child: const CreateTecnico(),
+          ),
 
       "/cliente": (context) => BlocProvider.value(
-        value: clienteBloc,
-        child: const ClienteScreen(),
-      ),
+            value: clienteBloc,
+            child: const ClienteScreen(),
+          ),
       "/createCliente": (context) => BlocProvider.value(
-        value: clienteBloc,
-        child: const CreateCliente(),
-      ),
+            value: clienteBloc,
+            child: const CreateCliente(),
+          ),
 
       "/servico": (context) => BlocProvider.value(
-        value: servicoBloc,
-        child: const ServicoScreen(),
-      ),
+            value: servicoBloc,
+            child: const ServicoScreen(),
+          ),
       "/filterServico": (context) => FilterService(),
       "/createServico": (context) {
-        final bool? args = ModalRoute.of(context)?.settings.arguments as bool?;
         return BlocProvider.value(
           value: servicoBloc,
-          child: CreateServico(isWithAnExistingClient: args ?? false),
+          child: CreateServicoAndCliente(),
         );
       },
       // "/updateTecnico": (context) => const UpdateTecnico(),

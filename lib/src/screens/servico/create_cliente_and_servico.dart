@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:serv_oeste/src/components/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/date_picker.dart';
 import 'package:serv_oeste/src/components/dropdown_field.dart';
+import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
 import 'package:serv_oeste/src/models/servico/servico_form.dart';
+import 'package:serv_oeste/src/models/validators/validator.dart';
 import 'package:serv_oeste/src/screens/servico/table_tecnico.dart';
+import 'package:serv_oeste/src/shared/constants.dart';
 
 class CreateServicoAndCliente extends StatefulWidget {
   const CreateServicoAndCliente({super.key});
@@ -22,9 +24,6 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
 
   final ServicoForm _servicoForm = ServicoForm();
   final ServicoValidator _servicoValidator = ServicoValidator();
-
-  final TextEditingController _dataPrevistaController = TextEditingController();
-  final TextEditingController _numeroController = TextEditingController();
 
   final GlobalKey<FormState> _clienteFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _servicoFormKey = GlobalKey<FormState>();
@@ -232,7 +231,7 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
             "Rio de Azevedo",
             "Belo Luis",
             "Curitiba Bianco"
-          ],
+          ], // TODO: fazer com que o nome dos clientes já cadastrados apareçam aqui
           maxLength: 50,
           hide: false,
           valueNotifier: _clienteForm.nome,
@@ -288,14 +287,7 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
             Expanded(
               child: CustomSearchDropDown(
                 label: "Município*",
-                dropdownValues: const [
-                  "Osasco",
-                  "Carapicuíba",
-                  "Barueri",
-                  "Cotia",
-                  "São Paulo",
-                  "Itapevi",
-                ],
+                dropdownValues: Constants.municipios,
                 maxLength: 20,
                 controller: TextEditingController(),
                 valueNotifier: _clienteForm.municipio,
@@ -330,7 +322,6 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
                 maxLength: 6,
                 hide: false,
                 valueNotifier: _clienteForm.numero,
-                controller: _numeroController,
                 validator: _clienteValidator.byField(_clienteForm, "numero"),
                 onChanged: _clienteForm.setNumero,
               ),
@@ -357,7 +348,7 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
     return Column(
       children: [
         CustomSearchDropDown(
-          dropdownValues: ['Equipamento 1', 'Equipamento 2', 'Equipamento 3'],
+          dropdownValues: Constants.equipamentos,
           valueNotifier: _servicoForm.equipamento,
           label: "Equipamento*",
           validator: _servicoValidator.byField(_servicoForm, "equipamento"),
@@ -365,7 +356,7 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
         ),
         const SizedBox(height: spacing),
         CustomSearchDropDown(
-          dropdownValues: ['Marca 1', 'Marca 2', 'Marca 3'],
+          dropdownValues: Constants.marcas,
           valueNotifier: _servicoForm.marca,
           label: "Marca*",
           validator: _servicoValidator.byField(_servicoForm, "marca"),
@@ -373,7 +364,7 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
         ),
         const SizedBox(height: spacing),
         CustomDropdownField(
-          dropdownValues: ['Osasco', 'Carapicuíba'],
+          dropdownValues: Constants.filiais,
           valueNotifier: _servicoForm.filial,
           label: "Filial*",
           validator: _servicoValidator.byField(_servicoForm, "filial"),
@@ -397,12 +388,12 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
             Expanded(
               flex: 2,
               child: CustomDatePicker(
-                type: TextInputType.datetime,
-                controller: _dataPrevistaController,
                 label: "Data Atendimento Previsto*",
-                hint: "dd/mm/aaaa",
-                mask: "##/##/####",
-                errorMessage: "Data inválida",
+                hint: 'dd/mm/aaaa',
+                mask: Constants.maskData,
+                rightPadding: 4,
+                type: TextInputType.datetime,
+                maxLength: 10,
                 valueNotifier: _servicoForm.dataPrevista,
                 validator:
                     _servicoValidator.byField(_servicoForm, "dataPrevista"),
@@ -412,7 +403,7 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
             Expanded(
               flex: 1,
               child: CustomDropdownField(
-                dropdownValues: ['Manhã', 'Tarde'],
+                dropdownValues: Constants.dataAtendimento,
                 valueNotifier: _servicoForm.horario,
                 label: "Horário*",
                 leftPadding: 0,

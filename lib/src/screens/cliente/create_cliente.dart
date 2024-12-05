@@ -141,11 +141,12 @@ class _CreateClienteState extends State<CreateCliente> {
                         }
                       },
                       child: CustomSearchDropDown(
-                        // hint: "Nome...",
                         label: "Nome*",
                         maxLength: 40,
                         dropdownValues: _dropdownValuesNomes,
-                        validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.nomeESobrenome.name),
+                        validator: _clienteCreateValidator.byField(
+                            _clienteCreateForm,
+                            ErrorCodeKey.nomeESobrenome.name),
                         onChanged: _onNomeChanged,
                       ),
                     ),
@@ -161,7 +162,9 @@ class _CreateClienteState extends State<CreateCliente> {
                             hide: false,
                             masks: Constants.maskTelefoneFixo,
                             valueNotifier: _clienteCreateForm.telefoneFixo,
-                            validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.telefoneFixo.name),
+                            validator: _clienteCreateValidator.byField(
+                                _clienteCreateForm,
+                                ErrorCodeKey.telefoneFixo.name),
                             onChanged: _clienteCreateForm.setTelefoneFixo,
                           ),
                         ),
@@ -175,7 +178,9 @@ class _CreateClienteState extends State<CreateCliente> {
                             maxLength: 15,
                             type: TextInputType.phone,
                             hide: false,
-                            validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.telefoneCelular.name),
+                            validator: _clienteCreateValidator.byField(
+                                _clienteCreateForm,
+                                ErrorCodeKey.telefoneCelular.name),
                             onChanged: _clienteCreateForm.setTelefoneCelular,
                           ),
                         ),
@@ -192,7 +197,8 @@ class _CreateClienteState extends State<CreateCliente> {
                                 Logger().i(state.municipio);
                                 _clienteCreateForm.setBairro(state.bairro);
                                 _clienteCreateForm.setRua(state.rua);
-                                _clienteCreateForm.setMunicipio(state.municipio);
+                                _clienteCreateForm
+                                    .setMunicipio(state.municipio);
                                 _municipioController.text = state.municipio;
                               }
                             },
@@ -205,19 +211,21 @@ class _CreateClienteState extends State<CreateCliente> {
                               hide: false,
                               masks: Constants.maskCep,
                               valueNotifier: _clienteCreateForm.cep,
-                              validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.cep.name),
+                              validator: _clienteCreateValidator.byField(
+                                  _clienteCreateForm, ErrorCodeKey.cep.name),
                               onChanged: _fetchInformationAboutCep,
                             ),
                           ),
                         ),
                         Expanded(
                           child: CustomSearchDropDown(
-                            // hint: "Município...",
                             label: "Município*",
                             leftPadding: 4,
                             dropdownValues: Constants.municipios,
                             controller: _municipioController,
-                            validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.municipio.name),
+                            validator: _clienteCreateValidator.byField(
+                                _clienteCreateForm,
+                                ErrorCodeKey.municipio.name),
                             onChanged: _clienteCreateForm.setMunicipio,
                           ),
                         ),
@@ -230,7 +238,8 @@ class _CreateClienteState extends State<CreateCliente> {
                       maxLength: 40,
                       hide: false,
                       valueNotifier: _clienteCreateForm.bairro,
-                      validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.bairro.name),
+                      validator: _clienteCreateValidator.byField(
+                          _clienteCreateForm, ErrorCodeKey.bairro.name),
                       onChanged: _clienteCreateForm.setBairro,
                     ),
                     Row(
@@ -245,7 +254,8 @@ class _CreateClienteState extends State<CreateCliente> {
                             rightPadding: 8,
                             hide: false,
                             valueNotifier: _clienteCreateForm.rua,
-                            validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.endereco.name),
+                            validator: _clienteCreateValidator.byField(
+                                _clienteCreateForm, ErrorCodeKey.endereco.name),
                             onChanged: _clienteCreateForm.setRua,
                           ),
                         ),
@@ -259,7 +269,8 @@ class _CreateClienteState extends State<CreateCliente> {
                             maxLength: 6,
                             hide: false,
                             valueNotifier: _clienteCreateForm.numero,
-                            validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.numero.name),
+                            validator: _clienteCreateValidator.byField(
+                                _clienteCreateForm, ErrorCodeKey.numero.name),
                             onChanged: _clienteCreateForm.setNumero,
                           ),
                         ),
@@ -273,7 +284,8 @@ class _CreateClienteState extends State<CreateCliente> {
                       maxLength: 100,
                       hide: false,
                       valueNotifier: _clienteCreateForm.complemento,
-                      validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.complemento.name),
+                      validator: _clienteCreateValidator.byField(
+                          _clienteCreateForm, ErrorCodeKey.complemento.name),
                       onChanged: _clienteCreateForm.setComplemento,
                     ),
                     const Padding(
@@ -306,7 +318,8 @@ class _CreateClienteState extends State<CreateCliente> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 128),
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                0, 16, 0, 128),
                             child: BlocListener<ClienteBloc, ClienteState>(
                               bloc: _clienteBloc,
                               listener: (context, state) {
@@ -315,7 +328,8 @@ class _CreateClienteState extends State<CreateCliente> {
                                 } else if (state is ClienteErrorState) {
                                   ErrorEntity error = state.error;
 
-                                  _clienteCreateValidator.applyBackendError(error);
+                                  _clienteCreateValidator
+                                      .applyBackendError(error);
                                   _clienteFormKey.currentState?.validate();
                                   _clienteCreateValidator.cleanExternalErrors();
 
@@ -333,12 +347,14 @@ class _CreateClienteState extends State<CreateCliente> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFF007BFF),
                                   minimumSize: const Size(double.infinity, 48),
-                                  padding: const EdgeInsets.symmetric(vertical: 18),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 18),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
-                                child: const Text("Adicionar",
+                                child: const Text(
+                                  "Adicionar",
                                   style: TextStyle(
                                     fontSize: 18,
                                     color: Colors.white,

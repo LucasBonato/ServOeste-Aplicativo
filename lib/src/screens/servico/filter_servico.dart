@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/src/components/date_picker.dart';
+import 'package:serv_oeste/src/components/dropdown_field.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/components/custom_search_field.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 
 class FilterService extends StatelessWidget {
   final TextEditingController addressController = TextEditingController();
-  final TextEditingController dataPrevistaController = TextEditingController();
-  final TextEditingController dataEfetivaController = TextEditingController();
-  final TextEditingController dataAberturaController = TextEditingController();
-  final ValueNotifier<String> equipamentoNotifier = ValueNotifier<String>('');
-  final ValueNotifier<String> situacaoNotifier = ValueNotifier<String>('');
-  final ValueNotifier<String> filialNotifier = ValueNotifier<String>('');
-  final ValueNotifier<String> garantiaNotifier = ValueNotifier<String>('');
-  final ValueNotifier<String> horarioNotifier = ValueNotifier<String>('');
+
+  final ValueNotifier<String?> equipamentoNotifier = ValueNotifier<String?>('');
+  final ValueNotifier<String?> situacaoNotifier = ValueNotifier<String?>('');
+  final ValueNotifier<String?> filialNotifier = ValueNotifier<String?>('');
+  final ValueNotifier<String?> garantiaNotifier = ValueNotifier<String?>('');
+  final ValueNotifier<String?> horarioNotifier = ValueNotifier<String?>('');
 
   final ValueNotifier<String> dataPrevistaNotifier = ValueNotifier<String>('');
   final ValueNotifier<String> dataEfetivaNotifier = ValueNotifier<String>('');
@@ -24,13 +23,6 @@ class FilterService extends StatelessWidget {
   void applyFilters() {
     // final endereco = addressController.text;
     // final equipamento = equipamentoNotifier.value;
-    // final situacao = situacaoNotifier.value;
-    // final filial = filialNotifier.value;
-    // final garantia = garantiaNotifier.value;
-    // final horario = horarioNotifier.value;
-    // final dataPrevista = dataPrevistaNotifier.value;
-    // final dataEfetiva = dataEfetivaNotifier.value;
-    // final dataAbertura = dataAberturaNotifier.value;
   }
 
   @override
@@ -81,64 +73,36 @@ class FilterService extends StatelessWidget {
                   const SizedBox(height: 16.0),
                   CustomSearchDropDown(
                     label: 'Equipamento...',
-                    dropdownValues: [
-                      'Adega de Vinho',
-                      'Ar Condicionado',
-                      'Bebedouro',
-                      'Climatizador',
-                      'Cooler Elétrico',
-                      'Frigobar',
-                      'Geladeira',
-                      'Lava Louças',
-                      'Máquina de Lavar',
-                      'Micro-ondas',
-                      'Purificador de Água',
-                      'Secadora',
-                    ],
+                    dropdownValues: Constants.equipamentos,
                     onChanged: (value) => equipamentoNotifier.value = value,
+                    valueNotifier: equipamentoNotifier,
                   ),
                   const SizedBox(height: 16.0),
-                  CustomSearchDropDown(
+                  CustomDropdownField(
                     label: 'Situação...',
-                    dropdownValues: [
-                      'Aguardando Agendamento',
-                      'Aguardando Aprovação do Cliente',
-                      'Aguardando Atendimento',
-                      'Aguardando Cliente Retirar',
-                      'Aguardando Orçamento',
-                      'Cancelado',
-                      'Compra',
-                      'Cortesia',
-                      'Garantia',
-                      'Não Aprovado pelo Cliente',
-                      'Não Retira há 3 Meses',
-                      'Orçamento Aprovado',
-                      'Resolvido',
-                      'Sem Defeito',
-                      'Fechada'
-                    ],
+                    dropdownValues: Constants.situationServiceList,
                     onChanged: (value) => situacaoNotifier.value = value,
+                    valueNotifier: situacaoNotifier,
                   ),
                   const SizedBox(height: 16.0),
                   Row(
                     children: [
                       Expanded(
-                        child: CustomSearchDropDown(
+                        child: CustomDropdownField(
                           label: 'Filial...',
                           dropdownValues: Constants.filiais,
                           rightPadding: 4,
                           onChanged: (value) => filialNotifier.value = value,
+                          valueNotifier: filialNotifier,
                         ),
                       ),
                       Expanded(
-                        child: CustomSearchDropDown(
+                        child: CustomDropdownField(
                           label: 'Garantia...',
-                          dropdownValues: [
-                            'Dentro do período de garantia',
-                            'Fora do período de garantia'
-                          ],
+                          dropdownValues: Constants.garantias,
                           leftPadding: 4,
                           onChanged: (value) => garantiaNotifier.value = value,
+                          valueNotifier: garantiaNotifier,
                         ),
                       ),
                     ],
@@ -187,12 +151,12 @@ class FilterService extends StatelessWidget {
                         ),
                       ),
                       Expanded(
-                        child: CustomSearchDropDown(
-                          hide: true,
+                        child: CustomDropdownField(
                           leftPadding: 4,
                           label: 'Horário...',
                           dropdownValues: ['Manhã', 'Tarde'],
                           onChanged: (value) => horarioNotifier.value = value,
+                          valueNotifier: horarioNotifier,
                         ),
                       ),
                     ],

@@ -10,13 +10,30 @@ class Constants {
     'Licença',
     'Desativado'
   ];
+  static const List<String> situationServiceList = [
+    'Aguardando Agendamento',
+    'Aguardando Aprovação do Cliente',
+    'Aguardando Atendimento',
+    'Aguardando Cliente Retirar',
+    'Aguardando Orçamento',
+    'Cancelado',
+    'Compra',
+    'Cortesia',
+    'Garantia',
+    'Não Aprovado pelo Cliente',
+    'Não Retira há 3 Meses',
+    'Orçamento Aprovado',
+    'Resolvido',
+    'Sem Defeito',
+    'Fechada'
+  ];
   static const List<String> municipios = [
     'Osasco',
-    'Barueri',
+    'Carapicuíba'
+        'Barueri',
     'Cotia',
     'São Paulo',
     'Itapevi',
-    'Carapicuíba'
   ];
   static const List<String> equipamentos = [
     "Adega",
@@ -36,6 +53,10 @@ class Constants {
     "Consul",
     "Electrolux",
     "Samsung"
+  ];
+  static const List<String> garantias = [
+    'Dentro do período de garantia',
+    'Fora do período de garantia'
   ];
   static const List<String> filiais = ["Osasco", "Carapicuíba"];
   static const List<String> dataAtendimento = ["Manhã", "Tarde"];
@@ -61,7 +82,7 @@ class Constants {
   static final List<MaskTextInputFormatter> maskData = [
     MaskTextInputFormatter(
       mask: '##/##/####',
-      filter: { "#": RegExp(r'[0-9]') },
+      filter: {"#": RegExp(r'[0-9]')},
     ),
   ];
 

@@ -35,8 +35,7 @@ class _UpdateClienteState extends State<UpdateCliente> {
   void initState() {
     super.initState();
     _clienteUpdateForm.setId(widget.id);
-    _clienteBloc
-        .add(ClienteSearchOneEvent(id: widget.id)); // A busca do cliente
+    _clienteBloc.add(ClienteSearchOneEvent(id: widget.id));
   }
 
   void _onNomeChanged(String nome) {
