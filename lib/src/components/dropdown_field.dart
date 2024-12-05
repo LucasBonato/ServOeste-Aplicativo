@@ -39,9 +39,10 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
   void initState() {
     super.initState();
 
-    _internalController = SingleSelectController(widget.dropdownValues.contains(widget.valueNotifier.value)
+    _internalController = SingleSelectController(
+      widget.dropdownValues.contains(widget.valueNotifier.value)
           ? widget.valueNotifier.value
-          : null, // Passivo de erro
+          : null,
     );
 
     _effectiveController = widget.controller ?? _internalController;
@@ -74,8 +75,9 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
           },
           child: ValueListenableBuilder<String>(
             valueListenable: widget.valueNotifier,
-            builder: (BuildContext context, String value, Widget? child) => CustomDropdown<String>(
-              enabled: widget.enabled?? true,
+            builder: (BuildContext context, String value, Widget? child) =>
+                CustomDropdown<String>(
+              enabled: widget.enabled ?? true,
               items: widget.dropdownValues,
               controller: _effectiveController,
               hintText: widget.label,

@@ -78,8 +78,10 @@ class CardClient extends StatelessWidget {
                       child: Text(
                         'Telefone Fixo: ${Constants.applyTelefoneMask(phoneNumber!)}',
                         style: TextStyle(
-                          fontSize:
-                              MediaQuery.of(context).size.width.clamp(13.0, 15.0),
+                          fontSize: MediaQuery.of(context)
+                              .size
+                              .width
+                              .clamp(13.0, 15.0),
                         ),
                       ),
                     ),
@@ -89,8 +91,10 @@ class CardClient extends StatelessWidget {
                       child: Text(
                         'Celular: ${Constants.applyTelefoneMask(cellphone!)}',
                         style: TextStyle(
-                          fontSize:
-                              MediaQuery.of(context).size.width.clamp(13.0, 15.0),
+                          fontSize: MediaQuery.of(context)
+                              .size
+                              .width
+                              .clamp(13.0, 15.0),
                         ),
                       ),
                     ),
