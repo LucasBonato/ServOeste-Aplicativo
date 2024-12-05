@@ -91,11 +91,9 @@ class Constants {
     return "(${telefone.substring(0, 2)}) ${telefone.substring(2, 7)}-${telefone.substring(7)}";
   }
 
-  static String transformarMask(String telefone) {
-    if (telefone.length != 15) return "";
-    return telefone.substring(1, 3) +
-        telefone.substring(5, 10) +
-        telefone.substring(11);
+  static String transformTelefoneMask(String telefone){
+    if(telefone.length < 14 || telefone.length > 15) return "";
+    return telefone.replaceAll("(", "").replaceAll(")", "").replaceAll(" ", "").replaceAll("-", "");
   }
 
   static String transformTelefone({Tecnico? tecnico, Cliente? cliente}) {

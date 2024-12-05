@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
 
+import '../../shared/constants.dart';
+
 List<Tecnico> tecnicoFromJson(String str) => List<Tecnico>.from(json.decode(str));
 
 class Tecnico {
@@ -29,8 +31,8 @@ class Tecnico {
         id = tecnicoForm.id;
         nome = tecnicoForm.nome.value;
         situacao = tecnicoForm.situacao.value;
-        telefoneFixo = transformTelefoneMask(tecnicoForm.telefoneFixo.value);
-        telefoneCelular = transformTelefoneMask(tecnicoForm.telefoneCelular.value);
+        telefoneFixo = Constants.transformTelefoneMask(tecnicoForm.telefoneFixo.value);
+        telefoneCelular = Constants.transformTelefoneMask(tecnicoForm.telefoneCelular.value);
         especialidadesIds = tecnicoForm.conhecimentos.value;
     }
 
@@ -43,11 +45,6 @@ class Tecnico {
         situacao: json["situacao"],
         especialidades: List<Especialidade>.from(json["especialidades"].map((x) => Especialidade.fromJson(x))),
     );
-
-    String transformTelefoneMask(String telefone){
-        if(telefone.length != 15) return "";
-        return telefone.substring(1, 3) + telefone.substring(5, 10) + telefone.substring(11);
-    }
 }
 
 
