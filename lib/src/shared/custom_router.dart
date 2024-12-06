@@ -4,16 +4,40 @@ import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/screens/cliente/cliente.dart';
-// import 'package:serv_oeste/src/screens/servico/create_cliente_and_servico.dart';
-import 'package:serv_oeste/src/screens/servico/filter_servico.dart';
-import 'package:serv_oeste/src/screens/servico/servico.dart';
-
+import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
 import '../screens/cliente/create_cliente.dart';
 import '../screens/servico/create_servico.dart';
 import '../screens/tecnico/tecnico.dart';
 import '../screens/tecnico/create_tecnico.dart';
+import '../screens/servico/servico.dart';
+import '../screens/servico/filter_servico.dart';
 
 class CustomRouter {
+  /// Define as rotas que necessitam argumentos usando onGenerateRoute.
+  static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case "/updateTecnico":
+        final id = settings.arguments as int;
+        return MaterialPageRoute(
+          builder: (context) {
+            final tecnicoBloc = context.read<TecnicoBloc>();
+            return BlocProvider.value(
+              value: tecnicoBloc,
+              child: UpdateTecnico(id: id),
+            );
+          },
+        );
+      default:
+        return MaterialPageRoute(
+          builder: (_) => Scaffold(
+            body: Center(
+              child: Text("Rota desconhecida: ${settings.name}"),
+            ),
+          ),
+        );
+    }
+  }
+
   static Map<String, WidgetBuilder> getRoutes(BuildContext context) {
     final TecnicoBloc tecnicoBloc = context.read<TecnicoBloc>();
     final ClienteBloc clienteBloc = context.read<ClienteBloc>();
@@ -28,7 +52,6 @@ class CustomRouter {
             value: tecnicoBloc,
             child: const CreateTecnico(),
           ),
-
       "/cliente": (context) => BlocProvider.value(
             value: clienteBloc,
             child: const ClienteScreen(),
@@ -37,7 +60,6 @@ class CustomRouter {
             value: clienteBloc,
             child: const CreateCliente(),
           ),
-
       "/servico": (context) => BlocProvider.value(
             value: servicoBloc,
             child: const ServicoScreen(),
@@ -50,10 +72,6 @@ class CustomRouter {
             value: servicoBloc,
             child: CreateServicoAndCliente(),
           ),
-
-      // "/updateTecnico": (context) => const UpdateTecnico(),
-      // "/updateCliente": (context) => const UpdateCliente(),
-      // "/updateServico": (context) => const UpdateServico()
     };
   }
 

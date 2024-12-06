@@ -30,8 +30,8 @@ class Constants {
   ];
   static const List<String> municipios = [
     'Osasco',
-    'Carapicuíba'
-        'Barueri',
+    'Carapicuíba',
+    'Barueri',
     'Cotia',
     'São Paulo',
     'Itapevi',
@@ -92,9 +92,13 @@ class Constants {
     return "(${telefone.substring(0, 2)}) ${telefone.substring(2, 7)}-${telefone.substring(7)}";
   }
 
-  static String transformTelefoneMask(String telefone){
-    if(telefone.length < 14 || telefone.length > 15) return "";
-    return telefone.replaceAll("(", "").replaceAll(")", "").replaceAll(" ", "").replaceAll("-", "");
+  static String transformTelefoneMask(String telefone) {
+    if (telefone.length < 14 || telefone.length > 15) return "";
+    return telefone
+        .replaceAll("(", "")
+        .replaceAll(")", "")
+        .replaceAll(" ", "")
+        .replaceAll("-", "");
   }
 
   static String transformTelefone({Tecnico? tecnico, Cliente? cliente}) {

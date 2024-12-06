@@ -8,6 +8,7 @@ import 'package:serv_oeste/src/components/card_technical.dart';
 import 'package:serv_oeste/src/components/custom_search_field.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
+import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
 
@@ -33,8 +34,9 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     _tecnicoBloc = context.read<TecnicoBloc>();
     _idController = TextEditingController();
     _nomeController = TextEditingController();
-    _situacaoController = SingleSelectController<String>('');
-    _situacaoNotifier = ValueNotifier<String>('');
+    _situacaoController =
+        SingleSelectController<String>('Selecione uma situação');
+    _situacaoNotifier = ValueNotifier<String>('Selecione uma situação');
     _selectedItems = [];
   }
 
@@ -111,25 +113,27 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
         );
 
     Widget buildDropdownField({
-      required String hint,
+      required String label,
       required SingleSelectController<String> controller,
       required ValueNotifier<String> valueNotifier,
       required List<String> dropdownValues,
     }) =>
         CustomDropdownField(
-          label: hint,
+          label: label,
           dropdownValues: dropdownValues,
           controller: controller,
           valueNotifier: valueNotifier,
           leftPadding: 0,
           rightPadding: 8,
-          onChanged: (situacao) => _tecnicoBloc.add(
-            TecnicoSearchEvent(
-              id: int.tryParse(_idController.text),
-              nome: _nomeController.text,
-              situacao: situacao,
-            ),
-          ),
+          onChanged: (situacao) {
+            _tecnicoBloc.add(
+              TecnicoSearchEvent(
+                id: int.tryParse(_idController.text),
+                nome: _nomeController.text,
+                situacao: situacao,
+              ),
+            );
+          },
         );
 
     Widget buildLargeScreenLayout() => Row(
@@ -153,7 +157,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
             Expanded(
               flex: 1,
               child: buildDropdownField(
-                hint: "Situação...",
+                label: "Situação...",
                 dropdownValues: Constants.situationTecnicoList,
                 controller: _situacaoController,
                 valueNotifier: _situacaoNotifier,
@@ -183,7 +187,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                 Expanded(
                   flex: 1,
                   child: buildDropdownField(
-                    hint: "Situação...",
+                    label: "Situação...",
                     dropdownValues: Constants.situationTecnicoList,
                     controller: _situacaoController,
                     valueNotifier: _situacaoNotifier,
@@ -206,7 +210,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
               controller: _idController,
             ),
             buildDropdownField(
-              hint: "Situação...",
+              label: "Situação...",
               dropdownValues: Constants.situationTecnicoList,
               controller: _situacaoController,
               valueNotifier: _situacaoNotifier,
@@ -259,6 +263,15 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                       aspectRatio: 2.5,
                       dataList: state.tecnicos,
                       buildCard: (tecnico) => GestureDetector(
+                        onTap: () {
+                          int tecnicoId = (tecnico).id!;
+                          Navigator.of(context, rootNavigator: true).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  UpdateTecnico(id: tecnicoId),
+                            ),
+                          );
+                        },
                         onDoubleTap: () => _selectItems(tecnico.id!),
                         onLongPress: () => _selectItems(tecnico.id!),
                         child: CardTechnical(

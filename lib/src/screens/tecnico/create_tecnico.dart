@@ -184,13 +184,15 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                     ),
                     const SizedBox(height: 24),
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Conhecimentos*",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                        Padding(
+                          padding: EdgeInsets.only(left: 16),
+                          child: Text(
+                            "Conhecimentos*",
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 8),
