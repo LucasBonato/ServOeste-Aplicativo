@@ -96,14 +96,12 @@ class _UpdateClienteState extends State<UpdateCliente> {
           if (state is ClienteSearchOneSuccessState) {
             _clienteUpdateForm.nome.value = state.cliente.nome!;
             _nomeController.text = _clienteUpdateForm.nome.value;
-            _clienteUpdateForm.telefoneCelular.value = (state
-                    .cliente.telefoneCelular!.isEmpty
+            _clienteUpdateForm.telefoneCelular.value = (state.cliente.telefoneCelular!.isEmpty
                 ? ""
-                : Constants.deTransformarMask(state.cliente.telefoneCelular!));
-            _clienteUpdateForm.telefoneFixo.value =
-                (state.cliente.telefoneFixo!.isEmpty
+                : Constants.applyTelefoneMask(state.cliente.telefoneCelular!));
+            _clienteUpdateForm.telefoneFixo.value = (state.cliente.telefoneFixo!.isEmpty
                     ? ""
-                    : Constants.deTransformarMask(state.cliente.telefoneFixo!));
+                    : Constants.applyTelefoneMask(state.cliente.telefoneFixo!));
             _clienteUpdateForm.municipio.value = state.cliente.municipio!;
             _clienteUpdateForm.bairro.value = state.cliente.bairro!;
             return true;
