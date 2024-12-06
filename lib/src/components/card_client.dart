@@ -46,7 +46,7 @@ class CardClient extends StatelessWidget {
                   color: isSelected
                       ? Colors.black
                       : (hovered ? Colors.black38 : Color(0xFFEAE6E5)),
-                  width: 1,
+                  width: 1.5,
                 ),
                 boxShadow: [
                   BoxShadow(
@@ -76,7 +76,7 @@ class CardClient extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(left: 12.0),
                       child: Text(
-                        'Telefone Fixo: ${Constants.applyTelefoneMask(phoneNumber!)}',
+                        'Telefone: ${Constants.applyTelefoneMask(phoneNumber!)}',
                         style: TextStyle(
                           fontSize: MediaQuery.of(context)
                               .size

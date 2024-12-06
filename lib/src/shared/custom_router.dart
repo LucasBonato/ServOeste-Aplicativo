@@ -4,6 +4,7 @@ import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/screens/cliente/cliente.dart';
+import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
 import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
 import '../screens/cliente/create_cliente.dart';
 import '../screens/servico/create_servico.dart';
@@ -13,7 +14,6 @@ import '../screens/servico/servico.dart';
 import '../screens/servico/filter_servico.dart';
 
 class CustomRouter {
-  /// Define as rotas que necessitam argumentos usando onGenerateRoute.
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case "/updateTecnico":
@@ -24,6 +24,17 @@ class CustomRouter {
             return BlocProvider.value(
               value: tecnicoBloc,
               child: UpdateTecnico(id: id),
+            );
+          },
+        );
+      case "/updateCliente":
+        final id = settings.arguments as int;
+        return MaterialPageRoute(
+          builder: (context) {
+            final clienteBloc = context.read<ClienteBloc>();
+            return BlocProvider.value(
+              value: clienteBloc,
+              child: UpdateCliente(id: id),
             );
           },
         );

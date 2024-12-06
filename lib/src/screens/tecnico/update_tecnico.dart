@@ -1,6 +1,6 @@
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:serv_oeste/src/components/dropdown_field.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
+import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
@@ -29,9 +29,9 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
   late ValueNotifier<String> _dropDownSituacaoValue;
 
   final Map<String, String> situationMap = {
-    'ativo': Constants.situationTecnicoList[0],
-    'licenca': Constants.situationTecnicoList[1],
-    'desativado': Constants.situationTecnicoList[2],
+    'Ativo': Constants.situationTecnicoList[1]['label'],
+    'Licença': Constants.situationTecnicoList[2]['label'],
+    'Desativado': Constants.situationTecnicoList[3]['label'],
   };
 
   final Map<String, bool> checkersMap = {
@@ -57,9 +57,8 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
     _telefoneFixoController = TextEditingController();
     _tecnicoUpdateForm.setId(widget.id);
 
-    // Inicializando com ValueNotifier
     _dropDownSituacaoValue =
-        ValueNotifier<String>(Constants.situationTecnicoList.first);
+        ValueNotifier<String>(Constants.situationTecnicoList.first['label']);
 
     _tecnicoBloc.add(TecnicoSearchOneEvent(id: widget.id));
   }
@@ -168,7 +167,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
               IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.black),
                 onPressed: () => Navigator.pop(context, "Back"),
-              )
+              ),
             ],
           ),
         ),
@@ -176,205 +175,231 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
           "Voltar",
           style: TextStyle(color: Colors.black, fontSize: 16),
         ),
-        backgroundColor: Color(0xFCFDFDFF),
+        backgroundColor: const Color(0xFCFDFDFF),
         elevation: 0,
       ),
-      body: BlocBuilder<TecnicoBloc, TecnicoState>(
+      body: BlocListener<TecnicoBloc, TecnicoState>(
         bloc: _tecnicoBloc,
-        buildWhen: (previousState, currentState) {
-          if (currentState is TecnicoSearchOneSuccessState) {
-            String nomeCompletoTecnico =
-                "${currentState.tecnico.nome} ${currentState.tecnico.sobrenome}";
-            _tecnicoUpdateForm.setNome(nomeCompletoTecnico);
-            _tecnicoUpdateForm
-                .setTelefoneCelular(currentState.tecnico.telefoneCelular);
-            _tecnicoUpdateForm
-                .setTelefoneCelular(currentState.tecnico.telefoneFixo);
-            _nomeController.text = nomeCompletoTecnico;
-            _telefoneCelularController.text =
-                currentState.tecnico.telefoneCelular!;
-            _telefoneFixoController.text = currentState.tecnico.telefoneFixo!;
+        listener: (context, state) {
+          if (state is TecnicoUpdateSuccessState) {
+            Navigator.pop(context);
+          } else if (state is TecnicoErrorState) {
+            ErrorEntity error = state.error;
 
-            final initial =
-                currentState.tecnico.situacao?.toLowerCase()[0] ?? '';
-            _dropDownSituacaoValue.value =
-                situationMap[initial] ?? _dropDownSituacaoValue.value;
+            _tecnicoUpdateValidator.applyBackendError(error);
+            _tecnicoFormKey.currentState?.validate();
+            _tecnicoUpdateValidator.cleanExternalErrors();
 
-            if (currentState.tecnico.especialidades != null) {
-              for (Especialidade especialidade
-                  in currentState.tecnico.especialidades!) {
-                if (!checkersMap.keys.contains(especialidade.conhecimento))
-                  continue;
-                checkersMap[especialidade.conhecimento] = true;
-              }
-            }
-            return true;
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+                "[ERROR] Informação(ões) inválida(s) ao atualizar o Técnico: ${error.errorMessage}",
+              ),
+            ));
           }
-          return false;
         },
-        builder: (context, state) {
-          return Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 800),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: SingleChildScrollView(
-                  child: Form(
-                    key: _tecnicoFormKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        const Text(
-                          "Atualizar Técnico",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
+        child: BlocBuilder<TecnicoBloc, TecnicoState>(
+          bloc: _tecnicoBloc,
+          buildWhen: (previousState, currentState) {
+            if (currentState is TecnicoSearchOneSuccessState) {
+              String nomeCompletoTecnico =
+                  "${currentState.tecnico.nome} ${currentState.tecnico.sobrenome}";
+              _tecnicoUpdateForm.setNome(nomeCompletoTecnico);
+              _tecnicoUpdateForm
+                  .setTelefoneFixo(currentState.tecnico.telefoneFixo);
+              _tecnicoUpdateForm
+                  .setTelefoneCelular(currentState.tecnico.telefoneCelular);
+
+              _nomeController.text = nomeCompletoTecnico;
+              _telefoneFixoController.text =
+                  currentState.tecnico.telefoneFixo ?? '';
+              _telefoneCelularController.text =
+                  currentState.tecnico.telefoneCelular ?? '';
+
+              final tecnicoSituacao =
+                  currentState.tecnico.situacao?.toLowerCase() ?? '';
+              _dropDownSituacaoValue.value =
+                  situationMap[tecnicoSituacao] ?? _dropDownSituacaoValue.value;
+
+              if (currentState.tecnico.especialidades != null) {
+                for (Especialidade especialidade
+                    in currentState.tecnico.especialidades!) {
+                  if (!checkersMap.keys.contains(especialidade.conhecimento))
+                    continue;
+                  checkersMap[especialidade.conhecimento] = true;
+                }
+              }
+              return true;
+            }
+            return false;
+          },
+          builder: (context, state) {
+            return Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 800),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: SingleChildScrollView(
+                    child: Form(
+                      key: _tecnicoFormKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          const Text(
+                            "Atualizar Técnico",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 24),
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: CustomTextFormField(
-                                hint: "Nome...",
-                                label: "Nome*",
-                                type: TextInputType.name,
-                                maxLength: 40,
-                                rightPadding: 8,
-                                hide: false,
-                                valueNotifier: _tecnicoUpdateForm.nome,
-                                validator: _tecnicoUpdateValidator.byField(
-                                    _tecnicoUpdateForm, "nome"),
-                                onChanged: _tecnicoUpdateForm.setNome,
+                          const SizedBox(height: 24),
+                          Row(
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: CustomTextFormField(
+                                  hint: "Nome...",
+                                  label: "Nome*",
+                                  type: TextInputType.name,
+                                  maxLength: 40,
+                                  rightPadding: 8,
+                                  hide: false,
+                                  valueNotifier: _tecnicoUpdateForm.nome,
+                                  validator: _tecnicoUpdateValidator.byField(
+                                      _tecnicoUpdateForm,
+                                      ErrorCodeKey.nomeESobrenome.name),
+                                  onChanged: _tecnicoUpdateForm.setNome,
+                                ),
                               ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: CustomDropdownField(
-                                label: "Situação",
-                                leftPadding: 0,
-                                valueNotifier: _dropDownSituacaoValue,
-                                validator: _tecnicoUpdateValidator.byField(
-                                    _tecnicoUpdateForm, "situacao"),
-                                dropdownValues: Constants.situationTecnicoList,
-                                onChanged: (String? value) {
-                                  _tecnicoUpdateForm.setSituacao(value);
-                                  setState(() {
-                                    _dropDownSituacaoValue.value = value!;
-                                  });
-                                },
+                              Expanded(
+                                flex: 1,
+                                child: CustomDropdownField(
+                                  label: "Situação",
+                                  leftPadding: 0,
+                                  valueNotifier: _dropDownSituacaoValue,
+                                  validator: _tecnicoUpdateValidator.byField(
+                                      _tecnicoUpdateForm, "situacao"),
+                                  dropdownValues: Constants.situationTecnicoList
+                                      .map((item) => item['label'] as String)
+                                      .toList(),
+                                  onChanged: (String? value) {
+                                    _tecnicoUpdateForm.setSituacao(value);
+                                    setState(() {
+                                      _dropDownSituacaoValue.value = value!;
+                                    });
+                                  },
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: CustomTextFormField(
-                                hint: "Telefone Fixo...",
-                                label: "Telefone Fixo**",
-                                type: TextInputType.phone,
-                                maxLength: 14,
-                                rightPadding: 8,
-                                hide: false,
-                                masks: [
-                                  MaskTextInputFormatter(
-                                      mask: '(##) ####-####'),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: CustomTextFormField(
+                                  hint: "Telefone Fixo...",
+                                  label: "Telefone Fixo**",
+                                  type: TextInputType.phone,
+                                  maxLength: 14,
+                                  rightPadding: 8,
+                                  hide: false,
+                                  // masks: Constants.maskTelefoneFixo,
+                                  valueNotifier:
+                                      _tecnicoUpdateForm.telefoneFixo,
+                                  validator: _tecnicoUpdateValidator.byField(
+                                      _tecnicoUpdateForm,
+                                      ErrorCodeKey.telefones.name),
+                                  onChanged: _tecnicoUpdateForm.setTelefoneFixo,
+                                ),
+                              ),
+                              Expanded(
+                                child: CustomTextFormField(
+                                  hint: "Telefone Celular...",
+                                  label: "Telefone Celular**",
+                                  type: TextInputType.phone,
+                                  maxLength: 15,
+                                  leftPadding: 0,
+                                  hide: false,
+                                  masks: Constants.maskTelefone,
+                                  valueNotifier:
+                                      _tecnicoUpdateForm.telefoneCelular,
+                                  validator: _tecnicoUpdateValidator.byField(
+                                      _tecnicoUpdateForm,
+                                      ErrorCodeKey.telefones.name),
+                                  onChanged:
+                                      _tecnicoUpdateForm.setTelefoneCelular,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 16),
+                                child: Text(
+                                  "Conhecimentos*",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              gridCheckersMap(),
+                            ],
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.only(top: 8, left: 16),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Wrap(
+                                children: [
+                                  Text(
+                                    "* - Campos obrigatórios",
+                                    style: TextStyle(
+                                        fontSize: 14, color: Colors.black),
+                                  ),
+                                  SizedBox(width: 16),
+                                  Text(
+                                    "** - Preencha ao menos um destes campos",
+                                    style: TextStyle(
+                                        fontSize: 14, color: Colors.black),
+                                  ),
                                 ],
-                                valueNotifier: _tecnicoUpdateForm.telefoneFixo,
-                                validator: _tecnicoUpdateValidator.byField(
-                                    _tecnicoUpdateForm, "telefoneFixo"),
-                                onChanged: _tecnicoUpdateForm.setTelefoneFixo,
                               ),
                             ),
-                            Expanded(
-                              child: CustomTextFormField(
-                                hint: "Telefone Celular...",
-                                label: "Telefone Celular**",
-                                type: TextInputType.phone,
-                                maxLength: 15,
-                                leftPadding: 0,
-                                hide: false,
-                                masks: Constants.maskTelefone,
-                                valueNotifier:
-                                    _tecnicoUpdateForm.telefoneCelular,
-                                validator: _tecnicoUpdateValidator.byField(
-                                    _tecnicoUpdateForm, "telefoneCelular"),
-                                onChanged:
-                                    _tecnicoUpdateForm.setTelefoneCelular,
+                          ),
+                          const SizedBox(height: 28),
+                          Center(
+                            child: ElevatedButton(
+                              onPressed: _updateTecnico,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF007BFF),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                minimumSize: const Size(double.infinity, 48),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(left: 16),
-                              child: Text(
-                                "Conhecimentos*",
+                              child: const Text(
+                                "Atualizar Técnico",
                                 style: TextStyle(
-                                  fontSize: 16,
-                                ),
+                                    fontSize: 16, color: Colors.white),
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            gridCheckersMap(),
-                          ],
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(top: 8, left: 16),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Wrap(
-                              children: [
-                                Text(
-                                  "* - Campos obrigatórios",
-                                  style: TextStyle(
-                                      fontSize: 14, color: Colors.black),
-                                ),
-                                SizedBox(width: 16),
-                                Text(
-                                  "** - Preencha ao menos um destes campos",
-                                  style: TextStyle(
-                                      fontSize: 14, color: Colors.black),
-                                ),
-                              ],
-                            ),
                           ),
-                        ),
-                        const SizedBox(height: 28),
-                        Center(
-                          child: ElevatedButton(
-                            onPressed: _updateTecnico,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF007BFF),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              minimumSize: const Size(double.infinity, 48),
-                            ),
-                            child: const Text(
-                              "Atualizar Técnico",
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

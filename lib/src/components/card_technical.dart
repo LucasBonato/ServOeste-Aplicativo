@@ -41,7 +41,7 @@ class CardTechnical extends StatelessWidget {
                 color: isSelected
                     ? Colors.black38
                     : (hovered ? Colors.black38 : const Color(0xFFEAE6E5)),
-                width: isSelected ? 1.5 : 1,
+                width: 1.5,
               ),
               boxShadow: [
                 BoxShadow(
@@ -85,7 +85,7 @@ class CardTechnical extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(left: 24),
                           child: Text(
-                            "Telefone fixo: ${Constants.applyTelefoneMask(phoneNumber!)}",
+                            "Telefone: ${Constants.applyTelefoneMask(phoneNumber!)}",
                             style: TextStyle(
                               fontSize: MediaQuery.of(context)
                                   .size
@@ -94,13 +94,17 @@ class CardTechnical extends StatelessWidget {
                             ),
                           ),
                         ),
-                      if (cellPhoneNumber != null && cellPhoneNumber!.isNotEmpty)
+                      if (cellPhoneNumber != null &&
+                          cellPhoneNumber!.isNotEmpty)
                         Padding(
                           padding: const EdgeInsets.only(left: 24),
                           child: Text(
-                            "Celular: ${Constants.applyTelefoneMask(cellPhoneNumber!)}",
+                            "Celular: ${Constants.applyCelularMask(cellPhoneNumber!)}",
                             style: TextStyle(
-                              fontSize: MediaQuery.of(context).size.width.clamp(13.0, 15.0),
+                              fontSize: MediaQuery.of(context)
+                                  .size
+                                  .width
+                                  .clamp(13.0, 15.0),
                             ),
                           ),
                         ),
@@ -113,8 +117,8 @@ class CardTechnical extends StatelessWidget {
                     fontSize: 14,
                     color: status.toLowerCase() == "ativo"
                         ? const Color.fromARGB(255, 4, 80, 16)
-                        : status.toLowerCase() == "licença"
-                            ? const Color.fromARGB(255, 25, 6, 199)
+                        : status.toLowerCase() == "licenca"
+                            ? const Color.fromARGB(255, 16, 6, 102)
                             : Colors.red,
                     fontWeight: FontWeight.bold,
                   ),

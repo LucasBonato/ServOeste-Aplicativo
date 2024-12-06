@@ -17,7 +17,6 @@ class _TableTecnicosModalState extends State<TableTecnicosModal> {
   void initState() {
     super.initState();
 
-    // Configura as colunas com header customizado
     _columns = [
       PlutoColumn(
         title: 'Técnicos',
@@ -57,7 +56,6 @@ class _TableTecnicosModalState extends State<TableTecnicosModal> {
       ),
     ];
 
-    // Define os grupos de colunas para o header
     _columnGroups = [
       PlutoColumnGroup(
           title: 'Técnicos', fields: ['tecnico'], expandedColumn: true),
@@ -115,7 +113,6 @@ class _TableTecnicosModalState extends State<TableTecnicosModal> {
       },
     ];
 
-    // Converte os dados para as linhas do PlutoGrid
     _rows = tecnicos.map((tecnico) {
       return PlutoRow(
         cells: {

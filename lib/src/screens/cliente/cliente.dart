@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/card_client.dart';
 import 'package:serv_oeste/src/components/grid_view.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
+import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
 import 'package:serv_oeste/src/components/custom_search_field.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
@@ -70,45 +71,6 @@ class _ClienteScreenState extends State<ClienteScreen> {
       isSelected = _selectedItems.isNotEmpty;
     });
   }
-
-  // Widget _buildEditableSection(int id) => Row(
-  //   mainAxisAlignment: MainAxisAlignment.end,
-  //   crossAxisAlignment: CrossAxisAlignment.center,
-  //   mainAxisSize: MainAxisSize.min,
-  //   children: [
-  //     IconButton(
-  //       onPressed: () {
-  //         setState(() {
-  //           isSelected = false;
-  //           _selectedItems.clear();
-  //         });
-  //
-  //         Navigator.push(
-  //             context,
-  //             MaterialPageRoute(
-  //                 builder: (context) => UpdateCliente(id: id))).then(
-  //             (value) => value ?? _clienteBloc.add(ClienteSearchEvent()));
-  //       },
-  //       icon: const Icon(Icons.edit, color: Colors.white),
-  //       style: const ButtonStyle(
-  //           backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
-  //     ),
-  //     const SizedBox(
-  //       width: 16,
-  //     ),
-  //     IconButton(
-  //       onPressed: () {
-  //         setState(() {
-  //           isSelected = false;
-  //           _selectedItems.clear();
-  //         });
-  //       },
-  //       icon: const Icon(Icons.content_paste, color: Colors.white),
-  //       style: const ButtonStyle(
-  //           backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
-  //     )
-  //   ],
-  // );
 
   Widget _buildSearchInputs() {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -240,22 +202,34 @@ class _ClienteScreenState extends State<ClienteScreen> {
             child: BlocBuilder<ClienteBloc, ClienteState>(
               bloc: _clienteBloc,
               builder: (context, state) {
-                if (state is ClienteInitialState || state is ClienteLoadingState) {
-                  return const Center(child: CircularProgressIndicator.adaptive());
-                }
-                else if (state is ClienteSearchSuccessState) {
+                if (state is ClienteInitialState ||
+                    state is ClienteLoadingState) {
+                  return const Center(
+                      child: CircularProgressIndicator.adaptive());
+                } else if (state is ClienteSearchSuccessState) {
                   return SingleChildScrollView(
                     child: GridListView(
                       aspectRatio: 1.65,
                       dataList: state.clientes,
-                      buildCard: (cliente) => CardClient(
-                        name: (cliente as Cliente).nome!,
-                        onTap: () => _selectItems((cliente).id!),
-                        phoneNumber: cliente.telefoneFixo!,
-                        cellphone: cliente.telefoneCelular!,
-                        city: cliente.municipio!,
-                        street: cliente.endereco!,
-                        isSelected: _selectedItems.contains(cliente.id),
+                      buildCard: (cliente) => GestureDetector(
+                        onTap: () {
+                          int tecnicoId = cliente.id!;
+                          Navigator.of(context, rootNavigator: true).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  UpdateCliente(id: tecnicoId),
+                            ),
+                          );
+                        },
+                        onDoubleTap: () => _selectItems(cliente.id!),
+                        child: CardClient(
+                          name: (cliente as Cliente).nome!,
+                          phoneNumber: cliente.telefoneFixo!,
+                          cellphone: cliente.telefoneCelular!,
+                          city: cliente.municipio!,
+                          street: cliente.endereco!,
+                          isSelected: _selectedItems.contains(cliente.id),
+                        ),
                       ),
                     ),
                   );

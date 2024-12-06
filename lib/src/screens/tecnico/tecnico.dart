@@ -36,7 +36,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     _nomeController = TextEditingController();
     _situacaoController =
         SingleSelectController<String>('Selecione uma situação');
-    _situacaoNotifier = ValueNotifier<String>('Selecione uma situação');
+    _situacaoNotifier = ValueNotifier<String>('');
     _selectedItems = [];
   }
 
@@ -75,24 +75,6 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     });
   }
 
-  // Widget _buildEditableSection(int id) => IconButton(
-  //   onPressed: () {
-  //     setState(() {
-  //       _selectedItems.clear();
-  //       isSelected = false;
-  //     });
-  //     Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateTecnico(id: id)))
-  //       .then((value) {
-  //         if(value == null) {
-  //           _tecnicoBloc.add(TecnicoSearchEvent());
-  //         }
-  //       }
-  //     );
-  //   },
-  //   icon: const Icon(Icons.edit, color: Colors.white),
-  //   style: const ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Colors.blue)),
-  // );
-
   Widget _buildSearchInputs() {
     final screenWidth = MediaQuery.of(context).size.width;
     final isLargeScreen = screenWidth >= 1000;
@@ -125,12 +107,14 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
           valueNotifier: valueNotifier,
           leftPadding: 0,
           rightPadding: 8,
-          onChanged: (situacao) {
+          onChanged: (selectedLabel) {
+            final selectedValue = Constants.situationTecnicoList
+                .firstWhere((e) => e['label'] == selectedLabel)['value'];
             _tecnicoBloc.add(
               TecnicoSearchEvent(
                 id: int.tryParse(_idController.text),
                 nome: _nomeController.text,
-                situacao: situacao,
+                situacao: selectedValue,
               ),
             );
           },
@@ -158,7 +142,9 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
               flex: 1,
               child: buildDropdownField(
                 label: "Situação...",
-                dropdownValues: Constants.situationTecnicoList,
+                dropdownValues: Constants.situationTecnicoList
+                    .map((e) => e['label'] as String)
+                    .toList(),
                 controller: _situacaoController,
                 valueNotifier: _situacaoNotifier,
               ),
@@ -188,7 +174,9 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                   flex: 1,
                   child: buildDropdownField(
                     label: "Situação...",
-                    dropdownValues: Constants.situationTecnicoList,
+                    dropdownValues: Constants.situationTecnicoList
+                        .map((e) => e['label'] as String)
+                        .toList(),
                     controller: _situacaoController,
                     valueNotifier: _situacaoNotifier,
                   ),
@@ -211,7 +199,9 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
             ),
             buildDropdownField(
               label: "Situação...",
-              dropdownValues: Constants.situationTecnicoList,
+              dropdownValues: Constants.situationTecnicoList
+                  .map((e) => e['label'] as String)
+                  .toList(),
               controller: _situacaoController,
               valueNotifier: _situacaoNotifier,
             ),
@@ -273,7 +263,6 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                           );
                         },
                         onDoubleTap: () => _selectItems(tecnico.id!),
-                        onLongPress: () => _selectItems(tecnico.id!),
                         child: CardTechnical(
                           id: (tecnico as Tecnico).id!,
                           name: tecnico.nome!,

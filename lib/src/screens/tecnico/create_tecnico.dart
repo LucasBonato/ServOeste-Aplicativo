@@ -159,7 +159,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                             valueNotifier: _tecnicoCreateForm.telefoneFixo,
                             validator: _tecnicoCreateValidator.byField(
                                 _tecnicoCreateForm,
-                                ErrorCodeKey.telefoneFixo.name),
+                                ErrorCodeKey.telefones.name),
                             onChanged: _tecnicoCreateForm.setTelefoneFixo,
                           ),
                         ),
@@ -176,7 +176,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                             valueNotifier: _tecnicoCreateForm.telefoneCelular,
                             validator: _tecnicoCreateValidator.byField(
                                 _tecnicoCreateForm,
-                                ErrorCodeKey.telefoneCelular.name),
+                                ErrorCodeKey.telefones.name),
                             onChanged: _tecnicoCreateForm.setTelefoneCelular,
                           ),
                         ),

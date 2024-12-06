@@ -16,7 +16,7 @@ class CustomSearchDropDown extends StatefulWidget {
   final void Function(String?)? onSaved;
   final String? Function([String?])? validator;
   final Widget Function(BuildContext, String)? itemWidgetBuilder;
-  final ValueNotifier<String?>? valueNotifier; // Agora opcional
+  final ValueNotifier<String?>? valueNotifier;
 
   const CustomSearchDropDown({
     super.key,
@@ -34,7 +34,7 @@ class CustomSearchDropDown extends StatefulWidget {
     required this.onChanged,
     required this.label,
     required this.dropdownValues,
-    this.valueNotifier, // Agora opcional
+    this.valueNotifier,
   });
 
   @override
@@ -47,7 +47,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
   @override
   void initState() {
     _customSearchController = widget.controller ?? TextEditingController();
-    // Inicializa o controlador com o valor do ValueNotifier (se existir)
+
     if (widget.valueNotifier?.value != null) {
       _customSearchController.text = widget.valueNotifier!.value!;
     }
@@ -56,7 +56,6 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
 
   @override
   void dispose() {
-    // Libera o controlador apenas se ele for criado internamente
     if (widget.controller == null) {
       _customSearchController.dispose();
     }
@@ -78,7 +77,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
           controller: _customSearchController,
           onChanged: (value) {
             widget.onChanged(value);
-            // Atualiza o ValueNotifier, se fornecido
+
             widget.valueNotifier?.value = value;
           },
           decoration: InputDecoration(

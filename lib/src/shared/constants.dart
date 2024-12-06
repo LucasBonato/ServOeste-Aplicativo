@@ -3,11 +3,11 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 class Constants {
   static const bool isDev = true;
 
-  static const List<String> situationTecnicoList = [
-    '',
-    'Ativo',
-    'Licença',
-    'Desativado'
+  static const List<Map<String, dynamic>> situationTecnicoList = [
+    {'label': 'Selecione uma situação', 'value': ''},
+    {'label': 'Ativo', 'value': 'Ativo'},
+    {'label': 'Licença', 'value': 'Licença'},
+    {'label': 'Desativado', 'value': 'Desativado'}
   ];
   static const List<String> situationServiceList = [
     'Aguardando Agendamento',
@@ -87,6 +87,10 @@ class Constants {
 
   // TODO - Retirar os métodos de transformar Mask das Constants
   static String applyTelefoneMask(String telefone) {
+    return "(${telefone.substring(0, 2)}) ${telefone.substring(2, 6)}-${telefone.substring(6)}";
+  }
+
+  static String applyCelularMask(String telefone) {
     return "(${telefone.substring(0, 2)}) ${telefone.substring(2, 7)}-${telefone.substring(7)}";
   }
 

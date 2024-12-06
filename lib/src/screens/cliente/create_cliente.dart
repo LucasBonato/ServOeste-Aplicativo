@@ -164,7 +164,7 @@ class _CreateClienteState extends State<CreateCliente> {
                             valueNotifier: _clienteCreateForm.telefoneFixo,
                             validator: _clienteCreateValidator.byField(
                                 _clienteCreateForm,
-                                ErrorCodeKey.telefoneFixo.name),
+                                ErrorCodeKey.telefones.name),
                             onChanged: _clienteCreateForm.setTelefoneFixo,
                           ),
                         ),
@@ -180,7 +180,7 @@ class _CreateClienteState extends State<CreateCliente> {
                             hide: false,
                             validator: _clienteCreateValidator.byField(
                                 _clienteCreateForm,
-                                ErrorCodeKey.telefoneCelular.name),
+                                ErrorCodeKey.telefones.name),
                             onChanged: _clienteCreateForm.setTelefoneCelular,
                           ),
                         ),
@@ -255,7 +255,7 @@ class _CreateClienteState extends State<CreateCliente> {
                             hide: false,
                             valueNotifier: _clienteCreateForm.rua,
                             validator: _clienteCreateValidator.byField(
-                                _clienteCreateForm, ErrorCodeKey.endereco.name),
+                                _clienteCreateForm, ErrorCodeKey.rua.name),
                             onChanged: _clienteCreateForm.setRua,
                           ),
                         ),

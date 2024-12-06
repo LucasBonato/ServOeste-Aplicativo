@@ -87,7 +87,7 @@ class CardService extends StatelessWidget {
                     color: isSelected
                         ? Colors.black38
                         : (hovered ? Colors.black38 : const Color(0xFFEAE6E5)),
-                    width: isSelected ? 1.5 : 1,
+                    width: 1.5,
                   ),
                   boxShadow: [
                     BoxShadow(

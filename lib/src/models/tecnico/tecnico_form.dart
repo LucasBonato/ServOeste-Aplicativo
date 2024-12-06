@@ -13,17 +13,17 @@ class TecnicoForm extends ChangeNotifier {
   }
 
   void setNome(String? nome) {
-    this.nome.value = nome?? "";
+    this.nome.value = nome ?? "";
     notifyListeners();
   }
 
   void setSituacao(String? situacao) {
-    this.situacao.value = situacao?? "";
+    this.situacao.value = situacao ?? "";
     notifyListeners();
   }
 
   void setTelefoneFixo(String? telefoneFixo) {
-    this.telefoneFixo.value = telefoneFixo?? "";
+    this.telefoneFixo.value = telefoneFixo ?? "";
     notifyListeners();
   }
 
@@ -42,7 +42,8 @@ class TecnicoForm extends ChangeNotifier {
   }
 
   void removeConhecimentos(int conhecimento) {
-    conhecimentos.value.removeWhere((especialidade) => especialidade == conhecimento);
+    conhecimentos.value
+        .removeWhere((especialidade) => especialidade == conhecimento);
     notifyListeners();
   }
 }
