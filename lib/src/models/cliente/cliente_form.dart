@@ -62,14 +62,12 @@ class ClienteForm extends ChangeNotifier {
   }
 
   bool isRequiredFieldsFilled() {
-    return (
-        nome.value.isNotEmpty &&
-            rua.value.isNotEmpty &&
-            numero.value.isNotEmpty &&
-            complemento.value.isNotEmpty &&
-            municipio.value.isNotEmpty &&
-            bairro.value.isNotEmpty &&
-            (telefoneFixo.value.isNotEmpty || telefoneCelular.value.isNotEmpty)
-      );
+    return (nome.value.isNotEmpty &&
+        rua.value.isNotEmpty &&
+        numero.value.isNotEmpty &&
+        complemento.value.isNotEmpty &&
+        municipio.value.isNotEmpty &&
+        bairro.value.isNotEmpty &&
+        (telefoneFixo.value.isNotEmpty || telefoneCelular.value.isNotEmpty));
   }
 }

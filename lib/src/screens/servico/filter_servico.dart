@@ -160,7 +160,7 @@ class FilterService extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 58.0),
+                  const SizedBox(height: 48.0),
                   ElevatedButton(
                     onPressed: applyFilters,
                     style: ElevatedButton.styleFrom(
@@ -172,7 +172,7 @@ class FilterService extends StatelessWidget {
                       minimumSize: const Size(double.infinity, 48),
                     ),
                     child: const Text(
-                      'Filtrar',
+                      "Filtrar",
                       style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                   ),

@@ -29,9 +29,9 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
   late ValueNotifier<String> _dropDownSituacaoValue;
 
   final Map<String, String> situationMap = {
-    'Ativo': Constants.situationTecnicoList[1]['label'],
-    'Licença': Constants.situationTecnicoList[2]['label'],
-    'Desativado': Constants.situationTecnicoList[3]['label'],
+    'a': Constants.situationTecnicoList[1]['label'],
+    'l': Constants.situationTecnicoList[2]['label'],
+    'd': Constants.situationTecnicoList[3]['label'],
   };
 
   final Map<String, bool> checkersMap = {
@@ -56,10 +56,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
     _telefoneCelularController = TextEditingController();
     _telefoneFixoController = TextEditingController();
     _tecnicoUpdateForm.setId(widget.id);
-
-    _dropDownSituacaoValue =
-        ValueNotifier<String>(Constants.situationTecnicoList.first['label']);
-
+    _dropDownSituacaoValue = ValueNotifier<String>("");
     _tecnicoBloc.add(TecnicoSearchOneEvent(id: widget.id));
   }
 
@@ -155,6 +152,11 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
     _tecnicoUpdateForm.nome.value = "${nomes.first} $sobrenome";
   }
 
+  void _handleBackNavigation() {
+    _tecnicoBloc.add(TecnicoSearchEvent());
+    Navigator.pop(context, "Back");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -166,7 +168,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
             children: [
               IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.black),
-                onPressed: () => Navigator.pop(context, "Back"),
+                onPressed: _handleBackNavigation,
               ),
             ],
           ),
@@ -182,7 +184,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
         bloc: _tecnicoBloc,
         listener: (context, state) {
           if (state is TecnicoUpdateSuccessState) {
-            Navigator.pop(context);
+            _handleBackNavigation();
           } else if (state is TecnicoErrorState) {
             ErrorEntity error = state.error;
 
@@ -204,11 +206,16 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
               String nomeCompletoTecnico =
                   "${currentState.tecnico.nome} ${currentState.tecnico.sobrenome}";
               _tecnicoUpdateForm.setNome(nomeCompletoTecnico);
-              _tecnicoUpdateForm
-                  .setTelefoneFixo(currentState.tecnico.telefoneFixo);
-              _tecnicoUpdateForm
-                  .setTelefoneCelular(currentState.tecnico.telefoneCelular);
-
+              _tecnicoUpdateForm.telefoneFixo.value =
+                  (currentState.tecnico.telefoneFixo!.isEmpty
+                      ? ""
+                      : Constants.applyTelefoneMask(
+                          currentState.tecnico.telefoneFixo!));
+              _tecnicoUpdateForm.telefoneCelular.value =
+                  (currentState.tecnico.telefoneCelular!.isEmpty
+                      ? ""
+                      : Constants.applyCelularMask(
+                          currentState.tecnico.telefoneCelular!));
               _nomeController.text = nomeCompletoTecnico;
               _telefoneFixoController.text =
                   currentState.tecnico.telefoneFixo ?? '';
@@ -253,7 +260,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                               color: Colors.black,
                             ),
                           ),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 48),
                           Row(
                             children: [
                               Expanded(
@@ -279,7 +286,8 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                                   leftPadding: 0,
                                   valueNotifier: _dropDownSituacaoValue,
                                   validator: _tecnicoUpdateValidator.byField(
-                                      _tecnicoUpdateForm, "situacao"),
+                                      _tecnicoUpdateForm,
+                                      ErrorCodeKey.situacao.name),
                                   dropdownValues: Constants.situationTecnicoList
                                       .map((item) => item['label'] as String)
                                       .toList(),
@@ -303,8 +311,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                                   type: TextInputType.phone,
                                   maxLength: 14,
                                   rightPadding: 8,
-                                  hide: false,
-                                  // masks: Constants.maskTelefoneFixo,
+                                  hide: true,
                                   valueNotifier:
                                       _tecnicoUpdateForm.telefoneFixo,
                                   validator: _tecnicoUpdateValidator.byField(
@@ -320,7 +327,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                                   type: TextInputType.phone,
                                   maxLength: 15,
                                   leftPadding: 0,
-                                  hide: false,
+                                  hide: true,
                                   masks: Constants.maskTelefone,
                                   valueNotifier:
                                       _tecnicoUpdateForm.telefoneCelular,

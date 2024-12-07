@@ -225,6 +225,11 @@ class TecnicoValidator extends LucidValidator<TecnicoForm>
             "O sobrenome precisa ter 2 caracteres!",
             ErrorCodeKey.nomeESobrenome.name);
 
+    ruleFor((tecnico) => tecnico.situacao.value,
+            key: ErrorCodeKey.situacao.name)
+        .must((situacao) => situacao.isNotEmpty, "Selecione uma situação.",
+            ErrorCodeKey.situacao.name);
+
     ruleFor((tecnico) => tecnico.telefoneCelular.value,
             key: ErrorCodeKey.telefoneCelular.name)
         .customValidExternalErrors(
@@ -323,6 +328,7 @@ enum ErrorCodeKey {
   bairro,
   cliente,
   tecnico,
+  situacao,
   equipamento,
   marca,
   descricao,

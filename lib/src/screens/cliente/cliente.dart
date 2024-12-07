@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/card_client.dart';
 import 'package:serv_oeste/src/components/grid_view.dart';
-import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
 import 'package:serv_oeste/src/components/custom_search_field.dart';
@@ -183,18 +182,26 @@ class _ClienteScreenState extends State<ClienteScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      floatingActionButton: (!isSelected)
-          ? BuildWidgets.buildFabAdd(
-              context,
-              "/createCliente",
-              () => _clienteBloc.add(ClienteSearchEvent()),
-              tooltip: 'Adicionar um cliente',
-            )
-          : BuildWidgets.buildFabRemove(
-              context,
-              _disableClientes,
-              tooltip: 'Excluir clientes selecionados',
-            ),
+      floatingActionButton: Builder(
+        builder: (context) {
+          bool isSelected = _selectedItems.isNotEmpty;
+
+          return !isSelected
+              ? BuildWidgets.buildFabAdd(
+                  context,
+                  "/createCliente",
+                  () {
+                    _clienteBloc.add(ClienteSearchEvent());
+                  },
+                  tooltip: 'Adicionar um cliente',
+                )
+              : BuildWidgets.buildFabRemove(
+                  context,
+                  _disableClientes,
+                  tooltip: 'Excluir clientes selecionados',
+                );
+        },
+      ),
       body: Column(
         children: [
           _buildSearchInputs(),
@@ -211,7 +218,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
                     child: GridListView(
                       aspectRatio: 1.65,
                       dataList: state.clientes,
-                      buildCard: (cliente) => GestureDetector(
+                      buildCard: (cliente) => CardClient(
                         onTap: () {
                           int tecnicoId = cliente.id!;
                           Navigator.of(context, rootNavigator: true).push(
@@ -220,16 +227,18 @@ class _ClienteScreenState extends State<ClienteScreen> {
                                   UpdateCliente(id: tecnicoId),
                             ),
                           );
+                          setState(() {
+                            _selectedItems.clear();
+                          });
                         },
                         onDoubleTap: () => _selectItems(cliente.id!),
-                        child: CardClient(
-                          name: (cliente as Cliente).nome!,
-                          phoneNumber: cliente.telefoneFixo!,
-                          cellphone: cliente.telefoneCelular!,
-                          city: cliente.municipio!,
-                          street: cliente.endereco!,
-                          isSelected: _selectedItems.contains(cliente.id),
-                        ),
+                        onLongPress: () => _selectItems(cliente.id!),
+                        name: cliente.nome!,
+                        phoneNumber: cliente.telefoneFixo!,
+                        cellphone: cliente.telefoneCelular!,
+                        city: cliente.municipio!,
+                        street: cliente.endereco!,
+                        isSelected: _selectedItems.contains(cliente.id),
                       ),
                     ),
                   );

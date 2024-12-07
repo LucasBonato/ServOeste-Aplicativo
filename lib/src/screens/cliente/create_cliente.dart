@@ -157,9 +157,9 @@ class _CreateClienteState extends State<CreateCliente> {
                             hint: "(99) 9999-9999",
                             label: "Telefone Fixo**",
                             type: TextInputType.phone,
-                            rightPadding: 4,
+                            rightPadding: 8,
                             maxLength: 14,
-                            hide: false,
+                            hide: true,
                             masks: Constants.maskTelefoneFixo,
                             valueNotifier: _clienteCreateForm.telefoneFixo,
                             validator: _clienteCreateValidator.byField(
@@ -174,10 +174,10 @@ class _CreateClienteState extends State<CreateCliente> {
                             hint: "(99) 99999-9999",
                             label: "Telefone Celular**",
                             masks: Constants.maskTelefone,
-                            leftPadding: 4,
+                            leftPadding: 0,
                             maxLength: 15,
                             type: TextInputType.phone,
-                            hide: false,
+                            hide: true,
                             validator: _clienteCreateValidator.byField(
                                 _clienteCreateForm,
                                 ErrorCodeKey.telefones.name),
@@ -206,7 +206,7 @@ class _CreateClienteState extends State<CreateCliente> {
                               hint: "00000-000",
                               label: "CEP",
                               type: TextInputType.streetAddress,
-                              rightPadding: 4,
+                              rightPadding: 8,
                               maxLength: 9,
                               hide: false,
                               masks: Constants.maskCep,
@@ -220,7 +220,7 @@ class _CreateClienteState extends State<CreateCliente> {
                         Expanded(
                           child: CustomSearchDropDown(
                             label: "Município*",
-                            leftPadding: 4,
+                            leftPadding: 0,
                             dropdownValues: Constants.municipios,
                             controller: _municipioController,
                             validator: _clienteCreateValidator.byField(
@@ -235,8 +235,8 @@ class _CreateClienteState extends State<CreateCliente> {
                       hint: "Bairro...",
                       label: "Bairro*",
                       type: TextInputType.text,
-                      maxLength: 40,
-                      hide: false,
+                      maxLength: 255,
+                      hide: true,
                       valueNotifier: _clienteCreateForm.bairro,
                       validator: _clienteCreateValidator.byField(
                           _clienteCreateForm, ErrorCodeKey.bairro.name),
@@ -250,9 +250,9 @@ class _CreateClienteState extends State<CreateCliente> {
                             hint: "Rua...",
                             label: "Rua*",
                             type: TextInputType.text,
-                            maxLength: 40,
+                            maxLength: 255,
                             rightPadding: 8,
-                            hide: false,
+                            hide: true,
                             valueNotifier: _clienteCreateForm.rua,
                             validator: _clienteCreateValidator.byField(
                                 _clienteCreateForm, ErrorCodeKey.rua.name),
@@ -266,8 +266,8 @@ class _CreateClienteState extends State<CreateCliente> {
                             label: "Número*",
                             type: TextInputType.text,
                             leftPadding: 0,
-                            maxLength: 6,
-                            hide: false,
+                            maxLength: 10,
+                            hide: true,
                             valueNotifier: _clienteCreateForm.numero,
                             validator: _clienteCreateValidator.byField(
                                 _clienteCreateForm, ErrorCodeKey.numero.name),
@@ -281,7 +281,7 @@ class _CreateClienteState extends State<CreateCliente> {
                       hint: "Complemento...",
                       label: "Complemento",
                       type: TextInputType.text,
-                      maxLength: 100,
+                      maxLength: 255,
                       hide: false,
                       valueNotifier: _clienteCreateForm.complemento,
                       validator: _clienteCreateValidator.byField(
@@ -383,4 +383,3 @@ class _CreateClienteState extends State<CreateCliente> {
     super.dispose();
   }
 }
-// TODO - Uma validação especifica para os campos de 'Número' e 'Complemento' separado da rua.

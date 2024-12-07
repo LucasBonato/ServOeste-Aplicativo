@@ -7,7 +7,6 @@ import 'package:serv_oeste/src/components/grid_view.dart';
 import 'package:serv_oeste/src/components/card_technical.dart';
 import 'package:serv_oeste/src/components/custom_search_field.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
-import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
@@ -225,18 +224,26 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      floatingActionButton: (!isSelected)
-          ? BuildWidgets.buildFabAdd(
-              context,
-              "/createTecnico",
-              () => _tecnicoBloc.add(TecnicoSearchEvent()),
-              tooltip: 'Adicionar um técnico',
-            )
-          : BuildWidgets.buildFabRemove(
-              context,
-              _disableTecnicos,
-              tooltip: 'Excluir técnicos selecionados',
-            ),
+      floatingActionButton: Builder(
+        builder: (context) {
+          bool isSelected = _selectedItems.isNotEmpty;
+
+          return !isSelected
+              ? BuildWidgets.buildFabAdd(
+                  context,
+                  "/createCliente",
+                  () {
+                    _tecnicoBloc.add(TecnicoSearchEvent());
+                  },
+                  tooltip: 'Adicionar um técnico',
+                )
+              : BuildWidgets.buildFabRemove(
+                  context,
+                  _disableTecnicos,
+                  tooltip: 'Desativar técnicos selecionados',
+                );
+        },
+      ),
       body: Column(
         children: [
           _buildSearchInputs(),
@@ -252,7 +259,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                     child: GridListView(
                       aspectRatio: 2.5,
                       dataList: state.tecnicos,
-                      buildCard: (tecnico) => GestureDetector(
+                      buildCard: (tecnico) => CardTechnical(
                         onTap: () {
                           int tecnicoId = (tecnico).id!;
                           Navigator.of(context, rootNavigator: true).push(
@@ -261,16 +268,18 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                                   UpdateTecnico(id: tecnicoId),
                             ),
                           );
+                          setState(() {
+                            _selectedItems.clear();
+                          });
                         },
                         onDoubleTap: () => _selectItems(tecnico.id!),
-                        child: CardTechnical(
-                          id: (tecnico as Tecnico).id!,
-                          name: tecnico.nome!,
-                          phoneNumber: tecnico.telefoneFixo!,
-                          cellPhoneNumber: tecnico.telefoneCelular!,
-                          status: tecnico.situacao!,
-                          isSelected: _selectedItems.contains(tecnico.id),
-                        ),
+                        onLongPress: () => _selectItems(tecnico.id!),
+                        id: tecnico.id!,
+                        name: tecnico.nome!,
+                        phoneNumber: tecnico.telefoneFixo!,
+                        cellPhoneNumber: tecnico.telefoneCelular!,
+                        status: tecnico.situacao!,
+                        isSelected: _selectedItems.contains(tecnico.id),
                       ),
                     ),
                   );

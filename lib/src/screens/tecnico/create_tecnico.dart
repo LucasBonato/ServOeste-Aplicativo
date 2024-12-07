@@ -129,7 +129,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                         color: Colors.black,
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 48),
                     CustomTextFormField(
                       hint: "Nome...",
                       label: "Nome*",
@@ -151,7 +151,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                             label: "Telefone Fixo**",
                             leftPadding: 0,
                             maxLength: 14,
-                            hide: false,
+                            hide: true,
                             masks: [
                               MaskTextInputFormatter(mask: '(##) ####-####'),
                             ],
@@ -170,7 +170,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                             label: "Telefone Celular**",
                             leftPadding: 0,
                             maxLength: 15,
-                            hide: false,
+                            hide: true,
                             masks: Constants.maskTelefone,
                             type: TextInputType.phone,
                             valueNotifier: _tecnicoCreateForm.telefoneCelular,

@@ -70,7 +70,7 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 36),
+                    const SizedBox(height: 48),
                     isMobile
                         ? Column(
                             children: [
