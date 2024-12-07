@@ -86,7 +86,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
             TextInputType? keyboardType}) =>
         CustomSearchTextField(
           hint: hint,
-          leftPadding: 0,
+          leftPadding: 8,
           rightPadding: 8,
           controller: controller,
           keyboardType: keyboardType,

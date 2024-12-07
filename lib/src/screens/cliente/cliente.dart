@@ -83,7 +83,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
             TextInputType? keyboardType}) =>
         CustomSearchTextField(
           hint: hint,
-          leftPadding: 0,
+          leftPadding: 8,
           rightPadding: 8,
           controller: controller,
           keyboardType: keyboardType,
@@ -223,8 +223,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
                           int tecnicoId = cliente.id!;
                           Navigator.of(context, rootNavigator: true).push(
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  UpdateCliente(id: tecnicoId),
+                              builder: (context) => UpdateCliente(id: tecnicoId),
                             ),
                           );
                           setState(() {

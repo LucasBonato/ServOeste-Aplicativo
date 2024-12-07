@@ -79,7 +79,7 @@ class ServicoScreenState extends State<ServicoScreen> {
             {required String hint, TextEditingController? controller}) =>
         CustomSearchTextField(
           hint: hint,
-          leftPadding: 0,
+          leftPadding: 8,
           rightPadding: 8,
           controller: controller,
           onChangedAction: (value) => _onNomeChanged(),
