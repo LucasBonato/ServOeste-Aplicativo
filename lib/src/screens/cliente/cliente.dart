@@ -182,11 +182,12 @@ class _ClienteScreenState extends State<ClienteScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      floatingActionButton: Builder(
-        builder: (context) {
-          bool isSelected = _selectedItems.isNotEmpty;
+      floatingActionButton: BlocBuilder<ClienteBloc, ClienteState>(
+        builder: (context, state) {
+          final bool hasSelection =
+              state is ClienteListState && state.selectedIds.isNotEmpty;
 
-          return !isSelected
+          return !hasSelection
               ? BuildWidgets.buildFabAdd(
                   context,
                   "/createCliente",
@@ -197,7 +198,10 @@ class _ClienteScreenState extends State<ClienteScreen> {
                 )
               : BuildWidgets.buildFabRemove(
                   context,
-                  _disableClientes,
+                  () {
+                    _clienteBloc.add(ClienteDeleteListEvent(
+                        selectedList: state.selectedIds));
+                  },
                   tooltip: 'Excluir clientes selecionados',
                 );
         },
@@ -209,35 +213,34 @@ class _ClienteScreenState extends State<ClienteScreen> {
             child: BlocBuilder<ClienteBloc, ClienteState>(
               bloc: _clienteBloc,
               builder: (context, state) {
-                if (state is ClienteInitialState ||
-                    state is ClienteLoadingState) {
+                if (state is ClienteLoadingState) {
                   return const Center(
                       child: CircularProgressIndicator.adaptive());
-                } else if (state is ClienteSearchSuccessState) {
+                } else if (state is ClienteListState) {
                   return SingleChildScrollView(
                     child: GridListView(
                       aspectRatio: 1.65,
                       dataList: state.clientes,
                       buildCard: (cliente) => CardClient(
                         onDoubleTap: () {
-                          int clienteId = (cliente).id!;
+                          int clienteId = cliente.id!;
                           Navigator.of(context, rootNavigator: true).push(
                             MaterialPageRoute(
                               builder: (context) =>
                                   UpdateCliente(id: clienteId),
                             ),
                           );
-                          setState(() {
-                            _selectedItems.clear();
-                          });
+                          _clienteBloc
+                              .add(ClienteToggleItemSelectEvent(id: clienteId));
                         },
-                        onLongPress: () => _selectItems(cliente.id!),
+                        onLongPress: () => _clienteBloc
+                            .add(ClienteToggleItemSelectEvent(id: cliente.id!)),
                         name: cliente.nome!,
                         phoneNumber: cliente.telefoneFixo!,
                         cellphone: cliente.telefoneCelular!,
                         city: cliente.municipio!,
                         street: cliente.endereco!,
-                        isSelected: _selectedItems.contains(cliente.id),
+                        isSelected: state.selectedIds.contains(cliente.id),
                       ),
                     ),
                   );

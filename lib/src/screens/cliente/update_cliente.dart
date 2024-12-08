@@ -11,6 +11,8 @@ import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:serv_oeste/src/util/formatters.dart';
+import 'package:serv_oeste/src/util/input_masks.dart';
 
 class UpdateCliente extends StatefulWidget {
   final int id;
@@ -100,14 +102,14 @@ class _UpdateClienteState extends State<UpdateCliente> {
           if (state is ClienteSearchOneSuccessState) {
             _clienteUpdateForm.nome.value = state.cliente.nome!;
             _nomeController.text = _clienteUpdateForm.nome.value;
-            _clienteUpdateForm.telefoneFixo.value =
-                (state.cliente.telefoneFixo!.isEmpty
-                    ? ""
-                    : Constants.applyTelefoneMask(state.cliente.telefoneFixo!));
+            _clienteUpdateForm.telefoneFixo.value = (state
+                    .cliente.telefoneFixo!.isEmpty
+                ? ""
+                : Formatters.applyTelefoneMask(state.cliente.telefoneFixo!));
             _clienteUpdateForm.telefoneCelular.value = (state
                     .cliente.telefoneCelular!.isEmpty
                 ? ""
-                : Constants.applyCelularMask(state.cliente.telefoneCelular!));
+                : Formatters.applyCelularMask(state.cliente.telefoneCelular!));
             _clienteUpdateForm.municipio.value = state.cliente.municipio!;
             _clienteUpdateForm.bairro.value = state.cliente.bairro!;
 
@@ -185,7 +187,7 @@ class _UpdateClienteState extends State<UpdateCliente> {
                                         _clienteUpdateForm.telefoneFixo,
                                     hint: "(99) 9999-9999",
                                     label: "Telefone Fixo**",
-                                    masks: Constants.maskTelefoneFixo,
+                                    masks: InputMasks.maskTelefoneFixo,
                                     rightPadding: 8,
                                     maxLength: 14,
                                     type: TextInputType.phone,
@@ -203,7 +205,7 @@ class _UpdateClienteState extends State<UpdateCliente> {
                                         _clienteUpdateForm.telefoneCelular,
                                     hint: "(99) 99999-9999",
                                     label: "Telefone Celular**",
-                                    masks: Constants.maskTelefone,
+                                    masks: InputMasks.maskCelular,
                                     leftPadding: 0,
                                     maxLength: 15,
                                     hide: true,
@@ -243,7 +245,7 @@ class _UpdateClienteState extends State<UpdateCliente> {
                                       rightPadding: 8,
                                       maxLength: 9,
                                       hide: true,
-                                      masks: Constants.maskCep,
+                                      masks: InputMasks.maskCep,
                                       valueNotifier: _clienteUpdateForm.cep,
                                       validator:
                                           _clienteUpdateValidator.byField(

@@ -9,6 +9,7 @@ import 'package:serv_oeste/src/models/servico/servico_form.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
 import 'package:serv_oeste/src/screens/servico/table_tecnico.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:serv_oeste/src/util/input_masks.dart';
 
 class CreateServicoAndCliente extends StatefulWidget {
   const CreateServicoAndCliente({super.key});
@@ -245,9 +246,7 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
           type: TextInputType.phone,
           maxLength: 14,
           hide: true,
-          masks: [
-            MaskTextInputFormatter(mask: '(##) ####-####'),
-          ],
+          masks: InputMasks.maskTelefoneFixo,
           valueNotifier: _clienteForm.telefoneFixo,
           validator: _clienteValidator.byField(_clienteForm, "telefoneFixo"),
           onChanged: _clienteForm.setTelefoneFixo,
@@ -259,9 +258,7 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
           type: TextInputType.phone,
           maxLength: 15,
           hide: true,
-          masks: [
-            MaskTextInputFormatter(mask: '(##) #####-####'),
-          ],
+          masks: InputMasks.maskCelular,
           valueNotifier: _clienteForm.telefoneCelular,
           validator: _clienteValidator.byField(_clienteForm, "telefoneCelular"),
           onChanged: _clienteForm.setTelefoneCelular,
@@ -395,7 +392,7 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
                 label: "Data Atendimento Previsto*",
                 hint: 'dd/mm/aaaa',
                 rightPadding: 8,
-                mask: Constants.maskData,
+                mask: InputMasks.maskData,
                 type: TextInputType.datetime,
                 maxLength: 10,
                 hide: true,

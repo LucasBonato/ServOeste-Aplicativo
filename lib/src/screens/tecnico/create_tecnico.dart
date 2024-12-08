@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/custom_grid_checkers_form_field.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
@@ -12,7 +11,7 @@ import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
 import 'package:lucid_validation/lucid_validation.dart';
-import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:serv_oeste/src/util/input_masks.dart';
 
 class CreateTecnico extends StatefulWidget {
   const CreateTecnico({super.key});
@@ -184,9 +183,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                             rightPadding: 8,
                             maxLength: 14,
                             hide: true,
-                            masks: [
-                              MaskTextInputFormatter(mask: '(##) ####-####'),
-                            ],
+                            masks: InputMasks.maskTelefoneFixo,
                             type: TextInputType.phone,
                             valueNotifier: _tecnicoCreateForm.telefoneFixo,
                             validator: _tecnicoCreateValidator.byField(
@@ -203,7 +200,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                             leftPadding: 0,
                             maxLength: 15,
                             hide: true,
-                            masks: Constants.maskTelefone,
+                            masks: InputMasks.maskCelular,
                             type: TextInputType.phone,
                             valueNotifier: _tecnicoCreateForm.telefoneCelular,
                             validator: _tecnicoCreateValidator.byField(

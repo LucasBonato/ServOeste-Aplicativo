@@ -4,6 +4,7 @@ import 'package:serv_oeste/src/components/dropdown_field.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/components/custom_search_field.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:serv_oeste/src/util/input_masks.dart';
 
 class FilterService extends StatelessWidget {
   final TextEditingController addressController = TextEditingController();
@@ -114,7 +115,7 @@ class FilterService extends StatelessWidget {
                         child: CustomDatePicker(
                           label: 'Data Atendimento Previsto...',
                           hint: 'dd/mm/aaaa',
-                          mask: Constants.maskData,
+                          mask: InputMasks.maskData,
                           rightPadding: 4,
                           type: TextInputType.datetime,
                           maxLength: 10,
@@ -127,7 +128,7 @@ class FilterService extends StatelessWidget {
                           label: 'Data Atendimento Efetivo...',
                           hint: 'dd/mm/aaaa',
                           leftPadding: 4,
-                          mask: Constants.maskData,
+                          mask: InputMasks.maskData,
                           type: TextInputType.datetime,
                           maxLength: 10,
                           valueNotifier: dataEfetivaNotifier,
@@ -142,7 +143,7 @@ class FilterService extends StatelessWidget {
                         child: CustomDatePicker(
                           label: 'Data Abertura...',
                           hint: 'dd/mm/aaaa',
-                          mask: Constants.maskData,
+                          mask: InputMasks.maskData,
                           type: TextInputType.datetime,
                           rightPadding: 4,
                           maxLength: 10,
@@ -185,4 +186,5 @@ class FilterService extends StatelessWidget {
     );
   }
 }
-//TODO - Refatorar tela por completo, criar um model para o formulário e não ficar dependendo de valueNotifiers no mesmo contexto.
+
+// TODO - Refatorar tela por completo, criar um model para o formulário e não ficar dependendo de valueNotifiers no mesmo contexto.

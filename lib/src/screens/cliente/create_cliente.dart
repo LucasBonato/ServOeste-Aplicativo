@@ -13,6 +13,7 @@ import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:serv_oeste/src/util/input_masks.dart';
 
 class CreateCliente extends StatefulWidget {
   const CreateCliente({super.key});
@@ -161,7 +162,7 @@ class _CreateClienteState extends State<CreateCliente> {
                           ),
                           Transform.translate(
                             offset: Offset(24, -18),
-                            child: Container(
+                            child: SizedBox(
                               width: MediaQuery.of(context).size.width * 0.5,
                               child: Text(
                                 "Obs. os nomes que aparecerem já estão cadastrados",
@@ -188,7 +189,7 @@ class _CreateClienteState extends State<CreateCliente> {
                             rightPadding: 8,
                             maxLength: 14,
                             hide: true,
-                            masks: Constants.maskTelefoneFixo,
+                            masks: InputMasks.maskTelefoneFixo,
                             valueNotifier: _clienteCreateForm.telefoneFixo,
                             validator: _clienteCreateValidator.byField(
                                 _clienteCreateForm,
@@ -201,7 +202,7 @@ class _CreateClienteState extends State<CreateCliente> {
                             valueNotifier: _clienteCreateForm.telefoneCelular,
                             hint: "(99) 99999-9999",
                             label: "Telefone Celular**",
-                            masks: Constants.maskTelefone,
+                            masks: InputMasks.maskCelular,
                             leftPadding: 0,
                             maxLength: 15,
                             type: TextInputType.phone,
@@ -237,7 +238,7 @@ class _CreateClienteState extends State<CreateCliente> {
                               rightPadding: 8,
                               maxLength: 9,
                               hide: true,
-                              masks: Constants.maskCep,
+                              masks: InputMasks.maskCep,
                               valueNotifier: _clienteCreateForm.cep,
                               validator: _clienteCreateValidator.byField(
                                   _clienteCreateForm, ErrorCodeKey.cep.name),

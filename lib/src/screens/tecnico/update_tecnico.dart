@@ -8,6 +8,8 @@ import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:serv_oeste/src/util/formatters.dart';
+import 'package:serv_oeste/src/util/input_masks.dart';
 
 class UpdateTecnico extends StatefulWidget {
   final int id;
@@ -211,12 +213,12 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
               _tecnicoUpdateForm.telefoneFixo.value =
                   (currentState.tecnico.telefoneFixo!.isEmpty
                       ? ""
-                      : Constants.applyTelefoneMask(
+                      : Formatters.applyTelefoneMask(
                           currentState.tecnico.telefoneFixo!));
               _tecnicoUpdateForm.telefoneCelular.value =
                   (currentState.tecnico.telefoneCelular!.isEmpty
                       ? ""
-                      : Constants.applyCelularMask(
+                      : Formatters.applyCelularMask(
                           currentState.tecnico.telefoneCelular!));
               _nomeController.text = nomeCompletoTecnico;
               _telefoneFixoController.text =
@@ -232,8 +234,9 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
               if (currentState.tecnico.especialidades != null) {
                 for (Especialidade especialidade
                     in currentState.tecnico.especialidades!) {
-                  if (!checkersMap.keys.contains(especialidade.conhecimento))
+                  if (!checkersMap.keys.contains(especialidade.conhecimento)) {
                     continue;
+                  }
                   checkersMap[especialidade.conhecimento] = true;
                 }
               }
@@ -314,6 +317,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                                   maxLength: 14,
                                   rightPadding: 8,
                                   hide: true,
+                                  masks: InputMasks.maskTelefoneFixo,
                                   valueNotifier:
                                       _tecnicoUpdateForm.telefoneFixo,
                                   validator: _tecnicoUpdateValidator.byField(
@@ -330,7 +334,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                                   maxLength: 15,
                                   leftPadding: 0,
                                   hide: true,
-                                  masks: Constants.maskTelefone,
+                                  masks: InputMasks.maskCelular,
                                   valueNotifier:
                                       _tecnicoUpdateForm.telefoneCelular,
                                   validator: _tecnicoUpdateValidator.byField(

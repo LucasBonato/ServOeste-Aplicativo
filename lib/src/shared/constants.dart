@@ -1,5 +1,3 @@
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-
 class Constants {
   static const bool isDev = true;
 
@@ -59,47 +57,4 @@ class Constants {
   ];
   static const List<String> filiais = ["Osasco", "Carapicuíba"];
   static const List<String> dataAtendimento = ["Manhã", "Tarde"];
-
-  static final List<MaskTextInputFormatter> maskCep = [
-    MaskTextInputFormatter(
-      mask: '#####-###',
-      filter: {"#": RegExp(r'[0-9]')},
-    ),
-  ];
-  static final List<MaskTextInputFormatter> maskTelefone = [
-    MaskTextInputFormatter(
-      mask: '(##) #####-####',
-      filter: {"#": RegExp(r'[0-9]')},
-    ),
-  ];
-  static final List<MaskTextInputFormatter> maskTelefoneFixo = [
-    MaskTextInputFormatter(
-      mask: '(##) ####-####',
-      filter: {"#": RegExp(r'[0-9]')},
-    ),
-  ];
-  static final List<MaskTextInputFormatter> maskData = [
-    MaskTextInputFormatter(
-      mask: '##/##/####',
-      filter: {"#": RegExp(r'[0-9]')},
-    ),
-  ];
-
-  // TODO - Retirar os métodos de transformar Mask das Constants
-  static String applyTelefoneMask(String telefone) {
-    return "(${telefone.substring(0, 2)}) ${telefone.substring(2, 6)}-${telefone.substring(6)}";
-  }
-
-  static String applyCelularMask(String telefone) {
-    return "(${telefone.substring(0, 2)}) ${telefone.substring(2, 7)}-${telefone.substring(7)}";
-  }
-
-  static String transformTelefoneMask(String telefone) {
-    if (telefone.length < 14 || telefone.length > 15) return "";
-    return telefone
-        .replaceAll("(", "")
-        .replaceAll(")", "")
-        .replaceAll(" ", "")
-        .replaceAll("-", "");
-  }
 }
