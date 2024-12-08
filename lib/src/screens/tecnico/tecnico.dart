@@ -231,7 +231,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
           return !isSelected
               ? BuildWidgets.buildFabAdd(
                   context,
-                  "/createCliente",
+                  "/createTecnico",
                   () {
                     _tecnicoBloc.add(TecnicoSearchEvent());
                   },
@@ -260,7 +260,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                       aspectRatio: 2.5,
                       dataList: state.tecnicos,
                       buildCard: (tecnico) => CardTechnical(
-                        onTap: () {
+                        onDoubleTap: () {
                           int tecnicoId = (tecnico).id!;
                           Navigator.of(context, rootNavigator: true).push(
                             MaterialPageRoute(
@@ -272,7 +272,6 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                             _selectedItems.clear();
                           });
                         },
-                        onDoubleTap: () => _selectItems(tecnico.id!),
                         onLongPress: () => _selectItems(tecnico.id!),
                         id: tecnico.id!,
                         name: tecnico.nome!,

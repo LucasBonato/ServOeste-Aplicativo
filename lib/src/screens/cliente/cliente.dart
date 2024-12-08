@@ -219,19 +219,18 @@ class _ClienteScreenState extends State<ClienteScreen> {
                       aspectRatio: 1.65,
                       dataList: state.clientes,
                       buildCard: (cliente) => CardClient(
-                        onTap: () {
-                          int tecnicoId = cliente.id!;
+                        onDoubleTap: () {
+                          int clienteId = (cliente).id!;
                           Navigator.of(context, rootNavigator: true).push(
                             MaterialPageRoute(
                               builder: (context) =>
-                                  UpdateCliente(id: tecnicoId),
+                                  UpdateCliente(id: clienteId),
                             ),
                           );
                           setState(() {
                             _selectedItems.clear();
                           });
                         },
-                        onDoubleTap: () => _selectItems(cliente.id!),
                         onLongPress: () => _selectItems(cliente.id!),
                         name: cliente.nome!,
                         phoneNumber: cliente.telefoneFixo!,

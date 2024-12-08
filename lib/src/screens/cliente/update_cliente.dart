@@ -1,3 +1,4 @@
+import 'package:logger/logger.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
@@ -10,7 +11,6 @@ import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
 
 class UpdateCliente extends StatefulWidget {
   final int id;
@@ -28,8 +28,8 @@ class _UpdateClienteState extends State<UpdateCliente> {
   final ClienteValidator _clienteUpdateValidator = ClienteValidator();
   final GlobalKey<FormState> _clienteFormKey = GlobalKey<FormState>();
   final TextEditingController _nomeController = TextEditingController();
+  late final TextEditingController _municipioController;
   List<String> _dropdownValuesNomes = [];
-  Timer? _debounce;
 
   @override
   void initState() {
@@ -37,19 +37,6 @@ class _UpdateClienteState extends State<UpdateCliente> {
     _clienteUpdateForm.setId(widget.id);
     _clienteBloc = context.read<ClienteBloc>();
     _clienteBloc.add(ClienteSearchOneEvent(id: widget.id));
-  }
-
-  void _onNomeChanged(String nome) {
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce =
-        Timer(Duration(milliseconds: 150), () => _fetchClienteNames(nome));
-  }
-
-  void _fetchClienteNames(String nome) async {
-    _clienteUpdateForm.setNome(nome);
-    if (nome == "") return;
-    if (nome.split(" ").length > 1 && _dropdownValuesNomes.isEmpty) return;
-    _clienteBloc.add(ClienteSearchEvent(nome: nome));
   }
 
   void _fetchInformationAboutCep(String? cep) async {
@@ -176,14 +163,18 @@ class _UpdateClienteState extends State<UpdateCliente> {
                                   }
                                 }
                               },
-                              child: CustomSearchDropDown(
-                                onChanged: _onNomeChanged,
-                                controller: _nomeController,
+                              child: CustomTextFormField(
+                                hint: "Nome...",
                                 label: "Nome*",
+                                type: TextInputType.name,
                                 maxLength: 40,
-                                dropdownValues: _dropdownValuesNomes,
+                                rightPadding: 8,
+                                hide: false,
+                                valueNotifier: _clienteUpdateForm.nome,
                                 validator: _clienteUpdateValidator.byField(
-                                    _clienteUpdateForm, "nome"),
+                                    _clienteUpdateForm,
+                                    ErrorCodeKey.nomeESobrenome.name),
+                                onChanged: _clienteUpdateForm.setNome,
                               ),
                             ),
                             Row(
@@ -226,16 +217,56 @@ class _UpdateClienteState extends State<UpdateCliente> {
                                 ),
                               ],
                             ),
-                            CustomSearchDropDown(
-                              label: "Município*",
-                              dropdownValues: Constants.municipios,
-                              valueNotifier: _clienteUpdateForm.municipio,
-                              validator: _clienteUpdateValidator.byField(
-                                  _clienteUpdateForm,
-                                  ErrorCodeKey.municipio.name),
-                              onChanged: _clienteUpdateForm.setMunicipio,
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child:
+                                      BlocListener<EnderecoBloc, EnderecoState>(
+                                    bloc: _enderecoBloc,
+                                    listener: (context, state) {
+                                      if (state is EnderecoSuccessState) {
+                                        Logger().i(state.municipio);
+                                        _clienteUpdateForm
+                                            .setBairro(state.bairro);
+                                        _clienteUpdateForm.setRua(state.rua);
+                                        _clienteUpdateForm
+                                            .setMunicipio(state.municipio);
+                                        _municipioController.text =
+                                            state.municipio;
+                                      }
+                                    },
+                                    child: CustomTextFormField(
+                                      hint: "00000-000",
+                                      label: "CEP",
+                                      type: TextInputType.streetAddress,
+                                      rightPadding: 8,
+                                      maxLength: 9,
+                                      hide: true,
+                                      masks: Constants.maskCep,
+                                      valueNotifier: _clienteUpdateForm.cep,
+                                      validator:
+                                          _clienteUpdateValidator.byField(
+                                              _clienteUpdateForm,
+                                              ErrorCodeKey.cep.name),
+                                      onChanged: _fetchInformationAboutCep,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: CustomSearchDropDown(
+                                    label: "Município*",
+                                    dropdownValues: Constants.municipios,
+                                    leftPadding: 0,
+                                    valueNotifier: _clienteUpdateForm.municipio,
+                                    validator: _clienteUpdateValidator.byField(
+                                        _clienteUpdateForm,
+                                        ErrorCodeKey.municipio.name),
+                                    onChanged: _clienteUpdateForm.setMunicipio,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 16),
                             CustomTextFormField(
                               valueNotifier: _clienteUpdateForm.bairro,
                               hint: "Bairro...",

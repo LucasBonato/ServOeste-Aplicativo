@@ -82,6 +82,11 @@ class _CreateClienteState extends State<CreateCliente> {
     );
   }
 
+  void _handleBackNavigation() {
+    _clienteBloc.add(ClienteSearchEvent());
+    Navigator.pop(context, "Back");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,7 +98,7 @@ class _CreateClienteState extends State<CreateCliente> {
             children: [
               IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.black),
-                onPressed: () => Navigator.pop(context, "Back"),
+                onPressed: _handleBackNavigation,
               )
             ],
           ),
@@ -135,19 +140,42 @@ class _CreateClienteState extends State<CreateCliente> {
                               .toList();
 
                           if (_dropdownValuesNomes != nomes) {
-                            _dropdownValuesNomes = nomes;
-                            setState(() {});
+                            setState(() {
+                              _dropdownValuesNomes = nomes;
+                            });
                           }
                         }
                       },
-                      child: CustomSearchDropDown(
-                        label: "Nome*",
-                        maxLength: 40,
-                        dropdownValues: _dropdownValuesNomes,
-                        validator: _clienteCreateValidator.byField(
-                            _clienteCreateForm,
-                            ErrorCodeKey.nomeESobrenome.name),
-                        onChanged: _onNomeChanged,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomSearchDropDown(
+                            label: "Nome*",
+                            maxLength: 40,
+                            dropdownValues: _dropdownValuesNomes,
+                            validator: _clienteCreateValidator.byField(
+                              _clienteCreateForm,
+                              ErrorCodeKey.nomeESobrenome.name,
+                            ),
+                            onChanged: _onNomeChanged,
+                          ),
+                          Transform.translate(
+                            offset: Offset(24, -18),
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.5,
+                              child: Text(
+                                "Obs. os nomes que aparecerem já estão cadastrados",
+                                style: TextStyle(
+                                  fontSize:
+                                      (MediaQuery.of(context).size.width * 0.03)
+                                          .clamp(9.0, 13.0),
+                                  color: Colors.grey,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     Row(
@@ -208,7 +236,7 @@ class _CreateClienteState extends State<CreateCliente> {
                               type: TextInputType.streetAddress,
                               rightPadding: 8,
                               maxLength: 9,
-                              hide: false,
+                              hide: true,
                               masks: Constants.maskCep,
                               valueNotifier: _clienteCreateForm.cep,
                               validator: _clienteCreateValidator.byField(
@@ -276,7 +304,6 @@ class _CreateClienteState extends State<CreateCliente> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
                     CustomTextFormField(
                       hint: "Complemento...",
                       label: "Complemento",
@@ -324,7 +351,7 @@ class _CreateClienteState extends State<CreateCliente> {
                               bloc: _clienteBloc,
                               listener: (context, state) {
                                 if (state is ClienteRegisterSuccessState) {
-                                  Navigator.pop(context);
+                                  _handleBackNavigation();
                                 } else if (state is ClienteErrorState) {
                                   ErrorEntity error = state.error;
 

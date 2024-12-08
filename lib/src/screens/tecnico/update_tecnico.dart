@@ -56,7 +56,9 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
     _telefoneCelularController = TextEditingController();
     _telefoneFixoController = TextEditingController();
     _tecnicoUpdateForm.setId(widget.id);
-    _dropDownSituacaoValue = ValueNotifier<String>("");
+    String defaultSituacao = Constants.situationTecnicoList.first['label'];
+    _dropDownSituacaoValue = ValueNotifier<String>(defaultSituacao);
+    _tecnicoUpdateForm.setSituacao(defaultSituacao);
     _tecnicoBloc.add(TecnicoSearchOneEvent(id: widget.id));
   }
 

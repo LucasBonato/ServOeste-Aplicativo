@@ -15,7 +15,8 @@ class ExpandableFab extends StatefulWidget {
   State<ExpandableFab> createState() => _ExpandableFabState();
 }
 
-class _ExpandableFabState extends State<ExpandableFab> with SingleTickerProviderStateMixin {
+class _ExpandableFabState extends State<ExpandableFab>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _expandAnimation;
   bool _open = false;
@@ -52,7 +53,9 @@ class _ExpandableFabState extends State<ExpandableFab> with SingleTickerProvider
     final children = <Widget>[];
     final count = widget.children.length;
     final step = 90.0 / (count - 1);
-    for (var i = 0, angleInDegrees = 0.0; i < count; i++, angleInDegrees += step) {
+    for (var i = 0, angleInDegrees = 0.0;
+        i < count;
+        i++, angleInDegrees += step) {
       children.add(
         _ExpandingActionButton(
           directionInDegrees: angleInDegrees,
@@ -98,23 +101,28 @@ class _ExpandableFabState extends State<ExpandableFab> with SingleTickerProvider
   }
 
   Widget _buildTapToCloseFab() {
-    return SizedBox(
-      width: 56,
-      height: 56,
-      child: Center(
-        child: Material(
-          color: Color(0xFC343F54),
-          shape: const CircleBorder(),
-          clipBehavior: Clip.antiAlias,
-          elevation: 8,
-          child: InkWell(
-            onTap: _toggle,
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: const Icon(
-                Icons.close,
-                color: Colors.white,
-                size: 36,
+    return AnimatedOpacity(
+      opacity: _open ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeInOut,
+      child: SizedBox(
+        width: 56,
+        height: 56,
+        child: Center(
+          child: Material(
+            color: const Color(0xFC343F54),
+            shape: const CircleBorder(),
+            clipBehavior: Clip.antiAlias,
+            elevation: 8,
+            child: InkWell(
+              onTap: _toggle,
+              child: const Padding(
+                padding: EdgeInsets.all(10),
+                child: Icon(
+                  Icons.close,
+                  color: Colors.white,
+                  size: 36,
+                ),
               ),
             ),
           ),
