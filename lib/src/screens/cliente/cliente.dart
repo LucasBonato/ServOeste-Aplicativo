@@ -50,27 +50,6 @@ class _ClienteScreenState extends State<ClienteScreen> {
     );
   }
 
-  void _disableClientes() {
-    final List<int> selectedItemsCopy = List<int>.from(_selectedItems);
-    _clienteBloc.add(ClienteDeleteListEvent(selectedList: selectedItemsCopy));
-    setState(() {
-      _selectedItems.clear();
-      isSelected = false;
-    });
-  }
-
-  void _selectItems(int id) {
-    setState(() {
-      if (_selectedItems.contains(id)) {
-        _selectedItems.remove(id);
-      } else {
-        _selectedItems.add(id);
-      }
-
-      isSelected = _selectedItems.isNotEmpty;
-    });
-  }
-
   Widget _buildSearchInputs() {
     final screenWidth = MediaQuery.of(context).size.width;
     final isLargeScreen = screenWidth >= 1000;
@@ -182,11 +161,12 @@ class _ClienteScreenState extends State<ClienteScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      floatingActionButton: Builder(
-        builder: (context) {
-          bool isSelected = _selectedItems.isNotEmpty;
+      floatingActionButton: BlocBuilder<ClienteBloc, ClienteState>(
+        builder: (context, state) {
+          final bool hasSelection =
+              state is ClienteListState && state.selectedIds.isNotEmpty;
 
-          return !isSelected
+          return !hasSelection
               ? BuildWidgets.buildFabAdd(
                   context,
                   "/createCliente",
@@ -197,7 +177,10 @@ class _ClienteScreenState extends State<ClienteScreen> {
                 )
               : BuildWidgets.buildFabRemove(
                   context,
-                  _disableClientes,
+                  () {
+                    _clienteBloc.add(ClienteDeleteListEvent(
+                        selectedList: state.selectedIds));
+                  },
                   tooltip: 'Excluir clientes selecionados',
                 );
         },
@@ -209,35 +192,33 @@ class _ClienteScreenState extends State<ClienteScreen> {
             child: BlocBuilder<ClienteBloc, ClienteState>(
               bloc: _clienteBloc,
               builder: (context, state) {
-                if (state is ClienteInitialState ||
-                    state is ClienteLoadingState) {
+                if (state is ClienteLoadingState) {
                   return const Center(
                       child: CircularProgressIndicator.adaptive());
-                } else if (state is ClienteSearchSuccessState) {
+                } else if (state is ClienteListState) {
                   return SingleChildScrollView(
                     child: GridListView(
                       aspectRatio: 1.65,
                       dataList: state.clientes,
                       buildCard: (cliente) => CardClient(
-                        onTap: () {
-                          int tecnicoId = cliente.id!;
+                        onDoubleTap: () {
+                          int clienteId = cliente.id!;
                           Navigator.of(context, rootNavigator: true).push(
                             MaterialPageRoute(
-                              builder: (context) => UpdateCliente(id: tecnicoId),
+                              builder: (context) => UpdateCliente(id: clienteId),
                             ),
                           );
-                          setState(() {
-                            _selectedItems.clear();
-                          });
+                          _clienteBloc
+                              .add(ClienteToggleItemSelectEvent(id: clienteId));
                         },
-                        onDoubleTap: () => _selectItems(cliente.id!),
-                        onLongPress: () => _selectItems(cliente.id!),
+                        onLongPress: () => _clienteBloc
+                            .add(ClienteToggleItemSelectEvent(id: cliente.id!)),
                         name: cliente.nome!,
                         phoneNumber: cliente.telefoneFixo!,
                         cellphone: cliente.telefoneCelular!,
                         city: cliente.municipio!,
                         street: cliente.endereco!,
-                        isSelected: _selectedItems.contains(cliente.id),
+                        isSelected: state.selectedIds.contains(cliente.id),
                       ),
                     ),
                   );

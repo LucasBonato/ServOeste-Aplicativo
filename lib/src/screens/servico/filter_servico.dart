@@ -1,46 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:serv_oeste/src/logic/filterService/filterServiceProvide.dart';
 import 'package:serv_oeste/src/components/date_picker.dart';
 import 'package:serv_oeste/src/components/dropdown_field.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/components/custom_search_field.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:serv_oeste/src/util/input_masks.dart';
 
 class FilterService extends StatelessWidget {
-  final TextEditingController addressController = TextEditingController();
+  const FilterService({super.key});
 
-  final ValueNotifier<String> equipamentoNotifier = ValueNotifier<String>('');
-  final ValueNotifier<String> situacaoNotifier = ValueNotifier<String>('');
-  final ValueNotifier<String> filialNotifier = ValueNotifier<String>('');
-  final ValueNotifier<String> garantiaNotifier = ValueNotifier<String>('');
-  final ValueNotifier<String> horarioNotifier = ValueNotifier<String>('');
-
-  final ValueNotifier<String> dataPrevistaNotifier = ValueNotifier<String>('');
-  final ValueNotifier<String> dataEfetivaNotifier = ValueNotifier<String>('');
-  final ValueNotifier<String> dataAberturaNotifier = ValueNotifier<String>('');
-
-  FilterService({super.key});
-
-  void applyFilters() {
-    // final endereco = addressController.text;
-    // final equipamento = equipamentoNotifier.value;
+  void applyFilters(BuildContext context) {
+    final filter = context.read<FilterServiceProvider>().filter;
+    print(
+        "Filtros Aplicados: ${filter.endereco}, ${filter.equipamento}, ${filter.situacao}");
   }
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<FilterServiceProvider>();
+
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9FF),
       appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () => Navigator.pop(context, "Back"),
-          ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context, "Back"),
         ),
-        title: const Text(
-          "Voltar",
-          style: TextStyle(color: Colors.black, fontSize: 16),
-        ),
+        title: const Text("Voltar",
+            style: TextStyle(color: Colors.black, fontSize: 16)),
         backgroundColor: const Color(0xFCFDFDFF),
         elevation: 0,
       ),
@@ -66,22 +55,25 @@ class FilterService extends StatelessWidget {
                   ),
                   CustomSearchTextField(
                     hint: 'Digite o Endereço do Cliente...',
-                    controller: addressController,
-                    onChangedAction: (value) {},
+                    controller:
+                        TextEditingController(text: provider.filter.endereco),
+                    onChangedAction: (value) =>
+                        provider.updateFilter(endereco: value),
                   ),
                   const SizedBox(height: 20),
                   CustomSearchDropDown(
                     label: 'Equipamento...',
                     dropdownValues: Constants.equipamentos,
-                    onChanged: (value) => equipamentoNotifier.value = value,
-                    valueNotifier: equipamentoNotifier,
+                    onChanged: (value) =>
+                        provider.updateFilter(equipamento: value),
                   ),
                   const SizedBox(height: 20),
                   CustomDropdownField(
                     label: 'Situação...',
                     dropdownValues: Constants.situationServiceList,
-                    onChanged: (value) => situacaoNotifier.value = value!,
-                    valueNotifier: situacaoNotifier,
+                    onChanged: (value) =>
+                        provider.updateFilter(situacao: value!),
+                    valueNotifier: ValueNotifier(provider.filter.situacao),
                   ),
                   const SizedBox(height: 8),
                   Row(
@@ -90,18 +82,21 @@ class FilterService extends StatelessWidget {
                         child: CustomDropdownField(
                           label: 'Filial...',
                           dropdownValues: Constants.filiais,
+                          onChanged: (value) =>
+                              provider.updateFilter(filial: value!),
+                          valueNotifier: ValueNotifier(provider.filter.filial),
                           rightPadding: 4,
-                          onChanged: (value) => filialNotifier.value = value!,
-                          valueNotifier: filialNotifier,
                         ),
                       ),
                       Expanded(
                         child: CustomDropdownField(
                           label: 'Garantia...',
                           dropdownValues: Constants.garantias,
+                          onChanged: (value) =>
+                              provider.updateFilter(garantia: value!),
+                          valueNotifier:
+                              ValueNotifier(provider.filter.garantia),
                           leftPadding: 4,
-                          onChanged: (value) => garantiaNotifier.value = value!,
-                          valueNotifier: garantiaNotifier,
                         ),
                       ),
                     ],
@@ -110,27 +105,27 @@ class FilterService extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        flex: 1,
                         child: CustomDatePicker(
                           label: 'Data Atendimento Previsto...',
                           hint: 'dd/mm/aaaa',
-                          mask: Constants.maskData,
-                          rightPadding: 4,
-                          type: TextInputType.datetime,
+                          mask: InputMasks.maskData,
                           maxLength: 10,
-                          valueNotifier: dataPrevistaNotifier,
+                          type: TextInputType.datetime,
+                          valueNotifier:
+                              ValueNotifier(provider.filter.dataPrevista),
+                          rightPadding: 4,
                         ),
                       ),
                       Expanded(
-                        flex: 1,
                         child: CustomDatePicker(
                           label: 'Data Atendimento Efetivo...',
                           hint: 'dd/mm/aaaa',
-                          leftPadding: 4,
-                          mask: Constants.maskData,
-                          type: TextInputType.datetime,
+                          mask: InputMasks.maskData,
                           maxLength: 10,
-                          valueNotifier: dataEfetivaNotifier,
+                          type: TextInputType.datetime,
+                          valueNotifier:
+                              ValueNotifier(provider.filter.dataEfetiva),
+                          leftPadding: 4,
                         ),
                       ),
                     ],
@@ -142,27 +137,29 @@ class FilterService extends StatelessWidget {
                         child: CustomDatePicker(
                           label: 'Data Abertura...',
                           hint: 'dd/mm/aaaa',
-                          mask: Constants.maskData,
-                          type: TextInputType.datetime,
-                          rightPadding: 4,
+                          mask: InputMasks.maskData,
                           maxLength: 10,
-                          valueNotifier: dataAberturaNotifier,
+                          type: TextInputType.datetime,
+                          valueNotifier:
+                              ValueNotifier(provider.filter.dataAbertura),
+                          rightPadding: 4,
                         ),
                       ),
                       Expanded(
                         child: CustomDropdownField(
-                          leftPadding: 4,
                           label: 'Horário...',
                           dropdownValues: ['Manhã', 'Tarde'],
-                          onChanged: (value) => horarioNotifier.value = value!,
-                          valueNotifier: horarioNotifier,
+                          onChanged: (value) =>
+                              provider.updateFilter(horario: value!),
+                          valueNotifier: ValueNotifier(provider.filter.horario),
+                          leftPadding: 4,
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 48.0),
                   ElevatedButton(
-                    onPressed: applyFilters,
+                    onPressed: () => applyFilters(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF007BFF),
                       padding: const EdgeInsets.symmetric(vertical: 12),
@@ -185,4 +182,3 @@ class FilterService extends StatelessWidget {
     );
   }
 }
-//TODO - Refatorar tela por completo, criar um model para o formulário e não ficar dependendo de valueNotifiers no mesmo contexto.

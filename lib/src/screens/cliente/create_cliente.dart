@@ -13,6 +13,7 @@ import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:serv_oeste/src/util/input_masks.dart';
 
 class CreateCliente extends StatefulWidget {
   const CreateCliente({super.key});
@@ -82,6 +83,11 @@ class _CreateClienteState extends State<CreateCliente> {
     );
   }
 
+  void _handleBackNavigation() {
+    _clienteBloc.add(ClienteSearchEvent());
+    Navigator.pop(context, "Back");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,7 +99,7 @@ class _CreateClienteState extends State<CreateCliente> {
             children: [
               IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.black),
-                onPressed: () => Navigator.pop(context, "Back"),
+                onPressed: _handleBackNavigation,
               )
             ],
           ),
@@ -135,19 +141,42 @@ class _CreateClienteState extends State<CreateCliente> {
                               .toList();
 
                           if (_dropdownValuesNomes != nomes) {
-                            _dropdownValuesNomes = nomes;
-                            setState(() {});
+                            setState(() {
+                              _dropdownValuesNomes = nomes;
+                            });
                           }
                         }
                       },
-                      child: CustomSearchDropDown(
-                        label: "Nome*",
-                        maxLength: 40,
-                        dropdownValues: _dropdownValuesNomes,
-                        validator: _clienteCreateValidator.byField(
-                            _clienteCreateForm,
-                            ErrorCodeKey.nomeESobrenome.name),
-                        onChanged: _onNomeChanged,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomSearchDropDown(
+                            label: "Nome*",
+                            maxLength: 40,
+                            dropdownValues: _dropdownValuesNomes,
+                            validator: _clienteCreateValidator.byField(
+                              _clienteCreateForm,
+                              ErrorCodeKey.nomeESobrenome.name,
+                            ),
+                            onChanged: _onNomeChanged,
+                          ),
+                          Transform.translate(
+                            offset: Offset(24, -18),
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.5,
+                              child: Text(
+                                "Obs. os nomes que aparecerem já estão cadastrados",
+                                style: TextStyle(
+                                  fontSize:
+                                      (MediaQuery.of(context).size.width * 0.03)
+                                          .clamp(9.0, 13.0),
+                                  color: Colors.grey,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     Row(
@@ -160,7 +189,7 @@ class _CreateClienteState extends State<CreateCliente> {
                             rightPadding: 8,
                             maxLength: 14,
                             hide: true,
-                            masks: Constants.maskTelefoneFixo,
+                            masks: InputMasks.maskTelefoneFixo,
                             valueNotifier: _clienteCreateForm.telefoneFixo,
                             validator: _clienteCreateValidator.byField(
                                 _clienteCreateForm,
@@ -173,7 +202,7 @@ class _CreateClienteState extends State<CreateCliente> {
                             valueNotifier: _clienteCreateForm.telefoneCelular,
                             hint: "(99) 99999-9999",
                             label: "Telefone Celular**",
-                            masks: Constants.maskTelefone,
+                            masks: InputMasks.maskCelular,
                             leftPadding: 0,
                             maxLength: 15,
                             type: TextInputType.phone,
@@ -208,8 +237,8 @@ class _CreateClienteState extends State<CreateCliente> {
                               type: TextInputType.streetAddress,
                               rightPadding: 8,
                               maxLength: 9,
-                              hide: false,
-                              masks: Constants.maskCep,
+                              hide: true,
+                              masks: InputMasks.maskCep,
                               valueNotifier: _clienteCreateForm.cep,
                               validator: _clienteCreateValidator.byField(
                                   _clienteCreateForm, ErrorCodeKey.cep.name),
@@ -276,7 +305,6 @@ class _CreateClienteState extends State<CreateCliente> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
                     CustomTextFormField(
                       hint: "Complemento...",
                       label: "Complemento",
@@ -324,7 +352,7 @@ class _CreateClienteState extends State<CreateCliente> {
                               bloc: _clienteBloc,
                               listener: (context, state) {
                                 if (state is ClienteRegisterSuccessState) {
-                                  Navigator.pop(context);
+                                  _handleBackNavigation();
                                 } else if (state is ClienteErrorState) {
                                   ErrorEntity error = state.error;
 

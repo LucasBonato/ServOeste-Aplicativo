@@ -9,6 +9,7 @@ import 'package:serv_oeste/src/models/servico/servico_form.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
 import 'package:serv_oeste/src/screens/servico/table_tecnico.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:serv_oeste/src/util/input_masks.dart';
 
 class CreateServicoAndCliente extends StatefulWidget {
   const CreateServicoAndCliente({super.key});
@@ -40,15 +41,15 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
               IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.black),
                 onPressed: () => Navigator.pop(context, "Back"),
-              ),
-              const Text(
-                "Voltar",
-                style: TextStyle(color: Colors.black, fontSize: 16),
-              ),
+              )
             ],
           ),
         ),
-        backgroundColor: const Color(0xFCFDFDFF),
+        title: const Text(
+          "Voltar",
+          style: TextStyle(color: Colors.black, fontSize: 16),
+        ),
+        backgroundColor: Color(0xFCFDFDFF),
         elevation: 0,
       ),
       body: LayoutBuilder(
@@ -232,7 +233,7 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
             "Belo Luis",
             "Curitiba Bianco"
           ], // TODO: fazer com que o nome dos clientes já cadastrados apareçam aqui
-          maxLength: 50,
+          maxLength: 40,
           hide: false,
           valueNotifier: _clienteForm.nome,
           validator: _clienteValidator.byField(_clienteForm, "nome"),
@@ -244,10 +245,8 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
           label: "Telefone Fixo**",
           type: TextInputType.phone,
           maxLength: 14,
-          hide: false,
-          masks: [
-            MaskTextInputFormatter(mask: '(##) ####-####'),
-          ],
+          hide: true,
+          masks: InputMasks.maskTelefoneFixo,
           valueNotifier: _clienteForm.telefoneFixo,
           validator: _clienteValidator.byField(_clienteForm, "telefoneFixo"),
           onChanged: _clienteForm.setTelefoneFixo,
@@ -258,10 +257,8 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
           label: "Telefone Celular**",
           type: TextInputType.phone,
           maxLength: 15,
-          hide: false,
-          masks: [
-            MaskTextInputFormatter(mask: '(##) #####-####'),
-          ],
+          hide: true,
+          masks: InputMasks.maskCelular,
           valueNotifier: _clienteForm.telefoneCelular,
           validator: _clienteValidator.byField(_clienteForm, "telefoneCelular"),
           onChanged: _clienteForm.setTelefoneCelular,
@@ -273,9 +270,10 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
               child: CustomTextFormField(
                 hint: "00000-000",
                 label: "CEP",
+                rightPadding: 8,
                 type: TextInputType.number,
                 maxLength: 9,
-                hide: false,
+                hide: true,
                 masks: [
                   MaskTextInputFormatter(mask: '#####-###'),
                 ],
@@ -306,9 +304,10 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
               child: CustomTextFormField(
                 hint: "Rua...",
                 label: "Rua*",
+                rightPadding: 8,
                 type: TextInputType.text,
-                maxLength: 100,
-                hide: false,
+                maxLength: 255,
+                hide: true,
                 valueNotifier: _clienteForm.rua,
                 validator: _clienteValidator.byField(_clienteForm, "rua"),
                 onChanged: _clienteForm.setRua,
@@ -321,8 +320,8 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
                 label: "Número*",
                 leftPadding: 0,
                 type: TextInputType.number,
-                maxLength: 6,
-                hide: false,
+                maxLength: 10,
+                hide: true,
                 valueNotifier: _clienteForm.numero,
                 validator: _clienteValidator.byField(_clienteForm, "numero"),
                 onChanged: _clienteForm.setNumero,
@@ -335,7 +334,7 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
           hint: "Complemento...",
           label: "Complemento",
           type: TextInputType.text,
-          maxLength: 100,
+          maxLength: 255,
           hide: false,
           valueNotifier: _clienteForm.complemento,
           onChanged: _clienteForm.setComplemento,
@@ -392,9 +391,11 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
               child: CustomDatePicker(
                 label: "Data Atendimento Previsto*",
                 hint: 'dd/mm/aaaa',
-                mask: Constants.maskData,
+                rightPadding: 8,
+                mask: InputMasks.maskData,
                 type: TextInputType.datetime,
                 maxLength: 10,
+                hide: true,
                 valueNotifier: _servicoForm.dataPrevista,
                 validator:
                     _servicoValidator.byField(_servicoForm, "dataPrevista"),
@@ -405,9 +406,9 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
               flex: 1,
               child: CustomDropdownField(
                 dropdownValues: Constants.dataAtendimento,
-                valueNotifier: _servicoForm.horario,
                 label: "Horário*",
                 leftPadding: 0,
+                valueNotifier: _servicoForm.horario,
                 validator: _servicoValidator.byField(_servicoForm, "horario"),
                 onChanged: _servicoForm.setHorario,
               ),
@@ -419,7 +420,7 @@ class _CreateServicoAndClienteState extends State<CreateServicoAndCliente> {
           hint: "Descrição...",
           label: "Descrição*",
           type: TextInputType.multiline,
-          maxLength: 200,
+          maxLength: 255,
           maxLines: 3,
           hide: false,
           valueNotifier: _servicoForm.descricao,

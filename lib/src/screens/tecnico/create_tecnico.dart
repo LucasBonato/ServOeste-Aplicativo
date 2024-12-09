@@ -1,15 +1,17 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/custom_grid_checkers_form_field.dart';
+import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
 import 'package:lucid_validation/lucid_validation.dart';
-import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:serv_oeste/src/util/input_masks.dart';
 
 class CreateTecnico extends StatefulWidget {
   const CreateTecnico({super.key});
@@ -23,7 +25,8 @@ class _CreateTecnicoState extends State<CreateTecnico> {
   final TecnicoForm _tecnicoCreateForm = TecnicoForm();
   final TecnicoValidator _tecnicoCreateValidator = TecnicoValidator();
   final GlobalKey<FormState> _tecnicoFormKey = GlobalKey<FormState>();
-
+  List<String> _dropdownValuesNomes = [];
+  Timer? _debounce;
   late TextEditingController _nomeController,
       _telefoneCelularController,
       _telefoneFixoController;
@@ -61,6 +64,19 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     return response.isValid;
   }
 
+  void _onNomeChanged(String nome) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce =
+        Timer(Duration(milliseconds: 150), () => _fetchTecnicoNames(nome));
+  }
+
+  void _fetchTecnicoNames(String nome) async {
+    _tecnicoCreateForm.setNome(nome);
+    if (nome == "") return;
+    if (nome.split(" ").length > 1 && _dropdownValuesNomes.isEmpty) return;
+    _tecnicoBloc.add(TecnicoSearchEvent(nome: nome));
+  }
+
   void _registerTecnico() {
     checkersMap.forEach((label, isChecked) {
       int idConhecimento = (checkersMap.keys.toList().indexOf(label) + 1);
@@ -86,6 +102,11 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     _tecnicoCreateForm.nome.value = "${nomes.first} $sobrenome";
   }
 
+  void _handleBackNavigation() {
+    _tecnicoBloc.add(TecnicoSearchEvent());
+    Navigator.pop(context, "Back");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,7 +118,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
             children: [
               IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.black),
-                onPressed: () => Navigator.pop(context, "Back"),
+                onPressed: _handleBackNavigation,
               )
             ],
           ),
@@ -130,18 +151,28 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                       ),
                     ),
                     const SizedBox(height: 48),
-                    CustomTextFormField(
-                      hint: "Nome...",
+                    CustomSearchDropDown(
                       label: "Nome*",
-                      type: TextInputType.name,
                       maxLength: 40,
-                      rightPadding: 0,
-                      leftPadding: 0,
-                      hide: false,
-                      valueNotifier: _tecnicoCreateForm.nome,
+                      dropdownValues: _dropdownValuesNomes,
+                      controller: _nomeController,
                       validator: _tecnicoCreateValidator.byField(
                           _tecnicoCreateForm, ErrorCodeKey.nomeESobrenome.name),
-                      onChanged: _tecnicoCreateForm.setNome,
+                      onChanged: _onNomeChanged,
+                    ),
+                    Transform.translate(
+                      offset: Offset(0, -18),
+                      child: Text(
+                        "Obs. os nomes que aparecerem já estão cadastrados",
+                        style: TextStyle(
+                          fontSize: MediaQuery.of(context)
+                              .size
+                              .width
+                              .clamp(9.0, 13.0),
+                          color: Colors.grey,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
                     ),
                     Row(
                       children: [
@@ -149,12 +180,10 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                           child: CustomTextFormField(
                             hint: "(99) 9999-9999",
                             label: "Telefone Fixo**",
-                            leftPadding: 0,
+                            rightPadding: 8,
                             maxLength: 14,
                             hide: true,
-                            masks: [
-                              MaskTextInputFormatter(mask: '(##) ####-####'),
-                            ],
+                            masks: InputMasks.maskTelefoneFixo,
                             type: TextInputType.phone,
                             valueNotifier: _tecnicoCreateForm.telefoneFixo,
                             validator: _tecnicoCreateValidator.byField(
@@ -171,7 +200,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                             leftPadding: 0,
                             maxLength: 15,
                             hide: true,
-                            masks: Constants.maskTelefone,
+                            masks: InputMasks.maskCelular,
                             type: TextInputType.phone,
                             valueNotifier: _tecnicoCreateForm.telefoneCelular,
                             validator: _tecnicoCreateValidator.byField(
@@ -228,8 +257,18 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                     BlocListener<TecnicoBloc, TecnicoState>(
                       bloc: _tecnicoBloc,
                       listener: (context, state) {
-                        if (state is TecnicoRegisterSuccessState) {
-                          Navigator.pop(context);
+                        if (state is TecnicoSearchSuccessState) {
+                          List<String> nomes = state.tecnicos
+                              .take(5)
+                              .map((tecnico) =>
+                                  '${tecnico.nome} ${tecnico.sobrenome}')
+                              .toList();
+
+                          setState(() {
+                            _dropdownValuesNomes = nomes;
+                          });
+                        } else if (state is TecnicoRegisterSuccessState) {
+                          _handleBackNavigation();
                         } else if (state is TecnicoErrorState) {
                           ErrorEntity error = state.error;
 

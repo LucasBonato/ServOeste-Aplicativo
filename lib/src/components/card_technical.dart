@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:serv_oeste/src/util/formatters.dart';
 
 class CardTechnical extends StatelessWidget {
   final int id;
@@ -95,7 +95,7 @@ class CardTechnical extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(left: 28),
                             child: Text(
-                              "Telefone: ${Constants.applyTelefoneMask(phoneNumber!)}",
+                              "Telefone: ${Formatters.applyTelefoneMask(phoneNumber!)}",
                               style: TextStyle(
                                 fontSize: MediaQuery.of(context)
                                     .size
@@ -109,7 +109,7 @@ class CardTechnical extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(left: 28),
                             child: Text(
-                              "Celular: ${Constants.applyCelularMask(cellPhoneNumber!)}",
+                              "Celular: ${Formatters.applyCelularMask(cellPhoneNumber!)}",
                               style: TextStyle(
                                 fontSize: MediaQuery.of(context)
                                     .size

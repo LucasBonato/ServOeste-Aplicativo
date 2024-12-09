@@ -23,13 +23,15 @@ final class ClienteRegisterSuccessState extends ClienteState {}
 
 final class ClienteUpdateSuccessState extends ClienteState {}
 
-// final class ClienteSelectedItemsState extends ClienteState {
-//   final List<int> selectedItems;
-//
-//   ClienteSelectedItemsState({
-//     required this.selectedItems
-//   });
-// }
+final class ClienteListState extends ClienteState {
+  final List<Cliente> clientes;
+  final List<int> selectedIds;
+
+  ClienteListState({
+    required this.clientes,
+    this.selectedIds = const [],
+  });
+}
 
 final class ClienteErrorState extends ClienteState {
   final ErrorEntity error;
