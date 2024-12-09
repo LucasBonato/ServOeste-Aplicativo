@@ -50,27 +50,6 @@ class _ClienteScreenState extends State<ClienteScreen> {
     );
   }
 
-  void _disableClientes() {
-    final List<int> selectedItemsCopy = List<int>.from(_selectedItems);
-    _clienteBloc.add(ClienteDeleteListEvent(selectedList: selectedItemsCopy));
-    setState(() {
-      _selectedItems.clear();
-      isSelected = false;
-    });
-  }
-
-  void _selectItems(int id) {
-    setState(() {
-      if (_selectedItems.contains(id)) {
-        _selectedItems.remove(id);
-      } else {
-        _selectedItems.add(id);
-      }
-
-      isSelected = _selectedItems.isNotEmpty;
-    });
-  }
-
   Widget _buildSearchInputs() {
     final screenWidth = MediaQuery.of(context).size.width;
     final isLargeScreen = screenWidth >= 1000;
