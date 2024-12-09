@@ -111,19 +111,4 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
           error: ErrorEntity(id: 0, errorMessage: "Erro ao deletar clientes")));
     }
   }
-
-  // void _onToggleItemsSelect(ClienteToggleItemSelectEvent event, Emitter<ClienteState> emit) {
-  //   if (state is ClienteListState) {
-  //     final currentState = state as ClienteListState;
-  //     List<int> updatedSelectedIds = List.from(currentState.selectedIds);
-  //
-  //     if (updatedSelectedIds.contains(event.id)) {
-  //       updatedSelectedIds.remove(event.id);
-  //     } else {
-  //       updatedSelectedIds.add(event.id);
-  //     }
-  //
-  //     emit(ClienteListState(selectedIds: updatedSelectedIds));
-  //   }
-  // }
 }

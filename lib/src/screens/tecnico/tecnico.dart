@@ -35,7 +35,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     _listBloc = context.read<ListBloc>();
     _idController = TextEditingController();
     _nomeController = TextEditingController();
-    _situacaoController = SingleSelectController<String>('Selecione uma situação');
+    _situacaoController = SingleSelectController<String>('Ativo');
     _situacaoNotifier = ValueNotifier<String>('');
     _listBloc.add(ListInitialEvent());
   }
@@ -80,8 +80,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     Widget buildSearchField(
             {required String hint,
             TextEditingController? controller,
-            TextInputType? keyboardType}) =>
-        CustomSearchTextField(
+            TextInputType? keyboardType}) => CustomSearchTextField(
           hint: hint,
           leftPadding: 8,
           rightPadding: 8,
@@ -90,13 +89,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
           onChangedAction: (value) => _onSearchFieldChanged(),
         );
 
-    Widget buildDropdownField({
-      required String label,
-      required SingleSelectController<String> controller,
-      required ValueNotifier<String> valueNotifier,
-      required List<String> dropdownValues,
-    }) =>
-        CustomDropdownField(
+    Widget buildDropdownField({required String label, required SingleSelectController<String> controller, required ValueNotifier<String> valueNotifier, required List<String> dropdownValues}) => CustomDropdownField(
           label: label,
           dropdownValues: dropdownValues,
           controller: controller,

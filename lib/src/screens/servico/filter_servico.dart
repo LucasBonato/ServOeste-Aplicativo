@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:serv_oeste/src/logic/filterService/filterServiceProvide.dart';
+import 'package:serv_oeste/src/logic/filterService/filter_service_provide.dart';
 import 'package:serv_oeste/src/components/date_picker.dart';
 import 'package:serv_oeste/src/components/dropdown_field.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
@@ -12,9 +12,8 @@ class FilterService extends StatelessWidget {
   const FilterService({super.key});
 
   void applyFilters(BuildContext context) {
-    final filter = context.read<FilterServiceProvider>().filter;
-    print(
-        "Filtros Aplicados: ${filter.endereco}, ${filter.equipamento}, ${filter.situacao}");
+    //final filter = context.read<FilterServiceProvider>().filter;
+    //print("Filtros Aplicados: ${filter.endereco}, ${filter.equipamento}, ${filter.situacao}");
   }
 
   @override

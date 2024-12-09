@@ -22,7 +22,6 @@ class ServicoScreenState extends State<ServicoScreen> {
   late final TextEditingController _nomeClienteController;
   late final TextEditingController _nomeTecnicoController;
   Timer? _debounce;
-  late final List<int> _selectedItems;
   bool isSelected = false;
 
   @override
@@ -49,26 +48,14 @@ class ServicoScreenState extends State<ServicoScreen> {
     );
   }
 
-  void _disableServico() {
-    // final List<int> selectedItemsCopy = List<int>.from(_selectedItems);
-    // _servicoBloc.add(_deleteService(selectedList: selectedItemsCopy));
-    setState(() {
-      _selectedItems.clear();
-      isSelected = false;
-    });
-  }
-
-  void _selectItems(int id) {
-    setState(() {
-      if (_selectedItems.contains(id)) {
-        _selectedItems.remove(id);
-      } else {
-        _selectedItems.add(id);
-      }
-
-      isSelected = _selectedItems.isNotEmpty;
-    });
-  }
+  // void _disableServico() {
+  //   // final List<int> selectedItemsCopy = List<int>.from(_selectedItems);
+  //   // _servicoBloc.add(_deleteService(selectedList: selectedItemsCopy));
+  //   // setState(() {
+  //   //   _selectedItems.clear();
+  //   //   isSelected = false;
+  //   // });
+  // }
 
   Widget _buildSearchInputs() {
     final screenWidth = MediaQuery.of(context).size.width;

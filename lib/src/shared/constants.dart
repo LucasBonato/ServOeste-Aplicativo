@@ -2,7 +2,6 @@ class Constants {
   static const bool isDev = true;
 
   static const List<Map<String, dynamic>> situationTecnicoList = [
-    {'label': 'Selecione uma situação', 'value': ''},
     {'label': 'Ativo', 'value': 'Ativo'},
     {'label': 'Licença', 'value': 'Licença'},
     {'label': 'Desativado', 'value': 'Desativado'}

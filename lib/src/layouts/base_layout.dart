@@ -106,7 +106,9 @@ class BaseLayoutState extends State<BaseLayout> {
   }
 
   void _loadTecnico() {
-    _tecnicoBloc.add(TecnicoLoadingEvent());
+    _tecnicoBloc.add(TecnicoLoadingEvent(
+      situacao: 'Ativo'
+    ));
   }
 
   void _loadCliente() {

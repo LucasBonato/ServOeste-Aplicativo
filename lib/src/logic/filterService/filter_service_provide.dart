@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:serv_oeste/src/models/filterService/filterService.dart';
+import 'package:serv_oeste/src/models/filterService/filter_service.dart';
 
 class FilterServiceProvider extends ChangeNotifier {
   FilterServiceModel _filter = FilterServiceModel();
