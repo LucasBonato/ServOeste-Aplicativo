@@ -44,9 +44,3 @@ final class ClienteDeleteListEvent extends ClienteEvent {
 
   ClienteDeleteListEvent({required this.selectedList});
 }
-
-final class ClienteToggleItemSelectEvent extends ClienteEvent {
-  final int id;
-
-  ClienteToggleItemSelectEvent({required this.id});
-}

@@ -6,7 +6,9 @@ import 'package:serv_oeste/src/components/dropdown_field.dart';
 import 'package:serv_oeste/src/components/grid_view.dart';
 import 'package:serv_oeste/src/components/card_technical.dart';
 import 'package:serv_oeste/src/components/custom_search_field.dart';
+import 'package:serv_oeste/src/logic/list_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
+import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
@@ -19,24 +21,36 @@ class TecnicoScreen extends StatefulWidget {
 }
 
 class _TecnicoScreenState extends State<TecnicoScreen> {
+  late final ListBloc _listBloc;
   late final TecnicoBloc _tecnicoBloc;
   late TextEditingController _idController, _nomeController;
   late SingleSelectController<String> _situacaoController;
   late ValueNotifier<String> _situacaoNotifier;
-  late final List<int> _selectedItems;
-  bool isSelected = false;
   Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
     _tecnicoBloc = context.read<TecnicoBloc>();
+    _listBloc = context.read<ListBloc>();
     _idController = TextEditingController();
     _nomeController = TextEditingController();
-    _situacaoController =
-        SingleSelectController<String>('Selecione uma situação');
+    _situacaoController = SingleSelectController<String>('Selecione uma situação');
     _situacaoNotifier = ValueNotifier<String>('');
-    _selectedItems = [];
+    _listBloc.add(ListInitialEvent());
+  }
+
+  void _onNavigateToUpdateScreen(int id) {
+    Navigator.of(context, rootNavigator: true).push(
+      MaterialPageRoute(
+        builder: (context) => UpdateTecnico(id: id),
+      ),
+    );
+    _onTapSelectItemList(id);
+  }
+
+  void _onTapSelectItemList(int id) {
+    _listBloc.add(ListToggleItemSelectEvent(id: id));
   }
 
   void _onSearchFieldChanged() {
@@ -54,24 +68,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
   }
 
   void _disableTecnicos() {
-    final List<int> selectedItemsCopy = List<int>.from(_selectedItems);
-    _tecnicoBloc.add(TecnicoDisableListEvent(selectedList: selectedItemsCopy));
-    setState(() {
-      _selectedItems.clear();
-      isSelected = false;
-    });
-  }
-
-  void _selectItems(int id) {
-    setState(() {
-      if (_selectedItems.contains(id)) {
-        _selectedItems.remove(id);
-      } else {
-        _selectedItems.add(id);
-      }
-
-      isSelected = _selectedItems.isNotEmpty;
-    });
+    //_tecnicoBloc.add(TecnicoDisableListEvent(selectedList: selectedItemsCopy));
   }
 
   Widget _buildSearchInputs() {
@@ -224,11 +221,11 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      floatingActionButton: Builder(
-        builder: (context) {
-          bool isSelected = _selectedItems.isNotEmpty;
+      floatingActionButton: BlocBuilder<ListBloc, ListState>(
+        builder: (context, state) {
+          final bool hasSelection = state is ListSelectState && state.selectedIds.isNotEmpty;
 
-          return !isSelected
+          return !hasSelection
               ? BuildWidgets.buildFabAdd(
                   context,
                   "/createTecnico",
@@ -249,36 +246,33 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
           _buildSearchInputs(),
           Expanded(
             child: BlocBuilder<TecnicoBloc, TecnicoState>(
-              builder: (context, state) {
-                if (state is TecnicoInitialState ||
-                    state is TecnicoLoadingState) {
-                  return const Center(
-                      child: CircularProgressIndicator.adaptive());
-                } else if (state is TecnicoSearchSuccessState) {
+              builder: (context, stateTecnico) {
+                if (stateTecnico is TecnicoInitialState || stateTecnico is TecnicoLoadingState) {
+                  return const Center(child: CircularProgressIndicator.adaptive());
+                } else if (stateTecnico is TecnicoSearchSuccessState) {
                   return SingleChildScrollView(
                     child: GridListView(
                       aspectRatio: 2.5,
-                      dataList: state.tecnicos,
-                      buildCard: (tecnico) => CardTechnical(
-                        onDoubleTap: () {
-                          int tecnicoId = (tecnico).id!;
-                          Navigator.of(context, rootNavigator: true).push(
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  UpdateTecnico(id: tecnicoId),
-                            ),
+                      dataList: stateTecnico.tecnicos,
+                      buildCard: (tecnico) => BlocBuilder<ListBloc, ListState>(
+                        builder: (context, stateList) {
+                          bool isSelected = false;
+
+                          if (stateList is ListSelectState) {
+                            isSelected = stateList.selectedIds.contains((tecnico as Tecnico).id);
+                          }
+
+                          return CardTechnical(
+                            onDoubleTap: () => _onNavigateToUpdateScreen(tecnico.id!),
+                            onTap: () => _onTapSelectItemList(tecnico.id!),
+                            id: (tecnico as Tecnico).id!,
+                            name: tecnico.nome!,
+                            phoneNumber: tecnico.telefoneFixo!,
+                            cellPhoneNumber: tecnico.telefoneCelular!,
+                            status: tecnico.situacao!,
+                            isSelected: isSelected,
                           );
-                          setState(() {
-                            _selectedItems.clear();
-                          });
                         },
-                        onLongPress: () => _selectItems(tecnico.id!),
-                        id: tecnico.id!,
-                        name: tecnico.nome!,
-                        phoneNumber: tecnico.telefoneFixo!,
-                        cellPhoneNumber: tecnico.telefoneCelular!,
-                        status: tecnico.situacao!,
-                        isSelected: _selectedItems.contains(tecnico.id),
                       ),
                     ),
                   );

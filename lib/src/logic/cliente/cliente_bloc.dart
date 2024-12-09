@@ -12,14 +12,13 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
   final ClienteRepository _clienteRepository = ClienteRepository();
   String? _nome, _telefone, _endereco;
 
-  ClienteBloc() : super(ClienteListState(clientes: [], selectedIds: [])) {
+  ClienteBloc() : super(ClienteInitialState()) {
     on<ClienteSearchOneEvent>(_fetchOneClient);
     on<ClienteLoadingEvent>(_fetchAllClients);
     on<ClienteSearchEvent>(_searchClients);
     on<ClienteDeleteListEvent>(_deleteListClients);
     on<ClienteUpdateEvent>(_updateClient);
     on<ClienteRegisterEvent>(_registerClient);
-    on<ClienteToggleItemSelectEvent>(_onToggleItemsSelect);
   }
 
   Future<void> _fetchOneClient(
@@ -39,8 +38,7 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
     }
   }
 
-  Future<void> _fetchAllClients(
-      ClienteLoadingEvent event, Emitter<ClienteState> emit) async {
+  Future<void> _fetchAllClients(ClienteLoadingEvent event, Emitter<ClienteState> emit) async {
     emit(ClienteLoadingState());
     try {
       final List<Cliente>? response =
@@ -49,7 +47,7 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
         telefone: event.telefone,
         endereco: event.endereco,
       );
-      emit(ClienteListState(clientes: response ?? [], selectedIds: []));
+      emit(ClienteSearchSuccessState(clientes: response ?? []));
     } on DioException catch (e) {
       emit(ClienteErrorState(
           error: ErrorEntity(id: 0, errorMessage: e.toString())));
@@ -114,22 +112,18 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
     }
   }
 
-  void _onToggleItemsSelect(
-      ClienteToggleItemSelectEvent event, Emitter<ClienteState> emit) {
-    if (state is ClienteListState) {
-      final currentState = state as ClienteListState;
-      List<int> updatedSelectedIds = List.from(currentState.selectedIds);
-
-      if (updatedSelectedIds.contains(event.id)) {
-        updatedSelectedIds.remove(event.id);
-      } else {
-        updatedSelectedIds.add(event.id);
-      }
-
-      emit(ClienteListState(
-        clientes: currentState.clientes,
-        selectedIds: updatedSelectedIds,
-      ));
-    }
-  }
+  // void _onToggleItemsSelect(ClienteToggleItemSelectEvent event, Emitter<ClienteState> emit) {
+  //   if (state is ClienteListState) {
+  //     final currentState = state as ClienteListState;
+  //     List<int> updatedSelectedIds = List.from(currentState.selectedIds);
+  //
+  //     if (updatedSelectedIds.contains(event.id)) {
+  //       updatedSelectedIds.remove(event.id);
+  //     } else {
+  //       updatedSelectedIds.add(event.id);
+  //     }
+  //
+  //     emit(ClienteListState(selectedIds: updatedSelectedIds));
+  //   }
+  // }
 }

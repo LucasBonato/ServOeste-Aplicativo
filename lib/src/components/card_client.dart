@@ -10,7 +10,6 @@ class CardClient extends StatelessWidget {
   final bool isSelected;
   final void Function()? onTap;
   final void Function()? onDoubleTap;
-  final void Function()? onLongPress;
 
   const CardClient({
     super.key,
@@ -22,7 +21,6 @@ class CardClient extends StatelessWidget {
     required this.isSelected,
     this.onTap,
     this.onDoubleTap,
-    this.onLongPress,
   });
 
   @override
@@ -35,7 +33,6 @@ class CardClient extends StatelessWidget {
         return GestureDetector(
           onTap: onTap,
           onDoubleTap: onDoubleTap,
-          onLongPress: onLongPress,
           child: Container(
             decoration: BoxDecoration(
               color: isSelected
