@@ -5,7 +5,7 @@ import 'package:serv_oeste/src/layouts/base_layout.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
-import 'package:serv_oeste/src/logic/filterService/filterServiceProvide.dart';
+import 'package:serv_oeste/src/logic/filter_service/filter_service_provider.dart';
 import 'package:serv_oeste/src/shared/custom_router.dart';
 
 void main() {

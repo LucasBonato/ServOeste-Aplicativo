@@ -39,10 +39,10 @@ final class ClienteUpdateEvent extends ClienteEvent {
   ClienteUpdateEvent({required this.cliente, required this.sobrenome});
 }
 
-final class ClienteDeleteListEvent extends ClienteEvent {
+final class TecnicoDisableListEvent extends ClienteEvent {
   final List<int> selectedList;
 
-  ClienteDeleteListEvent({required this.selectedList});
+  TecnicoDisableListEvent({required this.selectedList});
 }
 
 final class ClienteToggleItemSelectEvent extends ClienteEvent {

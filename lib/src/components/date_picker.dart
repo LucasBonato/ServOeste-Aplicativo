@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 
-//ignore: must_be_immutable
+// ignore: must_be_immutable
 class CustomDatePicker extends StatefulWidget {
   final String? restorationId;
   final String hint;
@@ -41,7 +42,8 @@ class CustomDatePicker extends StatefulWidget {
   State<CustomDatePicker> createState() => _CustomDatePickerState();
 }
 
-class _CustomDatePickerState extends State<CustomDatePicker> with RestorationMixin {
+class _CustomDatePickerState extends State<CustomDatePicker>
+    with RestorationMixin {
   @override
   String? get restorationId => widget.restorationId;
 
@@ -49,17 +51,21 @@ class _CustomDatePickerState extends State<CustomDatePicker> with RestorationMix
 
   final RestorableDateTime _selectedDate = RestorableDateTime(DateTime.now());
 
-  late final RestorableRouteFuture<DateTime?> _restorableDatePickerRouteFuture = RestorableRouteFuture<DateTime?>(
+  late final RestorableRouteFuture<DateTime?> _restorableDatePickerRouteFuture =
+      RestorableRouteFuture<DateTime?>(
     onComplete: _selectDate,
     onPresent: (NavigatorState navigator, Object? arguments) =>
-        navigator.restorablePush(_datePickerRoute, arguments: _selectedDate.value.millisecondsSinceEpoch),
+        navigator.restorablePush(_datePickerRoute,
+            arguments: _selectedDate.value.millisecondsSinceEpoch),
   );
+
+  final TextEditingController _controller = TextEditingController();
 
   @pragma('vm:entry-point')
   static Route<DateTime> _datePickerRoute(
-      BuildContext context,
-      Object? arguments,
-      ) {
+    BuildContext context,
+    Object? arguments,
+  ) {
     return DialogRoute<DateTime>(
       context: context,
       builder: (BuildContext context) {
@@ -80,15 +86,21 @@ class _CustomDatePickerState extends State<CustomDatePicker> with RestorationMix
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
     registerForRestoration(_selectedDate, 'selected_date');
-    registerForRestoration(_restorableDatePickerRouteFuture, 'date_picker_route_future');
+    registerForRestoration(
+        _restorableDatePickerRouteFuture, 'date_picker_route_future');
   }
 
   void _selectDate(DateTime? newSelectedDate) {
     if (newSelectedDate != null) {
       setState(() {
         _selectedDate.value = newSelectedDate;
-        _dateSelected = '${_selectedDate.value.day < 10 ? '0${_selectedDate.value.day}' : _selectedDate.value.day}/${_selectedDate.value.month < 10 ? '0${_selectedDate.value.month}' : _selectedDate.value.month}/${_selectedDate.value.year}';
+        _dateSelected = DateFormat('dd/MM/yyyy').format(_selectedDate.value);
+
+        // Atualizando o ValueNotifier
         widget.valueNotifier.value = _dateSelected;
+
+        // Chamando o callback onChanged, se definido
+        widget.onChanged?.call(_dateSelected);
       });
     }
   }
@@ -108,6 +120,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> with RestorationMix
       maxLength: widget.maxLength,
       type: widget.type,
       onChanged: widget.onChanged,
+      controller: _controller,
       onTap: () {
         _restorableDatePickerRouteFuture.present();
         setState(() {

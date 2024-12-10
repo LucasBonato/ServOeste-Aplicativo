@@ -46,6 +46,12 @@ final class TecnicoUpdateEvent extends TecnicoEvent {
   TecnicoUpdateEvent({required this.tecnico, required this.sobrenome});
 }
 
+final class TecnicoToggleItemSelectEvent extends TecnicoEvent {
+  final int id;
+
+  TecnicoToggleItemSelectEvent({required this.id});
+}
+
 final class TecnicoDisableListEvent extends TecnicoEvent {
   final List<int> selectedList;
 

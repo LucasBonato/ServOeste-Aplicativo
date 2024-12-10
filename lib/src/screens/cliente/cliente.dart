@@ -21,7 +21,6 @@ class _ClienteScreenState extends State<ClienteScreen> {
   late final TextEditingController _nomeController,
       _telefoneController,
       _enderecoController;
-  late final List<int> _selectedItems;
   bool isSelected = false;
   Timer? _debounce;
 
@@ -32,7 +31,6 @@ class _ClienteScreenState extends State<ClienteScreen> {
     _nomeController = TextEditingController();
     _telefoneController = TextEditingController();
     _enderecoController = TextEditingController();
-    _selectedItems = [];
   }
 
   void _onSearchFieldChanged() {
@@ -178,7 +176,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
               : BuildWidgets.buildFabRemove(
                   context,
                   () {
-                    _clienteBloc.add(ClienteDeleteListEvent(
+                    _clienteBloc.add(TecnicoDisableListEvent(
                         selectedList: state.selectedIds));
                   },
                   tooltip: 'Excluir clientes selecionados',
@@ -202,15 +200,14 @@ class _ClienteScreenState extends State<ClienteScreen> {
                       dataList: state.clientes,
                       buildCard: (cliente) => CardClient(
                         onDoubleTap: () {
-                          int clienteId = cliente.id!;
                           Navigator.of(context, rootNavigator: true).push(
                             MaterialPageRoute(
                               builder: (context) =>
-                                  UpdateCliente(id: clienteId),
+                                  UpdateCliente(id: cliente.id!),
                             ),
                           );
-                          _clienteBloc
-                              .add(ClienteToggleItemSelectEvent(id: clienteId));
+                          _clienteBloc.add(
+                              ClienteToggleItemSelectEvent(id: cliente.id!));
                         },
                         onLongPress: () => _clienteBloc
                             .add(ClienteToggleItemSelectEvent(id: cliente.id!)),
@@ -242,11 +239,9 @@ class _ClienteScreenState extends State<ClienteScreen> {
 
   @override
   void dispose() {
-    _selectedItems.clear();
     _nomeController.dispose();
     _telefoneController.dispose();
     _enderecoController.dispose();
     super.dispose();
   }
 }
-//TODO - Tentar passar toda a lógica de selecionamento de cards para um Bloc/Cubit

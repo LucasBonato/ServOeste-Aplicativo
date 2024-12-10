@@ -23,7 +23,6 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
   late TextEditingController _idController, _nomeController;
   late SingleSelectController<String> _situacaoController;
   late ValueNotifier<String> _situacaoNotifier;
-  late final List<int> _selectedItems;
   bool isSelected = false;
   Timer? _debounce;
 
@@ -36,7 +35,6 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     _situacaoController =
         SingleSelectController<String>('Selecione uma situação');
     _situacaoNotifier = ValueNotifier<String>('');
-    _selectedItems = [];
   }
 
   void _onSearchFieldChanged() {
@@ -51,27 +49,6 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                 situacao: _situacaoNotifier.value,
               ),
             ));
-  }
-
-  void _disableTecnicos() {
-    final List<int> selectedItemsCopy = List<int>.from(_selectedItems);
-    _tecnicoBloc.add(TecnicoDisableListEvent(selectedList: selectedItemsCopy));
-    setState(() {
-      _selectedItems.clear();
-      isSelected = false;
-    });
-  }
-
-  void _selectItems(int id) {
-    setState(() {
-      if (_selectedItems.contains(id)) {
-        _selectedItems.remove(id);
-      } else {
-        _selectedItems.add(id);
-      }
-
-      isSelected = _selectedItems.isNotEmpty;
-    });
   }
 
   Widget _buildSearchInputs() {
@@ -224,11 +201,11 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      floatingActionButton: Builder(
-        builder: (context) {
-          bool isSelected = _selectedItems.isNotEmpty;
-
-          return !isSelected
+      floatingActionButton: BlocBuilder<TecnicoBloc, TecnicoState>(
+        builder: (context, state) {
+          final bool hasSelection =
+              state is TecnicoListState && state.selectedIds.isNotEmpty;
+          return !hasSelection
               ? BuildWidgets.buildFabAdd(
                   context,
                   "/createTecnico",
@@ -239,8 +216,11 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                 )
               : BuildWidgets.buildFabRemove(
                   context,
-                  _disableTecnicos,
-                  tooltip: 'Desativar técnicos selecionados',
+                  () {
+                    _tecnicoBloc.add(TecnicoDisableListEvent(
+                        selectedList: state.selectedIds));
+                  },
+                  tooltip: 'Excluir técnicos selecionados',
                 );
         },
       ),
@@ -254,31 +234,30 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                     state is TecnicoLoadingState) {
                   return const Center(
                       child: CircularProgressIndicator.adaptive());
-                } else if (state is TecnicoSearchSuccessState) {
+                } else if (state is TecnicoListState) {
                   return SingleChildScrollView(
                     child: GridListView(
                       aspectRatio: 2.5,
                       dataList: state.tecnicos,
                       buildCard: (tecnico) => CardTechnical(
                         onDoubleTap: () {
-                          int tecnicoId = (tecnico).id!;
                           Navigator.of(context, rootNavigator: true).push(
                             MaterialPageRoute(
                               builder: (context) =>
-                                  UpdateTecnico(id: tecnicoId),
+                                  UpdateTecnico(id: tecnico.id!),
                             ),
                           );
-                          setState(() {
-                            _selectedItems.clear();
-                          });
+                          _tecnicoBloc.add(
+                              TecnicoToggleItemSelectEvent(id: tecnico.id!));
                         },
-                        onLongPress: () => _selectItems(tecnico.id!),
+                        onLongPress: () => _tecnicoBloc
+                            .add(TecnicoToggleItemSelectEvent(id: tecnico.id!)),
                         id: tecnico.id!,
                         name: tecnico.nome!,
                         phoneNumber: tecnico.telefoneFixo!,
                         cellPhoneNumber: tecnico.telefoneCelular!,
                         status: tecnico.situacao!,
-                        isSelected: _selectedItems.contains(tecnico.id),
+                        isSelected: state.selectedIds.contains(tecnico.id),
                       ),
                     ),
                   );
@@ -309,4 +288,3 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     super.dispose();
   }
 }
-//TODO - Tentar passar toda a lógica de selecionamento de cards para um Bloc/Cubit

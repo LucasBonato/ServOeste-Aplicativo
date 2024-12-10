@@ -16,7 +16,7 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
     on<ClienteSearchOneEvent>(_fetchOneClient);
     on<ClienteLoadingEvent>(_fetchAllClients);
     on<ClienteSearchEvent>(_searchClients);
-    on<ClienteDeleteListEvent>(_deleteListClients);
+    on<TecnicoDisableListEvent>(_deleteListClients);
     on<ClienteUpdateEvent>(_updateClient);
     on<ClienteRegisterEvent>(_registerClient);
     on<ClienteToggleItemSelectEvent>(_onToggleItemsSelect);
@@ -52,7 +52,13 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
       emit(ClienteListState(clientes: response ?? [], selectedIds: []));
     } on DioException catch (e) {
       emit(ClienteErrorState(
-          error: ErrorEntity(id: 0, errorMessage: e.toString())));
+        error:
+            ErrorEntity(id: 0, errorMessage: e.message ?? 'Erro desconhecido'),
+      ));
+    } catch (e) {
+      emit(ClienteErrorState(
+        error: ErrorEntity(id: 0, errorMessage: 'Erro ao buscar clientes'),
+      ));
     }
   }
 
@@ -99,7 +105,7 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
   }
 
   Future<void> _deleteListClients(
-      ClienteDeleteListEvent event, Emitter<ClienteState> emit) async {
+      TecnicoDisableListEvent event, Emitter<ClienteState> emit) async {
     emit(ClienteLoadingState());
     try {
       await _clienteRepository.deleteClientes(event.selectedList);

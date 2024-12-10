@@ -18,6 +18,7 @@ class CustomTextFormField extends StatefulWidget {
   final List<MaskTextInputFormatter>? masks;
   final String? Function([String?])? validator;
   final ValueNotifier<String> valueNotifier;
+  final TextEditingController? controller;
 
   const CustomTextFormField({
     super.key,
@@ -32,6 +33,7 @@ class CustomTextFormField extends StatefulWidget {
     this.leftPadding,
     this.validator,
     this.onChanged,
+    this.controller,
     this.maxLines,
     this.enabled,
     this.onSaved,
@@ -69,10 +71,12 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(widget.leftPadding ?? 16, 4, widget.rightPadding ?? 16, widget.hide ? 16 : 0),
+      padding: EdgeInsetsDirectional.fromSTEB(widget.leftPadding ?? 16, 4,
+          widget.rightPadding ?? 16, widget.hide ? 16 : 0),
       child: ValueListenableBuilder<String>(
         valueListenable: widget.valueNotifier,
-        builder: (BuildContext context, String value, Widget? child) => TextFormField(
+        builder: (BuildContext context, String value, Widget? child) =>
+            TextFormField(
           enabled: widget.enabled,
           controller: _internalController,
           inputFormatters: widget.masks,

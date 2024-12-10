@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class Formatters {
   static String applyTelefoneMask(String telefone) {
     if (telefone.length < 10) return telefone;
@@ -16,5 +18,13 @@ class Formatters {
         .replaceAll(")", "")
         .replaceAll(" ", "")
         .replaceAll("-", "");
+  }
+
+  static String applyDateMask(DateTime date) {
+    return DateFormat('dd/MM/yyyy').format(date);
+  }
+
+  static DateTime transformDateMask(String dateString) {
+    return DateFormat('dd/MM/yyyy').parseStrict(dateString);
   }
 }
