@@ -14,8 +14,28 @@ import '../screens/servico/servico.dart';
 import '../screens/servico/filter_servico.dart';
 
 class CustomRouter {
-  static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+  static Route<dynamic>? onGenerateRoute(RouteSettings settings, BuildContext context) {
+    final TecnicoBloc tecnicoBloc = context.read<TecnicoBloc>();
+    final ClienteBloc clienteBloc = context.read<ClienteBloc>();
+    final ServicoBloc servicoBloc = context.read<ServicoBloc>();
+
     switch (settings.name) {
+      case "/tecnico":
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider.value(
+            value: tecnicoBloc,
+            child: const TecnicoScreen(),
+          ),
+        );
+
+      case "/createTecnico":
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider.value(
+            value: tecnicoBloc,
+            child: const CreateTecnico(),
+          ),
+        );
+
       case "/updateTecnico":
         final id = settings.arguments as int;
         return MaterialPageRoute(
@@ -27,6 +47,23 @@ class CustomRouter {
             );
           },
         );
+
+      case "/cliente":
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider.value(
+            value: clienteBloc,
+            child: const ClienteScreen(),
+          ),
+        );
+
+      case "/createCliente":
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider.value(
+            value: clienteBloc,
+            child: const CreateCliente(),
+          ),
+        );
+
       case "/updateCliente":
         final id = settings.arguments as int;
         return MaterialPageRoute(
@@ -37,6 +74,32 @@ class CustomRouter {
               child: UpdateCliente(id: id),
             );
           },
+        );
+
+      case "/servico":
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider.value(
+            value: servicoBloc,
+            child: const ServicoScreen(),
+          ),
+        );
+
+      case "/filterServico":
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider.value(
+            value: servicoBloc,
+            child: FilterService(),
+          ),
+        );
+
+      case "/createServico":
+        final args = settings.arguments as Map<String, dynamic>?;
+        final isClientAndService = args?['isClientAndService'] ?? true;
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider.value(
+            value: servicoBloc,
+            child: CreateServico(isClientAndService: isClientAndService),
+          ),
         );
       default:
         return MaterialPageRoute(
@@ -81,7 +144,7 @@ class CustomRouter {
           ),
       "/createServico": (context) => BlocProvider.value(
             value: servicoBloc,
-            child: CreateServicoAndCliente(),
+            child: const CreateServico(),
           ),
     };
   }

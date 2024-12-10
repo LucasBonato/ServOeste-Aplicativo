@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/card_client.dart';
 import 'package:serv_oeste/src/components/grid_view.dart';
+import 'package:serv_oeste/src/logic/list_bloc.dart';
+import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
 import 'package:serv_oeste/src/components/custom_search_field.dart';
@@ -17,6 +19,7 @@ class ClienteScreen extends StatefulWidget {
 }
 
 class _ClienteScreenState extends State<ClienteScreen> {
+  late final ListBloc _listBloc;
   late final ClienteBloc _clienteBloc;
   late final TextEditingController _nomeController,
       _telefoneController,
@@ -28,9 +31,11 @@ class _ClienteScreenState extends State<ClienteScreen> {
   void initState() {
     super.initState();
     _clienteBloc = context.read<ClienteBloc>();
+    _listBloc = context.read<ListBloc>();
     _nomeController = TextEditingController();
     _telefoneController = TextEditingController();
     _enderecoController = TextEditingController();
+    _listBloc.add(ListInitialEvent());
   }
 
   void _onSearchFieldChanged() {
@@ -48,6 +53,19 @@ class _ClienteScreenState extends State<ClienteScreen> {
     );
   }
 
+  void _onNavigateToUpdateScreen(int id) {
+    Navigator.of(context, rootNavigator: true).push(
+      MaterialPageRoute(
+        builder: (context) => UpdateCliente(id: id),
+      ),
+    );
+    _onTapSelectItemList(id);
+  }
+
+  void _onTapSelectItemList(int id) {
+    _listBloc.add(ListToggleItemSelectEvent(id: id));
+  }
+
   Widget _buildSearchInputs() {
     final screenWidth = MediaQuery.of(context).size.width;
     final isLargeScreen = screenWidth >= 1000;
@@ -60,7 +78,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
             TextInputType? keyboardType}) =>
         CustomSearchTextField(
           hint: hint,
-          leftPadding: 0,
+          leftPadding: 8,
           rightPadding: 8,
           controller: controller,
           keyboardType: keyboardType,
@@ -159,10 +177,10 @@ class _ClienteScreenState extends State<ClienteScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      floatingActionButton: BlocBuilder<ClienteBloc, ClienteState>(
+      floatingActionButton: BlocBuilder<ListBloc, ListState>(
         builder: (context, state) {
           final bool hasSelection =
-              state is ClienteListState && state.selectedIds.isNotEmpty;
+              state is ListSelectState && state.selectedIds.isNotEmpty;
 
           return !hasSelection
               ? BuildWidgets.buildFabAdd(
@@ -189,34 +207,37 @@ class _ClienteScreenState extends State<ClienteScreen> {
           Expanded(
             child: BlocBuilder<ClienteBloc, ClienteState>(
               bloc: _clienteBloc,
-              builder: (context, state) {
-                if (state is ClienteLoadingState) {
+              builder: (context, stateCliente) {
+                if (stateCliente is ClienteLoadingState) {
                   return const Center(
                       child: CircularProgressIndicator.adaptive());
-                } else if (state is ClienteListState) {
+                } else if (stateCliente is ClienteSearchSuccessState) {
                   return SingleChildScrollView(
                     child: GridListView(
                       aspectRatio: 1.65,
-                      dataList: state.clientes,
-                      buildCard: (cliente) => CardClient(
-                        onDoubleTap: () {
-                          Navigator.of(context, rootNavigator: true).push(
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  UpdateCliente(id: cliente.id!),
-                            ),
+                      dataList: stateCliente.clientes,
+                      buildCard: (cliente) => BlocBuilder<ListBloc, ListState>(
+                        bloc: _listBloc,
+                        builder: (context, stateList) {
+                          bool isSelected = false;
+
+                          if (stateList is ListSelectState) {
+                            isSelected = stateList.selectedIds
+                                .contains((cliente as Cliente).id);
+                          }
+
+                          return CardClient(
+                            onDoubleTap: () =>
+                                _onNavigateToUpdateScreen(cliente.id!),
+                            onTap: () => _onTapSelectItemList(cliente.id!),
+                            name: (cliente as Cliente).nome!,
+                            phoneNumber: cliente.telefoneFixo!,
+                            cellphone: cliente.telefoneCelular!,
+                            city: cliente.municipio!,
+                            street: cliente.endereco!,
+                            isSelected: isSelected,
                           );
-                          _clienteBloc.add(
-                              ClienteToggleItemSelectEvent(id: cliente.id!));
                         },
-                        onLongPress: () => _clienteBloc
-                            .add(ClienteToggleItemSelectEvent(id: cliente.id!)),
-                        name: cliente.nome!,
-                        phoneNumber: cliente.telefoneFixo!,
-                        cellphone: cliente.telefoneCelular!,
-                        city: cliente.municipio!,
-                        street: cliente.endereco!,
-                        isSelected: state.selectedIds.contains(cliente.id),
                       ),
                     ),
                   );

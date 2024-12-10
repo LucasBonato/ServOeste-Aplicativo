@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/grid_view.dart';
+import 'package:serv_oeste/src/logic/list_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/components/card_service.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
@@ -19,16 +20,16 @@ class ServicoScreen extends StatefulWidget {
 
 class ServicoScreenState extends State<ServicoScreen> {
   late final ServicoBloc _servicoBloc;
+  late final ListBloc _listBloc;
   late final TextEditingController _nomeClienteController;
   late final TextEditingController _nomeTecnicoController;
   Timer? _debounce;
-  late final List<int> _selectedItems;
-  bool isSelected = false;
 
   @override
   void initState() {
     super.initState();
     _servicoBloc = context.read<ServicoBloc>();
+    _listBloc = context.read<ListBloc>();
     _nomeClienteController = TextEditingController();
     _nomeTecnicoController = TextEditingController();
   }
@@ -49,26 +50,14 @@ class ServicoScreenState extends State<ServicoScreen> {
     );
   }
 
-  void _disableServico() {
-    // final List<int> selectedItemsCopy = List<int>.from(_selectedItems);
-    // _servicoBloc.add(_deleteService(selectedList: selectedItemsCopy));
-    setState(() {
-      _selectedItems.clear();
-      isSelected = false;
-    });
-  }
-
-  void _selectItems(int id) {
-    setState(() {
-      if (_selectedItems.contains(id)) {
-        _selectedItems.remove(id);
-      } else {
-        _selectedItems.add(id);
-      }
-
-      isSelected = _selectedItems.isNotEmpty;
-    });
-  }
+  // void _disableServico() {
+  //   // final List<int> selectedItemsCopy = List<int>.from(_selectedItems);
+  //   // _servicoBloc.add(_deleteService(selectedList: selectedItemsCopy));
+  //   // setState(() {
+  //   //   _selectedItems.clear();
+  //   //   isSelected = false;
+  //   // });
+  // }
 
   Widget _buildSearchInputs() {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -76,85 +65,86 @@ class ServicoScreenState extends State<ServicoScreen> {
     final maxContainerWidth = 1200.0;
 
     Widget buildSearchField(
-            {required String hint, TextEditingController? controller}) =>
-        CustomSearchTextField(
+            {required String hint, TextEditingController? controller}) => CustomSearchTextField(
           hint: hint,
-          leftPadding: 0,
+          leftPadding: 8,
           rightPadding: 8,
           controller: controller,
           onChangedAction: (value) => _onNomeChanged(),
         );
 
     Widget buildFilterIcon() => InkWell(
-          onTap: () => Navigator.of(context, rootNavigator: true)
-              .push(MaterialPageRoute(builder: (context) => FilterService())),
-          hoverColor: const Color(0xFFF5EEED),
+      onTap: () => Navigator.of(context, rootNavigator: true)
+          .push(MaterialPageRoute(builder: (context) => FilterService())),
+      hoverColor: const Color(0xFFF5EEED),
+      borderRadius: BorderRadius.circular(10),
+      child: Ink(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          child: Ink(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: const Color(0xFFFFF8F7),
-              border: Border.all(
-                color: const Color(0xFFEAE6E5),
-              ),
-            ),
-            child: const Icon(
-              Icons.filter_list,
-              size: 30.0,
-              color: Colors.black,
-            ),
+          color: const Color(0xFFFFF8F7),
+          border: Border.all(
+            color: const Color(0xFFEAE6E5),
           ),
-        );
+        ),
+        child: const Icon(
+          Icons.filter_list,
+          size: 30.0,
+          color: Colors.black,
+        ),
+      ),
+    );
 
     Widget buildLargeScreenLayout() => Row(
+      children: [
+        Expanded(
+          flex: 8,
+          child: buildSearchField(
+            hint: 'Nome do Cliente...',
+            controller: _nomeClienteController,
+          ),
+        ),
+        Expanded(
+          flex: 8,
+          child: buildSearchField(
+            hint: 'Nome do Técnico...',
+            controller: _nomeTecnicoController,
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(right: 8, top: 4),
+          child: buildFilterIcon()
+        ),
+      ],
+    );
+
+    Widget buildSmallScreenLayout() => Column(
+      children: [
+        buildSearchField(
+          hint: 'Nome do Cliente...',
+          controller: _nomeClienteController,
+        ),
+        Row(
           children: [
             Expanded(
-              flex: 8,
-              child: buildSearchField(
-                hint: 'Nome do Cliente...',
-                controller: _nomeClienteController,
-              ),
-            ),
-            Expanded(
-              flex: 8,
               child: buildSearchField(
                 hint: 'Nome do Técnico...',
                 controller: _nomeTecnicoController,
               ),
             ),
-            Expanded(child: buildFilterIcon()),
-          ],
-        );
-
-    Widget buildSmallScreenLayout() => Column(
-          children: [
-            buildSearchField(
-              hint: 'Nome do Cliente...',
-              controller: _nomeClienteController,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: buildSearchField(
-                    hint: 'Nome do Técnico...',
-                    controller: _nomeTecnicoController,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(right: 8, top: 4),
-                  child: buildFilterIcon(),
-                ),
-              ],
+            Padding(
+              padding: EdgeInsets.only(right: 8, top: 4),
+              child: buildFilterIcon(),
             ),
           ],
-        );
+        ),
+      ],
+    );
 
     return Container(
       width: isLargeScreen ? maxContainerWidth : double.infinity,
       padding: const EdgeInsets.all(5),
-      child:
-          isLargeScreen ? buildLargeScreenLayout() : buildSmallScreenLayout(),
+      child: isLargeScreen ? buildLargeScreenLayout() : buildSmallScreenLayout(),
     );
   }
 
@@ -192,20 +182,31 @@ class ServicoScreenState extends State<ServicoScreen> {
                     child: GridListView(
                       aspectRatio: 1.5,
                       dataList: state.servicos,
-                      buildCard: (servico) => CardService(
-                        cliente: (servico as Servico).nomeCliente,
-                        tecnico: servico.nomeTecnico,
-                        equipamento: servico.equipamento,
-                        marca: servico.marca,
-                        local: servico.filial,
-                        data: servico.dataAtendimentoPrevisto,
-                        status: servico.situacao,
+                      buildCard: (servico) => BlocBuilder<ListBloc, ListState>(
+                        bloc: _listBloc,
+                        builder: (context, stateList) {
+                          bool isSelected = false;
+
+                          if (stateList is ListSelectState) {
+                            isSelected = stateList.selectedIds.contains((servico as Servico).id);
+                          }
+
+                          return CardService(
+                            cliente: (servico as Servico).nomeCliente,
+                            tecnico: servico.nomeTecnico,
+                            equipamento: servico.equipamento,
+                            marca: servico.marca,
+                            local: servico.filial,
+                            data: servico.dataAtendimentoPrevisto,
+                            status: servico.situacao,
+                            isSelected: isSelected,
+                          );
+                        },
                       ),
                     ),
                   );
                 }
-                return const Center(
-                    child: CircularProgressIndicator.adaptive());
+                return const Center(child: CircularProgressIndicator.adaptive());
               },
             ),
           )

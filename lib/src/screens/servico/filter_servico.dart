@@ -174,9 +174,9 @@ class FilterService extends StatelessWidget {
                           ),
                           onChanged: (value) {
                             if (value != null && value.isNotEmpty) {
-                              provider.updateFilter(
-                                  dataEfetiva:
-                                      Formatters.transformDateMask(value));
+                              final parsedDate =
+                                  DateFormat('dd/MM/yyyy').parse(value);
+                              provider.updateFilter(dataEfetiva: parsedDate);
                             }
                           },
                           leftPadding: 4,
@@ -202,9 +202,9 @@ class FilterService extends StatelessWidget {
                           ),
                           onChanged: (value) {
                             if (value != null && value.isNotEmpty) {
-                              provider.updateFilter(
-                                  dataAbertura:
-                                      Formatters.transformDateMask(value));
+                              final parsedDate =
+                                  DateFormat('dd/MM/yyyy').parse(value);
+                              provider.updateFilter(dataAbertura: parsedDate);
                             }
                           },
                           rightPadding: 4,

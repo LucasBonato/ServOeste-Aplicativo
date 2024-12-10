@@ -44,9 +44,3 @@ final class TecnicoDisableListEvent extends ClienteEvent {
 
   TecnicoDisableListEvent({required this.selectedList});
 }
-
-final class ClienteToggleItemSelectEvent extends ClienteEvent {
-  final int id;
-
-  ClienteToggleItemSelectEvent({required this.id});
-}

@@ -57,8 +57,7 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(
-          widget.leftPadding ?? 16, 4, widget.rightPadding ?? 16, 16),
+      padding: EdgeInsets.fromLTRB(widget.leftPadding ?? 16, 4, widget.rightPadding ?? 16, 16),
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         onEnter: (_) => setState(() {
@@ -75,9 +74,15 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
           },
           child: ValueListenableBuilder<String>(
             valueListenable: widget.valueNotifier,
-            builder: (BuildContext context, String value, Widget? child) =>
-                CustomDropdown<String>(
+            builder: (BuildContext context, String value, Widget? child) => CustomDropdown<String>(
               enabled: widget.enabled ?? true,
+              disabledDecoration: CustomDropdownDisabledDecoration(
+                fillColor: const Color(0xFFFFF8F7),
+                border: Border.all(
+                  color: Colors.black38
+                ),
+                suffixIcon: Icon(Icons.arrow_drop_down, color: Colors.black38, size: 20)
+              ),
               items: widget.dropdownValues,
               controller: _effectiveController,
               hintText: widget.label,
@@ -86,6 +91,11 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
                 style: const TextStyle(color: Colors.black87, fontSize: 16),
               ),
               decoration: CustomDropdownDecoration(
+                errorStyle: TextStyle(
+                  fontSize: 12,
+                  decoration: TextDecoration.none,
+                ),
+                closedSuffixIcon: Icon(Icons.arrow_drop_down, color: Colors.black38, size: 20),
                 closedFillColor: _isHovered
                     ? const Color(0xFFF5EEED)
                     : const Color(0xFFFFF8F7),
@@ -93,12 +103,13 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
                 expandedBorderRadius: BorderRadius.circular(12),
                 closedBorder: Border.all(
                   color: _hasFocus ? Colors.black : const Color(0xFFEAE6E5),
-                  width: _hasFocus ? 1.5 : 1,
+                  width: 1,
                 ),
                 expandedBorder: Border.all(
                   color: Colors.blueAccent,
-                  width: 1.5,
+                  width: 1,
                 ),
+                expandedFillColor: const Color(0xFFFFF8F7)
               ),
               closedHeaderPadding: const EdgeInsets.symmetric(
                 vertical: 12,

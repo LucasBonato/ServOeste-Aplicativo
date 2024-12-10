@@ -32,7 +32,7 @@ class ExpandableFabItems extends StatelessWidget {
       children: [
         FloatingActionButton(
           onPressed: () => Navigator.of(context, rootNavigator: true)
-              .pushNamed(firstRouterName)
+              .pushNamed(firstRouterName, arguments: {"isClientAndService": false})
               .then((value) {
             if (value == null) {
               updateList();
@@ -46,7 +46,7 @@ class ExpandableFabItems extends StatelessWidget {
         ),
         FloatingActionButton(
           onPressed: () => Navigator.of(context, rootNavigator: true)
-              .pushNamed(secondRouterName, arguments: true)
+              .pushNamed(secondRouterName)
               .then((value) {
             if (value == null) {
               updateList();
