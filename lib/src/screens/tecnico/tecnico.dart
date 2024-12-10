@@ -6,7 +6,7 @@ import 'package:serv_oeste/src/components/dropdown_field.dart';
 import 'package:serv_oeste/src/components/grid_view.dart';
 import 'package:serv_oeste/src/components/card_technical.dart';
 import 'package:serv_oeste/src/components/custom_search_field.dart';
-import 'package:serv_oeste/src/logic/list_bloc.dart';
+import 'package:serv_oeste/src/logic/list/list_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
@@ -34,7 +34,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     _listBloc = context.read<ListBloc>();
     _idController = TextEditingController();
     _nomeController = TextEditingController();
-    _situacaoController = SingleSelectController<String>('Ativo');
+    _situacaoController = SingleSelectController<String>('Situação...');
     _situacaoNotifier = ValueNotifier<String>('');
     _listBloc.add(ListInitialEvent());
   }
@@ -45,10 +45,10 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
         builder: (context) => UpdateTecnico(id: id),
       ),
     );
-    _onTapSelectItemList(id);
+    _listBloc.add(ListClearSelectionEvent());
   }
 
-  void _onTapSelectItemList(int id) {
+  void _onLongPressSelectItemList(int id) {
     _listBloc.add(ListToggleItemSelectEvent(id: id));
   }
 
@@ -66,8 +66,9 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
             ));
   }
 
-  void _disableTecnicos() {
-    //_tecnicoBloc.add(TecnicoDisableListEvent(selectedList: selectedItemsCopy));
+  void _disableTecnicos(BuildContext context, List<int> selectedIds) {
+    _tecnicoBloc.add(TecnicoDisableListEvent(selectedList: selectedIds));
+    _listBloc.add(ListClearSelectionEvent());
   }
 
   Widget _buildSearchInputs() {
@@ -236,8 +237,8 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
               : BuildWidgets.buildFabRemove(
                   context,
                   () {
-                    _tecnicoBloc.add(TecnicoDisableListEvent(
-                        selectedList: state.selectedIds));
+                    _disableTecnicos(context, state.selectedIds);
+                    context.read<ListBloc>().add(ListClearSelectionEvent());
                   },
                   tooltip: 'Excluir técnicos selecionados',
                 );
@@ -253,7 +254,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                     stateTecnico is TecnicoLoadingState) {
                   return const Center(
                       child: CircularProgressIndicator.adaptive());
-                } else if (stateTecnico is TecnicoSearchSuccessState) {
+                } else if (stateTecnico is TecnicoListState) {
                   return SingleChildScrollView(
                     child: GridListView(
                       aspectRatio: 2.5,
@@ -270,7 +271,8 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                           return CardTechnical(
                             onDoubleTap: () =>
                                 _onNavigateToUpdateScreen(tecnico.id!),
-                            onTap: () => _onTapSelectItemList(tecnico.id!),
+                            onLongPress: () =>
+                                _onLongPressSelectItemList(tecnico.id!),
                             id: tecnico.id!,
                             name: tecnico.nome!,
                             phoneNumber: tecnico.telefoneFixo!,

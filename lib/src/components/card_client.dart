@@ -8,7 +8,7 @@ class CardClient extends StatelessWidget {
   final String city;
   final String street;
   final bool isSelected;
-  final void Function()? onTap;
+  final void Function()? onLongPress;
   final void Function()? onDoubleTap;
 
   const CardClient({
@@ -19,7 +19,7 @@ class CardClient extends StatelessWidget {
     required this.city,
     required this.street,
     required this.isSelected,
-    this.onTap,
+    this.onLongPress,
     this.onDoubleTap,
   });
 
@@ -31,7 +31,7 @@ class CardClient extends StatelessWidget {
       valueListenable: isHovered,
       builder: (context, hovered, _) {
         return GestureDetector(
-          onTap: onTap,
+          onLongPress: onLongPress,
           onDoubleTap: onDoubleTap,
           child: Container(
             decoration: BoxDecoration(

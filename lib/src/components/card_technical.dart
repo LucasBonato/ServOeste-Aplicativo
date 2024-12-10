@@ -8,7 +8,7 @@ class CardTechnical extends StatelessWidget {
   final String? cellPhoneNumber;
   final String status;
   final bool isSelected;
-  final void Function()? onTap;
+  final void Function()? onLongPress;
   final void Function()? onDoubleTap;
 
   const CardTechnical({
@@ -19,7 +19,7 @@ class CardTechnical extends StatelessWidget {
     this.cellPhoneNumber,
     required this.status,
     this.isSelected = false,
-    this.onTap,
+    this.onLongPress,
     this.onDoubleTap,
   });
 
@@ -35,7 +35,7 @@ class CardTechnical extends StatelessWidget {
         valueListenable: isHovered,
         builder: (context, hovered, child) {
           return GestureDetector(
-            onTap: onTap,
+            onLongPress: onLongPress,
             onDoubleTap: onDoubleTap,
             child: Container(
               padding: const EdgeInsets.all(16.0),

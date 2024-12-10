@@ -98,7 +98,7 @@ class SidebarNavigation extends StatelessWidget {
         label,
         style: TextStyle(
           color: isSelected ? Colors.blue : Colors.black,
-          fontWeight: FontWeight.bold,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
       ),
       onTap: () {

@@ -4,7 +4,7 @@ import 'package:serv_oeste/src/components/bottom_nav_bar.dart';
 import 'package:serv_oeste/src/components/sidebar_navigation.dart';
 import 'package:serv_oeste/src/components/header.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
-import 'package:serv_oeste/src/logic/list_bloc.dart';
+import 'package:serv_oeste/src/logic/list/list_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
@@ -51,26 +51,26 @@ class BaseLayoutState extends State<BaseLayout> {
     _screens[index] ??= switch (index) {
       0 => BlocProvider.value(value: _servicoBloc, child: Home()),
       1 => MultiBlocProvider(
-        providers: [
-          BlocProvider.value(value: _tecnicoBloc),
-          BlocProvider(create: (_) => ListBloc()..add(ListInitialEvent()))
-        ],
-        child: TecnicoScreen(),
-      ),
+          providers: [
+            BlocProvider.value(value: _tecnicoBloc),
+            BlocProvider(create: (_) => ListBloc()..add(ListInitialEvent()))
+          ],
+          child: TecnicoScreen(),
+        ),
       2 => MultiBlocProvider(
-        providers: [
-          BlocProvider.value(value: _clienteBloc),
-          BlocProvider(create: (_) => ListBloc()..add(ListInitialEvent()))
-        ],
-        child: ClienteScreen(),
-      ),
+          providers: [
+            BlocProvider.value(value: _clienteBloc),
+            BlocProvider(create: (_) => ListBloc()..add(ListInitialEvent()))
+          ],
+          child: ClienteScreen(),
+        ),
       3 => MultiBlocProvider(
-        providers: [
-          BlocProvider.value(value: _servicoBloc),
-          BlocProvider(create: (_) => ListBloc()..add(ListInitialEvent())),
-        ],
-        child: ServicoScreen(),
-      ),
+          providers: [
+            BlocProvider.value(value: _servicoBloc),
+            BlocProvider(create: (_) => ListBloc()..add(ListInitialEvent())),
+          ],
+          child: ServicoScreen(),
+        ),
       _ => Container()
     };
     return _screens[index]!;
@@ -106,9 +106,7 @@ class BaseLayoutState extends State<BaseLayout> {
   }
 
   void _loadTecnico() {
-    _tecnicoBloc.add(TecnicoLoadingEvent(
-      situacao: 'Ativo'
-    ));
+    _tecnicoBloc.add(TecnicoLoadingEvent(situacao: 'Ativo'));
   }
 
   void _loadCliente() {

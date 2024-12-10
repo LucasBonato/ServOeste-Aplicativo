@@ -5,6 +5,8 @@ sealed class ListEvent {}
 
 final class ListInitialEvent extends ListEvent {}
 
+final class ListClearSelectionEvent extends ListEvent {}
+
 final class ListToggleItemSelectEvent extends ListEvent {
   final int id;
 

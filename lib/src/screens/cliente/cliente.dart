@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/card_client.dart';
 import 'package:serv_oeste/src/components/grid_view.dart';
-import 'package:serv_oeste/src/logic/list_bloc.dart';
+import 'package:serv_oeste/src/logic/list/list_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
@@ -59,10 +59,10 @@ class _ClienteScreenState extends State<ClienteScreen> {
         builder: (context) => UpdateCliente(id: id),
       ),
     );
-    _onTapSelectItemList(id);
+    _listBloc.add(ListClearSelectionEvent());
   }
 
-  void _onTapSelectItemList(int id) {
+  void _onLongPressSelectItemList(int id) {
     _listBloc.add(ListToggleItemSelectEvent(id: id));
   }
 
@@ -173,6 +173,11 @@ class _ClienteScreenState extends State<ClienteScreen> {
     );
   }
 
+  void _disableClientes(BuildContext context, List<int> selectedIds) {
+    _clienteBloc.add(TecnicoDisableListEvent(selectedList: selectedIds));
+    _listBloc.add(ListClearSelectionEvent());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -194,8 +199,9 @@ class _ClienteScreenState extends State<ClienteScreen> {
               : BuildWidgets.buildFabRemove(
                   context,
                   () {
-                    _clienteBloc.add(TecnicoDisableListEvent(
-                        selectedList: state.selectedIds));
+                    _disableClientes(context, state.selectedIds);
+
+                    context.read<ListBloc>().add(ListClearSelectionEvent());
                   },
                   tooltip: 'Excluir clientes selecionados',
                 );
@@ -229,7 +235,8 @@ class _ClienteScreenState extends State<ClienteScreen> {
                           return CardClient(
                             onDoubleTap: () =>
                                 _onNavigateToUpdateScreen(cliente.id!),
-                            onTap: () => _onTapSelectItemList(cliente.id!),
+                            onLongPress: () =>
+                                _onLongPressSelectItemList(cliente.id!),
                             name: (cliente as Cliente).nome!,
                             phoneNumber: cliente.telefoneFixo!,
                             cellphone: cliente.telefoneCelular!,
