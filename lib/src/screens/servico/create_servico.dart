@@ -35,7 +35,6 @@ class CreateServico extends StatefulWidget {
 }
 
 class _CreateServicoState extends State<CreateServico> {
-  int? clienteId;
   Timer? _debounce;
   late List<Tecnico> _tecnicos;
   late List<Cliente> _clientes;
@@ -72,7 +71,7 @@ class _CreateServicoState extends State<CreateServico> {
   }
 
   void _onNomeClienteChanged(String nome) {
-    setState(() => clienteId = null);
+    _servicoForm.setIdCliente(null);
     if (_debounce?.isActive?? false) _debounce!.cancel();
     _debounce = Timer(Duration(milliseconds: 150), () => _fetchClienteNames(nome));
   }
@@ -85,9 +84,7 @@ class _CreateServicoState extends State<CreateServico> {
   void _getClienteId(String nome) {
     for (Cliente cliente in _clientes) {
       if (cliente.nome! == _clienteForm.nome.value) {
-        setState(() {
-          clienteId = cliente.id;
-        });
+        _servicoForm.setIdCliente(cliente.id);
       }
     }
   }
@@ -103,7 +100,6 @@ class _CreateServicoState extends State<CreateServico> {
     if (nome == "") return;
     if (nome.split(" ").length > 1 && _dropdownNomeTecnicos.isEmpty) return;
     _tecnicoBloc.add(TecnicoSearchEvent(nome: nome, equipamento: _servicoForm.equipamento.value));
-    // _idTecnicoSelected = null;
   }
   void _getTecnicoId(String nome) {
     _servicoForm.setNomeTecnico(nome);
@@ -130,7 +126,7 @@ class _CreateServicoState extends State<CreateServico> {
   }
 
   bool _isInputEnabled() {
-    return (widget.isClientAndService || clienteId != null);
+    return (widget.isClientAndService || _servicoForm.idCliente.value != null);
   }
 
   bool _isValidServicoForm() {
@@ -146,32 +142,37 @@ class _CreateServicoState extends State<CreateServico> {
   }
 
   void _onAddService() {
-    if (_isValidClienteForm() == false) {
+    if (_isValidClienteForm() == false && widget.isClientAndService) {
       return;
     }
     if (_isValidServicoForm() == false) {
       return;
     }
 
-    List<String> nomes = _clienteForm.nome.value.split(" ");
-    _clienteForm.nome.value = nomes.first;
-    String sobrenomeCliente = nomes
-        .sublist(1)
-        .join(" ")
-        .trim();
+    if (widget.isClientAndService) {
+      List<String> nomes = _clienteForm.nome.value.split(" ");
+      _clienteForm.nome.value = nomes.first;
+      String sobrenomeCliente = nomes
+          .sublist(1)
+          .join(" ")
+          .trim();
+      _servicoBloc.add(
+          ServicoRegisterPlusClientEvent(
+            servico: ServicoRequest.fromServicoForm(servico: _servicoForm),
+            cliente: ClienteRequest.fromClienteForm(cliente: _clienteForm, sobrenome: sobrenomeCliente),
+          )
+      );
+      _clienteForm.nome.value = "${nomes.first} $sobrenomeCliente";
+      return;
+    }
     _servicoBloc.add(
-      ServicoRegisterPlusClientEvent(
-        servico: ServicoRequest.fromServicoForm(servico: _servicoForm),
-        cliente: ClienteRequest.fromClienteForm(cliente: _clienteForm, sobrenome: sobrenomeCliente),
-      )
+      ServicoRegisterEvent(servico: ServicoRequest.fromServicoForm(servico: _servicoForm))
     );
-    _clienteForm.nome.value = "${nomes.first} $sobrenomeCliente";
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Cliente e Serviço adicionados com sucesso!'),
-      ),
-    );
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   const SnackBar(
+    //     content: Text('Cliente e Serviço adicionados com sucesso!'),
+    //   ),
+    // );
     // else {
     //   ScaffoldMessenger.of(context).showSnackBar(
     //     const SnackBar(
@@ -584,10 +585,10 @@ class _CreateServicoState extends State<CreateServico> {
               builder: (context, value, child) {
                 late bool isFieldEnabled;
                 if (widget.isClientAndService) {
-                  isFieldEnabled = (value.isNotEmpty || (!widget.isClientAndService || clienteId != null));
+                  isFieldEnabled = (value.isNotEmpty || (!widget.isClientAndService || _servicoForm.idCliente.value != null));
                 }
                 else {
-                  isFieldEnabled = (value.isNotEmpty && (widget.isClientAndService || clienteId != null));
+                  isFieldEnabled = (value.isNotEmpty && (widget.isClientAndService || _servicoForm.idCliente.value != null));
                 }
 
                 return CustomSearchDropDown(

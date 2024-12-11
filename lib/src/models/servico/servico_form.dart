@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ServicoForm extends ChangeNotifier {
-  int? idTecnico;
+  ValueNotifier<int?> idCliente = ValueNotifier(null);
+  ValueNotifier<int?> idTecnico = ValueNotifier(null);
   ValueNotifier<String> equipamento = ValueNotifier("");
   ValueNotifier<String> marca = ValueNotifier("");
   ValueNotifier<String> filial = ValueNotifier("");
@@ -10,8 +11,13 @@ class ServicoForm extends ChangeNotifier {
   ValueNotifier<String> horario = ValueNotifier("");
   ValueNotifier<String> descricao = ValueNotifier("");
 
+  void setIdCliente(int? idCliente) {
+    this.idCliente.value = idCliente;
+    notifyListeners();
+  }
+
   void setIdTecnico(int? idTecnico) {
-    this.idTecnico = idTecnico;
+    this.idTecnico.value = idTecnico;
     notifyListeners();
   }
 
