@@ -9,13 +9,16 @@ final class TecnicoLoadingEvent extends TecnicoEvent {
   final String? telefoneFixo;
   final String? telefoneCelular;
   final String? situacao;
+  final String? equipamento;
 
-  TecnicoLoadingEvent(
-      {this.id,
-      this.nome,
-      this.telefoneFixo,
-      this.telefoneCelular,
-      this.situacao});
+  TecnicoLoadingEvent({
+    this.id,
+    this.nome,
+    this.telefoneFixo,
+    this.telefoneCelular,
+    this.situacao,
+    this.equipamento
+  });
 }
 
 final class TecnicoSearchOneEvent extends TecnicoEvent {
@@ -28,8 +31,9 @@ final class TecnicoSearchEvent extends TecnicoEvent {
   final int? id;
   final String? nome;
   final String? situacao;
+  final String? equipamento;
 
-  TecnicoSearchEvent({this.id, this.nome, this.situacao});
+  TecnicoSearchEvent({this.id, this.nome, this.situacao, this.equipamento});
 }
 
 final class TecnicoRegisterEvent extends TecnicoEvent {
@@ -44,12 +48,6 @@ final class TecnicoUpdateEvent extends TecnicoEvent {
   final String sobrenome;
 
   TecnicoUpdateEvent({required this.tecnico, required this.sobrenome});
-}
-
-final class TecnicoToggleItemSelectEvent extends TecnicoEvent {
-  final int id;
-
-  TecnicoToggleItemSelectEvent({required this.id});
 }
 
 final class TecnicoDisableListEvent extends TecnicoEvent {

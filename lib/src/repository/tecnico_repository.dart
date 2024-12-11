@@ -8,21 +8,19 @@ import 'package:serv_oeste/src/repository/dio/server_endpoints.dart';
 import '../models/tecnico/tecnico.dart';
 
 class TecnicoRepository extends DioService {
-  Future<List<Tecnico>?> getTecnicosByFind(
-      {int? id,
-      String? nome,
-      String? telefoneFixo,
-      String? telefoneCelular,
-      String? situacao}) async {
+  Future<List<Tecnico>?> getTecnicosByFind({int? id, String? nome, String? telefoneFixo, String? telefoneCelular, String? situacao, String? equipamento}) async {
     try {
-      final response =
-          await dio.post(ServerEndpoints.tecnicoFindEndpoint, data: {
-        "id": id,
-        "nome": nome,
-        "telefoneFixo": telefoneFixo,
-        "telefoneCelular": telefoneCelular,
-        "situacao": situacao
-      });
+      final response = await dio.post(
+        ServerEndpoints.tecnicoFindEndpoint,
+        data: {
+          "id": id,
+          "nome": nome,
+          "telefoneFixo": telefoneFixo,
+          "telefoneCelular": telefoneCelular,
+          "situacao": situacao,
+          "equipamento": equipamento
+        }
+      );
 
       if (response.data is List) {
         return (response.data as List)

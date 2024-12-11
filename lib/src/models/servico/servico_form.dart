@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 
 class ServicoForm extends ChangeNotifier {
-  int? id;
+  int? idTecnico;
   ValueNotifier<String> equipamento = ValueNotifier("");
   ValueNotifier<String> marca = ValueNotifier("");
   ValueNotifier<String> filial = ValueNotifier("");
-  ValueNotifier<String> tecnico = ValueNotifier("");
+  ValueNotifier<String> nomeTecnico = ValueNotifier("");
   ValueNotifier<String> dataPrevista = ValueNotifier("");
   ValueNotifier<String> horario = ValueNotifier("");
   ValueNotifier<String> descricao = ValueNotifier("");
+
+  void setIdTecnico(int? idTecnico) {
+    this.idTecnico = idTecnico;
+    notifyListeners();
+  }
 
   void setEquipamento(String? equipamento) {
     this.equipamento.value = equipamento ?? "";
@@ -25,8 +30,8 @@ class ServicoForm extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setTecnico(String? tecnico) {
-    this.tecnico.value = tecnico ?? "";
+  void setNomeTecnico(String? nomeTecnico) {
+    this.nomeTecnico.value = nomeTecnico ?? "";
     notifyListeners();
   }
 
