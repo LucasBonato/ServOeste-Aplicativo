@@ -13,6 +13,7 @@ import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_request.dart';
+import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/servico/servico_form.dart';
 import 'package:serv_oeste/src/models/servico/servico_request.dart';
@@ -646,6 +647,7 @@ class _CreateServicoState extends State<CreateServico> {
             type: TextInputType.multiline,
             maxLength: 255,
             maxLines: 3,
+            minLines: 1,
             hide: false,
             valueNotifier: _servicoForm.descricao,
             validator: _servicoValidator.byField(_servicoForm, ErrorCodeKey.descricao.name),

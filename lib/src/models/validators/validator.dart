@@ -1,5 +1,6 @@
 import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
+import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/servico/servico_form.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
@@ -245,29 +246,4 @@ extension on LucidValidationBuilder {
 
     return use(callback);
   }
-}
-
-enum ErrorCodeKey {
-  global,
-  nomeESobrenome,
-  telefoneCelular,
-  telefoneFixo,
-  telefones,
-  cep,
-  endereco,
-  municipio,
-  bairro,
-  cliente,
-  tecnico,
-  situacao,
-  equipamento,
-  marca,
-  descricao,
-  filial,
-  horario,
-  data,
-  conhecimento,
-  rua,
-  numero,
-  complemento
 }

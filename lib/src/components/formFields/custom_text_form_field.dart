@@ -12,6 +12,7 @@ class CustomTextFormField extends StatefulWidget {
   final double? rightPadding;
   final double? leftPadding;
   final int? maxLines;
+  final int? minLines;
   final void Function(String?)? onSaved;
   final void Function(String?)? onChanged;
   final void Function()? onTap;
@@ -35,6 +36,7 @@ class CustomTextFormField extends StatefulWidget {
     this.onChanged,
     this.controller,
     this.maxLines,
+    this.minLines,
     this.enabled,
     this.onSaved,
     this.onTap,
@@ -75,15 +77,14 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           widget.rightPadding ?? 16, widget.hide ? 16 : 0),
       child: ValueListenableBuilder<String>(
         valueListenable: widget.valueNotifier,
-        builder: (BuildContext context, String value, Widget? child) =>
-            TextFormField(
+        builder: (BuildContext context, String value, Widget? child) => TextFormField(
           enabled: widget.enabled,
           controller: _internalController,
           inputFormatters: widget.masks,
           maxLength: widget.maxLength,
           keyboardType: widget.type,
           maxLines: widget.maxLines ?? 1,
-          minLines: 1,
+          minLines: widget.minLines ?? 1,
           decoration: InputDecoration(
             counterText: widget.hide ? "" : null,
             hintText: widget.hint,

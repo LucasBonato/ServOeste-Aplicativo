@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:serv_oeste/src/models/enums/service_status.dart';
 
 class CardService extends StatelessWidget {
   final String cliente;
@@ -22,39 +23,63 @@ class CardService extends StatelessWidget {
     this.isSelected = false,
   });
 
-  Color _getStatusColor(String status) {
+  Color _getStatusColor(ServiceStatus status) {
     switch (status) {
-      case "Aguardando Agendamento":
+      case ServiceStatus.aguardandoAgendamento:
         return Colors.blue;
-      case "Aguardando Aprovação do Cliente":
+      case ServiceStatus.aguardandoAprovacaoCliente:
         return const Color.fromARGB(255, 179, 162, 14);
-      case "Aguardando Atendimento":
+      case ServiceStatus.aguardandoAtendimento:
         return const Color.fromARGB(255, 247, 203, 59);
-      case "Aguardando Cliente Retirar":
+      case ServiceStatus.aguardandoClienteRetirar:
         return const Color.fromARGB(255, 219, 170, 8);
-      case "Aguardando Orçamento":
+      case ServiceStatus.aguardandoOrcamento:
         return Colors.orange;
-      case "Cancelado":
+      case ServiceStatus.cancelado:
         return Colors.red;
-      case "Compra":
+      case ServiceStatus.compra:
         return Colors.teal;
-      case "Cortesia":
+      case ServiceStatus.cortesia:
         return Colors.tealAccent;
-      case "Garantia":
+      case ServiceStatus.garantia:
         return const Color.fromARGB(255, 18, 1, 255);
-      case "Não Aprovado pelo Cliente":
+      case ServiceStatus.naoAprovadoPeloCliente:
         return Colors.redAccent;
-      case "Não Retira há 3 Meses":
+      case ServiceStatus.naoRetira3Meses:
         return Colors.deepOrange;
-      case "Orçamento Aprovado":
+      case ServiceStatus.orcamentoAprovado:
         return Colors.green;
-      case "Resolvido":
+      case ServiceStatus.resolvido:
         return const Color.fromARGB(255, 47, 87, 2);
-      case "Sem Defeito":
+      case ServiceStatus.semDefeito:
         return Colors.blueAccent;
       default:
         return Colors.black;
     }
+  }
+
+  ServiceStatus _mapStringStatusToEnumStatus(String status) {
+    return switch (status) {
+      "AGUARDANDO_AGENDAMENTO" => ServiceStatus.aguardandoAgendamento,
+      "AGUARDANDO_ATENDIMENTO" => ServiceStatus.aguardandoAtendimento,
+      "AGUARDANDO_APROVACAO" => ServiceStatus.aguardandoAprovacaoCliente,
+      "AGUARDANDO_CLIENTE_RETIRAR" => ServiceStatus.aguardandoClienteRetirar,
+      "AGUARDANDO_ORCAMENTO" => ServiceStatus.aguardandoOrcamento,
+      "CANCELADO" => ServiceStatus.cancelado,
+      "COMPRA" => ServiceStatus.compra,
+      "CORTESIA" => ServiceStatus.cortesia,
+      "GARANTIA" => ServiceStatus.garantia,
+      "NAO_APROVADO" => ServiceStatus.naoAprovadoPeloCliente,
+      "NAO_RETIRA_3_MESES" => ServiceStatus.naoRetira3Meses,
+      "ORCAMENTO_APROVADO" => ServiceStatus.orcamentoAprovado,
+      "RESOLVIDO" => ServiceStatus.resolvido,
+      "SEM_DEFEITO" => ServiceStatus.semDefeito,
+      _ => ServiceStatus.aguardandoAgendamento
+    };
+  }
+
+  String _convertEnumStatusToString(String status) {
+    return "${status[0]}${status.substring(1).replaceAll("_", " ").toLowerCase()}";
   }
 
   @override
@@ -76,8 +101,7 @@ class CardService extends StatelessWidget {
                 maxWidth: constraints.maxWidth,
               ),
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? const Color(0xFFE9E7E7)
@@ -105,8 +129,7 @@ class CardService extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(
-                              left: constraints.maxWidth * 0.05),
+                          padding: EdgeInsets.only(left: constraints.maxWidth * 0.05),
                           child: Text(
                             cliente,
                             style: TextStyle(
@@ -180,11 +203,11 @@ class CardService extends StatelessWidget {
                         child: SizedBox(
                           width: constraints.maxWidth * 0.4,
                           child: Text(
-                            status,
+                            _convertEnumStatusToString(status),
                             style: TextStyle(
                               fontSize: constraints.maxWidth * 0.045,
                               fontWeight: FontWeight.bold,
-                              color: _getStatusColor(status),
+                              color: _getStatusColor(_mapStringStatusToEnumStatus(status)),
                             ),
                             maxLines: 3,
                             textAlign: TextAlign.center,

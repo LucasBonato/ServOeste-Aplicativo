@@ -1,5 +1,6 @@
 import 'package:serv_oeste/src/components/dropdown_field.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
+import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
@@ -278,9 +279,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                                   rightPadding: 8,
                                   hide: false,
                                   valueNotifier: _tecnicoUpdateForm.nome,
-                                  validator: _tecnicoUpdateValidator.byField(
-                                      _tecnicoUpdateForm,
-                                      ErrorCodeKey.nomeESobrenome.name),
+                                  validator: _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, ErrorCodeKey.nomeESobrenome.name),
                                   onChanged: _tecnicoUpdateForm.setNome,
                                 ),
                               ),
@@ -290,9 +289,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                                   label: "Situação",
                                   leftPadding: 0,
                                   valueNotifier: _dropDownSituacaoValue,
-                                  validator: _tecnicoUpdateValidator.byField(
-                                      _tecnicoUpdateForm,
-                                      ErrorCodeKey.situacao.name),
+                                  validator: _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, ErrorCodeKey.situacao.name),
                                   dropdownValues: Constants.situationTecnicoList
                                       .map((item) => item['label'] as String)
                                       .toList(),
