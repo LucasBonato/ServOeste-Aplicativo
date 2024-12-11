@@ -19,6 +19,7 @@ class CustomTextFormField extends StatefulWidget {
   final String? Function([String?])? validator;
   final ValueNotifier<String> valueNotifier;
   final TextEditingController? controller;
+  final IconButton? suffixIcon;
 
   const CustomTextFormField({
     super.key,
@@ -39,6 +40,7 @@ class CustomTextFormField extends StatefulWidget {
     this.onSaved,
     this.onTap,
     this.masks,
+    this.suffixIcon,
   });
 
   @override
@@ -131,6 +133,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               vertical: 16,
               horizontal: 20,
             ),
+            suffixIcon: widget.suffixIcon,
           ),
           onChanged: widget.onChanged,
           onTap: widget.onTap,

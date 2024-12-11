@@ -96,10 +96,8 @@ class _CustomDatePickerState extends State<CustomDatePicker>
         _selectedDate.value = newSelectedDate;
         _dateSelected = DateFormat('dd/MM/yyyy').format(_selectedDate.value);
 
-        // Atualizando o ValueNotifier
         widget.valueNotifier.value = _dateSelected;
 
-        // Chamando o callback onChanged, se definido
         widget.onChanged?.call(_dateSelected);
       });
     }
@@ -127,6 +125,15 @@ class _CustomDatePickerState extends State<CustomDatePicker>
           widget.validation = false;
         });
       },
+      suffixIcon: IconButton(
+        icon: const Icon(Icons.calendar_today),
+        onPressed: () {
+          _restorableDatePickerRouteFuture.present();
+          setState(() {
+            widget.validation = false;
+          });
+        },
+      ),
     );
   }
 }
