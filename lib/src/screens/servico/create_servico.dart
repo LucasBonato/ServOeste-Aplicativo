@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
 import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/components/date_picker.dart';
 import 'package:serv_oeste/src/components/dropdown_field.dart';
@@ -73,6 +72,7 @@ class _CreateServicoState extends State<CreateServico> {
   }
 
   void _onNomeClienteChanged(String nome) {
+    setState(() => clienteId = null);
     if (_debounce?.isActive?? false) _debounce!.cancel();
     _debounce = Timer(Duration(milliseconds: 150), () => _fetchClienteNames(nome));
   }
@@ -90,7 +90,6 @@ class _CreateServicoState extends State<CreateServico> {
         });
       }
     }
-    Logger().i("Id do Cliente: $clienteId");
   }
 
   void _onNomeTecnicoChanged(String nome) {
@@ -143,7 +142,6 @@ class _CreateServicoState extends State<CreateServico> {
   bool _isValidClienteForm() {
     _clienteFormKey.currentState?.validate();
     final ValidationResult response = _clienteValidator.validate(_clienteForm);
-    Logger().e(response.exceptions[0].message);
     return response.isValid;
   }
 
@@ -583,17 +581,27 @@ class _CreateServicoState extends State<CreateServico> {
             },
             child: ValueListenableBuilder(
               valueListenable: _servicoForm.equipamento,
-              builder: (context, value, child) => CustomSearchDropDown(
-                label: "Nome do Técnico*",
-                dropdownValues: _dropdownNomeTecnicos,
-                maxLength: 50,
-                hide: false,
-                valueNotifier: _servicoForm.nomeTecnico,
-                validator: _servicoValidator.byField(_servicoForm, ErrorCodeKey.tecnico.name),
-                onChanged: _onNomeTecnicoChanged,
-                onSelected: _getTecnicoId,
-                enabled: (value.isNotEmpty || (!widget.isClientAndService || clienteId != null)),
-              ),
+              builder: (context, value, child) {
+                late bool isFieldEnabled;
+                if (widget.isClientAndService) {
+                  isFieldEnabled = (value.isNotEmpty || (!widget.isClientAndService || clienteId != null));
+                }
+                else {
+                  isFieldEnabled = (value.isNotEmpty && (widget.isClientAndService || clienteId != null));
+                }
+
+                return CustomSearchDropDown(
+                  label: "Nome do Técnico*",
+                  dropdownValues: _dropdownNomeTecnicos,
+                  maxLength: 50,
+                  hide: false,
+                  valueNotifier: _servicoForm.nomeTecnico,
+                  validator: _servicoValidator.byField(_servicoForm, ErrorCodeKey.tecnico.name),
+                  onChanged: _onNomeTecnicoChanged,
+                  onSelected: _getTecnicoId,
+                  enabled: isFieldEnabled,
+                );
+              }
             ),
           ),
           const SizedBox(height: 6),
