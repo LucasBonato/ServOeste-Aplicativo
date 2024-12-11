@@ -10,7 +10,7 @@ import 'package:serv_oeste/src/components/custom_search_field.dart';
 // import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/util/formatters.dart';
-import 'package:serv_oeste/src/util/input_masks.dart';
+import 'package:serv_oeste/src/shared/input_masks.dart';
 
 class FilterService extends StatelessWidget {
   const FilterService({super.key});
