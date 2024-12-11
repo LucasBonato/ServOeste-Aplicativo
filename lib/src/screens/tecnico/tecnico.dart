@@ -250,11 +250,9 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
           Expanded(
             child: BlocBuilder<TecnicoBloc, TecnicoState>(
               builder: (context, stateTecnico) {
-                if (stateTecnico is TecnicoInitialState ||
-                    stateTecnico is TecnicoLoadingState) {
-                  return const Center(
-                      child: CircularProgressIndicator.adaptive());
-                } else if (stateTecnico is TecnicoListState) {
+                if (stateTecnico is TecnicoInitialState || stateTecnico is TecnicoLoadingState) {
+                  return const Center(child: CircularProgressIndicator.adaptive());
+                } else if (stateTecnico is TecnicoSearchSuccessState) {
                   return SingleChildScrollView(
                     child: GridListView(
                       aspectRatio: 2.5,
@@ -264,15 +262,12 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                           bool isSelected = false;
 
                           if (stateList is ListSelectState) {
-                            isSelected =
-                                stateList.selectedIds.contains(tecnico.id);
+                            isSelected = stateList.selectedIds.contains(tecnico.id);
                           }
 
                           return CardTechnical(
-                            onDoubleTap: () =>
-                                _onNavigateToUpdateScreen(tecnico.id!),
-                            onLongPress: () =>
-                                _onLongPressSelectItemList(tecnico.id!),
+                            onDoubleTap: () => _onNavigateToUpdateScreen(tecnico.id!),
+                            onLongPress: () => _onLongPressSelectItemList(tecnico.id!),
                             id: tecnico.id!,
                             name: tecnico.nome!,
                             phoneNumber: tecnico.telefoneFixo!,

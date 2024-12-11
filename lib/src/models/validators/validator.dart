@@ -88,173 +88,104 @@ mixin BackendErrorsValidator {
   }
 }
 
-class ServicoValidator extends LucidValidator<ServicoForm>
-    with BackendErrorsValidator {
+class ServicoValidator extends LucidValidator<ServicoForm> with BackendErrorsValidator {
   ServicoValidator() {
-    ruleFor((servico) => servico.equipamento.value,
-            key: ErrorCodeKey.equipamento.name)
-        .must((equipamento) => equipamento != "", "Selecione um equipamento!",
-            ErrorCodeKey.equipamento.name)
-        .customValidExternalErrors(
-            externalErrors, ErrorCodeKey.equipamento.name);
+    ruleFor((servico) => servico.equipamento.value, key: ErrorCodeKey.equipamento.name)
+        .must((equipamento) => equipamento != "", "Selecione um equipamento!", ErrorCodeKey.equipamento.name)
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.equipamento.name);
 
     ruleFor((servico) => servico.marca.value, key: ErrorCodeKey.marca.name)
-        .must((marca) => marca != "", "Selecione a marca do equipamento!",
-            ErrorCodeKey.marca.name)
+        .must((marca) => marca != "", "Selecione a marca do equipamento!", ErrorCodeKey.marca.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.marca.name);
 
     ruleFor((servico) => servico.filial.value, key: ErrorCodeKey.filial.name)
-        .must((filial) => filial != "", "Selecione uma filial!",
-            ErrorCodeKey.filial.name)
+        .must((filial) => filial != "", "Selecione uma filial!", ErrorCodeKey.filial.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.filial.name);
 
-    ruleFor((servico) => servico.dataPrevista.value,
-            key: ErrorCodeKey.data.name)
+    ruleFor((servico) => servico.dataPrevista.value, key: ErrorCodeKey.data.name)
         .customValidNotSunday(code: ErrorCodeKey.data.name)
-        .must((dataPrevista) => dataPrevista != "", "Selecione uma data!",
-            ErrorCodeKey.data.name)
+        .must((dataPrevista) => dataPrevista != "", "Selecione uma data!", ErrorCodeKey.data.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.data.name);
 
     ruleFor((servico) => servico.horario.value, key: ErrorCodeKey.horario.name)
-        .must((horarioPrevisto) => horarioPrevisto != "",
-            "Selecione um período válido!", ErrorCodeKey.horario.name)
+        .must((horarioPrevisto) => horarioPrevisto != "", "Selecione um período válido!", ErrorCodeKey.horario.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.horario.name);
 
-    ruleFor((servico) => servico.descricao.value,
-            key: ErrorCodeKey.descricao.name)
-        .must((descricao) => descricao != "",
-            "O campo 'descrição' é obrigatório!", ErrorCodeKey.descricao.name)
-        .minLength(10,
-            message: "É necessário o mínimo de 10 caracteres!",
-            code: ErrorCodeKey.descricao.name)
-        .must((descricao) => descricao.split(" ").length > 2,
-            "Insira ao menos 3 palavras!", ErrorCodeKey.descricao.name)
+    ruleFor((servico) => servico.descricao.value, key: ErrorCodeKey.descricao.name)
+        .must((descricao) => descricao != "", "O campo 'descrição' é obrigatório!", ErrorCodeKey.descricao.name)
+        .minLength(10, message: "É necessário o mínimo de 10 caracteres!", code: ErrorCodeKey.descricao.name)
+        .must((descricao) => descricao.split(" ").length > 2, "Insira ao menos 3 palavras!", ErrorCodeKey.descricao.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.descricao.name);
 
-    ruleFor((servico) => servico.id, key: ErrorCodeKey.tecnico.name)
+    ruleFor((servico) => servico.idTecnico, key: ErrorCodeKey.tecnico.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.tecnico.name)
-        .must((id) => id != null, "Selecione um técnico",
-            ErrorCodeKey.tecnico.name);
+        .must((id) => id != null, "Selecione um técnico", ErrorCodeKey.tecnico.name);
   }
 }
 
-class ClienteValidator extends LucidValidator<ClienteForm>
-    with BackendErrorsValidator {
+class ClienteValidator extends LucidValidator<ClienteForm> with BackendErrorsValidator {
   ClienteValidator() {
-    ruleFor((cliente) => cliente.nome.value,
-            key: ErrorCodeKey.nomeESobrenome.name)
-        .must((nome) => nome.isNotEmpty, "O campo 'nome' é obrigatório!",
-            ErrorCodeKey.nomeESobrenome.name)
-        .must(
-            (nome) => nome.split(" ").length > 1,
-            "É necessário o nome e sobrenome!",
-            ErrorCodeKey.nomeESobrenome.name)
-        .must(
-            (nome) =>
-                (nome.split(" ").length > 1 && nome.split(" ")[1].length > 2),
-            "O sobrenome precisa ter 2 caracteres!",
-            ErrorCodeKey.nomeESobrenome.name)
-        .customValidExternalErrors(
-            externalErrors, ErrorCodeKey.nomeESobrenome.name);
+    ruleFor((cliente) => cliente.nome.value, key: ErrorCodeKey.nomeESobrenome.name)
+        .must((nome) => nome.isNotEmpty, "O campo 'nome' é obrigatório!", ErrorCodeKey.nomeESobrenome.name)
+        .must((nome) => nome.split(" ").length > 1, "É necessário o nome e sobrenome!", ErrorCodeKey.nomeESobrenome.name)
+        .must((nome) => (nome.split(" ").length > 1 && nome.split(" ")[1].length > 2), "O sobrenome precisa ter 2 caracteres!", ErrorCodeKey.nomeESobrenome.name)
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.nomeESobrenome.name);
 
-    ruleFor((cliente) => cliente.telefoneCelular.value,
-            key: ErrorCodeKey.telefoneCelular.name)
-        .customValidExternalErrors(
-            externalErrors, ErrorCodeKey.telefoneCelular.name);
+    ruleFor((cliente) => cliente.telefoneCelular.value, key: ErrorCodeKey.telefoneCelular.name)
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.telefoneCelular.name);
 
-    ruleFor((cliente) => cliente.telefoneFixo.value,
-            key: ErrorCodeKey.telefoneFixo.name)
-        .customValidExternalErrors(
-            externalErrors, ErrorCodeKey.telefoneFixo.name);
+    ruleFor((cliente) => cliente.telefoneFixo.value, key: ErrorCodeKey.telefoneFixo.name)
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.telefoneFixo.name);
 
     ruleFor((cliente) => cliente, key: ErrorCodeKey.telefones.name)
-        .must(
-            (cliente) =>
-                cliente.telefoneCelular.value.isNotEmpty ||
-                cliente.telefoneFixo.value.isNotEmpty,
-            "Preencha ao menos um dos campos telefone!",
-            ErrorCodeKey.telefones.name)
+        .must((cliente) => cliente.telefoneCelular.value.isNotEmpty || cliente.telefoneFixo.value.isNotEmpty, "Preencha ao menos um dos campos telefone!", ErrorCodeKey.telefones.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.telefones.name);
 
-    ruleFor((cliente) => cliente.municipio.value,
-            key: ErrorCodeKey.municipio.name)
-        .must((cliente) => cliente.isNotEmpty, "Selecione um múnicipio.",
-            ErrorCodeKey.municipio.name)
+    ruleFor((cliente) => cliente.municipio.value, key: ErrorCodeKey.municipio.name)
+        .must((cliente) => cliente.isNotEmpty, "Selecione um múnicipio.", ErrorCodeKey.municipio.name)
         .isNotNull()
         .customValidExternalErrors(externalErrors, ErrorCodeKey.municipio.name);
 
     ruleFor((cliente) => cliente.bairro.value, key: ErrorCodeKey.bairro.name)
-        .must((municipio) => municipio.isNotEmpty,
-            "O campo 'bairro' é obrigatório!", ErrorCodeKey.bairro.name)
+        .must((municipio) => municipio.isNotEmpty, "O campo 'bairro' é obrigatório!", ErrorCodeKey.bairro.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.bairro.name);
 
     ruleFor((cliente) => cliente.rua.value, key: ErrorCodeKey.rua.name)
-        .must((rua) => rua.isNotEmpty, "O campo 'rua' é obrigatório!",
-            ErrorCodeKey.rua.name)
+        .must((rua) => rua.isNotEmpty, "O campo 'rua' é obrigatório!", ErrorCodeKey.rua.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.rua.name);
 
     ruleFor((cliente) => cliente.numero.value, key: ErrorCodeKey.numero.name)
-        .must((numero) => numero.isNotEmpty, "O campo 'número' é obrigatório!",
-            ErrorCodeKey.numero.name)
-        .must(
-            (numero) => RegExp(r'^\d+$').hasMatch(numero),
-            "O campo 'número' deve conter apenas dígitos!",
-            ErrorCodeKey.numero.name)
+        .must((numero) => numero.isNotEmpty, "O campo 'número' é obrigatório!", ErrorCodeKey.numero.name)
+        .must((numero) => RegExp(r'^\d+$').hasMatch(numero), "O campo 'número' deve conter apenas dígitos!", ErrorCodeKey.numero.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.numero.name);
   }
 }
 
-class TecnicoValidator extends LucidValidator<TecnicoForm>
-    with BackendErrorsValidator {
+class TecnicoValidator extends LucidValidator<TecnicoForm> with BackendErrorsValidator {
   List<int> conhecimentos = [];
 
   TecnicoValidator() {
-    ruleFor((tecnico) => tecnico.nome.value,
-            key: ErrorCodeKey.nomeESobrenome.name)
-        .customValidExternalErrors(
-            externalErrors, ErrorCodeKey.nomeESobrenome.name)
-        .must((nome) => nome.isNotEmpty, "O campo 'nome' é obrigatório!",
-            ErrorCodeKey.nomeESobrenome.name)
-        .must(
-            (nome) => nome.split(" ").length > 1,
-            "É necessário o nome e sobrenome!",
-            ErrorCodeKey.nomeESobrenome.name)
-        .must(
-            (nome) =>
-                (nome.split(" ").length > 1 && nome.split(" ")[1].length > 2),
-            "O sobrenome precisa ter 2 caracteres!",
-            ErrorCodeKey.nomeESobrenome.name);
+    ruleFor((tecnico) => tecnico.nome.value, key: ErrorCodeKey.nomeESobrenome.name)
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.nomeESobrenome.name)
+        .must((nome) => nome.isNotEmpty, "O campo 'nome' é obrigatório!", ErrorCodeKey.nomeESobrenome.name)
+        .must((nome) => nome.split(" ").length > 1, "É necessário o nome e sobrenome!", ErrorCodeKey.nomeESobrenome.name)
+        .must((nome) => (nome.split(" ").length > 1 && nome.split(" ")[1].length > 2), "O sobrenome precisa ter 2 caracteres!", ErrorCodeKey.nomeESobrenome.name);
 
-    ruleFor((tecnico) => tecnico.situacao.value,
-            key: ErrorCodeKey.situacao.name)
-        .must((situacao) => situacao.isNotEmpty, "Selecione uma situação.",
-            ErrorCodeKey.situacao.name);
+    ruleFor((tecnico) => tecnico.situacao.value, key: ErrorCodeKey.situacao.name)
+        .must((situacao) => situacao.isNotEmpty, "Selecione uma situação.", ErrorCodeKey.situacao.name);
 
-    ruleFor((tecnico) => tecnico.telefoneCelular.value,
-            key: ErrorCodeKey.telefoneCelular.name)
-        .customValidExternalErrors(
-            externalErrors, ErrorCodeKey.telefoneCelular.name);
+    ruleFor((tecnico) => tecnico.telefoneCelular.value, key: ErrorCodeKey.telefoneCelular.name)
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.telefoneCelular.name);
 
-    ruleFor((tecnico) => tecnico.telefoneFixo.value,
-            key: ErrorCodeKey.telefoneFixo.name)
-        .customValidExternalErrors(
-            externalErrors, ErrorCodeKey.telefoneFixo.name);
+    ruleFor((tecnico) => tecnico.telefoneFixo.value, key: ErrorCodeKey.telefoneFixo.name)
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.telefoneFixo.name);
 
     ruleFor((cliente) => cliente, key: ErrorCodeKey.telefones.name)
-        .must(
-            (cliente) =>
-                cliente.telefoneCelular.value.isNotEmpty ||
-                cliente.telefoneFixo.value.isNotEmpty,
-            "Preencha ao menos um dos campos telefone!",
-            ErrorCodeKey.telefones.name)
+        .must((cliente) => cliente.telefoneCelular.value.isNotEmpty || cliente.telefoneFixo.value.isNotEmpty, "Preencha ao menos um dos campos telefone!", ErrorCodeKey.telefones.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.telefones.name);
 
-    ruleFor((tecnico) => tecnico.conhecimentos.value,
-            key: ErrorCodeKey.conhecimento.name)
-        .customValidIsEmpty(
-            conhecimentos,
-            "Selecione ao menos um conhecimento!",
-            ErrorCodeKey.conhecimento.name);
+    ruleFor((tecnico) => tecnico.conhecimentos.value, key: ErrorCodeKey.conhecimento.name)
+        .customValidIsEmpty(conhecimentos, "Selecione ao menos um conhecimento!", ErrorCodeKey.conhecimento.name);
   }
 
   void setConhecimentos(List<int> conhecimentos) {

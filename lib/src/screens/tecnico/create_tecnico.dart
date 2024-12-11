@@ -11,7 +11,7 @@ import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
 import 'package:lucid_validation/lucid_validation.dart';
-import 'package:serv_oeste/src/util/input_masks.dart';
+import 'package:serv_oeste/src/shared/input_masks.dart';
 
 class CreateTecnico extends StatefulWidget {
   const CreateTecnico({super.key});

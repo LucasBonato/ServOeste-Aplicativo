@@ -45,13 +45,13 @@ class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
   Future<void> _registerService(ServicoRegisterEvent event, Emitter emit) async {
     emit(ServicoLoadingState());
     ErrorEntity? error = await _servicoRepository.createServicoComClienteExistente(event.servico);
-    emit(error == null ? ServicoRegisterSuccessState() : ServicoErrorState(error: error));
+    emit((error == null) ? ServicoRegisterSuccessState() : ServicoErrorState(error: error));
   }
 
   Future<void> _registerServicePlusClient(ServicoRegisterPlusClientEvent event, Emitter emit) async {
     emit(ServicoLoadingState());
     ErrorEntity? error = await _servicoRepository.createServicoComClienteNaoExistente(event.servico, event.cliente);
-    emit(error == null ? ServicoRegisterSuccessState() : ServicoErrorState(error: error));
+    emit((error == null) ? ServicoRegisterSuccessState() : ServicoErrorState(error: error));
   }
 
   Future<void> _updateService(ServicoUpdateEvent event, Emitter emit) async {

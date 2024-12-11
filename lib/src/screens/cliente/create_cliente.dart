@@ -13,7 +13,7 @@ import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
-import 'package:serv_oeste/src/util/input_masks.dart';
+import 'package:serv_oeste/src/shared/input_masks.dart';
 
 class CreateCliente extends StatefulWidget {
   const CreateCliente({super.key});
@@ -191,9 +191,7 @@ class _CreateClienteState extends State<CreateCliente> {
                             hide: true,
                             masks: InputMasks.maskTelefoneFixo,
                             valueNotifier: _clienteCreateForm.telefoneFixo,
-                            validator: _clienteCreateValidator.byField(
-                                _clienteCreateForm,
-                                ErrorCodeKey.telefones.name),
+                            validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.telefones.name),
                             onChanged: _clienteCreateForm.setTelefoneFixo,
                           ),
                         ),
@@ -207,9 +205,7 @@ class _CreateClienteState extends State<CreateCliente> {
                             maxLength: 15,
                             type: TextInputType.phone,
                             hide: true,
-                            validator: _clienteCreateValidator.byField(
-                                _clienteCreateForm,
-                                ErrorCodeKey.telefones.name),
+                            validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.telefones.name),
                             onChanged: _clienteCreateForm.setTelefoneCelular,
                           ),
                         ),
@@ -223,25 +219,22 @@ class _CreateClienteState extends State<CreateCliente> {
                             bloc: _enderecoBloc,
                             listener: (context, state) {
                               if (state is EnderecoSuccessState) {
-                                Logger().i(state.municipio);
                                 _clienteCreateForm.setBairro(state.bairro);
                                 _clienteCreateForm.setRua(state.rua);
-                                _clienteCreateForm
-                                    .setMunicipio(state.municipio);
+                                _clienteCreateForm.setMunicipio(state.municipio);
                                 _municipioController.text = state.municipio;
                               }
                             },
                             child: CustomTextFormField(
                               hint: "00000-000",
                               label: "CEP",
-                              type: TextInputType.streetAddress,
+                              type: TextInputType.number,
                               rightPadding: 8,
                               maxLength: 9,
                               hide: true,
                               masks: InputMasks.maskCep,
                               valueNotifier: _clienteCreateForm.cep,
-                              validator: _clienteCreateValidator.byField(
-                                  _clienteCreateForm, ErrorCodeKey.cep.name),
+                              validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.cep.name),
                               onChanged: _fetchInformationAboutCep,
                             ),
                           ),
@@ -267,8 +260,7 @@ class _CreateClienteState extends State<CreateCliente> {
                       maxLength: 255,
                       hide: true,
                       valueNotifier: _clienteCreateForm.bairro,
-                      validator: _clienteCreateValidator.byField(
-                          _clienteCreateForm, ErrorCodeKey.bairro.name),
+                      validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.bairro.name),
                       onChanged: _clienteCreateForm.setBairro,
                     ),
                     Row(
@@ -283,8 +275,7 @@ class _CreateClienteState extends State<CreateCliente> {
                             rightPadding: 8,
                             hide: true,
                             valueNotifier: _clienteCreateForm.rua,
-                            validator: _clienteCreateValidator.byField(
-                                _clienteCreateForm, ErrorCodeKey.rua.name),
+                            validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.rua.name),
                             onChanged: _clienteCreateForm.setRua,
                           ),
                         ),
@@ -346,18 +337,17 @@ class _CreateClienteState extends State<CreateCliente> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                0, 16, 0, 128),
+                            padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 128),
                             child: BlocListener<ClienteBloc, ClienteState>(
                               bloc: _clienteBloc,
                               listener: (context, state) {
                                 if (state is ClienteRegisterSuccessState) {
                                   _handleBackNavigation();
-                                } else if (state is ClienteErrorState) {
+                                }
+                                else if (state is ClienteErrorState) {
                                   ErrorEntity error = state.error;
 
-                                  _clienteCreateValidator
-                                      .applyBackendError(error);
+                                  _clienteCreateValidator.applyBackendError(error);
                                   _clienteFormKey.currentState?.validate();
                                   _clienteCreateValidator.cleanExternalErrors();
 
