@@ -32,9 +32,9 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
   late ValueNotifier<String> _dropDownSituacaoValue;
 
   final Map<String, String> situationMap = {
-    'a': Constants.situationTecnicoList[1]['label'],
-    'l': Constants.situationTecnicoList[2]['label'],
-    'd': Constants.situationTecnicoList[3]['label'],
+    'ATIVO': 'Ativo',
+    'LICENCA': 'Licenca',
+    'DESATIVADO': 'Desativado',
   };
 
   final Map<String, bool> checkersMap = {
@@ -227,10 +227,11 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
               _telefoneCelularController.text =
                   currentState.tecnico.telefoneCelular ?? '';
 
-              final tecnicoSituacao =
-                  currentState.tecnico.situacao?.toLowerCase() ?? '';
-              _dropDownSituacaoValue.value =
-                  situationMap[tecnicoSituacao] ?? _dropDownSituacaoValue.value;
+              final tecnicoSituacao = currentState.tecnico.situacao ?? '';
+              final mappedSituacao =
+                  situationMap[tecnicoSituacao] ?? 'Situação...';
+
+              _dropDownSituacaoValue.value = mappedSituacao;
 
               if (currentState.tecnico.especialidades != null) {
                 for (Especialidade especialidade
@@ -287,12 +288,12 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                                 flex: 1,
                                 child: CustomDropdownField(
                                   label: "Situação",
-                                  leftPadding: 0,
-                                  valueNotifier: _dropDownSituacaoValue,
-                                  validator: _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, ErrorCodeKey.situacao.name),
                                   dropdownValues: Constants.situationTecnicoList
                                       .map((item) => item['label'] as String)
                                       .toList(),
+                                  leftPadding: 0,
+                                  valueNotifier: _dropDownSituacaoValue,
+                                  validator: _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, ErrorCodeKey.situacao.name),
                                   onChanged: (String? value) {
                                     _tecnicoUpdateForm.setSituacao(value);
                                     setState(() {

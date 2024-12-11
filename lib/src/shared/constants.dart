@@ -4,7 +4,7 @@ class Constants {
   static const List<Map<String, dynamic>> situationTecnicoList = [
     {'label': 'Situação...', 'value': ''},
     {'label': 'Ativo', 'value': 'Ativo'},
-    {'label': 'Licença', 'value': 'Licença'},
+    {'label': 'Licenca', 'value': 'Licenca'},
     {'label': 'Desativado', 'value': 'Desativado'}
   ];
   static const List<String> situationServiceList = [

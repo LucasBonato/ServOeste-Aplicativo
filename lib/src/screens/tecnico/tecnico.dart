@@ -34,8 +34,10 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     _listBloc = context.read<ListBloc>();
     _idController = TextEditingController();
     _nomeController = TextEditingController();
-    _situacaoController = SingleSelectController<String>('Situação...');
-    _situacaoNotifier = ValueNotifier<String>('');
+    _situacaoController = SingleSelectController<String>(
+        Constants.situationTecnicoList[1]['label']);
+    _situacaoNotifier =
+        ValueNotifier<String>(Constants.situationTecnicoList[1]['value']);
     _listBloc.add(ListInitialEvent());
   }
 

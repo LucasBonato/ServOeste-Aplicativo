@@ -62,7 +62,7 @@ class _HomeState extends State<Home> {
             horizontal: MediaQuery.of(context).size.width * 0.05,
           ),
           child: Text(
-            "Agenda do Dia",
+            "Agenda da Semana",
             style: TextStyle(
               fontSize: MediaQuery.of(context).size.width.clamp(18.0, 26.0),
               fontWeight: FontWeight.bold,
@@ -75,6 +75,28 @@ class _HomeState extends State<Home> {
           child: BlocBuilder<ServicoBloc, ServicoState>(
             builder: (context, state) {
               if (state is ServicoSearchSuccessState) {
+                if (state.servicos.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.calendar_today,
+                          size: 80,
+                          color: Colors.grey[400],
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          "Nenhum serviço agendado para essa semana",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
                 return SingleChildScrollView(
                   child: GridListView(
                     aspectRatio: 1.5,
@@ -91,6 +113,17 @@ class _HomeState extends State<Home> {
                   ),
                 );
               }
+              if (state is ServicoErrorState) {
+                return Center(
+                  child: Text(
+                    "Erro ao carregar os serviços",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.red,
+                    ),
+                  ),
+                );
+              }
               return const Center(child: CircularProgressIndicator.adaptive());
             },
           ),
@@ -99,4 +132,3 @@ class _HomeState extends State<Home> {
     );
   }
 }
-//TODO - Mostrar alguma menssagem quando não tiver serviços no dia, ou mostrar os da semana.
