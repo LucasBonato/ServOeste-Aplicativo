@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/custom_grid_checkers_form_field.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
@@ -60,7 +61,13 @@ class _CreateTecnicoState extends State<CreateTecnico> {
 
   bool _isValidForm() {
     _tecnicoFormKey.currentState?.validate();
-    final ValidationResult response = _tecnicoCreateValidator.validate(_tecnicoCreateForm);
+    final ValidationResult response =
+        _tecnicoCreateValidator.validate(_tecnicoCreateForm);
+
+    if (!response.isValid) {
+      Logger().e(response.exceptions[0].message);
+    }
+
     return response.isValid;
   }
 
@@ -86,7 +93,8 @@ class _CreateTecnicoState extends State<CreateTecnico> {
         _tecnicoCreateForm.removeConhecimentos(idConhecimento);
       }
     });
-    _tecnicoCreateValidator.setConhecimentos(_tecnicoCreateForm.conhecimentos.value);
+    _tecnicoCreateValidator
+        .setConhecimentos(_tecnicoCreateForm.conhecimentos.value);
 
     if (_isValidForm() == false) {
       return;
@@ -95,6 +103,9 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     List<String> nomes = _tecnicoCreateForm.nome.value.split(" ");
     _tecnicoCreateForm.nome.value = nomes.first;
     String sobrenome = nomes.sublist(1).join(" ").trim();
+
+    print('Campos: ${Tecnico.fromForm(_tecnicoCreateForm)}');
+    print('nome: ${nomes}');
 
     _tecnicoBloc.add(TecnicoRegisterEvent(
         tecnico: Tecnico.fromForm(_tecnicoCreateForm), sobrenome: sobrenome));

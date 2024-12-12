@@ -24,7 +24,8 @@ class UpdateTecnico extends StatefulWidget {
 class _UpdateTecnicoState extends State<UpdateTecnico> {
   final TecnicoBloc _tecnicoBloc = TecnicoBloc();
   final TecnicoForm _tecnicoUpdateForm = TecnicoForm();
-  final TecnicoValidator _tecnicoUpdateValidator = TecnicoValidator();
+  final TecnicoValidator _tecnicoUpdateValidator =
+      TecnicoValidator(isUpdate: true);
   final GlobalKey<FormState> _tecnicoFormKey = GlobalKey<FormState>();
   late final TextEditingController _nomeController,
       _telefoneCelularController,
@@ -280,7 +281,9 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                                   rightPadding: 8,
                                   hide: false,
                                   valueNotifier: _tecnicoUpdateForm.nome,
-                                  validator: _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, ErrorCodeKey.nomeESobrenome.name),
+                                  validator: _tecnicoUpdateValidator.byField(
+                                      _tecnicoUpdateForm,
+                                      ErrorCodeKey.nomeESobrenome.name),
                                   onChanged: _tecnicoUpdateForm.setNome,
                                 ),
                               ),
@@ -293,7 +296,9 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                                       .toList(),
                                   leftPadding: 0,
                                   valueNotifier: _dropDownSituacaoValue,
-                                  validator: _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, ErrorCodeKey.situacao.name),
+                                  validator: _tecnicoUpdateValidator.byField(
+                                      _tecnicoUpdateForm,
+                                      ErrorCodeKey.situacao.name),
                                   onChanged: (String? value) {
                                     _tecnicoUpdateForm.setSituacao(value);
                                     setState(() {

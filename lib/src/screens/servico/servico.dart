@@ -224,4 +224,4 @@ class ServicoScreenState extends State<ServicoScreen> {
     super.dispose();
   }
 }
-//TODO - Criar um jeito de selecionar o card para possível edição ou mais ações no futuro. Não entendi o que vc quer fazer
+// TODO - Criar um jeito de selecionar o card para possível edição ou mais ações no futuro. Não entendi o que vc quer fazer
