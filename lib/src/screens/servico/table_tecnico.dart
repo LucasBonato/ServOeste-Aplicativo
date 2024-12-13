@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 class TableTecnicosModal extends StatefulWidget {
@@ -57,7 +58,8 @@ class _TableTecnicosModalState extends State<TableTecnicosModal> {
     ];
 
     _columnGroups = [
-      PlutoColumnGroup(title: 'Técnicos', fields: ['tecnico'], expandedColumn: true),
+      PlutoColumnGroup(
+          title: 'Técnicos', fields: ['tecnico'], expandedColumn: true),
       PlutoColumnGroup(title: '13/12/24', fields: ['13-12-M', '13-12-T']),
       PlutoColumnGroup(title: '14/12/24', fields: ['14-12-M', '14-12-T']),
       PlutoColumnGroup(title: '16/12/24', fields: ['16-12-M', '16-12-T']),
@@ -156,7 +158,7 @@ class _TableTecnicosModalState extends State<TableTecnicosModal> {
                 ),
                 onRowDoubleTap: (PlutoGridOnRowDoubleTapEvent event) {
                   final tecnico = event.row.cells['tecnico']?.value;
-                  print('Duplo clique no técnico: $tecnico');
+                  Logger().e('Duplo clique no técnico: $tecnico');
                 },
               ),
             ),

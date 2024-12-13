@@ -8,8 +8,11 @@ class Servico {
   final String filial;
   final String horarioPrevisto;
   final String marca;
+  final String? garantia;
   final String situacao;
   final DateTime dataAtendimentoPrevisto;
+  final DateTime? dataAtendimentoEfetivo;
+  final DateTime? dataAtendimentoAbertura;
 
   Servico({
     required this.id,
@@ -22,20 +25,31 @@ class Servico {
     required this.horarioPrevisto,
     required this.marca,
     required this.situacao,
-    required this.dataAtendimentoPrevisto
+    this.garantia,
+    required this.dataAtendimentoPrevisto,
+    this.dataAtendimentoEfetivo,
+    this.dataAtendimentoAbertura,
   });
 
   factory Servico.fromJson(Map<String, dynamic> json) => Servico(
-    id: json["id"],
-    idCliente: json["idCliente"],
-    idTecnico: json["idTecnico"],
-    nomeCliente: json["nomeCliente"],
-    nomeTecnico: json["nomeTecnico"],
-    equipamento: json["equipamento"],
-    filial: json["filial"],
-    horarioPrevisto: json["horarioPrevisto"],
-    marca: json["marca"],
-    situacao: json["situacao"],
-    dataAtendimentoPrevisto: DateTime.parse(json["dataAtendimentoPrevisto"])
-  );
+        id: json["id"],
+        idCliente: json["idCliente"],
+        idTecnico: json["idTecnico"],
+        nomeCliente: json["nomeCliente"],
+        nomeTecnico: json["nomeTecnico"],
+        equipamento: json["equipamento"],
+        filial: json["filial"],
+        horarioPrevisto: json["horarioPrevisto"],
+        marca: json["marca"],
+        situacao: json["situacao"],
+        garantia: json["garantia"],
+        dataAtendimentoPrevisto:
+            DateTime.parse(json["dataAtendimentoPrevisto"]),
+        dataAtendimentoEfetivo: json["dataAtendimentoEfetivo"] != null
+            ? DateTime.parse(json["dataAtendimentoEfetivo"])
+            : null,
+        dataAtendimentoAbertura: json["dataAtendimentoAbertura"] != null
+            ? DateTime.parse(json["dataAtendimentoAbertura"])
+            : null,
+      );
 }

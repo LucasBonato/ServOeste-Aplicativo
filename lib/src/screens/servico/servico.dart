@@ -38,7 +38,7 @@ class ServicoScreenState extends State<ServicoScreen> {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
     _debounce = Timer(
-      Duration(milliseconds: 150),
+      const Duration(milliseconds: 150),
       () => _servicoBloc.add(
         ServicoLoadingEvent(
           filterRequest: ServicoFilterRequest(
@@ -49,15 +49,6 @@ class ServicoScreenState extends State<ServicoScreen> {
       ),
     );
   }
-
-  // void _disableServico() {
-  //   // final List<int> selectedItemsCopy = List<int>.from(_selectedItems);
-  //   // _servicoBloc.add(_deleteService(selectedList: selectedItemsCopy));
-  //   // setState(() {
-  //   //   _selectedItems.clear();
-  //   //   isSelected = false;
-  //   // });
-  // }
 
   Widget _buildSearchInputs() {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -76,7 +67,8 @@ class ServicoScreenState extends State<ServicoScreen> {
 
     Widget buildFilterIcon() => InkWell(
           onTap: () => Navigator.of(context, rootNavigator: true)
-              .push(MaterialPageRoute(builder: (context) => FilterService())),
+              .push(MaterialPageRoute(builder: (context) => FilterService()))
+              .then((_) => _onNomeChanged()),
           hoverColor: const Color(0xFFF5EEED),
           borderRadius: BorderRadius.circular(10),
           child: Ink(
@@ -113,8 +105,9 @@ class ServicoScreenState extends State<ServicoScreen> {
               ),
             ),
             Padding(
-                padding: EdgeInsets.only(right: 8, top: 4),
-                child: buildFilterIcon()),
+              padding: const EdgeInsets.only(right: 8, top: 4),
+              child: buildFilterIcon(),
+            ),
           ],
         );
 
@@ -133,7 +126,7 @@ class ServicoScreenState extends State<ServicoScreen> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(right: 8, top: 4),
+                  padding: const EdgeInsets.only(right: 8, top: 4),
                   child: buildFilterIcon(),
                 ),
               ],
@@ -177,12 +170,17 @@ class ServicoScreenState extends State<ServicoScreen> {
           _buildSearchInputs(),
           Expanded(
             child: BlocBuilder<ServicoBloc, ServicoState>(
-              builder: (context, state) {
-                if (state is ServicoSearchSuccessState) {
+              builder: (context, stateServico) {
+                if (stateServico is ServicoInitialState ||
+                    stateServico is ServicoLoadingState) {
+                  return const Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  );
+                } else if (stateServico is ServicoSearchSuccessState) {
                   return SingleChildScrollView(
                     child: GridListView(
-                      aspectRatio: 1.5,
-                      dataList: state.servicos,
+                      aspectRatio: 1,
+                      dataList: stateServico.servicos,
                       buildCard: (servico) => BlocBuilder<ListBloc, ListState>(
                         bloc: _listBloc,
                         builder: (context, stateList) {
@@ -196,10 +194,15 @@ class ServicoScreenState extends State<ServicoScreen> {
                           return CardService(
                             cliente: (servico as Servico).nomeCliente,
                             tecnico: servico.nomeTecnico,
+                            codigo: servico.id,
                             equipamento: servico.equipamento,
                             marca: servico.marca,
-                            local: servico.filial,
-                            data: servico.dataAtendimentoPrevisto,
+                            filial: servico.filial,
+                            horario: servico.horarioPrevisto,
+                            dataPrevista: servico.dataAtendimentoPrevisto,
+                            dataAbertura: servico.dataAtendimentoAbertura,
+                            dataEfetiva: servico.dataAtendimentoEfetivo,
+                            garantia: servico.garantia,
                             status: servico.situacao,
                             isSelected: isSelected,
                           );
@@ -208,8 +211,14 @@ class ServicoScreenState extends State<ServicoScreen> {
                     ),
                   );
                 }
-                return const Center(
-                    child: CircularProgressIndicator.adaptive());
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.not_interested, size: 30),
+                    const SizedBox(height: 16),
+                    const Text("Aconteceu um erro!!"),
+                  ],
+                );
               },
             ),
           )
@@ -221,6 +230,8 @@ class ServicoScreenState extends State<ServicoScreen> {
   @override
   void dispose() {
     _debounce?.cancel();
+    _nomeClienteController.dispose();
+    _nomeTecnicoController.dispose();
     super.dispose();
   }
 }

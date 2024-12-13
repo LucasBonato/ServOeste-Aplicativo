@@ -104,9 +104,6 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     _tecnicoCreateForm.nome.value = nomes.first;
     String sobrenome = nomes.sublist(1).join(" ").trim();
 
-    print('Campos: ${Tecnico.fromForm(_tecnicoCreateForm)}');
-    print('nome: ${nomes}');
-
     _tecnicoBloc.add(TecnicoRegisterEvent(
         tecnico: Tecnico.fromForm(_tecnicoCreateForm), sobrenome: sobrenome));
     _tecnicoCreateForm.nome.value = "${nomes.first} $sobrenome";

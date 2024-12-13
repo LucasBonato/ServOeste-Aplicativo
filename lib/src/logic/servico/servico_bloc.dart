@@ -24,41 +24,47 @@ class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
     on<ServicoDeleteEvent>(_deleteService);
   }
 
-  Future<void> _fetchAllServices(ServicoLoadingEvent event, Emitter emit) async {
+  Future<void> _fetchAllServices(
+      ServicoLoadingEvent event, Emitter<ServicoState> emit) async {
     emit(ServicoLoadingState());
     try {
-      List<Servico>? servicos = await _servicoRepository.getServicosByFilter(event.filterRequest);
-      emit(ServicoSearchSuccessState(servicos: servicos?? []));
-    } on DioException {
-      emit(ServicoErrorState(error: ErrorEntity(id: 0, errorMessage: "")));
+      List<Servico>? response =
+          await _servicoRepository.getServicosByFilter(event.filterRequest);
+      emit(ServicoSearchSuccessState(servicos: response ?? []));
+    } on DioException catch (e) {
+      emit(ServicoErrorState(
+        error:
+            ErrorEntity(id: 0, errorMessage: e.message ?? 'Erro desconhecido'),
+      ));
     }
   }
 
-  Future<void> _fetchOneService(ServicoSearchOneEvent event, Emitter emit) async {
+  Future<void> _fetchOneService(
+      ServicoSearchOneEvent event, Emitter emit) async {}
 
-  }
+  Future<void> _searchServices(ServicoSearchEvent event, Emitter emit) async {}
 
-  Future<void> _searchServices(ServicoSearchEvent event, Emitter emit) async {
-
-  }
-
-  Future<void> _registerService(ServicoRegisterEvent event, Emitter emit) async {
+  Future<void> _registerService(
+      ServicoRegisterEvent event, Emitter emit) async {
     emit(ServicoLoadingState());
-    ErrorEntity? error = await _servicoRepository.createServicoComClienteExistente(event.servico);
-    emit((error == null) ? ServicoRegisterSuccessState() : ServicoErrorState(error: error));
+    ErrorEntity? error = await _servicoRepository
+        .createServicoComClienteExistente(event.servico);
+    emit((error == null)
+        ? ServicoRegisterSuccessState()
+        : ServicoErrorState(error: error));
   }
 
-  Future<void> _registerServicePlusClient(ServicoRegisterPlusClientEvent event, Emitter emit) async {
+  Future<void> _registerServicePlusClient(
+      ServicoRegisterPlusClientEvent event, Emitter emit) async {
     emit(ServicoLoadingState());
-    ErrorEntity? error = await _servicoRepository.createServicoComClienteNaoExistente(event.servico, event.cliente);
-    emit((error == null) ? ServicoRegisterSuccessState() : ServicoErrorState(error: error));
+    ErrorEntity? error = await _servicoRepository
+        .createServicoComClienteNaoExistente(event.servico, event.cliente);
+    emit((error == null)
+        ? ServicoRegisterSuccessState()
+        : ServicoErrorState(error: error));
   }
 
-  Future<void> _updateService(ServicoUpdateEvent event, Emitter emit) async {
+  Future<void> _updateService(ServicoUpdateEvent event, Emitter emit) async {}
 
-  }
-
-  Future<void> _deleteService(ServicoDeleteEvent event, Emitter emit) async {
-
-  }
+  Future<void> _deleteService(ServicoDeleteEvent event, Emitter emit) async {}
 }

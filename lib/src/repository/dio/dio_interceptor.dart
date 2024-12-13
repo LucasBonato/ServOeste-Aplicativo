@@ -4,12 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 
 class DioInterceptor extends Interceptor {
-
-  final Logger _logger = Logger(
-    printer: PrettyPrinter(
-      printEmojis: false
-    )
-  );
+  final Logger _logger = Logger(printer: PrettyPrinter(printEmojis: false));
   final JsonEncoder jsonEncoder = const JsonEncoder.withIndent("  ");
 
   @override
@@ -20,7 +15,7 @@ class DioInterceptor extends Interceptor {
     logMessage += "BaseUri: ${options.baseUrl}\n";
     logMessage += "Endpoint: ${options.path}\n";
     logMessage += "Method: ${options.method}\n";
-    if(options.data != null) {
+    if (options.data != null) {
       logMessage += "Body: ${jsonEncoder.convert(options.data)}\n";
     }
 
@@ -33,7 +28,7 @@ class DioInterceptor extends Interceptor {
     String logMessage = "";
     logMessage += "TimeStamp: ${DateTime.now()}\n";
     logMessage += "StatusCode: ${response.statusCode}\n";
-    if(response.data != null) {
+    if (response.data != null) {
       logMessage += "ResponseBody: ${jsonEncoder.convert(response.data)}\n";
       logMessage += "RuntimeTypeBody: ${response.data.runtimeType}\n";
     }
@@ -50,7 +45,7 @@ class DioInterceptor extends Interceptor {
     logMessage += "ErrorMessage: ${err.message}\n";
     logMessage += "Error: ${err.error}\n";
     logMessage += "Response: ${err.response}\n";
-    if(err.response != null) {
+    if (err.response != null) {
       logMessage += "ErrorBody: ${jsonEncoder.convert(err.response)}\n";
     }
 

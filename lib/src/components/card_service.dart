@@ -2,25 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:serv_oeste/src/models/enums/service_status.dart';
 
 class CardService extends StatelessWidget {
+  final int codigo;
   final String cliente;
   final String equipamento;
   final String marca;
   final String tecnico;
-  final String local;
+  final String filial;
+  final String? garantia;
   final String status;
-  final DateTime data;
+  final DateTime dataPrevista;
+  final DateTime? dataEfetiva;
+  final DateTime? dataAbertura;
+  final String horario;
   final bool isSelected;
+  final void Function()? onLongPress;
+  final void Function()? onDoubleTap;
 
   const CardService({
     super.key,
+    required this.codigo,
     required this.cliente,
     required this.equipamento,
     required this.marca,
     required this.tecnico,
-    required this.local,
-    required this.data,
+    required this.filial,
+    this.garantia,
+    required this.dataPrevista,
+    this.dataEfetiva,
+    this.dataAbertura,
+    required this.horario,
     required this.status,
     this.isSelected = false,
+    this.onLongPress,
+    this.onDoubleTap,
   });
 
   Color _getStatusColor(ServiceStatus status) {
@@ -82,6 +96,17 @@ class CardService extends StatelessWidget {
     return "${status[0]}${status.substring(1).replaceAll("_", " ").toLowerCase()}";
   }
 
+  String formatHorario(String horario) {
+    switch (horario.toLowerCase()) {
+      case "manha":
+        return "Manhã";
+      case "tarde":
+        return "Tarde";
+      default:
+        return horario[0].toUpperCase() + horario.substring(1);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final ValueNotifier<bool> isHovered = ValueNotifier(false);
@@ -94,128 +119,194 @@ class CardService extends StatelessWidget {
         child: ValueListenableBuilder<bool>(
           valueListenable: isHovered,
           builder: (context, hovered, child) {
-            return ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: 100,
-                maxHeight: 200,
-                maxWidth: constraints.maxWidth,
-              ),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? const Color(0xFFE9E7E7)
-                      : const Color(0xFCFDFDFF),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: isSelected
-                        ? Colors.black38
-                        : (hovered ? Colors.black38 : const Color(0xFFEAE6E5)),
-                    width: 1.5,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.2),
-                      spreadRadius: 2,
-                      blurRadius: 6,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
+            return GestureDetector(
+              onLongPress: onLongPress,
+              onDoubleTap: onDoubleTap,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: 100,
+                  maxHeight: 200,
+                  maxWidth: constraints.maxWidth,
                 ),
-                child: Stack(
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(left: constraints.maxWidth * 0.05),
-                          child: Text(
-                            cliente,
-                            style: TextStyle(
-                              fontSize: constraints.maxWidth * 0.05,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? const Color(0xFFE9E7E7)
+                        : const Color(0xFCFDFDFF),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: isSelected
+                          ? Colors.black
+                          : (hovered
+                              ? Colors.black38
+                              : const Color(0xFFEAE6E5)),
+                      width: 1.5,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        spreadRadius: 2,
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Stack(
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  left: constraints.maxWidth * 0.05,
+                                  bottom: constraints.maxWidth * 0.05),
+                              child: Text(
+                                '$codigo',
+                                style: TextStyle(
+                                  fontSize: constraints.maxWidth * 0.065,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 5),
-                        Padding(
-                          padding:
-                              EdgeInsets.only(left: constraints.maxWidth * 0.1),
-                          child: SizedBox(
-                            width: constraints.maxWidth * 0.5,
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: constraints.maxWidth * 0.05),
                             child: Text(
-                              "$equipamento - $marca",
+                              cliente,
                               style: TextStyle(
-                                fontSize: constraints.maxWidth * 0.045,
+                                fontSize: constraints.maxWidth * 0.05,
+                                fontWeight: FontWeight.bold,
                                 color: Colors.black,
                               ),
-                              maxLines: 2,
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 5),
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: constraints.maxWidth * 0.1,
-                              top: constraints.maxWidth * 0.035),
-                          child: Text(
-                            "Técnico - $tecnico",
-                            style: TextStyle(
-                              fontSize: constraints.maxWidth * 0.045,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                          const SizedBox(height: 5),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: constraints.maxWidth * 0.1),
+                            child: SizedBox(
+                              width: constraints.maxWidth * 0.5,
+                              child: Text(
+                                "$equipamento - $marca",
+                                style: TextStyle(
+                                  fontSize: constraints.maxWidth * 0.045,
+                                  color: Colors.black,
+                                ),
+                                maxLines: 2,
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 5),
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: constraints.maxWidth * 0.15),
-                          child: Text(
-                            local,
-                            style: TextStyle(
-                              fontSize: constraints.maxWidth * 0.04,
-                              color: Colors.black,
+                          const SizedBox(height: 5),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: constraints.maxWidth * 0.1,
+                                top: constraints.maxWidth * 0.035),
+                            child: Text(
+                              "Técnico - $tecnico",
+                              style: TextStyle(
+                                fontSize: constraints.maxWidth * 0.045,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 5),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            left: constraints.maxWidth * 0.15,
-                          ),
-                          child: Text(
-                            "${data.day}/${data.month}/${data.year}",
-                            style: TextStyle(
-                              fontSize: constraints.maxWidth * 0.04,
-                              color: Colors.black,
+                          const SizedBox(height: 5),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: constraints.maxWidth * 0.15),
+                            child: Text(
+                              filial,
+                              style: TextStyle(
+                                fontSize: constraints.maxWidth * 0.04,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: SizedBox(
-                          width: constraints.maxWidth * 0.4,
-                          child: Text(
-                            _convertEnumStatusToString(status),
-                            style: TextStyle(
-                              fontSize: constraints.maxWidth * 0.045,
-                              fontWeight: FontWeight.bold,
-                              color: _getStatusColor(_mapStringStatusToEnumStatus(status)),
+                          const SizedBox(height: 5),
+                          Padding(
+                            padding: EdgeInsets.only(
+                              left: constraints.maxWidth * 0.15,
                             ),
-                            maxLines: 3,
-                            textAlign: TextAlign.center,
+                            child: Text(
+                              "${dataPrevista.day}/${dataPrevista.month}/${dataPrevista.year} - ${formatHorario(horario)}",
+                              style: TextStyle(
+                                fontSize: constraints.maxWidth * 0.04,
+                                color: Colors.black,
+                              ),
+                            ),
                           ),
-                        ),
+                          if (dataEfetiva != null)
+                            Padding(
+                              padding: EdgeInsets.only(
+                                left: constraints.maxWidth * 0.15,
+                              ),
+                              child: Text(
+                                "${dataEfetiva!.day}/${dataEfetiva!.month}/${dataEfetiva!.year}",
+                                style: TextStyle(
+                                  fontSize: constraints.maxWidth * 0.04,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          if (dataAbertura != null)
+                            Padding(
+                              padding: EdgeInsets.only(
+                                left: constraints.maxWidth * 0.15,
+                              ),
+                              child: Text(
+                                "${dataAbertura!.day}/${dataAbertura!.month}/${dataAbertura!.year}",
+                                style: TextStyle(
+                                  fontSize: constraints.maxWidth * 0.04,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          if (garantia != null && garantia!.isNotEmpty)
+                            Padding(
+                              padding: EdgeInsets.only(
+                                left: constraints.maxWidth * 0.15,
+                              ),
+                              child: Text(
+                                garantia!,
+                                style: TextStyle(
+                                  fontSize: constraints.maxWidth * 0.04,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          Align(
+                            alignment: Alignment.center,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  left: constraints.maxWidth * 0.05,
+                                  top: constraints.maxWidth * 0.05),
+                              child: SizedBox(
+                                width: constraints.maxWidth * 0.4,
+                                child: Text(
+                                  _convertEnumStatusToString(status),
+                                  style: TextStyle(
+                                    fontSize: constraints.maxWidth * 0.045,
+                                    fontWeight: FontWeight.bold,
+                                    color: _getStatusColor(
+                                        _mapStringStatusToEnumStatus(status)),
+                                  ),
+                                  maxLines: 3,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             );

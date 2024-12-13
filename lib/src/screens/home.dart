@@ -73,9 +73,13 @@ class _HomeState extends State<Home> {
         const SizedBox(height: 10),
         Expanded(
           child: BlocBuilder<ServicoBloc, ServicoState>(
-            builder: (context, state) {
-              if (state is ServicoSearchSuccessState) {
-                if (state.servicos.isEmpty) {
+            builder: (context, stateServico) {
+              if (stateServico is ServicoInitialState ||
+                  stateServico is ServicoLoadingState) {
+                return const Center(
+                    child: CircularProgressIndicator.adaptive());
+              } else if (stateServico is ServicoSearchSuccessState) {
+                if (stateServico.servicos.isEmpty) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -99,32 +103,33 @@ class _HomeState extends State<Home> {
                 }
                 return SingleChildScrollView(
                   child: GridListView(
-                    aspectRatio: 1.5,
-                    dataList: state.servicos,
+                    aspectRatio: 1.25,
+                    dataList: stateServico.servicos,
                     buildCard: (dynamic servico) => CardService(
                       cliente: (servico as Servico).nomeCliente,
+                      codigo: servico.id,
                       tecnico: servico.nomeTecnico,
                       equipamento: servico.equipamento,
                       marca: servico.marca,
-                      local: servico.filial,
-                      data: servico.dataAtendimentoPrevisto,
+                      filial: servico.filial,
+                      horario: servico.horarioPrevisto,
+                      dataPrevista: servico.dataAtendimentoPrevisto,
+                      dataEfetiva: servico.dataAtendimentoEfetivo,
+                      dataAbertura: servico.dataAtendimentoAbertura,
+                      garantia: servico.garantia,
                       status: servico.situacao,
                     ),
                   ),
                 );
               }
-              if (state is ServicoErrorState) {
-                return Center(
-                  child: Text(
-                    "Erro ao carregar os serviços",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.red,
-                    ),
-                  ),
-                );
-              }
-              return const Center(child: CircularProgressIndicator.adaptive());
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.not_interested, size: 30),
+                  const SizedBox(height: 16),
+                  const Text("Aconteceu um erro!!"),
+                ],
+              );
             },
           ),
         ),

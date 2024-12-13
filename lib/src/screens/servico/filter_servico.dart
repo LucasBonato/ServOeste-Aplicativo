@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:serv_oeste/src/logic/filter_service/filter_service_provider.dart';
 import 'package:serv_oeste/src/components/date_picker.dart';
@@ -22,7 +23,6 @@ class FilterService extends StatelessWidget {
     //     codigo: filter.codigo,
     //     filial: filter.filial,
     //     equipamento: filter.equipamento,
-    //     tecnicoNome: filter.tecnico,
     //     situacao: filter.situacao,
     //     garantia: filter.garantia,
     //     dataAtendimentoPrevistoAntes: filter.dataPrevista,
@@ -31,7 +31,7 @@ class FilterService extends StatelessWidget {
     //     periodo: filter.horario,
     //   ),
     // );
-    print(
+    Logger().e(
         "Filtros Aplicados: ${filter.codigo}, ${filter.filial}, ${filter.equipamento}, ${filter.tecnico}, ${filter.situacao}, ${filter.garantia}, ${filter.dataPrevista}, ${filter.dataEfetiva}, ${filter.dataAbertura}, ${filter.horario}");
   }
 
@@ -76,14 +76,6 @@ class FilterService extends StatelessWidget {
                     dropdownValues: Constants.equipamentos,
                     onChanged: (value) =>
                         provider.updateFilter(equipamento: value),
-                  ),
-                  const SizedBox(height: 16),
-                  CustomSearchDropDown(
-                    label: 'Nome do técnico...',
-                    dropdownValues: [],
-                    controller:
-                        TextEditingController(text: provider.filter.tecnico),
-                    onChanged: (value) => provider.updateFilter(tecnico: value),
                   ),
                   const SizedBox(height: 16),
                   CustomDropdownField(
