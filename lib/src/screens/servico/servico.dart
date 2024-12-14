@@ -59,8 +59,8 @@ class ServicoScreenState extends State<ServicoScreen> {
             {required String hint, TextEditingController? controller}) =>
         CustomSearchTextField(
           hint: hint,
-          leftPadding: 8,
-          rightPadding: 8,
+          leftPadding: 4,
+          rightPadding: 4,
           controller: controller,
           onChangedAction: (value) => _onNomeChanged(),
         );
@@ -105,7 +105,7 @@ class ServicoScreenState extends State<ServicoScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(right: 8, top: 4),
+              padding: const EdgeInsets.only(right: 4, top: 4, left: 4),
               child: buildFilterIcon(),
             ),
           ],
@@ -117,6 +117,7 @@ class ServicoScreenState extends State<ServicoScreen> {
               hint: 'Nome do Cliente...',
               controller: _nomeClienteController,
             ),
+            SizedBox(height: 5),
             Row(
               children: [
                 Expanded(
@@ -126,7 +127,7 @@ class ServicoScreenState extends State<ServicoScreen> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(right: 8, top: 4),
+                  padding: const EdgeInsets.only(right: 4, top: 4, left: 4),
                   child: buildFilterIcon(),
                 ),
               ],

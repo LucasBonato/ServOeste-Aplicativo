@@ -78,8 +78,8 @@ class _ClienteScreenState extends State<ClienteScreen> {
             TextInputType? keyboardType}) =>
         CustomSearchTextField(
           hint: hint,
-          leftPadding: 8,
-          rightPadding: 8,
+          leftPadding: 4,
+          rightPadding: 4,
           controller: controller,
           keyboardType: keyboardType,
           onChangedAction: (value) => _onSearchFieldChanged(),
@@ -115,13 +115,11 @@ class _ClienteScreenState extends State<ClienteScreen> {
     Widget buildMediumScreenLayout() => Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              margin: const EdgeInsets.only(bottom: 10),
-              child: buildSearchField(
-                hint: "Procure por Clientes...",
-                controller: _nomeController,
-              ),
+            buildSearchField(
+              hint: "Procure por Clientes...",
+              controller: _nomeController,
             ),
+            SizedBox(height: 5),
             Row(
               children: [
                 Expanded(
@@ -150,11 +148,13 @@ class _ClienteScreenState extends State<ClienteScreen> {
               hint: "Procure por Clientes...",
               controller: _nomeController,
             ),
+            SizedBox(height: 5),
             buildSearchField(
               hint: 'Telefone...',
               keyboardType: TextInputType.phone,
               controller: _telefoneController,
             ),
+            SizedBox(height: 5),
             buildSearchField(
               hint: 'Endereço...',
               controller: _enderecoController,

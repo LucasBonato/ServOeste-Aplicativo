@@ -1,4 +1,5 @@
 import 'package:serv_oeste/src/components/dropdown_field.dart';
+import 'package:serv_oeste/src/components/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
@@ -156,6 +157,9 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
     _tecnicoBloc.add(TecnicoUpdateEvent(
         tecnico: Tecnico.fromForm(_tecnicoUpdateForm), sobrenome: sobrenome));
     _tecnicoUpdateForm.nome.value = "${nomes.first} $sobrenome";
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Técnico atualizado com sucesso!')),
+    );
   }
 
   void _handleBackNavigation() {
@@ -367,26 +371,8 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                             ],
                           ),
                           const Padding(
-                            padding: EdgeInsets.only(top: 8, left: 16),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Wrap(
-                                children: [
-                                  Text(
-                                    "* - Campos obrigatórios",
-                                    style: TextStyle(
-                                        fontSize: 14, color: Colors.black),
-                                  ),
-                                  SizedBox(width: 16),
-                                  Text(
-                                    "** - Preencha ao menos um destes campos",
-                                    style: TextStyle(
-                                        fontSize: 14, color: Colors.black),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                              padding: EdgeInsets.only(top: 8, left: 16),
+                              child: BuildFieldLabels()),
                           const SizedBox(height: 28),
                           Center(
                             child: ElevatedButton(

@@ -14,6 +14,7 @@ class Tecnico {
   String? situacao;
   List<Especialidade>? especialidades;
   List<int>? especialidadesIds;
+  Map<String, String>? disponibilidade;
 
   Tecnico(
       {this.id,
@@ -23,7 +24,8 @@ class Tecnico {
       this.telefoneCelular,
       this.situacao,
       this.especialidades,
-      this.especialidadesIds});
+      this.especialidadesIds,
+      this.disponibilidade});
 
   Tecnico.fromForm(TecnicoForm tecnicoForm) {
     id = tecnicoForm.id;

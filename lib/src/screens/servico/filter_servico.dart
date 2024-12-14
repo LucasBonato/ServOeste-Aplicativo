@@ -31,7 +31,7 @@ class FilterService extends StatelessWidget {
     //     periodo: filter.horario,
     //   ),
     // );
-    Logger().e(
+    Logger().i(
         "Filtros Aplicados: ${filter.codigo}, ${filter.filial}, ${filter.equipamento}, ${filter.tecnico}, ${filter.situacao}, ${filter.garantia}, ${filter.dataPrevista}, ${filter.dataEfetiva}, ${filter.dataAbertura}, ${filter.horario}");
   }
 

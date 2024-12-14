@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:pluto_grid/pluto_grid.dart';
+import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 
 class TableTecnicosModal extends StatefulWidget {
-  const TableTecnicosModal({super.key});
+  final List<Tecnico> tecnicos;
+
+  const TableTecnicosModal({super.key, required this.tecnicos});
 
   @override
-  State<TableTecnicosModal> createState() => _TableTecnicosModalState();
+  _TableTecnicosModalState createState() => _TableTecnicosModalState();
 }
 
 class _TableTecnicosModalState extends State<TableTecnicosModal> {
@@ -65,65 +68,22 @@ class _TableTecnicosModalState extends State<TableTecnicosModal> {
       PlutoColumnGroup(title: '16/12/24', fields: ['16-12-M', '16-12-T']),
     ];
 
-    // Simula os dados dos técnicos
-    final List<Map<String, dynamic>> tecnicos = [
-      {
-        "tecnico": "Técnico 1",
-        "13-12-M": "1",
-        "13-12-T": "0",
-        "14-12-M": "1",
-        "14-12-T": "1",
-        "16-12-M": "1",
-        "16-12-T": "0",
-      },
-      {
-        "tecnico": "Técnico 2",
-        "13-12-M": "2",
-        "13-12-T": "0",
-        "14-12-M": "0",
-        "14-12-T": "2",
-        "16-12-M": "0",
-        "16-12-T": "2",
-      },
-      {
-        "tecnico": "Técnico 3",
-        "13-12-M": "1",
-        "13-12-T": "2",
-        "14-12-M": "1",
-        "14-12-T": "0",
-        "16-12-M": "1",
-        "16-12-T": "1",
-      },
-      {
-        "tecnico": "Técnico 4",
-        "13-12-M": "2",
-        "13-12-T": "1",
-        "14-12-M": "1",
-        "14-12-T": "0",
-        "16-12-M": "0",
-        "16-12-T": "1",
-      },
-      {
-        "tecnico": "Técnico 5",
-        "13-12-M": "0",
-        "13-12-T": "1",
-        "14-12-M": "0",
-        "14-12-T": "1",
-        "16-12-M": "0",
-        "16-12-T": "1",
-      },
-    ];
-
-    _rows = tecnicos.map((tecnico) {
+    _rows = widget.tecnicos.map((tecnico) {
       return PlutoRow(
         cells: {
-          'tecnico': PlutoCell(value: tecnico["tecnico"]),
-          '13-12-M': PlutoCell(value: tecnico["13-12-M"]),
-          '13-12-T': PlutoCell(value: tecnico["13-12-T"]),
-          '14-12-M': PlutoCell(value: tecnico["14-12-M"]),
-          '14-12-T': PlutoCell(value: tecnico["14-12-T"]),
-          '16-12-M': PlutoCell(value: tecnico["16-12-M"]),
-          '16-12-T': PlutoCell(value: tecnico["16-12-T"]),
+          'tecnico': PlutoCell(value: tecnico.nome),
+          '13-12-M':
+              PlutoCell(value: tecnico.disponibilidade?['13-12-M'] ?? ''),
+          '13-12-T':
+              PlutoCell(value: tecnico.disponibilidade?['13-12-T'] ?? ''),
+          '14-12-M':
+              PlutoCell(value: tecnico.disponibilidade?['14-12-M'] ?? ''),
+          '14-12-T':
+              PlutoCell(value: tecnico.disponibilidade?['14-12-T'] ?? ''),
+          '16-12-M':
+              PlutoCell(value: tecnico.disponibilidade?['16-12-M'] ?? ''),
+          '16-12-T':
+              PlutoCell(value: tecnico.disponibilidade?['16-12-T'] ?? ''),
         },
       );
     }).toList();
@@ -158,7 +118,17 @@ class _TableTecnicosModalState extends State<TableTecnicosModal> {
                 ),
                 onRowDoubleTap: (PlutoGridOnRowDoubleTapEvent event) {
                   final tecnico = event.row.cells['tecnico']?.value;
-                  Logger().e('Duplo clique no técnico: $tecnico');
+                  final cellField = event.cell.column.field;
+                  final cellValue = event.cell.value;
+
+                  final tecnicoData = widget.tecnicos.firstWhere(
+                    (tec) => tec.nome == tecnico,
+                    orElse: () => Tecnico(nome: '', disponibilidade: {}),
+                  );
+                  final extraInfo = tecnicoData.disponibilidade?[cellField];
+
+                  Logger().i(
+                      'Técnico: $tecnico, Valor: $cellValue, Informação extra: $extraInfo');
                 },
               ),
             ),
@@ -166,7 +136,7 @@ class _TableTecnicosModalState extends State<TableTecnicosModal> {
             Text(
               'Clique duas vezes em um dos números para puxar as informações do Técnico para o formulário',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+              style: TextStyle(fontSize: 12, color: Colors.black54),
             ),
           ],
         ),

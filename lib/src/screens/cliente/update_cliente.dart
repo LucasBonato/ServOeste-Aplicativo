@@ -1,4 +1,4 @@
-import 'package:logger/logger.dart';
+import 'package:serv_oeste/src/components/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
@@ -60,6 +60,9 @@ class _UpdateClienteState extends State<UpdateCliente> {
     _clienteBloc.add(ClienteUpdateEvent(
         cliente: Cliente.fromForm(_clienteUpdateForm), sobrenome: sobrenome));
     _clienteUpdateForm.nome.value = "${nomes.first} $sobrenome";
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Cliente atualizado com sucesso!')),
+    );
   }
 
   bool _isValidForm() {
@@ -229,7 +232,6 @@ class _UpdateClienteState extends State<UpdateCliente> {
                                     bloc: _enderecoBloc,
                                     listener: (context, state) {
                                       if (state is EnderecoSuccessState) {
-                                        Logger().i(state.municipio);
                                         _clienteUpdateForm
                                             .setBairro(state.bairro);
                                         _clienteUpdateForm.setRua(state.rua);
@@ -353,26 +355,8 @@ class _UpdateClienteState extends State<UpdateCliente> {
                               ),
                             ),
                             const Padding(
-                              padding: EdgeInsets.only(left: 16),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Wrap(
-                                  children: [
-                                    Text(
-                                      "* - Campos obrigatórios",
-                                      style: TextStyle(
-                                          fontSize: 14, color: Colors.black),
-                                    ),
-                                    SizedBox(width: 16),
-                                    Text(
-                                      "** - Preencha ao menos um destes campos",
-                                      style: TextStyle(
-                                          fontSize: 14, color: Colors.black),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                                padding: EdgeInsets.only(left: 16),
+                                child: BuildFieldLabels()),
                             SizedBox(height: 24),
                             ConstrainedBox(
                               constraints: const BoxConstraints(maxWidth: 750),

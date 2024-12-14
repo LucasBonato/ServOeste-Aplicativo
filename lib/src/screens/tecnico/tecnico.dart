@@ -85,8 +85,8 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
             TextInputType? keyboardType}) =>
         CustomSearchTextField(
           hint: hint,
-          leftPadding: 8,
-          rightPadding: 8,
+          leftPadding: 4,
+          rightPadding: 4,
           controller: controller,
           keyboardType: keyboardType,
           onChangedAction: (value) => _onSearchFieldChanged(),
@@ -102,8 +102,8 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
           dropdownValues: dropdownValues,
           controller: controller,
           valueNotifier: valueNotifier,
-          leftPadding: 0,
-          rightPadding: 8,
+          leftPadding: 4,
+          rightPadding: 4,
           onChanged: (selectedLabel) {
             final selectedValue = Constants.situationTecnicoList
                 .firstWhere((e) => e['label'] == selectedLabel)['value'];
@@ -156,6 +156,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
               hint: "Procure por Técnicos...",
               controller: _nomeController,
             ),
+            SizedBox(height: 5),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -189,11 +190,13 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
               hint: "Procure por Técnicos...",
               controller: _nomeController,
             ),
+            SizedBox(height: 5),
             buildSearchField(
               hint: 'ID...',
               keyboardType: TextInputType.number,
               controller: _idController,
             ),
+            SizedBox(height: 5),
             buildDropdownField(
               label: "Situação...",
               dropdownValues: Constants.situationTecnicoList
@@ -252,8 +255,10 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
           Expanded(
             child: BlocBuilder<TecnicoBloc, TecnicoState>(
               builder: (context, stateTecnico) {
-                if (stateTecnico is TecnicoInitialState || stateTecnico is TecnicoLoadingState) {
-                  return const Center(child: CircularProgressIndicator.adaptive());
+                if (stateTecnico is TecnicoInitialState ||
+                    stateTecnico is TecnicoLoadingState) {
+                  return const Center(
+                      child: CircularProgressIndicator.adaptive());
                 } else if (stateTecnico is TecnicoSearchSuccessState) {
                   return SingleChildScrollView(
                     child: GridListView(
@@ -264,16 +269,20 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                           bool isSelected = false;
 
                           if (stateList is ListSelectState) {
-                            isSelected = stateList.selectedIds.contains(tecnico.id);
+                            isSelected =
+                                stateList.selectedIds.contains(tecnico.id);
                           }
 
                           return CardTechnical(
-                            onDoubleTap: () => _onNavigateToUpdateScreen(tecnico.id!),
-                            onLongPress: () => _onLongPressSelectItemList(tecnico.id!),
+                            onDoubleTap: () =>
+                                _onNavigateToUpdateScreen(tecnico.id!),
+                            onLongPress: () =>
+                                _onLongPressSelectItemList(tecnico.id!),
                             id: tecnico.id!,
-                            name: tecnico.nome!,
-                            phoneNumber: tecnico.telefoneFixo!,
-                            cellPhoneNumber: tecnico.telefoneCelular!,
+                            nome: tecnico.nome!,
+                            sobrenome: tecnico.sobrenome!,
+                            telefone: tecnico.telefoneFixo!,
+                            celular: tecnico.telefoneCelular!,
                             status: tecnico.situacao!,
                             isSelected: isSelected,
                           );

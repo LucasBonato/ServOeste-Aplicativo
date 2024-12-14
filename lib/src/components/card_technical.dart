@@ -3,9 +3,10 @@ import 'package:serv_oeste/src/util/formatters.dart';
 
 class CardTechnical extends StatelessWidget {
   final int id;
-  final String name;
-  final String? phoneNumber;
-  final String? cellPhoneNumber;
+  final String nome;
+  final String sobrenome;
+  final String? telefone;
+  final String? celular;
   final String status;
   final bool isSelected;
   final void Function()? onLongPress;
@@ -14,14 +15,20 @@ class CardTechnical extends StatelessWidget {
   const CardTechnical({
     super.key,
     required this.id,
-    required this.name,
-    this.phoneNumber,
-    this.cellPhoneNumber,
+    required this.nome,
+    required this.sobrenome,
+    this.telefone,
+    this.celular,
     required this.status,
     this.isSelected = false,
     this.onLongPress,
     this.onDoubleTap,
   });
+
+  String getCompostName(String sobrenome) {
+    List<String> compostName = sobrenome.split(' ');
+    return compostName.first;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +84,7 @@ class CardTechnical extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(left: 20),
                           child: Text(
-                            name,
+                            "$nome ${getCompostName(sobrenome)}",
                             style: TextStyle(
                               fontSize: MediaQuery.of(context)
                                   .size
@@ -88,11 +95,11 @@ class CardTechnical extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 4),
-                        if (phoneNumber != null && phoneNumber!.isNotEmpty)
+                        if (telefone != null && telefone!.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(left: 28),
                             child: Text(
-                              "Telefone: ${Formatters.applyTelefoneMask(phoneNumber!)}",
+                              "Telefone: ${Formatters.applyTelefoneMask(telefone!)}",
                               style: TextStyle(
                                 fontSize: MediaQuery.of(context)
                                     .size
@@ -101,12 +108,11 @@ class CardTechnical extends StatelessWidget {
                               ),
                             ),
                           ),
-                        if (cellPhoneNumber != null &&
-                            cellPhoneNumber!.isNotEmpty)
+                        if (celular != null && celular!.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(left: 28),
                             child: Text(
-                              "Celular: ${Formatters.applyCelularMask(cellPhoneNumber!)}",
+                              "Celular: ${Formatters.applyCelularMask(celular!)}",
                               style: TextStyle(
                                 fontSize: MediaQuery.of(context)
                                     .size
