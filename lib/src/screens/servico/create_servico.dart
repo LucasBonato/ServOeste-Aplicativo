@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/components/date_picker.dart';
 import 'package:serv_oeste/src/components/dropdown_field.dart';
@@ -40,6 +41,7 @@ class _CreateServicoState extends State<CreateServico> {
   late List<String> _dropdownNomeClientes;
   late List<String> _dropdownNomeTecnicos;
   late TextEditingController _municipioController;
+  bool _isModalOpen = false;
 
   late final ServicoBloc _servicoBloc;
   late final ClienteBloc _clienteBloc;
@@ -117,19 +119,42 @@ class _CreateServicoState extends State<CreateServico> {
   }
 
   void _onShowAvailabilityTechnicianTable() {
-    if (_tecnicos.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Nenhum técnico encontrado!')),
-      );
-      return;
-    }
+    _tecnicoBloc.add(TecnicoSearchEvent(
+      nome: _servicoForm.nomeTecnico.value,
+      equipamento: _servicoForm.equipamento.value,
+    ));
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return TableTecnicosModal(tecnicos: _tecnicos);
-      },
-    );
+    _tecnicoBloc.stream.listen((state) {
+      if (!mounted) return;
+
+      if (state is TecnicoSearchSuccessState) {
+        setState(() {
+          _tecnicos = state.tecnicos;
+        });
+
+        if (_tecnicos.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Nenhum técnico encontrado!')),
+          );
+          return;
+        }
+
+        if (!_isModalOpen) {
+          _isModalOpen = true;
+
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return TableTecnicosModal(tecnicos: _tecnicos);
+            },
+          ).then((_) {
+            _isModalOpen = false;
+          });
+        }
+      } else if (state is TecnicoErrorState) {
+        Logger().e('Erro ao buscar técnicos: ${state.error}');
+      }
+    });
   }
 
   bool _isValidServicoForm() {

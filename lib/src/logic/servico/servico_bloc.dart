@@ -13,6 +13,7 @@ part 'servico_state.dart';
 
 class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
   final ServicoRepository _servicoRepository = ServicoRepository();
+  late ServicoFilterRequest _filterRequest;
 
   ServicoBloc() : super(ServicoInitialState()) {
     on<ServicoLoadingEvent>(_fetchAllServices);
@@ -21,7 +22,7 @@ class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
     on<ServicoRegisterEvent>(_registerService);
     on<ServicoRegisterPlusClientEvent>(_registerServicePlusClient);
     on<ServicoUpdateEvent>(_updateService);
-    on<ServicoDeleteEvent>(_deleteService);
+    on<ServicoDisableListEvent>(_deleteService);
   }
 
   Future<void> _fetchAllServices(
@@ -66,5 +67,17 @@ class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
 
   Future<void> _updateService(ServicoUpdateEvent event, Emitter emit) async {}
 
-  Future<void> _deleteService(ServicoDeleteEvent event, Emitter emit) async {}
+  Future<void> _deleteService(
+      ServicoDisableListEvent event, Emitter<ServicoState> emit) async {
+    emit(ServicoLoadingState());
+    try {
+      await _servicoRepository.disableListOfServico(event.selectedList);
+      await _fetchAllServices(
+          ServicoLoadingEvent(filterRequest: _filterRequest), emit);
+    } catch (e) {
+      emit(ServicoErrorState(
+        error: ErrorEntity(id: 0, errorMessage: "Erro ao deletar serviço"),
+      ));
+    }
+  }
 }

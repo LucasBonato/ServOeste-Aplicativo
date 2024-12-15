@@ -9,10 +9,10 @@ class TableTecnicosModal extends StatefulWidget {
   const TableTecnicosModal({super.key, required this.tecnicos});
 
   @override
-  _TableTecnicosModalState createState() => _TableTecnicosModalState();
+  TableTecnicosModalState createState() => TableTecnicosModalState();
 }
 
-class _TableTecnicosModalState extends State<TableTecnicosModal> {
+class TableTecnicosModalState extends State<TableTecnicosModal> {
   late List<PlutoColumnGroup> _columnGroups;
   late List<PlutoColumn> _columns;
   late List<PlutoRow> _rows;
@@ -21,91 +21,136 @@ class _TableTecnicosModalState extends State<TableTecnicosModal> {
   void initState() {
     super.initState();
 
+    final List<DateTime> validDates = _getNextValidDates();
+
+    final dateFields = validDates.map((date) {
+      final day = date.day.toString().padLeft(2, '0');
+      final month = date.month.toString().padLeft(2, '0');
+      final year = date.year.toString().padLeft(2, '0');
+      return '$day-$month-$year';
+    }).toList();
+
     _columns = [
       PlutoColumn(
         title: 'Técnicos',
         field: 'tecnico',
         type: PlutoColumnType.text(),
         frozen: PlutoColumnFrozen.start,
+        minWidth: 100,
+        width: 150,
+        enableEditingMode: false,
       ),
-      PlutoColumn(
-        title: 'M',
-        field: '13-12-M',
-        type: PlutoColumnType.text(),
-      ),
-      PlutoColumn(
-        title: 'T',
-        field: '13-12-T',
-        type: PlutoColumnType.text(),
-      ),
-      PlutoColumn(
-        title: 'M',
-        field: '14-12-M',
-        type: PlutoColumnType.text(),
-      ),
-      PlutoColumn(
-        title: 'T',
-        field: '14-12-T',
-        type: PlutoColumnType.text(),
-      ),
-      PlutoColumn(
-        title: 'M',
-        field: '16-12-M',
-        type: PlutoColumnType.text(),
-      ),
-      PlutoColumn(
-        title: 'T',
-        field: '16-12-T',
-        type: PlutoColumnType.text(),
-      ),
+      ...dateFields.expand((field) => [
+            PlutoColumn(
+              title: 'M',
+              field: '$field-M',
+              type: PlutoColumnType.text(),
+              minWidth: 80,
+              width: 100,
+              enableEditingMode: false,
+            ),
+            PlutoColumn(
+              title: 'T',
+              field: '$field-T',
+              type: PlutoColumnType.text(),
+              minWidth: 80,
+              width: 100,
+              enableEditingMode: false,
+            ),
+          ]),
     ];
 
     _columnGroups = [
       PlutoColumnGroup(
-          title: 'Técnicos', fields: ['tecnico'], expandedColumn: true),
-      PlutoColumnGroup(title: '13/12/24', fields: ['13-12-M', '13-12-T']),
-      PlutoColumnGroup(title: '14/12/24', fields: ['14-12-M', '14-12-T']),
-      PlutoColumnGroup(title: '16/12/24', fields: ['16-12-M', '16-12-T']),
+        title: 'Técnicos',
+        fields: ['tecnico'],
+        expandedColumn: true,
+      ),
+      ...dateFields.map(
+        (field) => PlutoColumnGroup(
+          title: field.replaceAll('-', '/'),
+          fields: ['$field-M', '$field-T'],
+        ),
+      ),
     ];
 
     _rows = widget.tecnicos.map((tecnico) {
+      final nomeComposto =
+          "${tecnico.nome} ${getCompostName(tecnico.sobrenome ?? '')}";
+
+      final Map<String, PlutoCell> dateFieldsMap = {
+        for (var field in dateFields) ...{
+          '$field-M':
+              PlutoCell(value: tecnico.disponibilidade?['$field-M'] ?? ''),
+          '$field-T':
+              PlutoCell(value: tecnico.disponibilidade?['$field-T'] ?? ''),
+        }
+      };
+
       return PlutoRow(
         cells: {
-          'tecnico': PlutoCell(value: tecnico.nome),
-          '13-12-M':
-              PlutoCell(value: tecnico.disponibilidade?['13-12-M'] ?? ''),
-          '13-12-T':
-              PlutoCell(value: tecnico.disponibilidade?['13-12-T'] ?? ''),
-          '14-12-M':
-              PlutoCell(value: tecnico.disponibilidade?['14-12-M'] ?? ''),
-          '14-12-T':
-              PlutoCell(value: tecnico.disponibilidade?['14-12-T'] ?? ''),
-          '16-12-M':
-              PlutoCell(value: tecnico.disponibilidade?['16-12-M'] ?? ''),
-          '16-12-T':
-              PlutoCell(value: tecnico.disponibilidade?['16-12-T'] ?? ''),
+          'tecnico': PlutoCell(value: nomeComposto),
+          ...dateFieldsMap,
         },
       );
     }).toList();
   }
 
+  List<DateTime> _getNextValidDates() {
+    final List<DateTime> dates = [];
+    DateTime currentDate = DateTime.now();
+
+    while (dates.length < 3) {
+      if (currentDate.weekday != DateTime.sunday) {
+        dates.add(currentDate);
+      }
+      currentDate = currentDate.add(Duration(days: 1));
+    }
+
+    return dates;
+  }
+
+  String getCompostName(String sobrenome) {
+    List<String> compostName = sobrenome.split(' ');
+
+    if (compostName.isNotEmpty) {
+      if (compostName.first.length <= 3 && compostName.length > 1) {
+        return compostName[1];
+      }
+      return compostName.first;
+    }
+    return '';
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool isMediumScreen = MediaQuery.of(context).size.width >= 600 &&
+        MediaQuery.of(context).size.width < 1024;
+
+    double dialogWidth = isMediumScreen
+        ? MediaQuery.of(context).size.width * 0.85
+        : MediaQuery.of(context).size.width * 0.65;
+
+    double getFontSize(double min, double preferred, double max) {
+      return (MediaQuery.of(context).size.width / 100).clamp(min, max);
+    }
+
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
       child: Container(
         padding: const EdgeInsets.all(16),
-        width: MediaQuery.of(context).size.width * 0.9,
-        height: MediaQuery.of(context).size.height * 0.7,
+        width: dialogWidth,
+        height: MediaQuery.of(context).size.height * 0.5,
         child: Column(
           children: [
             Text(
               'Disponibilidade dos Técnicos',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              textAlign: TextAlign.center,
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Expanded(
               child: PlutoGrid(
                 columns: _columns,
@@ -114,6 +159,12 @@ class _TableTecnicosModalState extends State<TableTecnicosModal> {
                 configuration: PlutoGridConfiguration(
                   style: PlutoGridStyleConfig(
                     gridBorderColor: Colors.grey,
+                    cellTextStyle: TextStyle(
+                      fontSize: getFontSize(15, 16, 17),
+                    ),
+                    columnTextStyle: TextStyle(
+                      fontSize: getFontSize(15, 16, 17),
+                    ),
                   ),
                 ),
                 onRowDoubleTap: (PlutoGridOnRowDoubleTapEvent event) {
@@ -123,12 +174,15 @@ class _TableTecnicosModalState extends State<TableTecnicosModal> {
 
                   final tecnicoData = widget.tecnicos.firstWhere(
                     (tec) => tec.nome == tecnico,
-                    orElse: () => Tecnico(nome: '', disponibilidade: {}),
+                    orElse: () =>
+                        Tecnico(nome: '', sobrenome: '', disponibilidade: {}),
                   );
                   final extraInfo = tecnicoData.disponibilidade?[cellField];
 
+                  final nomeComposto =
+                      "${tecnicoData.nome} ${getCompostName(tecnicoData.sobrenome ?? '')}";
                   Logger().i(
-                      'Técnico: $tecnico, Valor: $cellValue, Informação extra: $extraInfo');
+                      'Técnico: $nomeComposto, Valor: $cellValue, Informação extra: $extraInfo');
                 },
               ),
             ),
@@ -136,7 +190,7 @@ class _TableTecnicosModalState extends State<TableTecnicosModal> {
             Text(
               'Clique duas vezes em um dos números para puxar as informações do Técnico para o formulário',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12, color: Colors.black54),
+              style: TextStyle(fontSize: 13, color: Colors.black54),
             ),
           ],
         ),

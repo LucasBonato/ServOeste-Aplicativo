@@ -33,4 +33,8 @@ final class ServicoRegisterPlusClientEvent extends ServicoEvent {
 
 final class ServicoUpdateEvent extends ServicoEvent {}
 
-final class ServicoDeleteEvent extends ServicoEvent {}
+final class ServicoDisableListEvent extends ServicoEvent {
+  final List<int> selectedList;
+
+  ServicoDisableListEvent({required this.selectedList});
+}

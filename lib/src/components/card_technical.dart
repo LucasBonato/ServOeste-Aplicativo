@@ -27,7 +27,14 @@ class CardTechnical extends StatelessWidget {
 
   String getCompostName(String sobrenome) {
     List<String> compostName = sobrenome.split(' ');
-    return compostName.first;
+
+    if (compostName.isNotEmpty) {
+      if (compostName.first.length <= 3 && compostName.length > 1) {
+        return compostName[1];
+      }
+      return compostName.first;
+    }
+    return '';
   }
 
   @override

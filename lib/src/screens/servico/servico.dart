@@ -10,6 +10,7 @@ import 'package:serv_oeste/src/components/custom_search_field.dart';
 import 'package:serv_oeste/src/screens/servico/filter_servico.dart';
 import 'package:serv_oeste/src/components/expandable_fab_items.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
+import 'package:serv_oeste/src/util/buildwidgets.dart';
 
 class ServicoScreen extends StatefulWidget {
   const ServicoScreen({super.key});
@@ -48,6 +49,24 @@ class ServicoScreenState extends State<ServicoScreen> {
         ),
       ),
     );
+  }
+
+  void _onNavigateToUpdateScreen(int id) {
+    // Navigator.of(context, rootNavigator: true).push(
+    //   MaterialPageRoute(
+    //     builder: (context) => UpdateServico(id: id),
+    //   ),
+    // );
+    _listBloc.add(ListClearSelectionEvent());
+  }
+
+  void _onLongPressSelectItemList(int id) {
+    _listBloc.add(ListToggleItemSelectEvent(id: id));
+  }
+
+  void _disableServicos(BuildContext context, List<int> selectedIds) {
+    _servicoBloc.add(ServicoDisableListEvent(selectedList: selectedIds));
+    _listBloc.add(ListClearSelectionEvent());
   }
 
   Widget _buildSearchInputs() {
@@ -146,25 +165,41 @@ class ServicoScreenState extends State<ServicoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: ExpandableFabItems(
-        firstHeroTag: 'add_service',
-        secondHeroTag: 'add_service_cliente',
-        firstRouterName: '/createServico',
-        secondRouterName: '/createServico',
-        firstTooltip: 'Adicionar Serviço',
-        secondTooltip: 'Adicionar Serviço e Cliente',
-        firstChild: Image.asset(
-          'assets/addService.png',
-          fit: BoxFit.contain,
-          width: 36,
-          height: 36,
-        ),
-        secondChild: const Icon(
-          Icons.group_add,
-          size: 36,
-          color: Colors.white,
-        ),
-        updateList: _onNomeChanged,
+      floatingActionButton: BlocBuilder<ListBloc, ListState>(
+        builder: (context, state) {
+          final bool hasSelection =
+              state is ListSelectState && state.selectedIds.isNotEmpty;
+
+          return !hasSelection
+              ? ExpandableFabItems(
+                  firstHeroTag: 'add_service',
+                  secondHeroTag: 'add_service_cliente',
+                  firstRouterName: '/createServico',
+                  secondRouterName: '/createServico',
+                  firstTooltip: 'Adicionar Serviço',
+                  secondTooltip: 'Adicionar Serviço e Cliente',
+                  firstChild: Image.asset(
+                    'assets/addService.png',
+                    fit: BoxFit.contain,
+                    width: 36,
+                    height: 36,
+                  ),
+                  secondChild: const Icon(
+                    Icons.group_add,
+                    size: 36,
+                    color: Colors.white,
+                  ),
+                  updateList: _onNomeChanged,
+                )
+              : BuildWidgets.buildFabRemove(
+                  context,
+                  () {
+                    _disableServicos(context, state.selectedIds);
+                    context.read<ListBloc>().add(ListClearSelectionEvent());
+                  },
+                  tooltip: 'Excluir serviços selecionados',
+                );
+        },
       ),
       body: Column(
         children: [
@@ -193,6 +228,10 @@ class ServicoScreenState extends State<ServicoScreen> {
                           }
 
                           return CardService(
+                            onLongPress: () =>
+                                _onLongPressSelectItemList(servico.id),
+                            onDoubleTap: () =>
+                                _onNavigateToUpdateScreen(servico.id),
                             cliente: (servico as Servico).nomeCliente,
                             tecnico: servico.nomeTecnico,
                             codigo: servico.id,

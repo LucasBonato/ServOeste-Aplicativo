@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:logger/logger.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
@@ -116,5 +118,14 @@ class ServicoRepository extends DioService {
       return onRequestError(e);
     }
     return null;
+  }
+
+  Future<void> disableListOfServico(List<int> selectedItems) async {
+    try {
+      await dio.delete(ServerEndpoints.servicoEndpoint,
+          data: jsonEncode(selectedItems));
+    } on DioException catch (e) {
+      throw Exception(onRequestError(e));
+    }
   }
 }
