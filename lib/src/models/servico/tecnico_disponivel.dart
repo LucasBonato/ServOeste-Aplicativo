@@ -4,38 +4,44 @@ List<TecnicoDisponivel> tecnicoFromJson(String str) => List<TecnicoDisponivel>.f
 class TecnicoDisponivel {
   int? id;
   String? nome;
+  int? quantidadeTotalServicos;
   List<Disponibilidade>? disponibilidades;
 
   TecnicoDisponivel({
     this.id,
     this.nome,
+    this.quantidadeTotalServicos,
     this.disponibilidades
   });
 
   factory TecnicoDisponivel.fromJson(Map<String, dynamic> json) => TecnicoDisponivel(
     id: json["id"],
     nome: json["nome"],
+    quantidadeTotalServicos: json["quantidadeTotalServicos"],
     disponibilidades: List<Disponibilidade>.from(json["disponibilidades"].map((x) => Disponibilidade.fromJson(x))),
   );
 }
 
 class Disponibilidade {
   DateTime? data;
-  int? dia;
+  int? numeroDiaSemana;
+  String? nomeDiaSemana;
   String? periodo;
-  int? quantidade;
+  int? quantidadeServicos;
 
   Disponibilidade({
     this.data,
-    this.dia,
+    this.numeroDiaSemana,
+    this.nomeDiaSemana,
     this.periodo,
-    this.quantidade
+    this.quantidadeServicos
   });
 
   factory Disponibilidade.fromJson(Map<String, dynamic> json) => Disponibilidade(
       data: DateTime.tryParse(json["data"]),
-      dia: json["dia"],
+      numeroDiaSemana: json["numeroDiaSemana"],
+      nomeDiaSemana: json["nomeDiaSemana"],
       periodo: json["periodo"],
-      quantidade: json["quantidade"]
+      quantidadeServicos: json["quantidadeServicos"]
   );
 }
