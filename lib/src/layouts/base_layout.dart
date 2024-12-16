@@ -6,6 +6,7 @@ import 'package:serv_oeste/src/components/header.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/list/list_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
+import 'package:serv_oeste/src/logic/servico/servico_event.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/screens/cliente/cliente.dart';

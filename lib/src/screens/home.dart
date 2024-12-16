@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/grid_view.dart';
 import 'package:serv_oeste/src/components/card_service.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
+import 'package:serv_oeste/src/logic/servico/servico_state.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
 
 class Home extends StatefulWidget {

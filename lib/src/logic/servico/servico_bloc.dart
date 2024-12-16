@@ -1,15 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
-import 'package:meta/meta.dart';
-import 'package:serv_oeste/src/models/cliente/cliente_request.dart';
+import 'package:serv_oeste/src/logic/servico/servico_event.dart';
+import 'package:serv_oeste/src/logic/servico/servico_state.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
-import 'package:serv_oeste/src/models/servico/servico_request.dart';
 import 'package:serv_oeste/src/repository/servico_repository.dart';
-
-part 'servico_event.dart';
-part 'servico_state.dart';
 
 class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
   final ServicoRepository _servicoRepository = ServicoRepository();

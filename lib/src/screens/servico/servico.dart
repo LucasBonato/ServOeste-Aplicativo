@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/grid_view.dart';
 import 'package:serv_oeste/src/logic/list/list_bloc.dart';
+import 'package:serv_oeste/src/logic/servico/servico_event.dart';
+import 'package:serv_oeste/src/logic/servico/servico_state.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/components/card_service.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';

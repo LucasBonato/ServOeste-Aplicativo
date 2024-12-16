@@ -1,6 +1,8 @@
-part of 'servico_bloc.dart';
+import 'package:serv_oeste/src/models/cliente/cliente_request.dart';
+import 'package:serv_oeste/src/models/servico/servico.dart';
+import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
+import 'package:serv_oeste/src/models/servico/servico_request.dart';
 
-@immutable
 sealed class ServicoEvent {}
 
 final class ServicoLoadingEvent extends ServicoEvent {
@@ -9,7 +11,11 @@ final class ServicoLoadingEvent extends ServicoEvent {
   ServicoLoadingEvent({required this.filterRequest});
 }
 
-final class ServicoSearchOneEvent extends ServicoEvent {}
+final class ServicoSearchOneEvent extends ServicoEvent {
+  final int id;
+
+  ServicoSearchOneEvent({required this.id});
+}
 
 final class ServicoSearchEvent extends ServicoEvent {
   final ServicoFilterRequest filterRequest;
@@ -31,7 +37,11 @@ final class ServicoRegisterPlusClientEvent extends ServicoEvent {
       {required this.cliente, required this.servico});
 }
 
-final class ServicoUpdateEvent extends ServicoEvent {}
+final class ServicoUpdateEvent extends ServicoEvent {
+  final Servico servico;
+
+  ServicoUpdateEvent({required this.servico});
+}
 
 final class ServicoDisableListEvent extends ServicoEvent {
   final List<int> selectedList;

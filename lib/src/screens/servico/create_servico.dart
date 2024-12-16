@@ -11,6 +11,8 @@ import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
+import 'package:serv_oeste/src/logic/servico/servico_event.dart';
+import 'package:serv_oeste/src/logic/servico/servico_state.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
@@ -659,7 +661,7 @@ class _CreateServicoState extends State<CreateServico> {
               Expanded(
                 flex: 2,
                 child: CustomDropdownField(
-                  dropdownValues: Constants.dataAtendimento,
+                  dropdownValues: Constants.horarioAtendimento,
                   label: "Horário*",
                   leftPadding: 0,
                   valueNotifier: _servicoForm.horario,

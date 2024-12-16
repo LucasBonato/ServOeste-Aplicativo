@@ -1,3 +1,5 @@
+import 'package:serv_oeste/src/models/servico/servico_form.dart';
+
 class Servico {
   final int id;
   final int idCliente;
@@ -30,6 +32,29 @@ class Servico {
     this.dataAtendimentoEfetivo,
     this.dataAtendimentoAbertura,
   });
+
+  factory Servico.fromForm(ServicoForm servicoForm) => Servico(
+        id: servicoForm.id!,
+        idCliente: servicoForm.idCliente.value!,
+        idTecnico: servicoForm.idTecnico.value!,
+        nomeCliente: servicoForm.nomeCliente.value,
+        nomeTecnico: servicoForm.nomeTecnico.value,
+        equipamento: servicoForm.equipamento.value,
+        filial: servicoForm.filial.value,
+        horarioPrevisto: servicoForm.horario.value,
+        marca: servicoForm.marca.value,
+        situacao: servicoForm.situacao.value,
+        garantia: servicoForm.garantia.value,
+        dataAtendimentoPrevisto: servicoForm.dataAtendimentoPrevisto != null
+            ? DateTime.parse(servicoForm.dataAtendimentoPrevisto.value)
+            : DateTime.now(),
+        dataAtendimentoEfetivo: servicoForm.dataAtendimentoEfetivo != null
+            ? DateTime.parse(servicoForm.dataAtendimentoEfetivo.value)
+            : null,
+        dataAtendimentoAbertura: servicoForm.dataAtendimentoAbertura != null
+            ? DateTime.parse(servicoForm.dataAtendimentoAbertura.value)
+            : null,
+      );
 
   factory Servico.fromJson(Map<String, dynamic> json) => Servico(
         id: json["id"],

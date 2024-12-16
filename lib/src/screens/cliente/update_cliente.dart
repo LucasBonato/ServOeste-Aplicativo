@@ -146,7 +146,7 @@ class _UpdateClienteState extends State<UpdateCliente> {
                           child:
                               Column(mainAxisSize: MainAxisSize.max, children: [
                             const Text(
-                              "Adicionar Cliente",
+                              "Atualizar Cliente",
                               style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
