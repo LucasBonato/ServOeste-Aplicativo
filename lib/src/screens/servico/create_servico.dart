@@ -576,13 +576,19 @@ class _CreateServicoState extends State<CreateServico> {
       child: Column(
         children: [
           CustomSearchDropDown(
-            dropdownValues: Constants.equipamentos,
+            dropdownValues: Constants.equipamentos.values.toList(),
             valueNotifier: _servicoForm.equipamento,
             hide: true,
             label: "Equipamento*",
             validator: _servicoValidator.byField(
                 _servicoForm, ErrorCodeKey.equipamento.name),
-            onChanged: _servicoForm.setEquipamento,
+            onChanged: (selectedValue) {
+              final equipamentoSelecionado =
+                  Constants.equipamentos.keys.firstWhere(
+                (key) => Constants.equipamentos[key] == selectedValue,
+              );
+              _servicoForm.setEquipamento(equipamentoSelecionado);
+            },
           ),
           CustomSearchDropDown(
             dropdownValues: Constants.marcas,

@@ -43,12 +43,16 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     "Cooler": false,
     "Frigobar": false,
     "Geladeira": false,
-    "Lava Louça": false,
+    "Lava Louca": false,
     "Lava Roupa": false,
     "Microondas": false,
     "Purificador": false,
     "Secadora": false,
     "Outros": false,
+  };
+
+  final Map<String, String> displayMap = {
+    "Lava Louca": "Lava Louça",
   };
 
   @override
@@ -120,6 +124,11 @@ class _CreateTecnicoState extends State<CreateTecnico> {
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, bool> processedCheckersMap = {
+      for (var entry in checkersMap.entries)
+        displayMap[entry.key] ?? entry.key: entry.value,
+    };
+
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9FF),
       appBar: AppBar(
@@ -237,10 +246,11 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                         ),
                         const SizedBox(height: 8),
                         CustomGridCheckersFormField(
-                            validator: _tecnicoCreateValidator.byField(
-                                _tecnicoCreateForm,
-                                ErrorCodeKey.conhecimento.name),
-                            checkersMap: checkersMap),
+                          validator: _tecnicoCreateValidator.byField(
+                              _tecnicoCreateForm,
+                              ErrorCodeKey.conhecimento.name),
+                          checkersMap: processedCheckersMap,
+                        ),
                       ],
                     ),
                     const Padding(

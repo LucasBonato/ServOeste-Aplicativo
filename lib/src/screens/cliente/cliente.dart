@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/card_client.dart';
 import 'package:serv_oeste/src/components/grid_view.dart';
-import 'package:serv_oeste/src/logic/list/list_bloc.dart';
+import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
@@ -19,7 +19,7 @@ class ClienteScreen extends StatefulWidget {
 }
 
 class _ClienteScreenState extends State<ClienteScreen> {
-  late final ListBloc _listBloc;
+  late final ListaBloc _listaBloc;
   late final ClienteBloc _clienteBloc;
   late final TextEditingController _nomeController,
       _telefoneController,
@@ -31,11 +31,11 @@ class _ClienteScreenState extends State<ClienteScreen> {
   void initState() {
     super.initState();
     _clienteBloc = context.read<ClienteBloc>();
-    _listBloc = context.read<ListBloc>();
+    _listaBloc = context.read<ListaBloc>();
     _nomeController = TextEditingController();
     _telefoneController = TextEditingController();
     _enderecoController = TextEditingController();
-    _listBloc.add(ListInitialEvent());
+    _listaBloc.add(ListaInitialEvent());
   }
 
   void _onSearchFieldChanged() {
@@ -59,11 +59,11 @@ class _ClienteScreenState extends State<ClienteScreen> {
         builder: (context) => UpdateCliente(id: id),
       ),
     );
-    _listBloc.add(ListClearSelectionEvent());
+    _listaBloc.add(ListaClearSelectionEvent());
   }
 
   void _onLongPressSelectItemList(int id) {
-    _listBloc.add(ListToggleItemSelectEvent(id: id));
+    _listaBloc.add(ListaToggleItemSelectEvent(id: id));
   }
 
   Widget _buildSearchInputs() {
@@ -175,17 +175,17 @@ class _ClienteScreenState extends State<ClienteScreen> {
 
   void _disableClientes(BuildContext context, List<int> selectedIds) {
     _clienteBloc.add(TecnicoDisableListEvent(selectedList: selectedIds));
-    _listBloc.add(ListClearSelectionEvent());
+    _listaBloc.add(ListaClearSelectionEvent());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      floatingActionButton: BlocBuilder<ListBloc, ListState>(
+      floatingActionButton: BlocBuilder<ListaBloc, ListaState>(
         builder: (context, state) {
           final bool hasSelection =
-              state is ListSelectState && state.selectedIds.isNotEmpty;
+              state is ListaSelectState && state.selectedIds.isNotEmpty;
 
           return !hasSelection
               ? BuildWidgets.buildFabAdd(
@@ -201,7 +201,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
                   () {
                     _disableClientes(context, state.selectedIds);
 
-                    context.read<ListBloc>().add(ListClearSelectionEvent());
+                    context.read<ListaBloc>().add(ListaClearSelectionEvent());
                   },
                   tooltip: 'Excluir clientes selecionados',
                 );
@@ -222,13 +222,14 @@ class _ClienteScreenState extends State<ClienteScreen> {
                     child: GridListView(
                       aspectRatio: 1.65,
                       dataList: stateCliente.clientes,
-                      buildCard: (cliente) => BlocBuilder<ListBloc, ListState>(
-                        bloc: _listBloc,
-                        builder: (context, stateList) {
+                      buildCard: (cliente) =>
+                          BlocBuilder<ListaBloc, ListaState>(
+                        bloc: _listaBloc,
+                        builder: (context, stateLista) {
                           bool isSelected = false;
 
-                          if (stateList is ListSelectState) {
-                            isSelected = stateList.selectedIds
+                          if (stateLista is ListaSelectState) {
+                            isSelected = stateLista.selectedIds
                                 .contains((cliente as Cliente).id);
                           }
 

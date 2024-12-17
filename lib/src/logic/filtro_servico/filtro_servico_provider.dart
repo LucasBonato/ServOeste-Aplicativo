@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
-import 'package:serv_oeste/src/models/filter_service/filter_service.dart';
+import 'package:serv_oeste/src/models/filtro_servico/filtro_servico.dart';
 
-class FilterServiceProvider extends ChangeNotifier {
-  FilterServiceModel _filter = FilterServiceModel();
+class FiltroServicoProvider extends ChangeNotifier {
+  FiltroServicoModel _filter = FiltroServicoModel();
 
-  FilterServiceModel get filter => _filter;
+  FiltroServicoModel get filter => _filter;
 
   void updateFilter({
     int? codigo,
@@ -18,7 +18,7 @@ class FilterServiceProvider extends ChangeNotifier {
     DateTime? dataEfetiva,
     DateTime? dataAbertura,
   }) {
-    _filter = FilterServiceModel(
+    _filter = FiltroServicoModel(
       codigo: codigo ?? _filter.codigo,
       tecnico: tecnico ?? _filter.tecnico,
       equipamento: equipamento ?? _filter.equipamento,

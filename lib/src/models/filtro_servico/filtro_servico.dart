@@ -1,4 +1,4 @@
-class FilterServiceModel {
+class FiltroServicoModel {
   int? codigo;
   String? tecnico;
   String? equipamento;
@@ -10,7 +10,7 @@ class FilterServiceModel {
   DateTime? dataEfetiva;
   DateTime? dataAbertura;
 
-  FilterServiceModel({
+  FiltroServicoModel({
     this.codigo,
     this.tecnico,
     this.equipamento,

@@ -1,6 +1,9 @@
 import 'dart:convert';
 
-List<TecnicoDisponivel> tecnicoFromJson(String str) => List<TecnicoDisponivel>.from(json.decode(str));
+List<TecnicoDisponivel> tecnicoFromJson(String str) =>
+    List<TecnicoDisponivel>.from(
+        json.decode(str).map((x) => TecnicoDisponivel.fromJson(x)));
+
 class TecnicoDisponivel {
   int? id;
   String? nome;
@@ -11,15 +14,19 @@ class TecnicoDisponivel {
     this.id,
     this.nome,
     this.quantidadeTotalServicos,
-    this.disponibilidades
+    this.disponibilidades,
   });
 
-  factory TecnicoDisponivel.fromJson(Map<String, dynamic> json) => TecnicoDisponivel(
-    id: json["id"],
-    nome: json["nome"],
-    quantidadeTotalServicos: json["quantidadeTotalServicos"],
-    disponibilidades: List<Disponibilidade>.from(json["disponibilidades"].map((x) => Disponibilidade.fromJson(x))),
-  );
+  factory TecnicoDisponivel.fromJson(Map<String, dynamic> json) =>
+      TecnicoDisponivel(
+        id: json["id"],
+        nome: json["nome"],
+        quantidadeTotalServicos: json["quantidadeTotalServicos"],
+        disponibilidades: json["disponibilidades"] == null
+            ? []
+            : List<Disponibilidade>.from(json["disponibilidades"]
+                .map((x) => Disponibilidade.fromJson(x))),
+      );
 }
 
 class Disponibilidade {
@@ -34,14 +41,15 @@ class Disponibilidade {
     this.numeroDiaSemana,
     this.nomeDiaSemana,
     this.periodo,
-    this.quantidadeServicos
+    this.quantidadeServicos,
   });
 
-  factory Disponibilidade.fromJson(Map<String, dynamic> json) => Disponibilidade(
-      data: DateTime.tryParse(json["data"]),
-      numeroDiaSemana: json["numeroDiaSemana"],
-      nomeDiaSemana: json["nomeDiaSemana"],
-      periodo: json["periodo"],
-      quantidadeServicos: json["quantidadeServicos"]
-  );
+  factory Disponibilidade.fromJson(Map<String, dynamic> json) =>
+      Disponibilidade(
+        data: DateTime.tryParse(json["data"]),
+        numeroDiaSemana: json["numeroDiaSemana"],
+        nomeDiaSemana: json["nomeDiaSemana"],
+        periodo: json["periodo"],
+        quantidadeServicos: json["quantidadeServicos"],
+      );
 }

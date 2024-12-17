@@ -32,19 +32,19 @@ class Constants {
     'São Paulo',
     'Itapevi',
   ];
-  static const List<String> equipamentos = [
-    "Adega",
-    "Bebedouro",
-    "Climatizador",
-    "Cooler",
-    "Frigobar",
-    "Geladeira",
-    "Lava Louça",
-    "Lava Roupa",
-    "Microondas",
-    "Purificador",
-    "Secadora"
-  ];
+  static const Map<String, String> equipamentos = {
+    "Adega": "Adega",
+    "Bebedouro": "Bebedouro",
+    "Climatizador": "Climatizador",
+    "Cooler": "Cooler",
+    "Frigobar": "Frigobar",
+    "Geladeira": "Geladeira",
+    "Lava Louça": "Lava Louca",
+    "Lava Roupa": "Lava Roupa",
+    "Microondas": "Microondas",
+    "Purificador": "Purificador",
+    "Secadora": "Secadora",
+  };
   static const List<String> marcas = [
     "Brastemp",
     "Consul",

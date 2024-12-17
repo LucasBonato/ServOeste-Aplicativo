@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
-import 'package:serv_oeste/src/logic/filter_service/filter_service_provider.dart';
+import 'package:serv_oeste/src/logic/filtro_servico/filtro_servico_provider.dart';
 import 'package:serv_oeste/src/components/date_picker.dart';
 import 'package:serv_oeste/src/components/dropdown_field.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/components/custom_search_field.dart';
-// import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
-// import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
+import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
+import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/util/formatters.dart';
 import 'package:serv_oeste/src/shared/input_masks.dart';
@@ -17,27 +16,25 @@ class FilterService extends StatelessWidget {
   const FilterService({super.key});
 
   void applyFilters(BuildContext context) {
-    final filter = context.read<FilterServiceProvider>().filter;
-    // ServicoSearchEvent(
-    //   filterRequest: ServicoFilterRequest(
-    //     codigo: filter.codigo,
-    //     filial: filter.filial,
-    //     equipamento: filter.equipamento,
-    //     situacao: filter.situacao,
-    //     garantia: filter.garantia,
-    //     dataAtendimentoPrevistoAntes: filter.dataPrevista,
-    //     dataAtendimentoPrevistoDepois: filter.dataEfetiva,
-    //     dataAbertura: filter.dataAbertura,
-    //     periodo: filter.horario,
-    //   ),
-    // );
-    Logger().i(
-        "Filtros Aplicados: ${filter.codigo}, ${filter.filial}, ${filter.equipamento}, ${filter.tecnico}, ${filter.situacao}, ${filter.garantia}, ${filter.dataPrevista}, ${filter.dataEfetiva}, ${filter.dataAbertura}, ${filter.horario}");
+    final filter = context.read<FiltroServicoProvider>().filter;
+    ServicoSearchEvent(
+      filterRequest: ServicoFilterRequest(
+        id: filter.codigo,
+        filial: filter.filial,
+        equipamento: filter.equipamento,
+        situacao: filter.situacao,
+        garantia: filter.garantia,
+        dataAtendimentoPrevistoAntes: filter.dataPrevista,
+        dataAtendimentoEfetivoAntes: filter.dataEfetiva,
+        dataAberturaAntes: filter.dataAbertura,
+        periodo: filter.horario,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<FilterServiceProvider>();
+    final provider = context.watch<FiltroServicoProvider>();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9FF),
@@ -73,9 +70,16 @@ class FilterService extends StatelessWidget {
                   ),
                   CustomSearchDropDown(
                     label: 'Equipamento...',
-                    dropdownValues: Constants.equipamentos,
-                    onChanged: (value) =>
-                        provider.updateFilter(equipamento: value),
+                    dropdownValues: Constants.equipamentos.values.toList(),
+                    onChanged: (value) {
+                      final equipamentoSelecionado =
+                          Constants.equipamentos.keys.firstWhere(
+                        (key) => Constants.equipamentos[key] == value,
+                      );
+
+                      provider.updateFilter(
+                          equipamento: equipamentoSelecionado);
+                    },
                   ),
                   const SizedBox(height: 16),
                   CustomDropdownField(

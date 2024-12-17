@@ -6,7 +6,7 @@ import 'package:serv_oeste/src/components/dropdown_field.dart';
 import 'package:serv_oeste/src/components/grid_view.dart';
 import 'package:serv_oeste/src/components/card_technical.dart';
 import 'package:serv_oeste/src/components/custom_search_field.dart';
-import 'package:serv_oeste/src/logic/list/list_bloc.dart';
+import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
@@ -20,7 +20,7 @@ class TecnicoScreen extends StatefulWidget {
 }
 
 class _TecnicoScreenState extends State<TecnicoScreen> {
-  late final ListBloc _listBloc;
+  late final ListaBloc _listaBloc;
   late final TecnicoBloc _tecnicoBloc;
   late TextEditingController _idController, _nomeController;
   late SingleSelectController<String> _situacaoController;
@@ -31,14 +31,14 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
   void initState() {
     super.initState();
     _tecnicoBloc = context.read<TecnicoBloc>();
-    _listBloc = context.read<ListBloc>();
+    _listaBloc = context.read<ListaBloc>();
     _idController = TextEditingController();
     _nomeController = TextEditingController();
     _situacaoController = SingleSelectController<String>(
         Constants.situationTecnicoList[1]['label']);
     _situacaoNotifier =
         ValueNotifier<String>(Constants.situationTecnicoList[1]['value']);
-    _listBloc.add(ListInitialEvent());
+    _listaBloc.add(ListaInitialEvent());
   }
 
   void _onNavigateToUpdateScreen(int id) {
@@ -47,11 +47,11 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
         builder: (context) => UpdateTecnico(id: id),
       ),
     );
-    _listBloc.add(ListClearSelectionEvent());
+    _listaBloc.add(ListaClearSelectionEvent());
   }
 
-  void _onLongPressSelectItemList(int id) {
-    _listBloc.add(ListToggleItemSelectEvent(id: id));
+  void _onLongPressSelectItemLista(int id) {
+    _listaBloc.add(ListaToggleItemSelectEvent(id: id));
   }
 
   void _onSearchFieldChanged() {
@@ -70,7 +70,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
 
   void _disableTecnicos(BuildContext context, List<int> selectedIds) {
     _tecnicoBloc.add(TecnicoDisableListEvent(selectedList: selectedIds));
-    _listBloc.add(ListClearSelectionEvent());
+    _listaBloc.add(ListaClearSelectionEvent());
   }
 
   Widget _buildSearchInputs() {
@@ -225,10 +225,10 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      floatingActionButton: BlocBuilder<ListBloc, ListState>(
+      floatingActionButton: BlocBuilder<ListaBloc, ListaState>(
         builder: (context, state) {
           final bool hasSelection =
-              state is ListSelectState && state.selectedIds.isNotEmpty;
+              state is ListaSelectState && state.selectedIds.isNotEmpty;
 
           return !hasSelection
               ? BuildWidgets.buildFabAdd(
@@ -243,7 +243,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                   context,
                   () {
                     _disableTecnicos(context, state.selectedIds);
-                    context.read<ListBloc>().add(ListClearSelectionEvent());
+                    context.read<ListaBloc>().add(ListaClearSelectionEvent());
                   },
                   tooltip: 'Excluir técnicos selecionados',
                 );
@@ -264,20 +264,21 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                     child: GridListView(
                       aspectRatio: 2.5,
                       dataList: stateTecnico.tecnicos,
-                      buildCard: (tecnico) => BlocBuilder<ListBloc, ListState>(
-                        builder: (context, stateList) {
+                      buildCard: (tecnico) =>
+                          BlocBuilder<ListaBloc, ListaState>(
+                        builder: (context, stateLista) {
                           bool isSelected = false;
 
-                          if (stateList is ListSelectState) {
+                          if (stateLista is ListaSelectState) {
                             isSelected =
-                                stateList.selectedIds.contains(tecnico.id);
+                                stateLista.selectedIds.contains(tecnico.id);
                           }
 
                           return CardTechnical(
                             onDoubleTap: () =>
                                 _onNavigateToUpdateScreen(tecnico.id!),
                             onLongPress: () =>
-                                _onLongPressSelectItemList(tecnico.id!),
+                                _onLongPressSelectItemLista(tecnico.id!),
                             id: tecnico.id!,
                             nome: tecnico.nome!,
                             sobrenome: tecnico.sobrenome!,

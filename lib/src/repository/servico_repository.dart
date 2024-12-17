@@ -12,13 +12,16 @@ import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:dio/dio.dart';
 
 class ServicoRepository extends DioService {
-  Future<List<Servico>?> getServicosByFilter(ServicoFilterRequest servicoFilter) async {
+  Future<List<Servico>?> getServicosByFilter(
+      ServicoFilterRequest servicoFilter) async {
     try {
       final response = await dio.post(
         ServerEndpoints.servicoFilterEndpoint,
         data: {
-          'dataAtendimentoPrevistoAntes': servicoFilter.dataAtendimentoPrevistoAntes?.toIso8601String(),
-          'dataAtendimentoPrevistoDepois': servicoFilter.dataAtendimentoPrevistoDepois?.toIso8601String(),
+          'dataAtendimentoPrevistoAntes':
+              servicoFilter.dataAtendimentoPrevistoAntes?.toIso8601String(),
+          'dataAtendimentoPrevistoDepois':
+              servicoFilter.dataAtendimentoPrevistoDepois?.toIso8601String(),
           'clienteId': servicoFilter.clienteId,
           'tecnicoId': servicoFilter.tecnicoId,
           'clienteNome': servicoFilter.clienteNome,
@@ -52,14 +55,14 @@ class ServicoRepository extends DioService {
     return null;
   }
 
-  Future<List<TecnicoDisponivel>?> getTecnicosDisponiveis(int especialidadeId) async {
+  Future<List<TecnicoDisponivel>?> getTecnicosDisponiveis(
+      int especialidadeId) async {
     try {
       final response = await dio.post(
-        ServerEndpoints.servicoDisponibilidadeEndpoint,
-        data: {
-          "especialidadeId": especialidadeId
-        }
-      );
+          ServerEndpoints.servicoDisponibilidadeEndpoint,
+          data: {"especialidadeId": especialidadeId});
+
+      print('Resposta completa: ${response.data}');
 
       if (response.data is List) {
         return (response.data as List)
@@ -72,7 +75,8 @@ class ServicoRepository extends DioService {
     return null;
   }
 
-  Future<ErrorEntity?> createServicoComClienteNaoExistente(ServicoRequest servico, ClienteRequest cliente) async {
+  Future<ErrorEntity?> createServicoComClienteNaoExistente(
+      ServicoRequest servico, ClienteRequest cliente) async {
     try {
       await dio.post(ServerEndpoints.servicoMaisClienteEndpoint, data: {
         "clienteRequest": {
@@ -101,7 +105,8 @@ class ServicoRepository extends DioService {
     return null;
   }
 
-  Future<ErrorEntity?> createServicoComClienteExistente(ServicoRequest servico) async {
+  Future<ErrorEntity?> createServicoComClienteExistente(
+      ServicoRequest servico) async {
     try {
       await dio.post(ServerEndpoints.servicoEndpoint, data: {
         "idCliente": servico.idCliente,

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/grid_view.dart';
-import 'package:serv_oeste/src/logic/list/list_bloc.dart';
+import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/components/card_service.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
@@ -21,7 +21,7 @@ class ServicoScreen extends StatefulWidget {
 
 class ServicoScreenState extends State<ServicoScreen> {
   late final ServicoBloc _servicoBloc;
-  late final ListBloc _listBloc;
+  late final ListaBloc _listaBloc;
   late final TextEditingController _nomeClienteController;
   late final TextEditingController _nomeTecnicoController;
   Timer? _debounce;
@@ -30,7 +30,7 @@ class ServicoScreenState extends State<ServicoScreen> {
   void initState() {
     super.initState();
     _servicoBloc = context.read<ServicoBloc>();
-    _listBloc = context.read<ListBloc>();
+    _listaBloc = context.read<ListaBloc>();
     _nomeClienteController = TextEditingController();
     _nomeTecnicoController = TextEditingController();
   }
@@ -57,16 +57,16 @@ class ServicoScreenState extends State<ServicoScreen> {
     //     builder: (context) => UpdateServico(id: id),
     //   ),
     // );
-    _listBloc.add(ListClearSelectionEvent());
+    _listaBloc.add(ListaClearSelectionEvent());
   }
 
   void _onLongPressSelectItemList(int id) {
-    _listBloc.add(ListToggleItemSelectEvent(id: id));
+    _listaBloc.add(ListaToggleItemSelectEvent(id: id));
   }
 
   void _disableServicos(BuildContext context, List<int> selectedIds) {
     _servicoBloc.add(ServicoDisableListEvent(selectedList: selectedIds));
-    _listBloc.add(ListClearSelectionEvent());
+    _listaBloc.add(ListaClearSelectionEvent());
   }
 
   Widget _buildSearchInputs() {
@@ -165,10 +165,10 @@ class ServicoScreenState extends State<ServicoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: BlocBuilder<ListBloc, ListState>(
+      floatingActionButton: BlocBuilder<ListaBloc, ListaState>(
         builder: (context, state) {
           final bool hasSelection =
-              state is ListSelectState && state.selectedIds.isNotEmpty;
+              state is ListaSelectState && state.selectedIds.isNotEmpty;
 
           return !hasSelection
               ? ExpandableFabItems(
@@ -195,7 +195,7 @@ class ServicoScreenState extends State<ServicoScreen> {
                   context,
                   () {
                     _disableServicos(context, state.selectedIds);
-                    context.read<ListBloc>().add(ListClearSelectionEvent());
+                    context.read<ListaBloc>().add(ListaClearSelectionEvent());
                   },
                   tooltip: 'Excluir serviços selecionados',
                 );
@@ -217,13 +217,14 @@ class ServicoScreenState extends State<ServicoScreen> {
                     child: GridListView(
                       aspectRatio: 1,
                       dataList: stateServico.servicos,
-                      buildCard: (servico) => BlocBuilder<ListBloc, ListState>(
-                        bloc: _listBloc,
-                        builder: (context, stateList) {
+                      buildCard: (servico) =>
+                          BlocBuilder<ListaBloc, ListaState>(
+                        bloc: _listaBloc,
+                        builder: (context, stateLista) {
                           bool isSelected = false;
 
-                          if (stateList is ListSelectState) {
-                            isSelected = stateList.selectedIds
+                          if (stateLista is ListaSelectState) {
+                            isSelected = stateLista.selectedIds
                                 .contains((servico as Servico).id);
                           }
 

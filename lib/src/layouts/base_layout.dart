@@ -4,7 +4,7 @@ import 'package:serv_oeste/src/components/bottom_nav_bar.dart';
 import 'package:serv_oeste/src/components/sidebar_navigation.dart';
 import 'package:serv_oeste/src/components/header.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
-import 'package:serv_oeste/src/logic/list/list_bloc.dart';
+import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
@@ -53,21 +53,21 @@ class BaseLayoutState extends State<BaseLayout> {
       1 => MultiBlocProvider(
           providers: [
             BlocProvider.value(value: _tecnicoBloc),
-            BlocProvider(create: (_) => ListBloc()..add(ListInitialEvent()))
+            BlocProvider(create: (_) => ListaBloc()..add(ListaInitialEvent()))
           ],
           child: TecnicoScreen(),
         ),
       2 => MultiBlocProvider(
           providers: [
             BlocProvider.value(value: _clienteBloc),
-            BlocProvider(create: (_) => ListBloc()..add(ListInitialEvent()))
+            BlocProvider(create: (_) => ListaBloc()..add(ListaInitialEvent()))
           ],
           child: ClienteScreen(),
         ),
       3 => MultiBlocProvider(
           providers: [
             BlocProvider.value(value: _servicoBloc),
-            BlocProvider(create: (_) => ListBloc()..add(ListInitialEvent())),
+            BlocProvider(create: (_) => ListaBloc()..add(ListaInitialEvent())),
           ],
           child: ServicoScreen(),
         ),
@@ -165,4 +165,4 @@ class BaseLayoutState extends State<BaseLayout> {
     );
   }
 }
-//TODO - no `_loadHome` ou passar o mesmo dia ou passar uma semana inteira de intervalo
+//TODO - no `_loadHome` passar uma semana inteira de intervalo

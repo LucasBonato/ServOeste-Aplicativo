@@ -168,21 +168,64 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
                   ),
                 ),
                 onRowDoubleTap: (PlutoGridOnRowDoubleTapEvent event) {
-                  final tecnico = event.row.cells['tecnico']?.value;
+                  final tecnico = event.row.cells['tecnico']?.value as String?;
+                  if (tecnico == null) {
+                    Logger().e('Erro: Nome do técnico não encontrado!');
+                    return;
+                  }
+
                   final cellField = event.cell.column.field;
+
+                  if (cellField == 'tecnico') {
+                    Logger().w(
+                        'Aviso: A coluna "Técnicos" foi selecionada. Nenhuma ação necessária.');
+                    return;
+                  }
+
+                  final match = RegExp(r'^(\d{2}-\d{2}-\d{4})-(M|T)$')
+                      .firstMatch(cellField);
+                  if (match == null) {
+                    Logger().e(
+                        'Erro: Formato inválido no campo selecionado ($cellField)!');
+                    return;
+                  }
+
+                  final dataSelecionada = match.group(1);
+                  final horarioSelecionado = match.group(2);
+
+                  final horarioConvertido =
+                      horarioSelecionado == 'M' ? 'Manhã' : 'Tarde';
+
                   final cellValue = event.cell.value;
 
                   final tecnicoData = widget.tecnicos.firstWhere(
-                    (tec) => tec.nome == tecnico,
+                    (tec) {
+                      final nomeComposto =
+                          "${tec.nome} ${getCompostName(tec.sobrenome ?? '')}";
+                      return nomeComposto == tecnico;
+                    },
                     orElse: () =>
                         Tecnico(nome: '', sobrenome: '', disponibilidade: {}),
                   );
-                  final extraInfo = tecnicoData.disponibilidade?[cellField];
 
-                  final nomeComposto =
-                      "${tecnicoData.nome} ${getCompostName(tecnicoData.sobrenome ?? '')}";
+                  if (tecnicoData.nome!.isEmpty) {
+                    Logger().e('Erro: Técnico não encontrado na lista!');
+                    return;
+                  }
+
+                  final extraInfo = tecnicoData.disponibilidade?[cellField] ??
+                      'Sem informação';
+
+                  final nomeTecnico =
+                      '${tecnicoData.nome} ${tecnicoData.sobrenome ?? ''}';
+
                   Logger().i(
-                      'Técnico: $nomeComposto, Valor: $cellValue, Informação extra: $extraInfo');
+                    'Técnico: $nomeTecnico, '
+                    'Data: $dataSelecionada, '
+                    'Horário: $horarioConvertido, '
+                    'Valor: $cellValue, '
+                    'Informação extra: $extraInfo',
+                  );
                 },
               ),
             ),
