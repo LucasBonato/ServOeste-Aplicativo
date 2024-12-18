@@ -71,19 +71,12 @@ class FilterService extends StatelessWidget {
                   ),
                   CustomSearchDropDown(
                     label: 'Equipamento...',
-                    dropdownValues:
-                        Constants.equipamentos.map((e) => e.label).toList(),
+                    dropdownValues: Constants.equipamentos,
                     onChanged: (String? value) {
                       if (value != null) {
-                        final equipamentoSelecionado =
-                            Constants.equipamentos.firstWhere(
-                          (equipamento) => equipamento.conhecimento == value,
-                          orElse: () =>
-                              Equipamento(id: 0, conhecimento: '', label: ''),
-                        );
+                        final String equipamento = Constants.equipamentos.contains(value) ? value : Constants.equipamentos.last;
 
-                        provider.updateFilter(
-                            equipamento: equipamentoSelecionado.conhecimento);
+                        provider.updateFilter(equipamento: equipamento);
                       }
                     },
                   ),

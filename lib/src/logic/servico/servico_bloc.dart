@@ -25,8 +25,7 @@ class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
     on<ServicoDisableListEvent>(_deleteService);
   }
 
-  Future<void> _fetchAllServices(
-      ServicoLoadingEvent event, Emitter<ServicoState> emit) async {
+  Future<void> _fetchAllServices(ServicoLoadingEvent event, Emitter<ServicoState> emit) async {
     emit(ServicoLoadingState());
     try {
       List<Servico>? response =
@@ -40,13 +39,11 @@ class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
     }
   }
 
-  Future<void> _fetchOneService(
-      ServicoSearchOneEvent event, Emitter emit) async {}
+  Future<void> _fetchOneService(ServicoSearchOneEvent event, Emitter emit) async {}
 
   Future<void> _searchServices(ServicoSearchEvent event, Emitter emit) async {}
 
-  Future<void> _registerService(
-      ServicoRegisterEvent event, Emitter emit) async {
+  Future<void> _registerService(ServicoRegisterEvent event, Emitter emit) async {
     emit(ServicoLoadingState());
     ErrorEntity? error = await _servicoRepository
         .createServicoComClienteExistente(event.servico);
@@ -55,8 +52,7 @@ class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
         : ServicoErrorState(error: error));
   }
 
-  Future<void> _registerServicePlusClient(
-      ServicoRegisterPlusClientEvent event, Emitter emit) async {
+  Future<void> _registerServicePlusClient(ServicoRegisterPlusClientEvent event, Emitter emit) async {
     emit(ServicoLoadingState());
     ErrorEntity? error = await _servicoRepository
         .createServicoComClienteNaoExistente(event.servico, event.cliente);
@@ -67,8 +63,7 @@ class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
 
   Future<void> _updateService(ServicoUpdateEvent event, Emitter emit) async {}
 
-  Future<void> _deleteService(
-      ServicoDisableListEvent event, Emitter<ServicoState> emit) async {
+  Future<void> _deleteService(ServicoDisableListEvent event, Emitter<ServicoState> emit) async {
     emit(ServicoLoadingState());
     try {
       await _servicoRepository.disableListOfServico(event.selectedList);
