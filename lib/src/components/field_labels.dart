@@ -12,8 +12,7 @@ class BuildFieldLabels extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.centerLeft,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Wrap(
         children: [
           Text(
             "* - Campos obrigatórios",

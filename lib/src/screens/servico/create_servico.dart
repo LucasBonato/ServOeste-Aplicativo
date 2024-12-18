@@ -9,8 +9,6 @@ import 'package:serv_oeste/src/components/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
-import 'package:serv_oeste/src/logic/disponibilidade_tecnico.dart/disponibilidade_tecnico_bloc.dart';
-import 'package:serv_oeste/src/logic/disponibilidade_tecnico.dart/disponibilidade_tecnico_event.dart';
 import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
@@ -50,7 +48,6 @@ class _CreateServicoState extends State<CreateServico> {
   late final ClienteBloc _clienteBloc;
   late final TecnicoBloc _tecnicoBloc;
   late final EnderecoBloc _enderecoBloc;
-  late final DisponibilidadeBloc _disponibilidadeBloc;
 
   final ClienteForm _clienteForm = ClienteForm();
   final ClienteValidator _clienteValidator = ClienteValidator();
@@ -72,33 +69,20 @@ class _CreateServicoState extends State<CreateServico> {
     _clienteBloc = context.read<ClienteBloc>();
     _tecnicoBloc = context.read<TecnicoBloc>();
     _enderecoBloc = EnderecoBloc();
-    _disponibilidadeBloc = DisponibilidadeBloc();
     super.initState();
   }
 
-  void _onNameChanged(String nome, String type) {
-    if (type == "cliente") _servicoForm.setIdCliente(null);
-    if (type == "tecnico") _servicoForm.setIdTecnico(null);
-
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(
-      Duration(milliseconds: 150),
-      () => _fetchNames(nome, type),
-    );
+  void _onNomeClienteChanged(String nome) {
+    _servicoForm.setIdCliente(null);
+    if (_debounce?.isActive?? false) _debounce!.cancel();
+    _debounce = Timer(Duration(milliseconds: 150), () => _fetchClienteNames(nome));
   }
-
-  void _fetchNames(String nome, String type) {
-    if (nome.isEmpty) return;
-    if (type == "cliente") {
-      _clienteBloc.add(ClienteSearchEvent(nome: nome));
-    } else if (type == "tecnico") {
-      _tecnicoBloc.add(TecnicoSearchEvent(
-        nome: nome,
-        equipamento: _servicoForm.equipamento.value,
-      ));
-    }
+  void _fetchClienteNames(String nome) {
+    _clienteForm.setNome(nome);
+    if (nome == "") return;
+    if (nome.split(" ").length > 1 && _dropdownNomeClientes.isEmpty) return;
+    _clienteBloc.add(ClienteSearchEvent(nome: nome));
   }
-
   void _getClienteId(String nome) {
     for (Cliente cliente in _clientes) {
       if (cliente.nome! == _clienteForm.nome.value) {
@@ -107,6 +91,18 @@ class _CreateServicoState extends State<CreateServico> {
     }
   }
 
+  void _onNomeTecnicoChanged(String nome) {
+    _servicoForm.setIdTecnico(null);
+    if (_servicoForm.equipamento.value.isEmpty) return;
+    if (_debounce?.isActive?? false) _debounce!.cancel();
+    _debounce = Timer(Duration(milliseconds: 150), () => _fetchTecnicoNames(nome));
+  }
+  void _fetchTecnicoNames(String nome) {
+    _servicoForm.setNomeTecnico(nome);
+    if (nome == "") return;
+    if (nome.split(" ").length > 1 && _dropdownNomeTecnicos.isEmpty) return;
+    _tecnicoBloc.add(TecnicoSearchEvent(nome: nome, equipamento: _servicoForm.equipamento.value));
+  }
   void _getTecnicoId(String nome) {
     _servicoForm.setNomeTecnico(nome);
     for (Tecnico tecnico in _tecnicos) {
@@ -124,55 +120,41 @@ class _CreateServicoState extends State<CreateServico> {
   }
 
   void _onShowAvailabilityTechnicianTable() {
-    final equipamentoSelecionado = _servicoForm.equipamento.value;
+    final String equipamentoSelected = _servicoForm.equipamento.value;
+    int idEspecialidade = 12;
+    if (Constants.equipamentos.contains(equipamentoSelected)) {
+      idEspecialidade = Constants.equipamentos.indexOf(equipamentoSelected) + 1;
+    }
 
-    final selectedEspecialidade = Constants.equipamentos.firstWhere(
-      (equipamento) => equipamento.label == equipamentoSelecionado,
-      orElse: () => Equipamento(id: 0, label: '', conhecimento: ''),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return TableTecnicosModal(
+            especialidadeId: idEspecialidade
+        );
+      },
     );
 
-    _tecnicoBloc.add(TecnicoSearchEvent(
-      nome: _servicoForm.nomeTecnico.value,
-      equipamento: _servicoForm.equipamento.value,
-    ));
-
-    _disponibilidadeBloc.add(DisponibilidadesSearchEvent(
-      selectedEspecialidade.id,
-    ));
-
-    _tecnicoBloc.stream.listen((state) {
-      if (!mounted) return;
-
-      if (state is TecnicoSearchSuccessState) {
-        setState(() {
-          _tecnicos = state.tecnicos;
-        });
-
-        if (_tecnicos.isEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Nenhum técnico encontrado!')),
-          );
-          return;
-        }
-
-        if (!_isModalOpen) {
-          _isModalOpen = true;
-
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return TableTecnicosModal(
-                  tecnicos: _tecnicos,
-                  especialidadeId: selectedEspecialidade.id);
-            },
-          ).then((_) {
-            _isModalOpen = false;
-          });
-        }
-      } else if (state is TecnicoErrorState) {
-        Logger().e('Erro ao buscar técnicos: ${state.error.errorMessage}');
-      }
-    });
+    // _tecnicoBloc.stream.listen((state) {
+    //   if (!mounted) return;
+    //
+    //   if (state is TecnicoSearchSuccessState) {
+    //     setState(() {
+    //       _tecnicos = state.tecnicos;
+    //     });
+    //
+    //     if (!_isModalOpen) {
+    //       _isModalOpen = true;
+    //
+    //       .then((_) {
+    //         _isModalOpen = false;
+    //       });
+    //     }
+    //   }
+    //   else if (state is TecnicoErrorState) {
+    //     Logger().e('Erro ao buscar técnicos: ${state.error.errorMessage}');
+    //   }
+    // });
   }
 
   bool _isValidServicoForm() {
@@ -207,8 +189,7 @@ class _CreateServicoState extends State<CreateServico> {
       _clienteForm.nome.value = "${nomes.first} $sobrenomeCliente";
       return;
     }
-    _servicoBloc.add(ServicoRegisterEvent(
-        servico: ServicoRequest.fromServicoForm(servico: _servicoForm)));
+    _servicoBloc.add(ServicoRegisterEvent(servico: ServicoRequest.fromServicoForm(servico: _servicoForm)));
 
     if (widget.isClientAndService) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -216,7 +197,8 @@ class _CreateServicoState extends State<CreateServico> {
           content: Text('Cliente e Serviço adicionados com sucesso!'),
         ),
       );
-    } else {
+    }
+    else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Serviço adicionado com sucesso!'),
@@ -335,9 +317,11 @@ class _CreateServicoState extends State<CreateServico> {
                           _servicoValidator.applyBackendError(error);
                           _servicoFormKey.currentState?.validate();
                           _servicoValidator.cleanExternalErrors();
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text(
-                                  "[ERROR] Informação(ões) inválida(s) ao registrar o Serviço: ${error.errorMessage}")));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text("[ERROR] Informação(ões) inválida(s) ao registrar o Serviço: ${error.errorMessage}"),
+                            ),
+                          );
                         }
                       },
                       child: _buildButton(
@@ -435,7 +419,7 @@ class _CreateServicoState extends State<CreateServico> {
               valueNotifier: _clienteForm.nome,
               validator: _clienteValidator.byField(
                   _clienteForm, ErrorCodeKey.nomeESobrenome.name),
-              onChanged: (value) => _onNameChanged(value, "cliente"),
+              onChanged: _onNomeClienteChanged,
               onSelected: _getClienteId,
             ),
           ),
@@ -595,18 +579,11 @@ class _CreateServicoState extends State<CreateServico> {
         children: [
           CustomSearchDropDown(
             label: "Equipamento*",
-            dropdownValues: Constants.equipamentos.map((e) => e.label).toList(),
+            dropdownValues: Constants.equipamentos,
             valueNotifier: _servicoForm.equipamento,
             hide: true,
-            validator: _servicoValidator.byField(
-                _servicoForm, ErrorCodeKey.equipamento.name),
-            onChanged: (selectedLabel) {
-              final selectedEquipamento = Constants.equipamentos.firstWhere(
-                (equipamento) => equipamento.label == selectedLabel,
-                orElse: () => Equipamento(id: 0, label: '', conhecimento: ''),
-              );
-              _servicoForm.setEquipamento(selectedEquipamento.conhecimento);
-            },
+            validator: _servicoValidator.byField(_servicoForm, ErrorCodeKey.equipamento.name),
+            onChanged: _servicoForm.setEquipamento,
           ),
           CustomSearchDropDown(
             dropdownValues: Constants.marcas,
@@ -643,21 +620,21 @@ class _CreateServicoState extends State<CreateServico> {
               }
             },
             child: ValueListenableBuilder(
-                valueListenable: _servicoForm.equipamento,
-                builder: (context, value, child) {
-                  return CustomSearchDropDown(
-                    label: "Nome do Técnico*",
-                    dropdownValues: _dropdownNomeTecnicos,
-                    maxLength: 50,
-                    hide: true,
-                    valueNotifier: _servicoForm.nomeTecnico,
-                    validator: _servicoValidator.byField(
-                        _servicoForm, ErrorCodeKey.tecnico.name),
-                    onChanged: (value) => _onNameChanged(value, "tecnico"),
-                    onSelected: _getTecnicoId,
-                    // enabled: false,
-                  );
-                }),
+              valueListenable: _servicoForm.equipamento,
+              builder: (context, value, child) {
+                return CustomSearchDropDown(
+                  label: "Nome do Técnico*",
+                  dropdownValues: _dropdownNomeTecnicos,
+                  maxLength: 50,
+                  hide: true,
+                  valueNotifier: _servicoForm.nomeTecnico,
+                  validator: _servicoValidator.byField(_servicoForm, ErrorCodeKey.tecnico.name),
+                  onChanged: _onNomeTecnicoChanged,
+                  onSelected: _getTecnicoId,
+                  // enabled: false,
+                );
+              }
+            ),
           ),
           const SizedBox(height: 6),
           Row(

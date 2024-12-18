@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
+import 'package:serv_oeste/src/models/servico/tecnico_disponivel.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/repository/tecnico_repository.dart';
 
@@ -18,6 +19,7 @@ class TecnicoBloc extends Bloc<TecnicoEvent, TecnicoState> {
   TecnicoBloc() : super(TecnicoInitialState()) {
     on<TecnicoLoadingEvent>(_fetchAllTecnicos);
     on<TecnicoSearchOneEvent>(_fetchOneTecnico);
+    on<TecnicoAvailabilitySearchEvent>(_fetchAvailability);
     on<TecnicoSearchEvent>(_searchTecnicos);
     on<TecnicoRegisterEvent>(_registerTecnico);
     on<TecnicoUpdateEvent>(_updateTecnico);
@@ -66,6 +68,18 @@ class TecnicoBloc extends Bloc<TecnicoEvent, TecnicoState> {
     }
   }
 
+  Future<void> _fetchAvailability(TecnicoAvailabilitySearchEvent event, Emitter emit) async {
+    emit(TecnicoLoadingState());
+    try {
+      final List<TecnicoDisponivel>? tecnicosDisponiveis = await _tecnicoRepository.getTecnicosDisponiveis(event.idEspecialidade);
+      emit(TecnicoSearchAvailabilitySuccessState(tecnicosDisponiveis: tecnicosDisponiveis ?? []));
+    } on DioException catch (e) {
+      emit(TecnicoErrorState(
+        error: ErrorEntity(id: 0, errorMessage: e.message ?? 'Erro desconhecido'),
+      ));
+    }
+  }
+
   Future<void> _searchTecnicos(TecnicoSearchEvent event, Emitter<TecnicoState> emit) async {
     _id = event.id;
     _nome = (event.nome?.isNotEmpty == true) ? event.nome : null;
@@ -101,10 +115,7 @@ class TecnicoBloc extends Bloc<TecnicoEvent, TecnicoState> {
     }
   }
 
-  Future<void> _deleteListTecnicos(
-    TecnicoDisableListEvent event,
-    Emitter<TecnicoState> emit,
-  ) async {
+  Future<void> _deleteListTecnicos(TecnicoDisableListEvent event, Emitter<TecnicoState> emit) async {
     emit(TecnicoLoadingState());
     try {
       await _tecnicoRepository.disableListOfTecnicos(event.selectedList);

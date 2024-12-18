@@ -1,43 +1,35 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:pluto_grid/pluto_grid.dart';
-import 'package:serv_oeste/src/logic/disponibilidade_tecnico.dart/disponibilidade_tecnico_bloc.dart';
-import 'package:serv_oeste/src/logic/disponibilidade_tecnico.dart/disponibilidade_tecnico_event.dart';
-import 'package:serv_oeste/src/logic/disponibilidade_tecnico.dart/disponibilidade_tecnico_state.dart';
-import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
+import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TableTecnicosModal extends StatefulWidget {
-  final List<Tecnico> tecnicos;
   final int especialidadeId;
 
-  const TableTecnicosModal(
-      {super.key, required this.tecnicos, required this.especialidadeId});
+  const TableTecnicosModal({
+    super.key,
+    required this.especialidadeId
+  });
 
   @override
   TableTecnicosModalState createState() => TableTecnicosModalState();
 }
 
 class TableTecnicosModalState extends State<TableTecnicosModal> {
+  late final TecnicoBloc _tecnicoBloc;
+  late final List<String> dateFields;
   late List<PlutoColumnGroup> _columnGroups;
   late List<PlutoColumn> _columns;
   late List<PlutoRow> _rows;
-  late final DisponibilidadeBloc _disponibilidadeBloc;
 
   @override
   void initState() {
     super.initState();
-    _disponibilidadeBloc = DisponibilidadeBloc();
+    _tecnicoBloc = context.read<TecnicoBloc>();
 
-    _disponibilidadeBloc.add(DisponibilidadesSearchEvent(
-      widget.especialidadeId,
-    ));
+    _tecnicoBloc.add(TecnicoAvailabilitySearchEvent(idEspecialidade: widget.especialidadeId));
 
-    final List<DateTime> validDates = _getNextValidDates();
-
-    final dateFields = validDates.map((date) {
+    dateFields = _getNextValidDates().map((date) {
       final day = date.day.toString().padLeft(2, '0');
       final month = date.month.toString().padLeft(2, '0');
       final year = date.year.toString().padLeft(2, '0');
@@ -54,24 +46,26 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
         width: 150,
         enableEditingMode: false,
       ),
-      ...dateFields.expand((field) => [
-            PlutoColumn(
-              title: 'M',
-              field: '$field-M',
-              type: PlutoColumnType.text(),
-              minWidth: 80,
-              width: 100,
-              enableEditingMode: false,
-            ),
-            PlutoColumn(
-              title: 'T',
-              field: '$field-T',
-              type: PlutoColumnType.text(),
-              minWidth: 80,
-              width: 100,
-              enableEditingMode: false,
-            ),
-          ]),
+      ...dateFields.expand(
+        (field) => [
+          PlutoColumn(
+            title: 'M',
+            field: '$field-M',
+            type: PlutoColumnType.text(),
+            minWidth: 80,
+            width: 100,
+            enableEditingMode: false,
+          ),
+          PlutoColumn(
+            title: 'T',
+            field: '$field-T',
+            type: PlutoColumnType.text(),
+            minWidth: 80,
+            width: 100,
+            enableEditingMode: false,
+          ),
+        ]
+      ),
     ];
 
     _columnGroups = [
@@ -90,6 +84,7 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
   }
 
   List<DateTime> _getNextValidDates() {
+    //TODO - Existem jeitos melhores de fazer isso aqui, cuidado com muitos loops na aplicação
     final List<DateTime> dates = [];
     DateTime currentDate = DateTime.now();
 
@@ -117,48 +112,38 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
 
   @override
   Widget build(BuildContext context) {
-    bool isMediumScreen = MediaQuery.of(context).size.width >= 600 &&
-        MediaQuery.of(context).size.width < 1024;
-
-    double dialogWidth = isMediumScreen
-        ? MediaQuery.of(context).size.width * 0.85
-        : MediaQuery.of(context).size.width * 0.65;
+    double dialogWidth = MediaQuery.of(context).size.width * 0.85;
 
     double getFontSize(double min, double preferred, double max) {
       return (MediaQuery.of(context).size.width / 100).clamp(min, max);
     }
 
-    return BlocBuilder<DisponibilidadeBloc, DisponibilidadeState>(
-      bloc: _disponibilidadeBloc,
+    return BlocBuilder<TecnicoBloc, TecnicoState>(
+      bloc: _tecnicoBloc,
       builder: (context, state) {
-        if (state is DisponibilidadeLoadingState) {
+        if (state is TecnicoLoadingState) {
           return Center(child: CircularProgressIndicator());
-        } else if (state is DisponibilidadeSearchSuccessState) {
-          Logger().i('Técnicos Disponíveis: ${state.tecnicoDisponivel}');
-          Logger().i('Técnicos : ${widget.tecnicos}');
-          _rows = widget.tecnicos.map((tecnico) {
-            final nomeComposto =
-                "${tecnico.nome} ${getCompostName(tecnico.sobrenome)}";
+        }
+        else if (state is TecnicoSearchAvailabilitySuccessState) {
+          if (state.tecnicosDisponiveis == null || state.tecnicosDisponiveis!.isEmpty) {
+            return SizedBox();
+          }
+
+          _rows = state.tecnicosDisponiveis!.map((tecnico) {
             final Map<String, PlutoCell> dateFieldsMap = {
-              for (var field in state.tecnicoDisponivel) ...{
-                '$field-M': PlutoCell(value: '0'),
-                '$field-T': PlutoCell(value: '0'),
+              for (var date in dateFields) ...{
+                '$date-M': PlutoCell(value: '0'),
+                '$date-T': PlutoCell(value: '0'),
               }
             };
 
-            print('VSFDDDDDD ${dateFieldsMap.keys}');
-
             return PlutoRow(
               cells: {
-                'tecnico': PlutoCell(value: nomeComposto),
+                'tecnico': PlutoCell(value: tecnico.nome),
                 ...dateFieldsMap,
               },
             );
           }).toList();
-
-          if (_rows.isEmpty) {
-            return SizedBox();
-          }
 
           return Dialog(
             shape: RoundedRectangleBorder(
@@ -167,16 +152,18 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
             child: Container(
               padding: const EdgeInsets.all(16),
               width: dialogWidth,
-              height: MediaQuery.of(context).size.height * 0.5,
+              height: MediaQuery.of(context).size.height * 0.6,
               child: Column(
                 children: [
-                  Text(
-                    'Disponibilidade dos Técnicos',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 12),
                   Expanded(
+                    child: Text(
+                      'Disponibilidade dos Técnicos',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Expanded(
+                    flex: 10,
                     child: PlutoGrid(
                       columns: _columns,
                       rows: _rows,
@@ -195,17 +182,19 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
                       // onRowDoubleTap: _handleRowDoubleTap,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Clique duas vezes em um dos números para puxar as informações do Técnico para o formulário',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 13, color: Colors.black54),
+                  Expanded(
+                    child: Text(
+                      'Clique duas vezes em um dos números para puxar as informações do Técnico para o formulário',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 13, color: Colors.black54),
+                    ),
                   ),
                 ],
               ),
             ),
           );
-        } else if (state is DisponibilidadeErrorState) {
+        }
+        else if (state is TecnicoErrorState) {
           return Center(child: Text('Erro ao carregar as disponibilidades.'));
         }
         return Center(child: CircularProgressIndicator());

@@ -27,6 +27,14 @@ final class TecnicoSearchOneEvent extends TecnicoEvent {
   TecnicoSearchOneEvent({required this.id});
 }
 
+final class TecnicoAvailabilitySearchEvent extends TecnicoEvent {
+  final int idEspecialidade;
+
+  TecnicoAvailabilitySearchEvent({
+    required this.idEspecialidade,
+  });
+}
+
 final class TecnicoSearchEvent extends TecnicoEvent {
   final int? id;
   final String? nome;

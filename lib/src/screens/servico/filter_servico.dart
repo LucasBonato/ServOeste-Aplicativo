@@ -41,11 +41,6 @@ class FilterService extends StatelessWidget {
     Navigator.pop(context);
   }
 
-  void cleanFilters(BuildContext context) {
-    context.read<FiltroServicoProvider>().clearFields();
-    context.read<FiltroServicoProvider>().resetFilter();
-  }
-
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<FiltroServicoProvider>();
@@ -275,22 +270,6 @@ class FilterService extends StatelessWidget {
                     ),
                     child: const Text(
                       "Filtrar",
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  ElevatedButton(
-                    onPressed: () => cleanFilters(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF7C98B6),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      minimumSize: const Size(double.infinity, 48),
-                    ),
-                    child: const Text(
-                      "Limpar filtros",
                       style: TextStyle(fontSize: 18, color: Colors.white),
                     ),
                   ),

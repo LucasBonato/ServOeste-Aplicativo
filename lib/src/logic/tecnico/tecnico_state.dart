@@ -13,6 +13,14 @@ final class TecnicoSearchOneSuccessState extends TecnicoState {
   TecnicoSearchOneSuccessState({required this.tecnico});
 }
 
+final class TecnicoSearchAvailabilitySuccessState extends TecnicoState {
+  final List<TecnicoDisponivel>? tecnicosDisponiveis;
+
+  TecnicoSearchAvailabilitySuccessState({
+    this.tecnicosDisponiveis
+  });
+}
+
 final class TecnicoSearchSuccessState extends TecnicoState {
   final List<Tecnico> tecnicos;
 
