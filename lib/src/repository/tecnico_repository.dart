@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
+import 'package:serv_oeste/src/models/servico/tecnico_disponivel.dart';
 import 'package:serv_oeste/src/repository/dio/dio_service.dart';
 import 'package:serv_oeste/src/repository/dio/server_endpoints.dart';
 
@@ -61,6 +62,24 @@ class TecnicoRepository extends DioService {
       });
     } on DioException catch (e) {
       return onRequestError(e);
+    }
+    return null;
+  }
+
+  Future<List<TecnicoDisponivel>?> getTecnicosDisponiveis(
+      int especialidadeId) async {
+    try {
+      final response = await dio.post(
+          ServerEndpoints.tecnicoDisponibilidadeEndpoint,
+          data: {"especialidadeId": especialidadeId});
+
+      if (response.data is List) {
+        return (response.data as List)
+            .map((json) => TecnicoDisponivel.fromJson(json))
+            .toList();
+      }
+    } on DioException catch (e) {
+      throw Exception(onRequestError(e));
     }
     return null;
   }

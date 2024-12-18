@@ -9,6 +9,8 @@ import 'package:serv_oeste/src/components/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
+import 'package:serv_oeste/src/logic/disponibilidade_tecnico.dart/disponibilidade_tecnico_bloc.dart';
+import 'package:serv_oeste/src/logic/disponibilidade_tecnico.dart/disponibilidade_tecnico_event.dart';
 import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
@@ -17,6 +19,7 @@ import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_request.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
+import 'package:serv_oeste/src/models/servico/equipamento.dart';
 import 'package:serv_oeste/src/models/servico/servico_form.dart';
 import 'package:serv_oeste/src/models/servico/servico_request.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
@@ -47,6 +50,7 @@ class _CreateServicoState extends State<CreateServico> {
   late final ClienteBloc _clienteBloc;
   late final TecnicoBloc _tecnicoBloc;
   late final EnderecoBloc _enderecoBloc;
+  late final DisponibilidadeBloc _disponibilidadeBloc;
 
   final ClienteForm _clienteForm = ClienteForm();
   final ClienteValidator _clienteValidator = ClienteValidator();
@@ -68,6 +72,7 @@ class _CreateServicoState extends State<CreateServico> {
     _clienteBloc = context.read<ClienteBloc>();
     _tecnicoBloc = context.read<TecnicoBloc>();
     _enderecoBloc = EnderecoBloc();
+    _disponibilidadeBloc = DisponibilidadeBloc();
     super.initState();
   }
 
@@ -119,9 +124,20 @@ class _CreateServicoState extends State<CreateServico> {
   }
 
   void _onShowAvailabilityTechnicianTable() {
+    final equipamentoSelecionado = _servicoForm.equipamento.value;
+
+    final selectedEspecialidade = Constants.equipamentos.firstWhere(
+      (equipamento) => equipamento.label == equipamentoSelecionado,
+      orElse: () => Equipamento(id: 0, label: '', conhecimento: ''),
+    );
+
     _tecnicoBloc.add(TecnicoSearchEvent(
       nome: _servicoForm.nomeTecnico.value,
       equipamento: _servicoForm.equipamento.value,
+    ));
+
+    _disponibilidadeBloc.add(DisponibilidadesSearchEvent(
+      selectedEspecialidade.id,
     ));
 
     _tecnicoBloc.stream.listen((state) {
@@ -145,14 +161,16 @@ class _CreateServicoState extends State<CreateServico> {
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              return TableTecnicosModal(tecnicos: _tecnicos);
+              return TableTecnicosModal(
+                  tecnicos: _tecnicos,
+                  especialidadeId: selectedEspecialidade.id);
             },
           ).then((_) {
             _isModalOpen = false;
           });
         }
       } else if (state is TecnicoErrorState) {
-        Logger().e('Erro ao buscar técnicos: ${state.error}');
+        Logger().e('Erro ao buscar técnicos: ${state.error.errorMessage}');
       }
     });
   }
@@ -579,18 +597,18 @@ class _CreateServicoState extends State<CreateServico> {
       child: Column(
         children: [
           CustomSearchDropDown(
-            dropdownValues: Constants.equipamentos.values.toList(),
+            label: "Equipamento*",
+            dropdownValues: Constants.equipamentos.map((e) => e.label).toList(),
             valueNotifier: _servicoForm.equipamento,
             hide: true,
-            label: "Equipamento*",
             validator: _servicoValidator.byField(
                 _servicoForm, ErrorCodeKey.equipamento.name),
-            onChanged: (selectedValue) {
-              final equipamentoSelecionado =
-                  Constants.equipamentos.keys.firstWhere(
-                (key) => Constants.equipamentos[key] == selectedValue,
+            onChanged: (selectedLabel) {
+              final selectedEquipamento = Constants.equipamentos.firstWhere(
+                (equipamento) => equipamento.label == selectedLabel,
+                orElse: () => Equipamento(id: 0, label: '', conhecimento: ''),
               );
-              _servicoForm.setEquipamento(equipamentoSelecionado);
+              _servicoForm.setEquipamento(selectedEquipamento.conhecimento);
             },
           ),
           CustomSearchDropDown(

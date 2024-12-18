@@ -1,3 +1,5 @@
+import 'package:serv_oeste/src/models/servico/equipamento.dart';
+
 class Constants {
   static const bool isDev = true;
 
@@ -31,19 +33,20 @@ class Constants {
     'São Paulo',
     'Itapevi',
   ];
-  static const Map<String, String> equipamentos = {
-    "Adega": "Adega",
-    "Bebedouro": "Bebedouro",
-    "Climatizador": "Climatizador",
-    "Cooler": "Cooler",
-    "Frigobar": "Frigobar",
-    "Geladeira": "Geladeira",
-    "Lava Louça": "Lava Louca",
-    "Lava Roupa": "Lava Roupa",
-    "Microondas": "Microondas",
-    "Purificador": "Purificador",
-    "Secadora": "Secadora",
-  };
+  static List<Equipamento> equipamentos = [
+    Equipamento(id: 1, conhecimento: 'Adega', label: 'Adega'),
+    Equipamento(id: 2, conhecimento: 'Bebedouro', label: 'Bebedouro'),
+    Equipamento(id: 3, conhecimento: 'Climatizador', label: 'Climatizador'),
+    Equipamento(id: 4, conhecimento: 'Cooler', label: 'Cooler'),
+    Equipamento(id: 5, conhecimento: 'Frigobar', label: 'Frigobar'),
+    Equipamento(id: 6, conhecimento: 'Geladeira', label: 'Geladeira'),
+    Equipamento(id: 7, conhecimento: 'Lava Louca', label: 'Lava Louça'),
+    Equipamento(id: 8, conhecimento: 'Lava Roupa', label: 'Lava Roupa'),
+    Equipamento(id: 9, conhecimento: 'Microondas', label: 'Microondas'),
+    Equipamento(id: 10, conhecimento: 'Purificador', label: 'Purificador'),
+    Equipamento(id: 11, conhecimento: 'Secadora', label: 'Secadora'),
+    Equipamento(id: 12, conhecimento: 'Outros', label: 'Outros'),
+  ];
   static const List<String> marcas = [
     "Brastemp",
     "Consul",
