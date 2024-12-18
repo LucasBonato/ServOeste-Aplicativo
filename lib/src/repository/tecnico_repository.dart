@@ -66,12 +66,14 @@ class TecnicoRepository extends DioService {
     return null;
   }
 
-  Future<List<TecnicoDisponivel>?> getTecnicosDisponiveis(
-      int especialidadeId) async {
+  Future<List<TecnicoDisponivel>?> getTecnicosDisponiveis(int especialidadeId) async {
     try {
       final response = await dio.post(
-          ServerEndpoints.tecnicoDisponibilidadeEndpoint,
-          data: {"especialidadeId": especialidadeId});
+        ServerEndpoints.tecnicoDisponibilidadeEndpoint,
+        data: {
+          "especialidadeId": especialidadeId
+        }
+      );
 
       if (response.data is List) {
         return (response.data as List)
