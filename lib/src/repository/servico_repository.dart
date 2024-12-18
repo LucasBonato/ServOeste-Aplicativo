@@ -18,10 +18,8 @@ class ServicoRepository extends DioService {
       final response = await dio.post(
         ServerEndpoints.servicoFilterEndpoint,
         data: {
-          'dataAtendimentoPrevistoAntes':
-              servicoFilter.dataAtendimentoPrevistoAntes?.toIso8601String(),
-          'dataAtendimentoPrevistoDepois':
-              servicoFilter.dataAtendimentoPrevistoDepois?.toIso8601String(),
+          'dataAtendimentoPrevistoAntes': servicoFilter.dataAtendimentoPrevistoAntes?.toIso8601String(),
+          'dataAtendimentoPrevistoDepois': servicoFilter.dataAtendimentoPrevistoDepois?.toIso8601String(),
           'clienteId': servicoFilter.clienteId,
           'tecnicoId': servicoFilter.tecnicoId,
           'clienteNome': servicoFilter.clienteNome,

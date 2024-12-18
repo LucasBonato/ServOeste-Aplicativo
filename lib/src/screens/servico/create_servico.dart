@@ -134,7 +134,7 @@ class _CreateServicoState extends State<CreateServico> {
 
         if (_tecnicos.isEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Nenhum técnico encontrado!')),
+            const SnackBar(content: Text('Nenhum técnico está ocupado!')),
           );
           return;
         }
@@ -287,6 +287,9 @@ class _CreateServicoState extends State<CreateServico> {
                             ],
                           ),
                     const SizedBox(height: 48),
+                    BlocListener<>(
+                      listener: listener
+                    ),
                     ValueListenableBuilder<String>(
                       valueListenable: _servicoForm.equipamento,
                       builder: (context, equipamentoSelecionado, child) {
