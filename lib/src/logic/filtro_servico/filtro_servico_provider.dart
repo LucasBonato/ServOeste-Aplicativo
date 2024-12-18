@@ -1,10 +1,35 @@
 import 'package:flutter/foundation.dart';
-import 'package:serv_oeste/src/models/filtro_servico/filtro_servico.dart';
+import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 
 class FiltroServicoProvider extends ChangeNotifier {
-  FiltroServicoModel _filter = FiltroServicoModel();
+  ServicoFilterRequest _filter = ServicoFilterRequest();
 
-  FiltroServicoModel get filter => _filter;
+  ServicoFilterRequest get filter => _filter;
+
+  void clearFields() {
+    _filter = ServicoFilterRequest();
+    notifyListeners();
+  }
+
+  void resetFilter({bool resetAll = true}) {
+    if (resetAll) {
+      _filter = ServicoFilterRequest();
+    } else {
+      _filter = ServicoFilterRequest(
+        id: null,
+        tecnicoNome: null,
+        equipamento: null,
+        situacao: null,
+        filial: null,
+        garantia: null,
+        periodo: null,
+        dataAtendimentoPrevistoAntes: null,
+        dataAtendimentoEfetivoAntes: null,
+        dataAberturaAntes: null,
+      );
+    }
+    notifyListeners();
+  }
 
   void updateFilter({
     int? codigo,
@@ -13,22 +38,24 @@ class FiltroServicoProvider extends ChangeNotifier {
     String? situacao,
     String? filial,
     String? garantia,
-    String? horario,
+    String? periodo,
     DateTime? dataPrevista,
     DateTime? dataEfetiva,
     DateTime? dataAbertura,
   }) {
-    _filter = FiltroServicoModel(
-      codigo: codigo ?? _filter.codigo,
-      tecnico: tecnico ?? _filter.tecnico,
+    _filter = ServicoFilterRequest(
+      id: codigo ?? _filter.id,
+      tecnicoNome: tecnico ?? _filter.tecnicoNome,
       equipamento: equipamento ?? _filter.equipamento,
       situacao: situacao ?? _filter.situacao,
       filial: filial ?? _filter.filial,
       garantia: garantia ?? _filter.garantia,
-      horario: horario ?? _filter.horario,
-      dataPrevista: dataPrevista ?? _filter.dataPrevista,
-      dataEfetiva: dataEfetiva ?? _filter.dataEfetiva,
-      dataAbertura: dataAbertura ?? _filter.dataAbertura,
+      periodo: periodo ?? _filter.periodo,
+      dataAtendimentoPrevistoAntes:
+          dataPrevista ?? _filter.dataAtendimentoPrevistoAntes,
+      dataAtendimentoEfetivoAntes:
+          dataEfetiva ?? _filter.dataAtendimentoEfetivoAntes,
+      dataAberturaAntes: dataAbertura ?? _filter.dataAberturaAntes,
     );
     notifyListeners();
   }

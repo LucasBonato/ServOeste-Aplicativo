@@ -38,25 +38,16 @@ class ServicoScreenState extends State<ServicoScreen> {
   void _onNomeChanged() {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
-    _debounce = Timer(
-      const Duration(milliseconds: 150),
-      () => _servicoBloc.add(
-        ServicoLoadingEvent(
-          filterRequest: ServicoFilterRequest(
-            clienteNome: _nomeClienteController.text,
-            tecnicoNome: _nomeTecnicoController.text,
-          ),
-        ),
-      ),
-    );
+    _debounce = Timer(const Duration(milliseconds: 150), () {
+      final filterRequest = ServicoFilterRequest(
+        clienteNome: _nomeClienteController.text,
+        tecnicoNome: _nomeTecnicoController.text,
+      );
+      _servicoBloc.add(ServicoLoadingEvent(filterRequest: filterRequest));
+    });
   }
 
   void _onNavigateToUpdateScreen(int id) {
-    // Navigator.of(context, rootNavigator: true).push(
-    //   MaterialPageRoute(
-    //     builder: (context) => UpdateServico(id: id),
-    //   ),
-    // );
     _listaBloc.add(ListaClearSelectionEvent());
   }
 
@@ -276,4 +267,3 @@ class ServicoScreenState extends State<ServicoScreen> {
     super.dispose();
   }
 }
-// TODO - Criar um jeito de selecionar o card para possível edição ou mais ações no futuro. Não entendi o que vc quer fazer

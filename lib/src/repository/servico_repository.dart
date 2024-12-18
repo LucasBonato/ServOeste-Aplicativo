@@ -17,16 +17,28 @@ class ServicoRepository extends DioService {
       final response = await dio.post(
         ServerEndpoints.servicoFilterEndpoint,
         data: {
-          'dataAtendimentoPrevistoAntes':
-              servicoFilter.dataAtendimentoPrevistoAntes?.toIso8601String(),
-          'dataAtendimentoPrevistoDepois':
-              servicoFilter.dataAtendimentoPrevistoDepois?.toIso8601String(),
+          'servicoId': servicoFilter.id,
           'clienteId': servicoFilter.clienteId,
           'tecnicoId': servicoFilter.tecnicoId,
           'clienteNome': servicoFilter.clienteNome,
           'tecnicoNome': servicoFilter.tecnicoNome,
+          'equipamento': servicoFilter.equipamento,
+          'situacao': servicoFilter.situacao,
+          'garantia': servicoFilter.garantia,
           'filial': servicoFilter.filial,
           'periodo': servicoFilter.periodo,
+          'dataAtendimentoPrevistoAntes':
+              servicoFilter.dataAtendimentoPrevistoAntes?.toIso8601String(),
+          'dataAtendimentoPrevistoDepois':
+              servicoFilter.dataAtendimentoPrevistoDepois?.toIso8601String(),
+          'dataAtendimentoEfetivoAntes':
+              servicoFilter.dataAtendimentoEfetivoAntes?.toIso8601String(),
+          'dataAtendimentoEfetivoDepois':
+              servicoFilter.dataAtendimentoEfetivoDepois?.toIso8601String(),
+          'dataAberturaAntes':
+              servicoFilter.dataAberturaAntes?.toIso8601String(),
+          'dataAberturaDepois':
+              servicoFilter.dataAberturaDepois?.toIso8601String(),
         },
       );
 
