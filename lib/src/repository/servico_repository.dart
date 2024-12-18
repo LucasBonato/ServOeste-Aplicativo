@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:logger/logger.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
-import 'package:serv_oeste/src/models/servico/tecnico_disponivel.dart';
 import 'package:serv_oeste/src/repository/dio/server_endpoints.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_request.dart';
 import 'package:serv_oeste/src/models/servico/servico_request.dart';
@@ -51,26 +50,6 @@ class ServicoRepository extends DioService {
       throw Exception(onRequestError(e));
     } catch (e) {
       Logger().e('Erro inesperado: $e');
-    }
-    return null;
-  }
-
-  Future<List<TecnicoDisponivel>?> getTecnicosDisponiveis(
-      int especialidadeId) async {
-    try {
-      final response = await dio.post(
-          ServerEndpoints.servicoDisponibilidadeEndpoint,
-          data: {"especialidadeId": especialidadeId});
-
-      print('Resposta completa: ${response.data}');
-
-      if (response.data is List) {
-        return (response.data as List)
-            .map((json) => TecnicoDisponivel.fromJson(json))
-            .toList();
-      }
-    } on DioException catch (e) {
-      throw Exception(onRequestError(e));
     }
     return null;
   }

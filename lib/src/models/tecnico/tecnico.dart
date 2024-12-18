@@ -14,7 +14,7 @@ class Tecnico {
   String? situacao;
   List<Especialidade>? especialidades;
   List<int>? especialidadesIds;
-  Map<String, String>? disponibilidade;
+  List<Map<String, dynamic>>? disponibilidade;
 
   Tecnico(
       {this.id,
@@ -48,6 +48,11 @@ class Tecnico {
         especialidades: List<Especialidade>.from(
             json["especialidades"].map((x) => Especialidade.fromJson(x))),
       );
+
+  @override
+  String toString() {
+    return 'Tecnico: $nome $sobrenome, Telefone Fixo: $telefoneFixo, Telefone Celular: $telefoneCelular, Situação: $situacao, Especialidades: ${especialidades?.map((e) => e.conhecimento).join(", ")}';
+  }
 }
 
 class Especialidade {

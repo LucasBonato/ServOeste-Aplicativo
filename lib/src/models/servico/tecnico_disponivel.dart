@@ -27,6 +27,11 @@ class TecnicoDisponivel {
             : List<Disponibilidade>.from(json["disponibilidades"]
                 .map((x) => Disponibilidade.fromJson(x))),
       );
+
+  @override
+  String toString() {
+    return 'TecnicoDisponivel(id: $id, nome: $nome, quantidadeTotalServicos: $quantidadeTotalServicos, disponibilidades: $disponibilidades)';
+  }
 }
 
 class Disponibilidade {
@@ -52,4 +57,9 @@ class Disponibilidade {
         periodo: json["periodo"],
         quantidadeServicos: json["quantidadeServicos"],
       );
+
+  @override
+  String toString() {
+    return 'Disponibilidade(data: $data, numeroDiaSemana: $numeroDiaSemana, nomeDiaSemana: $nomeDiaSemana, periodo: $periodo, quantidadeServicos: $quantidadeServicos)';
+  }
 }
