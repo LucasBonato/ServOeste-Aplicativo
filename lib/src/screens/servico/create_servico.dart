@@ -42,6 +42,7 @@ class _CreateServicoState extends State<CreateServico> {
   late List<Cliente> _clientes;
   late List<String> _dropdownNomeClientes;
   late List<String> _dropdownNomeTecnicos;
+
   late TextEditingController _municipioController;
   late TextEditingController _nomeTecnicoController;
 
@@ -77,8 +78,7 @@ class _CreateServicoState extends State<CreateServico> {
   void _onNomeClienteChanged(String nome) {
     _servicoForm.setIdCliente(null);
     if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce =
-        Timer(Duration(milliseconds: 150), () => _fetchClienteNames(nome));
+    _debounce = Timer(Duration(milliseconds: 150), () => _fetchClienteNames(nome));
   }
   void _fetchClienteNames(String nome) {
     _clienteForm.setNome(nome);
