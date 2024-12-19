@@ -1,7 +1,7 @@
 class Constants {
   static const bool isDev = true;
-
   static const List<Map<String, dynamic>> situationTecnicoList = [
+    {'label': 'Situação...', 'value': ''},
     {'label': 'Ativo', 'value': 'Ativo'},
     {'label': 'Licenca', 'value': 'Licenca'},
     {'label': 'Desativado', 'value': 'Desativado'}
@@ -31,14 +31,14 @@ class Constants {
     'São Paulo',
     'Itapevi',
   ];
-  static List<String> equipamentos = [
+  static const List<String> equipamentos = [
     'Adega',
     'Bebedouro',
     'Climatizador',
     'Cooler',
     'Frigobar',
     'Geladeira',
-    'Lava Louca',
+    'Lava Louça',
     'Lava Roupa',
     'Microondas',
     'Purificador',

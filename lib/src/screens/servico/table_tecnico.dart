@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/src/models/servico/servico_form.dart';
+import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
+import 'package:serv_oeste/src/screens/servico/create_servico.dart';
 
 class TableTecnicosModal extends StatefulWidget {
   final int especialidadeId;
+  final List<Tecnico> tecnicos;
 
-  const TableTecnicosModal({
-    super.key,
-    required this.especialidadeId
-  });
+  const TableTecnicosModal(
+      {super.key, required this.especialidadeId, required this.tecnicos});
 
   @override
   TableTecnicosModalState createState() => TableTecnicosModalState();
@@ -21,13 +25,15 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
   late List<PlutoColumnGroup> _columnGroups;
   late List<PlutoColumn> _columns;
   late List<PlutoRow> _rows;
+  late ServicoForm _servicoForm;
 
   @override
   void initState() {
     super.initState();
     _tecnicoBloc = context.read<TecnicoBloc>();
 
-    _tecnicoBloc.add(TecnicoAvailabilitySearchEvent(idEspecialidade: widget.especialidadeId));
+    _tecnicoBloc.add(TecnicoAvailabilitySearchEvent(
+        idEspecialidade: widget.especialidadeId));
 
     dateFields = _getNextValidDates().map((date) {
       final day = date.day.toString().padLeft(2, '0');
@@ -46,26 +52,24 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
         width: 150,
         enableEditingMode: false,
       ),
-      ...dateFields.expand(
-        (field) => [
-          PlutoColumn(
-            title: 'M',
-            field: '$field-M',
-            type: PlutoColumnType.text(),
-            minWidth: 80,
-            width: 100,
-            enableEditingMode: false,
-          ),
-          PlutoColumn(
-            title: 'T',
-            field: '$field-T',
-            type: PlutoColumnType.text(),
-            minWidth: 80,
-            width: 100,
-            enableEditingMode: false,
-          ),
-        ]
-      ),
+      ...dateFields.expand((field) => [
+            PlutoColumn(
+              title: 'M',
+              field: '$field-M',
+              type: PlutoColumnType.text(),
+              minWidth: 80,
+              width: 100,
+              enableEditingMode: false,
+            ),
+            PlutoColumn(
+              title: 'T',
+              field: '$field-T',
+              type: PlutoColumnType.text(),
+              minWidth: 80,
+              width: 100,
+              enableEditingMode: false,
+            ),
+          ]),
     ];
 
     _columnGroups = [
@@ -123,13 +127,15 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
       builder: (context, state) {
         if (state is TecnicoLoadingState) {
           return Center(child: CircularProgressIndicator());
-        }
-        else if (state is TecnicoSearchAvailabilitySuccessState) {
-          if (state.tecnicosDisponiveis == null || state.tecnicosDisponiveis!.isEmpty) {
+        } else if (state is TecnicoSearchAvailabilitySuccessState) {
+          if (state.tecnicosDisponiveis == null ||
+              state.tecnicosDisponiveis!.isEmpty) {
             return SizedBox();
           }
 
           _rows = state.tecnicosDisponiveis!.map((tecnico) {
+            final DateFormat formatter = DateFormat('dd-MM-yyyy');
+
             final Map<String, PlutoCell> dateFieldsMap = {
               for (var date in dateFields) ...{
                 '$date-M': PlutoCell(value: '1'),
@@ -137,8 +143,26 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
               }
             };
 
+            print(state.tecnicosDisponiveis!
+                .map((tecnico) => tecnico.id)
+                .join(', '));
+
+            if (tecnico.disponibilidades != null) {
+              for (var disponibilidade in tecnico.disponibilidades!) {
+                final String formattedDate =
+                    formatter.format(disponibilidade.data!);
+                final String key =
+                    '$formattedDate-${disponibilidade.periodo == "manha" ? "M" : "T"}';
+                if (dateFieldsMap.containsKey(key)) {
+                  dateFieldsMap[key] = PlutoCell(
+                      value: disponibilidade.quantidadeServicos.toString());
+                }
+              }
+            }
+
             return PlutoRow(
               cells: {
+                'id': PlutoCell(value: tecnico.id),
                 'tecnico': PlutoCell(value: tecnico.nome),
                 ...dateFieldsMap,
               },
@@ -158,7 +182,8 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
                   Expanded(
                     child: Text(
                       'Disponibilidade dos Técnicos',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -195,7 +220,7 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
                           ),
                         ),
                       ),
-                      // onRowDoubleTap: _handleRowDoubleTap,
+                      onRowDoubleTap: _handleRowDoubleTap,
                     ),
                   ),
                   Expanded(
@@ -209,8 +234,7 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
               ),
             ),
           );
-        }
-        else if (state is TecnicoErrorState) {
+        } else if (state is TecnicoErrorState) {
           return Center(child: Text('Erro ao carregar as disponibilidades.'));
         }
         return Center(child: CircularProgressIndicator());
@@ -218,42 +242,34 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
     );
   }
 
-  // void _handleRowDoubleTap(PlutoGridOnRowDoubleTapEvent event) {
-  //   final tecnico = event.row.cells['tecnico']?.value as String?;
-  //   final cellField = event.cell.column.field;
+  void _handleRowDoubleTap(PlutoGridOnRowDoubleTapEvent event) {
+    final tecnicoNome = event.row.cells['tecnico']?.value as String?;
+    final tecnicoId = event.row.cells['id']?.value as int?;
+    final cellField = event.cell.column.field;
 
-  //   if (cellField == 'tecnico') {
-  //     Logger().w(
-  //         'Aviso: A coluna "Técnicos" foi selecionada. Nenhuma ação necessária.');
-  //     return;
-  //   }
+    if (cellField == 'tecnico') {
+      Logger().w(
+          'Aviso: A coluna "Técnicos" foi selecionada. Nenhuma ação necessária.');
+      return;
+    }
 
-  //   final match = RegExp(r'^(\d{2}-\d{2}-\d{4})-(M|T)$').firstMatch(cellField);
-  //   if (match == null) {
-  //     Logger().e('Erro: Formato inválido no campo selecionado ($cellField)!');
-  //     return;
-  //   }
+    final match = RegExp(r'^(\d{2}-\d{2}-\d{4})-(M|T)$').firstMatch(cellField);
+    if (match == null) {
+      Logger().e('Erro: Formato inválido no campo selecionado ($cellField)!');
+      return;
+    }
 
-  //   final dataSelecionada = match.group(1);
-  //   final horarioSelecionado = match.group(2);
+    final dataSelecionada = match.group(1);
+    final horarioSelecionado = match.group(2);
+    final horarioConvertido = horarioSelecionado == 'M' ? 'Manhã' : 'Tarde';
 
-  //   final horarioConvertido = horarioSelecionado == 'M' ? 'Manhã' : 'Tarde';
+    // _servicoForm.setNomeTecnico(tecnico);
+    // _servicoForm.setDataPrevista(dataSelecionada);
+    // _servicoForm.setHorario(horarioConvertido);
 
-  //   final cellValue = event.cell.value;
+    CreateServico.setValuesAvailabilityTechnicianTable(_servicoForm,
+        tecnicoNome!, dataSelecionada!, horarioConvertido, tecnicoId);
 
-  //   final tecnicoData = widget.tecnicos.firstWhere(
-  //     (tec) {
-  //       final nomeComposto = "${tec.nome} ${getCompostName(tec.sobrenome)}";
-  //       return nomeComposto == tecnico;
-  //     },
-  //     orElse: () => Tecnico(nome: '', sobrenome: '', disponibilidade: []),
-  //   );
-
-  //   final nomeTecnico = '${tecnicoData.nome} ${tecnicoData.sobrenome}';
-
-  //   Logger().i('Técnico: $nomeTecnico, '
-  //       'Data: $dataSelecionada, '
-  //       'Horário: $horarioConvertido, '
-  //       'Valor: $cellValue, ');
-  // }
+    Navigator.pop(context);
+  }
 }

@@ -43,16 +43,12 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     "Cooler": false,
     "Frigobar": false,
     "Geladeira": false,
-    "Lava Louca": false,
+    "Lava Louça": false,
     "Lava Roupa": false,
     "Microondas": false,
     "Purificador": false,
     "Secadora": false,
     "Outros": false,
-  };
-
-  final Map<String, String> displayMap = {
-    "Lava Louca": "Lava Louça",
   };
 
   @override
@@ -98,7 +94,8 @@ class _CreateTecnicoState extends State<CreateTecnico> {
         _tecnicoCreateForm.removeConhecimentos(idConhecimento);
       }
     });
-    _tecnicoCreateValidator.setConhecimentos(_tecnicoCreateForm.conhecimentos.value);
+    _tecnicoCreateValidator
+        .setConhecimentos(_tecnicoCreateForm.conhecimentos.value);
 
     if (_isValidForm() == false) {
       return;
@@ -240,7 +237,9 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                         ),
                         const SizedBox(height: 8),
                         CustomGridCheckersFormField(
-                          validator: _tecnicoCreateValidator.byField(_tecnicoCreateForm, ErrorCodeKey.conhecimento.name),
+                          validator: _tecnicoCreateValidator.byField(
+                              _tecnicoCreateForm,
+                              ErrorCodeKey.conhecimento.name),
                           checkersMap: checkersMap,
                         ),
                       ],

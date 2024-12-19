@@ -17,19 +17,27 @@ class FilterService extends StatelessWidget {
 
   void applyFilters(BuildContext context) {
     final filter = context.read<FiltroServicoProvider>().filter;
-    ServicoSearchEvent(
-      filterRequest: ServicoFilterRequest(
-        id: filter.codigo,
-        filial: filter.filial,
-        equipamento: filter.equipamento,
-        situacao: filter.situacao,
-        garantia: filter.garantia,
-        dataAtendimentoPrevistoAntes: filter.dataPrevista,
-        dataAtendimentoEfetivoAntes: filter.dataEfetiva,
-        dataAberturaAntes: filter.dataAbertura,
-        periodo: filter.horario,
-      ),
+
+    final filterRequest = ServicoFilterRequest(
+      id: (filter.id != null && filter.id! > 0) ? filter.id : null,
+      filial: (filter.filial?.isNotEmpty ?? false) ? filter.filial : null,
+      equipamento:
+          (filter.equipamento?.isNotEmpty ?? false) ? filter.equipamento : null,
+      situacao: (filter.situacao?.isNotEmpty ?? false) ? filter.situacao : null,
+      garantia: (filter.garantia?.isNotEmpty ?? false) ? filter.garantia : null,
+      dataAtendimentoPrevistoAntes: filter.dataAtendimentoPrevistoAntes,
+      dataAtendimentoEfetivoAntes: filter.dataAtendimentoEfetivoAntes,
+      dataAberturaAntes: filter.dataAberturaAntes,
+      periodo: (filter.periodo?.isNotEmpty ?? false) ? filter.periodo : null,
     );
+
+    context
+        .read<ServicoBloc>()
+        .add(ServicoLoadingEvent(filterRequest: filterRequest));
+
+    context.read<FiltroServicoProvider>().clearFields();
+
+    Navigator.pop(context);
   }
 
   @override
@@ -71,28 +79,34 @@ class FilterService extends StatelessWidget {
                   CustomSearchDropDown(
                     label: 'Equipamento...',
                     dropdownValues: Constants.equipamentos,
-                    onChanged: (String? value) {
-                      if (value != null) {
-                        final String equipamento = Constants.equipamentos.contains(value) ? value : Constants.equipamentos.last;
-
-                        provider.updateFilter(equipamento: equipamento);
-                      }
+                    onChanged: (value) {
+                      provider.updateFilter(equipamento: value);
                     },
                   ),
                   const SizedBox(height: 16),
                   CustomDropdownField(
                     label: 'Situação...',
                     dropdownValues: Constants.situationServiceList,
-                    onChanged: (value) =>
-                        provider.updateFilter(situacao: value!),
+                    onChanged: (value) {
+                      if (value == null || value.isEmpty) {
+                        provider.updateFilter(situacao: null);
+                      } else {
+                        provider.updateFilter(situacao: value);
+                      }
+                    },
                     valueNotifier:
                         ValueNotifier(provider.filter.situacao ?? ''),
                   ),
                   CustomDropdownField(
                     label: 'Garantia...',
                     dropdownValues: Constants.garantias,
-                    onChanged: (value) =>
-                        provider.updateFilter(garantia: value!),
+                    onChanged: (value) {
+                      if (value == null || value.isEmpty) {
+                        provider.updateFilter(garantia: null);
+                      } else {
+                        provider.updateFilter(garantia: value);
+                      }
+                    },
                     valueNotifier:
                         ValueNotifier(provider.filter.garantia ?? ''),
                   ),
@@ -102,7 +116,8 @@ class FilterService extends StatelessWidget {
                       Expanded(
                         child: CustomSearchTextField(
                           hint: 'Código...',
-                          controller: TextEditingController(text: provider.filter.codigo?.toString() ?? ''),
+                          controller: TextEditingController(
+                              text: provider.filter.id?.toString() ?? ''),
                           keyboardType: TextInputType.number,
                           onChangedAction: (value) {
                             final codigoInt =
@@ -116,8 +131,13 @@ class FilterService extends StatelessWidget {
                         child: CustomDropdownField(
                           label: 'Filial...',
                           dropdownValues: Constants.filiais,
-                          onChanged: (value) =>
-                              provider.updateFilter(filial: value!),
+                          onChanged: (value) {
+                            if (value == null || value.isEmpty) {
+                              provider.updateFilter(filial: null);
+                            } else {
+                              provider.updateFilter(filial: value);
+                            }
+                          },
                           valueNotifier:
                               ValueNotifier(provider.filter.filial ?? ''),
                           leftPadding: 4,
@@ -136,9 +156,9 @@ class FilterService extends StatelessWidget {
                           hide: true,
                           type: TextInputType.datetime,
                           valueNotifier: ValueNotifier(
-                            provider.filter.dataPrevista != null
-                                ? Formatters.applyDateMask(
-                                    provider.filter.dataPrevista!)
+                            provider.filter.dataAtendimentoPrevistoAntes != null
+                                ? Formatters.applyDateMask(provider
+                                    .filter.dataAtendimentoPrevistoAntes!)
                                 : '',
                           ),
                           onChanged: (value) {
@@ -146,6 +166,8 @@ class FilterService extends StatelessWidget {
                               final parsedDate =
                                   DateFormat('dd/MM/yyyy').parse(value);
                               provider.updateFilter(dataPrevista: parsedDate);
+                            } else {
+                              provider.updateFilter(dataPrevista: null);
                             }
                           },
                           rightPadding: 4,
@@ -153,16 +175,16 @@ class FilterService extends StatelessWidget {
                       ),
                       Expanded(
                         child: CustomDatePicker(
-                          label: 'Data Atendimento Efetivo...',
+                          label: 'Data Efetiva...',
                           hint: 'dd/mm/aaaa',
                           mask: InputMasks.maskData,
                           maxLength: 10,
                           hide: true,
                           type: TextInputType.datetime,
                           valueNotifier: ValueNotifier(
-                            provider.filter.dataEfetiva != null
-                                ? Formatters.applyDateMask(
-                                    provider.filter.dataEfetiva!)
+                            provider.filter.dataAtendimentoEfetivoAntes != null
+                                ? Formatters.applyDateMask(provider
+                                    .filter.dataAtendimentoEfetivoAntes!)
                                 : '',
                           ),
                           onChanged: (value) {
@@ -170,6 +192,8 @@ class FilterService extends StatelessWidget {
                               final parsedDate =
                                   DateFormat('dd/MM/yyyy').parse(value);
                               provider.updateFilter(dataEfetiva: parsedDate);
+                            } else {
+                              provider.updateFilter(dataEfetiva: null);
                             }
                           },
                           leftPadding: 4,
@@ -188,9 +212,9 @@ class FilterService extends StatelessWidget {
                           hide: true,
                           type: TextInputType.datetime,
                           valueNotifier: ValueNotifier(
-                            provider.filter.dataAbertura != null
+                            provider.filter.dataAberturaAntes != null
                                 ? Formatters.applyDateMask(
-                                    provider.filter.dataAbertura!)
+                                    provider.filter.dataAberturaAntes!)
                                 : '',
                           ),
                           onChanged: (value) {
@@ -198,6 +222,8 @@ class FilterService extends StatelessWidget {
                               final parsedDate =
                                   DateFormat('dd/MM/yyyy').parse(value);
                               provider.updateFilter(dataAbertura: parsedDate);
+                            } else {
+                              provider.updateFilter(dataAbertura: null);
                             }
                           },
                           rightPadding: 4,
@@ -207,10 +233,15 @@ class FilterService extends StatelessWidget {
                         child: CustomDropdownField(
                           label: 'Horário...',
                           dropdownValues: ['Manhã', 'Tarde'],
-                          onChanged: (value) =>
-                              provider.updateFilter(horario: value!),
+                          onChanged: (value) {
+                            if (value == null || value.isEmpty) {
+                              provider.updateFilter(periodo: null);
+                            } else {
+                              provider.updateFilter(periodo: value);
+                            }
+                          },
                           valueNotifier:
-                              ValueNotifier(provider.filter.horario ?? ''),
+                              ValueNotifier(provider.filter.periodo ?? ''),
                           leftPadding: 4,
                         ),
                       ),

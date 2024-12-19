@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 class ServicoForm extends ChangeNotifier {
   ValueNotifier<int?> idCliente = ValueNotifier(null);
   ValueNotifier<int?> idTecnico = ValueNotifier(null);
-  ValueNotifier<String> equipamento = ValueNotifier("");
-  ValueNotifier<String> marca = ValueNotifier("");
-  ValueNotifier<String> filial = ValueNotifier("");
-  ValueNotifier<String> nomeTecnico = ValueNotifier("");
-  ValueNotifier<String> dataPrevista = ValueNotifier("");
-  ValueNotifier<String> horario = ValueNotifier("");
-  ValueNotifier<String> descricao = ValueNotifier("");
-
+  ValueNotifier<String> equipamento = ValueNotifier<String>("");
+  ValueNotifier<String> marca = ValueNotifier<String>("");
+  ValueNotifier<String> filial = ValueNotifier<String>("");
+  ValueNotifier<String> nomeTecnico = ValueNotifier<String>("");
+  ValueNotifier<String> dataPrevista = ValueNotifier<String>("");
+  ValueNotifier<String> horario = ValueNotifier<String>("");
+  ValueNotifier<String> descricao = ValueNotifier<String>("");
   void setIdCliente(int? idCliente) {
     this.idCliente.value = idCliente;
     notifyListeners();
@@ -38,16 +37,19 @@ class ServicoForm extends ChangeNotifier {
 
   void setNomeTecnico(String? nomeTecnico) {
     this.nomeTecnico.value = nomeTecnico ?? "";
+    print(this.nomeTecnico.value);
     notifyListeners();
   }
 
   void setDataPrevista(String? dataPrevista) {
     this.dataPrevista.value = dataPrevista ?? "";
+    print(this.dataPrevista.value);
     notifyListeners();
   }
 
   void setHorario(String? horario) {
     this.horario.value = horario ?? "";
+    print(this.horario.value);
     notifyListeners();
   }
 
