@@ -9,6 +9,12 @@ final class ServicoLoadingEvent extends ServicoEvent {
   ServicoLoadingEvent({required this.filterRequest});
 }
 
+final class ServicoInitialLoadingEvent extends ServicoEvent {
+  final ServicoFilterRequest filterRequest;
+
+  ServicoInitialLoadingEvent({required this.filterRequest});
+}
+
 final class ServicoSearchOneEvent extends ServicoEvent {}
 
 final class ServicoSearchEvent extends ServicoEvent {

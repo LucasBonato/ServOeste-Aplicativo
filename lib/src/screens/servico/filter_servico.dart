@@ -19,15 +19,15 @@ class FilterService extends StatelessWidget {
     final filter = context.read<FiltroServicoProvider>().filter;
 
     final filterRequest = ServicoFilterRequest(
-      id: (filter.id != null && filter.id! > 0) ? filter.id : null,
-      filial: (filter.filial?.isNotEmpty ?? false) ? filter.filial : null,
-      equipamento: (filter.equipamento?.isNotEmpty ?? false) ? filter.equipamento : null,
-      situacao: (filter.situacao?.isNotEmpty ?? false) ? filter.situacao : null,
-      garantia: (filter.garantia?.isNotEmpty ?? false) ? filter.garantia : null,
+      id: filter.id != null && filter.id! > 0 ? filter.id! : null,
+      filial: filter.filial ?? '',
+      equipamento: filter.equipamento ?? '',
+      situacao: filter.situacao ?? '',
+      garantia: filter.garantia ?? '',
       dataAtendimentoPrevistoAntes: filter.dataAtendimentoPrevistoAntes,
       dataAtendimentoEfetivoAntes: filter.dataAtendimentoEfetivoAntes,
       dataAberturaAntes: filter.dataAberturaAntes,
-      periodo: (filter.periodo?.isNotEmpty ?? false) ? filter.periodo : null,
+      periodo: filter.periodo ?? '',
     );
 
     context
@@ -116,7 +116,10 @@ class FilterService extends StatelessWidget {
                         child: CustomSearchTextField(
                           hint: 'Código...',
                           controller: TextEditingController(
-                              text: provider.filter.id?.toString() ?? ''),
+                              text: provider.filter.id != null &&
+                                      provider.filter.id! > 0
+                                  ? provider.filter.id.toString()
+                                  : ''),
                           keyboardType: TextInputType.number,
                           onChangedAction: (value) {
                             final codigoInt =

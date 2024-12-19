@@ -22,8 +22,8 @@ class ServicoRepository extends DioService {
           'clienteNome': servicoFilter.clienteNome,
           'tecnicoNome': servicoFilter.tecnicoNome,
           'equipamento': servicoFilter.equipamento,
-          'situacao': servicoFilter.situacao,
-          'garantia': servicoFilter.garantia,
+          // 'situacao': servicoFilter.situacao,
+          // 'garantia': servicoFilter.garantia,
           'filial': servicoFilter.filial,
           'periodo': servicoFilter.periodo,
           'dataAtendimentoPrevistoAntes':

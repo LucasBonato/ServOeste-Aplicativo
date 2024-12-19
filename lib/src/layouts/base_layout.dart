@@ -114,7 +114,7 @@ class BaseLayoutState extends State<BaseLayout> {
   }
 
   void _loadServico() {
-    _servicoBloc.add(ServicoLoadingEvent(
+    _servicoBloc.add(ServicoInitialLoadingEvent(
       filterRequest: ServicoFilterRequest(),
     ));
   }
