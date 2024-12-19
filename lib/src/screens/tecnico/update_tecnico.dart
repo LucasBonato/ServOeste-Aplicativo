@@ -46,16 +46,12 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
     "Cooler": false,
     "Frigobar": false,
     "Geladeira": false,
-    "Lava Louca": false,
+    "Lava Louça": false,
     "Lava Roupa": false,
     "Microondas": false,
     "Purificador": false,
     "Secadora": false,
     "Outros": false
-  };
-
-  final Map<String, String> displayMap = {
-    "Lava Louca": "Lava Louça",
   };
 
   @override
@@ -109,7 +105,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                         },
                       ),
                       Text(
-                        displayMap[label] ?? label,
+                        label,
                         style: const TextStyle(
                           fontSize: 16,
                         ),

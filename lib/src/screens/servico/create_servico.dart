@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
 import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/components/date_picker.dart';
 import 'package:serv_oeste/src/components/dropdown_field.dart';
@@ -17,7 +16,6 @@ import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_request.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
-import 'package:serv_oeste/src/models/servico/equipamento.dart';
 import 'package:serv_oeste/src/models/servico/servico_form.dart';
 import 'package:serv_oeste/src/models/servico/servico_request.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
@@ -30,6 +28,18 @@ class CreateServico extends StatefulWidget {
   final bool isClientAndService;
 
   const CreateServico({super.key, this.isClientAndService = true});
+
+  static void setValuesAvailabilityTechnicianTable(ServicoForm servicoForm,
+      String nomeTecnico, String dataPrevista, String horario, int? tecnicoId) {
+    servicoForm.setNomeTecnico(nomeTecnico);
+    servicoForm.setDataPrevista(dataPrevista);
+    servicoForm.setHorario(horario);
+
+    debugPrint('Nome do Técnico: ${servicoForm.nomeTecnico.value}');
+    debugPrint('Data Prevista: ${servicoForm.dataPrevista.value}');
+    debugPrint('Horário: ${servicoForm.horario.value}');
+    debugPrint('Id: $tecnicoId');
+  }
 
   @override
   State<CreateServico> createState() => _CreateServicoState();
@@ -74,15 +84,18 @@ class _CreateServicoState extends State<CreateServico> {
 
   void _onNomeClienteChanged(String nome) {
     _servicoForm.setIdCliente(null);
-    if (_debounce?.isActive?? false) _debounce!.cancel();
-    _debounce = Timer(Duration(milliseconds: 150), () => _fetchClienteNames(nome));
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce =
+        Timer(Duration(milliseconds: 150), () => _fetchClienteNames(nome));
   }
+
   void _fetchClienteNames(String nome) {
     _clienteForm.setNome(nome);
     if (nome == "") return;
     if (nome.split(" ").length > 1 && _dropdownNomeClientes.isEmpty) return;
     _clienteBloc.add(ClienteSearchEvent(nome: nome));
   }
+
   void _getClienteId(String nome) {
     for (Cliente cliente in _clientes) {
       if (cliente.nome! == _clienteForm.nome.value) {
@@ -94,15 +107,19 @@ class _CreateServicoState extends State<CreateServico> {
   void _onNomeTecnicoChanged(String nome) {
     _servicoForm.setIdTecnico(null);
     if (_servicoForm.equipamento.value.isEmpty) return;
-    if (_debounce?.isActive?? false) _debounce!.cancel();
-    _debounce = Timer(Duration(milliseconds: 150), () => _fetchTecnicoNames(nome));
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce =
+        Timer(Duration(milliseconds: 150), () => _fetchTecnicoNames(nome));
   }
+
   void _fetchTecnicoNames(String nome) {
     _servicoForm.setNomeTecnico(nome);
     if (nome == "") return;
     if (nome.split(" ").length > 1 && _dropdownNomeTecnicos.isEmpty) return;
-    _tecnicoBloc.add(TecnicoSearchEvent(nome: nome, equipamento: _servicoForm.equipamento.value));
+    _tecnicoBloc.add(TecnicoSearchEvent(
+        nome: nome, equipamento: _servicoForm.equipamento.value));
   }
+
   void _getTecnicoId(String nome) {
     _servicoForm.setNomeTecnico(nome);
     for (Tecnico tecnico in _tecnicos) {
@@ -126,35 +143,34 @@ class _CreateServicoState extends State<CreateServico> {
       idEspecialidade = Constants.equipamentos.indexOf(equipamentoSelected) + 1;
     }
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return TableTecnicosModal(
-            especialidadeId: idEspecialidade
-        );
-      },
-    );
+    _tecnicoBloc.add(TecnicoSearchEvent(
+      nome: _servicoForm.nomeTecnico.value,
+      equipamento: _servicoForm.equipamento.value,
+    ));
 
-    // _tecnicoBloc.stream.listen((state) {
-    //   if (!mounted) return;
-    //
-    //   if (state is TecnicoSearchSuccessState) {
-    //     setState(() {
-    //       _tecnicos = state.tecnicos;
-    //     });
-    //
-    //     if (!_isModalOpen) {
-    //       _isModalOpen = true;
-    //
-    //       .then((_) {
-    //         _isModalOpen = false;
-    //       });
-    //     }
-    //   }
-    //   else if (state is TecnicoErrorState) {
-    //     Logger().e('Erro ao buscar técnicos: ${state.error.errorMessage}');
-    //   }
-    // });
+    _tecnicoBloc.stream.listen((state) {
+      if (!mounted) return;
+
+      if (state is TecnicoSearchSuccessState) {
+        setState(() {
+          _tecnicos = state.tecnicos;
+        });
+
+        if (!_isModalOpen) {
+          _isModalOpen = true;
+
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return TableTecnicosModal(
+                  especialidadeId: idEspecialidade, tecnicos: _tecnicos);
+            },
+          ).then((_) {
+            _isModalOpen = false;
+          });
+        }
+      }
+    });
   }
 
   bool _isValidServicoForm() {
@@ -189,7 +205,8 @@ class _CreateServicoState extends State<CreateServico> {
       _clienteForm.nome.value = "${nomes.first} $sobrenomeCliente";
       return;
     }
-    _servicoBloc.add(ServicoRegisterEvent(servico: ServicoRequest.fromServicoForm(servico: _servicoForm)));
+    _servicoBloc.add(ServicoRegisterEvent(
+        servico: ServicoRequest.fromServicoForm(servico: _servicoForm)));
 
     if (widget.isClientAndService) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -197,8 +214,7 @@ class _CreateServicoState extends State<CreateServico> {
           content: Text('Cliente e Serviço adicionados com sucesso!'),
         ),
       );
-    }
-    else {
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Serviço adicionado com sucesso!'),
@@ -319,7 +335,8 @@ class _CreateServicoState extends State<CreateServico> {
                           _servicoValidator.cleanExternalErrors();
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text("[ERROR] Informação(ões) inválida(s) ao registrar o Serviço: ${error.errorMessage}"),
+                              content: Text(
+                                  "[ERROR] Informação(ões) inválida(s) ao registrar o Serviço: ${error.errorMessage}"),
                             ),
                           );
                         }
@@ -582,7 +599,8 @@ class _CreateServicoState extends State<CreateServico> {
             dropdownValues: Constants.equipamentos,
             valueNotifier: _servicoForm.equipamento,
             hide: true,
-            validator: _servicoValidator.byField(_servicoForm, ErrorCodeKey.equipamento.name),
+            validator: _servicoValidator.byField(
+                _servicoForm, ErrorCodeKey.equipamento.name),
             onChanged: _servicoForm.setEquipamento,
           ),
           CustomSearchDropDown(
@@ -619,22 +637,23 @@ class _CreateServicoState extends State<CreateServico> {
                 }
               }
             },
-            child: ValueListenableBuilder(
-              valueListenable: _servicoForm.equipamento,
-              builder: (context, value, child) {
-                return CustomSearchDropDown(
-                  label: "Nome do Técnico*",
-                  dropdownValues: _dropdownNomeTecnicos,
-                  maxLength: 50,
-                  hide: true,
-                  valueNotifier: _servicoForm.nomeTecnico,
-                  validator: _servicoValidator.byField(_servicoForm, ErrorCodeKey.tecnico.name),
-                  onChanged: _onNomeTecnicoChanged,
-                  onSelected: _getTecnicoId,
-                  // enabled: false,
-                );
-              }
-            ),
+            child: ValueListenableBuilder<String>(
+                valueListenable: _servicoForm.nomeTecnico,
+                builder: (context, value, child) {
+                  print('Nome do Técnico na tela de destino: $value');
+                  return CustomSearchDropDown(
+                    label: "Nome do Técnico*",
+                    dropdownValues: _dropdownNomeTecnicos,
+                    maxLength: 50,
+                    hide: true,
+                    valueNotifier: _servicoForm.nomeTecnico,
+                    validator: _servicoValidator.byField(
+                        _servicoForm, ErrorCodeKey.tecnico.name),
+                    onChanged: _onNomeTecnicoChanged,
+                    onSelected: _getTecnicoId,
+                    // enabled: false,
+                  );
+                }),
           ),
           const SizedBox(height: 6),
           Row(

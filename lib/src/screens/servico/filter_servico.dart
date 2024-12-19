@@ -7,7 +7,6 @@ import 'package:serv_oeste/src/components/dropdown_field.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/components/custom_search_field.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
-import 'package:serv_oeste/src/models/servico/equipamento.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/util/formatters.dart';
@@ -79,18 +78,9 @@ class FilterService extends StatelessWidget {
                   ),
                   CustomSearchDropDown(
                     label: 'Equipamento...',
-                    dropdownValues:
-                        Constants.equipamentos.map((e) => e.label).toList(),
-                    onChanged: (String? value) {
-                      final equipamentoSelecionado =
-                          Constants.equipamentos.firstWhere(
-                        (equipamento) => equipamento.conhecimento == value,
-                        orElse: () =>
-                            Equipamento(id: 0, conhecimento: '', label: ''),
-                      );
-
-                      provider.updateFilter(
-                          equipamento: equipamentoSelecionado.conhecimento);
+                    dropdownValues: Constants.equipamentos,
+                    onChanged: (value) {
+                      provider.updateFilter(equipamento: value);
                     },
                   ),
                   const SizedBox(height: 16),
