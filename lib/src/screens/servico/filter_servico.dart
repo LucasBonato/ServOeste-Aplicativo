@@ -21,8 +21,7 @@ class FilterService extends StatelessWidget {
     final filterRequest = ServicoFilterRequest(
       id: (filter.id != null && filter.id! > 0) ? filter.id : null,
       filial: (filter.filial?.isNotEmpty ?? false) ? filter.filial : null,
-      equipamento:
-          (filter.equipamento?.isNotEmpty ?? false) ? filter.equipamento : null,
+      equipamento: (filter.equipamento?.isNotEmpty ?? false) ? filter.equipamento : null,
       situacao: (filter.situacao?.isNotEmpty ?? false) ? filter.situacao : null,
       garantia: (filter.garantia?.isNotEmpty ?? false) ? filter.garantia : null,
       dataAtendimentoPrevistoAntes: filter.dataAtendimentoPrevistoAntes,

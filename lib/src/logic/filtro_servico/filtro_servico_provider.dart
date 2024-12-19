@@ -51,10 +51,8 @@ class FiltroServicoProvider extends ChangeNotifier {
       filial: filial ?? _filter.filial,
       garantia: garantia ?? _filter.garantia,
       periodo: periodo ?? _filter.periodo,
-      dataAtendimentoPrevistoAntes:
-          dataPrevista ?? _filter.dataAtendimentoPrevistoAntes,
-      dataAtendimentoEfetivoAntes:
-          dataEfetiva ?? _filter.dataAtendimentoEfetivoAntes,
+      dataAtendimentoPrevistoAntes: dataPrevista ?? _filter.dataAtendimentoPrevistoAntes,
+      dataAtendimentoEfetivoAntes: dataEfetiva ?? _filter.dataAtendimentoEfetivoAntes,
       dataAberturaAntes: dataAbertura ?? _filter.dataAberturaAntes,
     );
     notifyListeners();
