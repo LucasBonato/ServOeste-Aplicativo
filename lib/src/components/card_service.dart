@@ -235,7 +235,7 @@ class CardService extends StatelessWidget {
                               left: constraints.maxWidth * 0.15,
                             ),
                             child: Text(
-                              "${dataPrevista.day}/${dataPrevista.month}/${dataPrevista.year} - ${formatHorario(horario)}",
+                              "Data Prevista: ${dataPrevista.day}/${dataPrevista.month}/${dataPrevista.year} - ${formatHorario(horario)}",
                               style: TextStyle(
                                 fontSize: constraints.maxWidth * 0.04,
                                 color: Colors.black,
@@ -248,7 +248,7 @@ class CardService extends StatelessWidget {
                                 left: constraints.maxWidth * 0.15,
                               ),
                               child: Text(
-                                "${dataEfetiva!.day}/${dataEfetiva!.month}/${dataEfetiva!.year}",
+                                "Data Efetiva: ${dataEfetiva!.day}/${dataEfetiva!.month}/${dataEfetiva!.year}",
                                 style: TextStyle(
                                   fontSize: constraints.maxWidth * 0.04,
                                   color: Colors.black,
@@ -261,7 +261,7 @@ class CardService extends StatelessWidget {
                                 left: constraints.maxWidth * 0.15,
                               ),
                               child: Text(
-                                "${dataAbertura!.day}/${dataAbertura!.month}/${dataAbertura!.year}",
+                                "Data Abertura: ${dataAbertura!.day}/${dataAbertura!.month}/${dataAbertura!.year}",
                                 style: TextStyle(
                                   fontSize: constraints.maxWidth * 0.04,
                                   color: Colors.black,

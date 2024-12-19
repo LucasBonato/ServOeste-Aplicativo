@@ -13,6 +13,7 @@ import 'package:dio/dio.dart';
 class ServicoRepository extends DioService {
   Future<List<Servico>?> getServicosByFilter(
       ServicoFilterRequest servicoFilter) async {
+    print("requisição: ${servicoFilter.id}");
     try {
       final response = await dio.post(
         ServerEndpoints.servicoFilterEndpoint,
@@ -23,8 +24,8 @@ class ServicoRepository extends DioService {
           'clienteNome': servicoFilter.clienteNome,
           'tecnicoNome': servicoFilter.tecnicoNome,
           'equipamento': servicoFilter.equipamento,
-          'situacao': servicoFilter.situacao,
-          'garantia': servicoFilter.garantia,
+          // 'situacao': servicoFilter.situacao,
+          // 'garantia': servicoFilter.garantia,
           'filial': servicoFilter.filial,
           'periodo': servicoFilter.periodo,
           'dataAtendimentoPrevistoAntes':

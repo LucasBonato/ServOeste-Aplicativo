@@ -37,19 +37,16 @@ class ServicoForm extends ChangeNotifier {
 
   void setNomeTecnico(String? nomeTecnico) {
     this.nomeTecnico.value = nomeTecnico ?? "";
-    print(this.nomeTecnico.value);
     notifyListeners();
   }
 
   void setDataPrevista(String? dataPrevista) {
     this.dataPrevista.value = dataPrevista ?? "";
-    print(this.dataPrevista.value);
     notifyListeners();
   }
 
   void setHorario(String? horario) {
     this.horario.value = horario ?? "";
-    print(this.horario.value);
     notifyListeners();
   }
 

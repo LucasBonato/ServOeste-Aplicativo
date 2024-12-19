@@ -76,4 +76,29 @@ class ServicoFilterRequest {
       dataAberturaDepois: dataAberturaDepois ?? this.dataAberturaDepois,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'clienteId': clienteId,
+      'tecnicoId': tecnicoId,
+      'clienteNome': clienteNome,
+      'tecnicoNome': tecnicoNome,
+      'equipamento': equipamento,
+      'situacao': situacao,
+      'garantia': garantia,
+      'filial': filial,
+      'periodo': periodo,
+      'dataAtendimentoPrevistoAntes':
+          dataAtendimentoPrevistoAntes?.toIso8601String(),
+      'dataAtendimentoPrevistoDepois':
+          dataAtendimentoPrevistoDepois?.toIso8601String(),
+      'dataAtendimentoEfetivoAntes':
+          dataAtendimentoEfetivoAntes?.toIso8601String(),
+      'dataAtendimentoEfetivoDepois':
+          dataAtendimentoEfetivoDepois?.toIso8601String(),
+      'dataAberturaAntes': dataAberturaAntes?.toIso8601String(),
+      'dataAberturaDepois': dataAberturaDepois?.toIso8601String(),
+    };
+  }
 }
