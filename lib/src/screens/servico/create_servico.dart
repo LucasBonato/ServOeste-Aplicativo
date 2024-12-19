@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
 import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/components/date_picker.dart';
 import 'package:serv_oeste/src/components/dropdown_field.dart';
@@ -17,7 +16,6 @@ import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_request.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
-import 'package:serv_oeste/src/models/servico/equipamento.dart';
 import 'package:serv_oeste/src/models/servico/servico_form.dart';
 import 'package:serv_oeste/src/models/servico/servico_request.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
@@ -42,7 +40,6 @@ class _CreateServicoState extends State<CreateServico> {
   late List<String> _dropdownNomeClientes;
   late List<String> _dropdownNomeTecnicos;
   late TextEditingController _municipioController;
-  bool _isModalOpen = false;
 
   late final ServicoBloc _servicoBloc;
   late final ClienteBloc _clienteBloc;

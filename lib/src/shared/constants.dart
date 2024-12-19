@@ -1,5 +1,3 @@
-import 'package:serv_oeste/src/models/servico/equipamento.dart';
-
 class Constants {
   static const bool isDev = true;
 

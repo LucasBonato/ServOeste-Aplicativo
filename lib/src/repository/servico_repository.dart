@@ -11,8 +11,7 @@ import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:dio/dio.dart';
 
 class ServicoRepository extends DioService {
-  Future<List<Servico>?> getServicosByFilter(
-      ServicoFilterRequest servicoFilter) async {
+  Future<List<Servico>?> getServicosByFilter(ServicoFilterRequest servicoFilter) async {
     try {
       final response = await dio.post(
         ServerEndpoints.servicoFilterEndpoint,

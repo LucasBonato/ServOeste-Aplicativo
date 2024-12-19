@@ -7,7 +7,6 @@ import 'package:serv_oeste/src/components/dropdown_field.dart';
 import 'package:serv_oeste/src/components/search_dropdown_field.dart';
 import 'package:serv_oeste/src/components/custom_search_field.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
-import 'package:serv_oeste/src/models/servico/equipamento.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/util/formatters.dart';
@@ -103,8 +102,7 @@ class FilterService extends StatelessWidget {
                       Expanded(
                         child: CustomSearchTextField(
                           hint: 'Código...',
-                          controller: TextEditingController(
-                              text: provider.filter.codigo?.toString() ?? ''),
+                          controller: TextEditingController(text: provider.filter.codigo?.toString() ?? ''),
                           keyboardType: TextInputType.number,
                           onChangedAction: (value) {
                             final codigoInt =

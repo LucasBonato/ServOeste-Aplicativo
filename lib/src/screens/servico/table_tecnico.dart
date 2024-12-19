@@ -112,7 +112,7 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
 
   @override
   Widget build(BuildContext context) {
-    double dialogWidth = MediaQuery.of(context).size.width * 0.85;
+    double dialogWidth = MediaQuery.of(context).size.width;
 
     double getFontSize(double min, double preferred, double max) {
       return (MediaQuery.of(context).size.width / 100).clamp(min, max);
@@ -132,7 +132,7 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
           _rows = state.tecnicosDisponiveis!.map((tecnico) {
             final Map<String, PlutoCell> dateFieldsMap = {
               for (var date in dateFields) ...{
-                '$date-M': PlutoCell(value: '0'),
+                '$date-M': PlutoCell(value: '1'),
                 '$date-T': PlutoCell(value: '0'),
               }
             };
@@ -168,8 +168,24 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
                       columns: _columns,
                       rows: _rows,
                       columnGroups: _columnGroups,
+                      // onRowDoubleTap: (event) {
+                      //   final String nomeTecnico = event.cell.row.cells.values.first.value;
+                      //   final String nomeColumn = event.cell.column.field;
+                      //   final String data = nomeColumn.replaceAll("-", "/").substring(0, 10);
+                      //   final String periodo = switch (nomeColumn.substring(11)) {
+                      //     "T" => "Tarde",
+                      //     _ => "Manhã"
+                      //   };
+                      //   final String valorCell = event.cell.value;
+                      //   Logger().i(valorCell);
+                      //   Logger().i(nomeColumn);
+                      //   Logger().i(data);
+                      //   Logger().i(periodo);
+                      //   Logger().i(nomeTecnico);
+                      // },
                       configuration: PlutoGridConfiguration(
                         style: PlutoGridStyleConfig(
+
                           gridBorderColor: Colors.grey,
                           cellTextStyle: TextStyle(
                             fontSize: getFontSize(15, 16, 17),
