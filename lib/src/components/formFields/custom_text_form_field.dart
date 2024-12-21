@@ -79,7 +79,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           widget.rightPadding ?? 16, widget.hide ? 16 : 0),
       child: ValueListenableBuilder<String>(
         valueListenable: widget.valueNotifier,
-        builder: (BuildContext context, String value, Widget? child) => TextFormField(
+        builder: (BuildContext context, String value, Widget? child) =>
+            TextFormField(
           enabled: widget.enabled,
           controller: _internalController,
           inputFormatters: widget.masks,
@@ -99,7 +100,14 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               fontSize: 16,
             ),
             labelStyle: const TextStyle(
-              color: Color.fromARGB(255, 48, 48, 48),
+              color: Color(0xFF948F8F),
+              fontSize: 16,
+            ),
+            floatingLabelStyle: TextStyle(
+              color: _internalController.text.isNotEmpty ||
+                      FocusScope.of(context).hasFocus
+                  ? Colors.black
+                  : Color(0xFF948F8F),
               fontSize: 16,
             ),
             border: OutlineInputBorder(
@@ -136,7 +144,10 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             ),
             suffixIcon: widget.suffixIcon,
           ),
-          onChanged: widget.onChanged,
+          onChanged: (value) {
+            widget.onChanged?.call(value);
+            widget.valueNotifier.value = value;
+          },
           onTap: widget.onTap,
           validator: widget.validator,
           onSaved: widget.onSaved,

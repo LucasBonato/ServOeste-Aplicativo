@@ -7,13 +7,13 @@ import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 
 class TableTecnicosModal extends StatefulWidget {
   final int especialidadeId;
-  final void Function(String nome, String data, String periodo, int id) setValuesAvailabilityTechnicianTable;
+  final void Function(String nome, String data, String periodo, int id)
+      setValuesAvailabilityTechnicianTable;
 
-  const TableTecnicosModal({
-    super.key,
-    required this.especialidadeId,
-    required this.setValuesAvailabilityTechnicianTable
-  });
+  const TableTecnicosModal(
+      {super.key,
+      required this.especialidadeId,
+      required this.setValuesAvailabilityTechnicianTable});
 
   @override
   TableTecnicosModalState createState() => TableTecnicosModalState();
@@ -31,7 +31,8 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
     super.initState();
     _tecnicoBloc = context.read<TecnicoBloc>();
 
-    _tecnicoBloc.add(TecnicoAvailabilitySearchEvent(idEspecialidade: widget.especialidadeId));
+    _tecnicoBloc.add(TecnicoAvailabilitySearchEvent(
+        idEspecialidade: widget.especialidadeId));
 
     dateFields = _getNextValidDates().map((date) {
       final day = date.day.toString().padLeft(2, '0');
@@ -50,7 +51,8 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
         width: 150,
         enableEditingMode: false,
       ),
-      ...dateFields.expand((field) => [
+      ...dateFields.expand(
+        (field) => [
           PlutoColumn(
             title: 'M',
             field: '$field-M',
@@ -86,19 +88,34 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
     ];
   }
 
-  List<DateTime> _getNextValidDates() {
-    //TODO - Existem jeitos melhores de fazer isso aqui, cuidado com muitos loops na aplicação
-    final List<DateTime> dates = [];
-    DateTime currentDate = DateTime.now();
+  // List<DateTime> _getNextValidDates() {
+  //   // Obs. Existem jeitos melhores de fazer isso aqui, cuidado com muitos loops na aplicação
+  //   final List<DateTime> dates = [];
+  //   DateTime currentDate = DateTime.now();
 
-    while (dates.length < 3) {
-      if (currentDate.weekday != DateTime.sunday) {
-        dates.add(currentDate);
+  //   while (dates.length < 3) {
+  //     if (currentDate.weekday != DateTime.sunday) {
+  //       dates.add(currentDate);
+  //     }
+  //     currentDate = currentDate.add(Duration(days: 1));
+  //   }
+
+  //   return dates;
+  // }
+
+  List<DateTime> _getNextValidDates() {
+    final DateTime currentDate = DateTime.now();
+    final List<DateTime> dates = [];
+
+    for (int i = 0; i < 7; i++) {
+      final DateTime potentialDate = currentDate.add(Duration(days: i));
+      if (potentialDate.weekday != DateTime.sunday) {
+        dates.add(potentialDate);
+        if (dates.length == 3) break;
       }
-      currentDate = currentDate.add(Duration(days: 1));
     }
 
-    return dates;
+    return dates; // acha q assim ficou melhor? tentei diminuir ao maximo o uso dos loops
   }
 
   String getCompostName(String? sobrenome) {
@@ -125,9 +142,9 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
       bloc: _tecnicoBloc,
       builder: (context, state) {
         if (state is TecnicoSearchAvailabilitySuccessState) {
-          if (state.tecnicosDisponiveis == null || state.tecnicosDisponiveis!.isEmpty) {
-            return SizedBox();
-          }
+          // if (state.tecnicosDisponiveis == null || state.tecnicosDisponiveis!.isEmpty) {
+          //   return SizedBox();
+          // }
 
           _rows = state.tecnicosDisponiveis!.map((tecnico) {
             final DateFormat formatter = DateFormat('dd-MM-yyyy');
@@ -141,10 +158,13 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
 
             if (tecnico.disponibilidades != null) {
               for (var disponibilidade in tecnico.disponibilidades!) {
-                final String formattedDate = formatter.format(disponibilidade.data!);
-                final String key = '$formattedDate-${disponibilidade.periodo == "manha" ? "M" : "T"}';
+                final String formattedDate =
+                    formatter.format(disponibilidade.data!);
+                final String key =
+                    '$formattedDate-${disponibilidade.periodo == "manha" ? "M" : "T"}';
                 if (dateFieldsMap.containsKey(key)) {
-                  dateFieldsMap[key] = PlutoCell(value: disponibilidade.quantidadeServicos.toString());
+                  dateFieldsMap[key] = PlutoCell(
+                      value: disponibilidade.quantidadeServicos.toString());
                 }
               }
             }
@@ -171,7 +191,8 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
                   Expanded(
                     child: Text(
                       'Disponibilidade dos Técnicos',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -221,8 +242,7 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
               ),
             ),
           );
-        }
-        else if (state is TecnicoErrorState) {
+        } else if (state is TecnicoErrorState) {
           return Center(child: Text('Erro ao carregar as disponibilidades.'));
         }
         return Center(child: CircularProgressIndicator());
@@ -236,7 +256,8 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
     final String cellField = event.cell.column.field;
 
     if (cellField == 'tecnico') {
-      Logger().w('Aviso: A coluna "Técnicos" foi selecionada. Nenhuma ação necessária.');
+      Logger().w(
+          'Aviso: A coluna "Técnicos" foi selecionada. Nenhuma ação necessária.');
       return;
     }
 
@@ -250,7 +271,8 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
     final horarioSelecionado = match.group(2);
     final periodo = horarioSelecionado == 'M' ? 'Manhã' : 'Tarde';
 
-    widget.setValuesAvailabilityTechnicianTable(tecnicoNome!, dataSelecionada!, periodo, tecnicoId!);
+    widget.setValuesAvailabilityTechnicianTable(
+        tecnicoNome!, dataSelecionada!, periodo, tecnicoId!);
 
     Navigator.pop(context);
   }

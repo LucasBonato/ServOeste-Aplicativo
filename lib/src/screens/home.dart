@@ -103,7 +103,7 @@ class _HomeState extends State<Home> {
                 }
                 return SingleChildScrollView(
                   child: GridListView(
-                    aspectRatio: 1.25,
+                    aspectRatio: 1,
                     dataList: stateServico.servicos,
                     buildCard: (dynamic servico) => CardService(
                       cliente: (servico as Servico).nomeCliente,

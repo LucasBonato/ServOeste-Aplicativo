@@ -230,18 +230,32 @@ class CardService extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 5),
-                          Padding(
-                            padding: EdgeInsets.only(
-                              left: constraints.maxWidth * 0.15,
-                            ),
-                            child: Text(
-                              "Data Prevista: ${dataPrevista.day}/${dataPrevista.month}/${dataPrevista.year} - ${formatHorario(horario)}",
-                              style: TextStyle(
-                                fontSize: constraints.maxWidth * 0.04,
-                                color: Colors.black,
+                          if (dataAbertura != null)
+                            Padding(
+                              padding: EdgeInsets.only(
+                                left: constraints.maxWidth * 0.15,
+                              ),
+                              child: Text(
+                                "Data Prevista: ${dataPrevista.day}/${dataPrevista.month}/${dataPrevista.year}",
+                                style: TextStyle(
+                                  fontSize: constraints.maxWidth * 0.04,
+                                  color: Colors.black,
+                                ),
                               ),
                             ),
-                          ),
+                          if (dataAbertura == null)
+                            Padding(
+                              padding: EdgeInsets.only(
+                                left: constraints.maxWidth * 0.15,
+                              ),
+                              child: Text(
+                                "Data Prevista: ${dataPrevista.day}/${dataPrevista.month}/${dataPrevista.year} - ${formatHorario(horario)}",
+                                style: TextStyle(
+                                  fontSize: constraints.maxWidth * 0.04,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
                           if (dataEfetiva != null)
                             Padding(
                               padding: EdgeInsets.only(
@@ -261,7 +275,7 @@ class CardService extends StatelessWidget {
                                 left: constraints.maxWidth * 0.15,
                               ),
                               child: Text(
-                                "Data Abertura: ${dataAbertura!.day}/${dataAbertura!.month}/${dataAbertura!.year}",
+                                "Data Abertura: ${dataAbertura!.day}/${dataAbertura!.month}/${dataAbertura!.year} - ${formatHorario(horario)}",
                                 style: TextStyle(
                                   fontSize: constraints.maxWidth * 0.04,
                                   color: Colors.black,

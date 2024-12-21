@@ -27,7 +27,7 @@ class _CustomSearchTextFieldState extends State<CustomSearchTextField> {
 
   @override
   void initState() {
-    _internalController = widget.controller?? TextEditingController();
+    _internalController = widget.controller ?? TextEditingController();
     super.initState();
   }
 
@@ -47,12 +47,12 @@ class _CustomSearchTextFieldState extends State<CustomSearchTextField> {
         decoration: InputDecoration(
           prefixIcon: const Icon(
             Icons.search_outlined,
-            color: Color(0xFFB0A9A9),
+            color: Color(0xFF948F8F),
           ),
           isDense: true,
           hintText: widget.hint,
           hintStyle: const TextStyle(
-            color: Color(0xFFB0A9A9),
+            color: Color(0xFF948F8F),
             fontSize: 16,
           ),
           filled: true,
