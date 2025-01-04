@@ -61,7 +61,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
     _telefoneCelularController = TextEditingController();
     _telefoneFixoController = TextEditingController();
     _tecnicoUpdateForm.setId(widget.id);
-    String defaultSituacao = Constants.situationTecnicoList.first['label'];
+    String defaultSituacao = Constants.situationTecnicoList.first;
     _dropDownSituacaoValue = ValueNotifier<String>(defaultSituacao);
     _tecnicoUpdateForm.setSituacao(defaultSituacao);
     _tecnicoBloc.add(TecnicoSearchOneEvent(id: widget.id));
@@ -295,9 +295,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                                 flex: 1,
                                 child: CustomDropdownField(
                                   label: "Situação",
-                                  dropdownValues: Constants.situationTecnicoList
-                                      .map((item) => item['label'] as String)
-                                      .toList(),
+                                  dropdownValues: Constants.situationTecnicoList,
                                   leftPadding: 0,
                                   valueNotifier: _dropDownSituacaoValue,
                                   validator: _tecnicoUpdateValidator.byField(

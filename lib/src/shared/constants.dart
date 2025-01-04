@@ -1,10 +1,14 @@
 class Constants {
   static const bool isDev = true;
-  static const List<Map<String, dynamic>> situationTecnicoList = [
-    {'label': 'Situação...', 'value': ''},
-    {'label': 'Ativo', 'value': 'Ativo'},
-    {'label': 'Licenca', 'value': 'Licenca'},
-    {'label': 'Desativado', 'value': 'Desativado'}
+  // static const List<Map<String, dynamic>> situationTecnicoList = [
+  //   {'label': 'Ativo', 'value': 'Ativo'},
+  //   {'label': 'Licenca', 'value': 'Licenca'},
+  //   {'label': 'Desativado', 'value': 'Desativado'}
+  // ];
+  static const List<String> situationTecnicoList = [
+    "Ativo",
+    "Licenca",
+    "Desativado"
   ];
   static const List<String> situationServiceList = [
     'Aguardando Agendamento',

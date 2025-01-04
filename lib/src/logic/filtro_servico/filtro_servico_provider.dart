@@ -17,6 +17,9 @@ class FiltroServicoProvider extends ChangeNotifier {
     } else {
       _filter = ServicoFilterRequest(
         id: null,
+        clienteId: null,
+        tecnicoId: null,
+        clienteNome: null,
         tecnicoNome: null,
         equipamento: null,
         situacao: null,
@@ -24,8 +27,11 @@ class FiltroServicoProvider extends ChangeNotifier {
         garantia: null,
         periodo: null,
         dataAtendimentoPrevistoAntes: null,
+        dataAtendimentoPrevistoDepois: null,
         dataAtendimentoEfetivoAntes: null,
+        dataAtendimentoEfetivoDepois: null,
         dataAberturaAntes: null,
+        dataAberturaDepois: null,
       );
     }
     notifyListeners();

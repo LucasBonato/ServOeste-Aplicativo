@@ -129,6 +129,10 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
             return SizedBox();
           }
 
+          state.tecnicosDisponiveis?.sort((tecnico1, tecnico2) => (tecnico1.quantidadeTotalServicos! > tecnico2.quantidadeTotalServicos!) ? 0 : 1);
+
+          Logger().e(state.tecnicosDisponiveis);
+
           _rows = state.tecnicosDisponiveis!.map((tecnico) {
             final DateFormat formatter = DateFormat('dd-MM-yyyy');
 
@@ -181,21 +185,6 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
                       columns: _columns,
                       rows: _rows,
                       columnGroups: _columnGroups,
-                      // onRowDoubleTap: (event) {
-                      //   final String nomeTecnico = event.cell.row.cells.values.first.value;
-                      //   final String nomeColumn = event.cell.column.field;
-                      //   final String data = nomeColumn.replaceAll("-", "/").substring(0, 10);
-                      //   final String periodo = switch (nomeColumn.substring(11)) {
-                      //     "T" => "Tarde",
-                      //     _ => "Manhã"
-                      //   };
-                      //   final String valorCell = event.cell.value;
-                      //   Logger().i(valorCell);
-                      //   Logger().i(nomeColumn);
-                      //   Logger().i(data);
-                      //   Logger().i(periodo);
-                      //   Logger().i(nomeTecnico);
-                      // },
                       configuration: PlutoGridConfiguration(
                         style: PlutoGridStyleConfig(
                           gridBorderColor: Colors.grey,

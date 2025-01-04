@@ -20,14 +20,14 @@ class FilterService extends StatelessWidget {
 
     final filterRequest = ServicoFilterRequest(
       id: filter.id != null && filter.id! > 0 ? filter.id! : null,
-      filial: filter.filial ?? '',
-      equipamento: filter.equipamento ?? '',
-      situacao: filter.situacao ?? '',
-      garantia: filter.garantia ?? '',
+      filial: filter.filial,
+      equipamento: filter.equipamento,
+      situacao: filter.situacao,
+      garantia: filter.garantia,
       dataAtendimentoPrevistoAntes: filter.dataAtendimentoPrevistoAntes,
       dataAtendimentoEfetivoAntes: filter.dataAtendimentoEfetivoAntes,
       dataAberturaAntes: filter.dataAberturaAntes,
-      periodo: filter.periodo ?? '',
+      periodo: filter.periodo,
     );
 
     context
@@ -106,8 +106,7 @@ class FilterService extends StatelessWidget {
                         provider.updateFilter(garantia: value);
                       }
                     },
-                    valueNotifier:
-                        ValueNotifier(provider.filter.garantia ?? ''),
+                    valueNotifier: ValueNotifier(provider.filter.garantia ?? ''),
                   ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,

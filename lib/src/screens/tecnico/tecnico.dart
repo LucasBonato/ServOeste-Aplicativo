@@ -34,10 +34,8 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     _listaBloc = context.read<ListaBloc>();
     _idController = TextEditingController();
     _nomeController = TextEditingController();
-    _situacaoController = SingleSelectController<String>(
-        Constants.situationTecnicoList[1]['label']);
-    _situacaoNotifier =
-        ValueNotifier<String>(Constants.situationTecnicoList[1]['value']);
+    _situacaoController = SingleSelectController<String>(Constants.situationTecnicoList.first);
+    _situacaoNotifier = ValueNotifier<String>(Constants.situationTecnicoList.first);
     _listaBloc.add(ListaInitialEvent());
   }
 
@@ -104,17 +102,13 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
           valueNotifier: valueNotifier,
           leftPadding: 4,
           rightPadding: 4,
-          onChanged: (selectedLabel) {
-            final selectedValue = Constants.situationTecnicoList
-                .firstWhere((e) => e['label'] == selectedLabel)['value'];
-            _tecnicoBloc.add(
-              TecnicoSearchEvent(
-                id: int.tryParse(_idController.text),
-                nome: _nomeController.text,
-                situacao: selectedValue,
-              ),
-            );
-          },
+          onChanged: (situacao) => _tecnicoBloc.add(
+            TecnicoSearchEvent(
+              id: int.tryParse(_idController.text),
+              nome: _nomeController.text,
+              situacao: situacao,
+            ),
+          ),
         );
 
     Widget buildLargeScreenLayout() => Row(
@@ -139,9 +133,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
               flex: 1,
               child: buildDropdownField(
                 label: "Situação...",
-                dropdownValues: Constants.situationTecnicoList
-                    .map((e) => e['label'] as String)
-                    .toList(),
+                dropdownValues: Constants.situationTecnicoList,
                 controller: _situacaoController,
                 valueNotifier: _situacaoNotifier,
               ),
@@ -172,9 +164,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                   flex: 1,
                   child: buildDropdownField(
                     label: "Situação...",
-                    dropdownValues: Constants.situationTecnicoList
-                        .map((e) => e['label'] as String)
-                        .toList(),
+                    dropdownValues: Constants.situationTecnicoList,
                     controller: _situacaoController,
                     valueNotifier: _situacaoNotifier,
                   ),
@@ -199,9 +189,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
             SizedBox(height: 5),
             buildDropdownField(
               label: "Situação...",
-              dropdownValues: Constants.situationTecnicoList
-                  .map((e) => e['label'] as String)
-                  .toList(),
+              dropdownValues: Constants.situationTecnicoList,
               controller: _situacaoController,
               valueNotifier: _situacaoNotifier,
             ),
@@ -255,10 +243,8 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
           Expanded(
             child: BlocBuilder<TecnicoBloc, TecnicoState>(
               builder: (context, stateTecnico) {
-                if (stateTecnico is TecnicoInitialState ||
-                    stateTecnico is TecnicoLoadingState) {
-                  return const Center(
-                      child: CircularProgressIndicator.adaptive());
+                if (stateTecnico is TecnicoInitialState || stateTecnico is TecnicoLoadingState) {
+                  return const Center(child: CircularProgressIndicator.adaptive());
                 } else if (stateTecnico is TecnicoSearchSuccessState) {
                   return SingleChildScrollView(
                     child: GridListView(
@@ -270,15 +256,12 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                           bool isSelected = false;
 
                           if (stateLista is ListaSelectState) {
-                            isSelected =
-                                stateLista.selectedIds.contains(tecnico.id);
+                            isSelected = stateLista.selectedIds.contains(tecnico.id);
                           }
 
                           return CardTechnical(
-                            onDoubleTap: () =>
-                                _onNavigateToUpdateScreen(tecnico.id!),
-                            onLongPress: () =>
-                                _onLongPressSelectItemLista(tecnico.id!),
+                            onDoubleTap: () => _onNavigateToUpdateScreen(tecnico.id!),
+                            onLongPress: () => _onLongPressSelectItemLista(tecnico.id!),
                             id: tecnico.id!,
                             nome: tecnico.nome!,
                             sobrenome: tecnico.sobrenome!,

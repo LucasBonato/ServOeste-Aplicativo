@@ -12,6 +12,7 @@ import 'package:serv_oeste/src/screens/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/home.dart';
 import 'package:serv_oeste/src/screens/servico/servico.dart';
 import 'package:serv_oeste/src/screens/tecnico/tecnico.dart';
+import 'package:serv_oeste/src/shared/constants.dart';
 
 class BaseLayout extends StatefulWidget {
   final int? initialIndex;
@@ -100,13 +101,13 @@ class BaseLayoutState extends State<BaseLayout> {
       ServicoLoadingEvent(
         filterRequest: ServicoFilterRequest(
             // dataAtendimentoPrevistoAntes: DateTime.now().toUtc()
-            ),
+          ),
       ),
     );
   }
 
   void _loadTecnico() {
-    _tecnicoBloc.add(TecnicoLoadingEvent(situacao: 'Ativo'));
+    _tecnicoBloc.add(TecnicoLoadingEvent(situacao: Constants.situationTecnicoList.first));
   }
 
   void _loadCliente() {
