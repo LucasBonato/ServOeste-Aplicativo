@@ -43,14 +43,25 @@ class CustomSearchDropDown extends StatefulWidget {
 
 class _CustomSearchDropDown extends State<CustomSearchDropDown> {
   late final TextEditingController _customSearchController;
+  late Color labelColor;
 
   @override
   void initState() {
     _customSearchController = widget.controller ?? TextEditingController();
+    labelColor = Color(0xFF948F8F);
 
     if (widget.valueNotifier?.value != null) {
       _customSearchController.text = widget.valueNotifier!.value!;
     }
+
+    _customSearchController.addListener(() {
+      setState(() {
+        labelColor = _customSearchController.text.isNotEmpty
+            ? Color(0xFF948F8F)
+            : Color(0xFF000000);
+      });
+    });
+
     super.initState();
   }
 
@@ -83,13 +94,13 @@ class _CustomSearchDropDown extends State<CustomSearchDropDown> {
           decoration: InputDecoration(
             counterText: widget.hide ? "" : null,
             labelText: widget.label,
-            labelStyle: const TextStyle(
-              color: Color(0xFFB0A9A9),
+            labelStyle: TextStyle(
+              color: labelColor,
               fontSize: 16,
             ),
             suffixIcon: const Icon(
               Icons.arrow_drop_down_outlined,
-              color: Color(0xFFB0A9A9),
+              color: Color(0xFF948F8F),
             ),
             isDense: true,
             filled: true,

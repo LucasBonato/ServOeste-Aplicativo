@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:serv_oeste/src/logic/filtro_servico/filtro_servico_provider.dart';
 import 'package:serv_oeste/src/components/date_picker.dart';
 import 'package:serv_oeste/src/components/dropdown_field.dart';
-import 'package:serv_oeste/src/components/search_dropdown_field.dart';
+import 'package:serv_oeste/src/components/formFields/search_dropdown_field.dart';
 import 'package:serv_oeste/src/components/custom_search_field.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';

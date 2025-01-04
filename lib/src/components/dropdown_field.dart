@@ -88,7 +88,7 @@ class _CustomDropdownFieldState extends State<CustomDropdownField> {
               hintText: widget.label,
               hintBuilder: (context, hint, enabled) => Text(
                 hint,
-                style: const TextStyle(color: Colors.black87, fontSize: 16),
+                style: const TextStyle(color: Color(0xFF948F8F), fontSize: 16),
               ),
               decoration: CustomDropdownDecoration(
                   errorStyle: TextStyle(

@@ -1,6 +1,6 @@
-import 'package:serv_oeste/src/components/field_labels.dart';
+import 'package:serv_oeste/src/components/formFields/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
-import 'package:serv_oeste/src/components/search_dropdown_field.dart';
+import 'package:serv_oeste/src/components/formFields/search_dropdown_field.dart';
 import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';

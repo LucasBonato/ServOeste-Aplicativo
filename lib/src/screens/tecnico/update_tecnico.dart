@@ -1,5 +1,5 @@
 import 'package:serv_oeste/src/components/dropdown_field.dart';
-import 'package:serv_oeste/src/components/field_labels.dart';
+import 'package:serv_oeste/src/components/formFields/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';

@@ -4,9 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/components/date_picker.dart';
 import 'package:serv_oeste/src/components/dropdown_field.dart';
-import 'package:serv_oeste/src/components/field_labels.dart';
+import 'package:serv_oeste/src/components/formFields/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
-import 'package:serv_oeste/src/components/search_dropdown_field.dart';
+import 'package:serv_oeste/src/components/formFields/search_dropdown_field.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
@@ -27,10 +27,7 @@ import 'package:serv_oeste/src/shared/input_masks.dart';
 class CreateServico extends StatefulWidget {
   final bool isClientAndService;
 
-  const CreateServico({
-    super.key,
-    this.isClientAndService = true
-  });
+  const CreateServico({super.key, this.isClientAndService = true});
 
   @override
   State<CreateServico> createState() => _CreateServicoState();
@@ -78,14 +75,17 @@ class _CreateServicoState extends State<CreateServico> {
   void _onNomeClienteChanged(String nome) {
     _servicoForm.setIdCliente(null);
     if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(Duration(milliseconds: 150), () => _fetchClienteNames(nome));
+    _debounce =
+        Timer(Duration(milliseconds: 150), () => _fetchClienteNames(nome));
   }
+
   void _fetchClienteNames(String nome) {
     _clienteForm.setNome(nome);
     if (nome == "") return;
     if (nome.split(" ").length > 1 && _dropdownNomeClientes.isEmpty) return;
     _clienteBloc.add(ClienteSearchEvent(nome: nome));
   }
+
   void _getClienteId(String nome) {
     for (Cliente cliente in _clientes) {
       if (cliente.nome! == _clienteForm.nome.value) {
@@ -98,14 +98,18 @@ class _CreateServicoState extends State<CreateServico> {
     _servicoForm.setIdTecnico(null);
     if (_servicoForm.equipamento.value.isEmpty) return;
     if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(Duration(milliseconds: 150), () => _fetchTecnicoNames(nome));
+    _debounce =
+        Timer(Duration(milliseconds: 150), () => _fetchTecnicoNames(nome));
   }
+
   void _fetchTecnicoNames(String nome) {
     _servicoForm.setNomeTecnico(nome);
     if (nome == "") return;
     if (nome.split(" ").length > 1 && _dropdownNomeTecnicos.isEmpty) return;
-    _tecnicoBloc.add(TecnicoSearchEvent(nome: nome, equipamento: _servicoForm.equipamento.value));
+    _tecnicoBloc.add(TecnicoSearchEvent(
+        nome: nome, equipamento: _servicoForm.equipamento.value));
   }
+
   void _getTecnicoId(String nome) {
     _servicoForm.setNomeTecnico(nome);
     for (Tecnico tecnico in _tecnicos) {
@@ -133,7 +137,6 @@ class _CreateServicoState extends State<CreateServico> {
       idEspecialidade = Constants.equipamentos.indexOf(equipamentoSelected) + 1;
     }
 
-
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -144,7 +147,9 @@ class _CreateServicoState extends State<CreateServico> {
       },
     );
   }
-  void _setTableValues(String nomeTecnico, String data, String periodo, int idTecnico) {
+
+  void _setTableValues(
+      String nomeTecnico, String data, String periodo, int idTecnico) {
     _servicoForm.setNomeTecnico(nomeTecnico);
     _nomeTecnicoController.text = nomeTecnico;
     _servicoForm.setDataPrevista(data);
@@ -157,11 +162,13 @@ class _CreateServicoState extends State<CreateServico> {
     final ValidationResult response = _servicoValidator.validate(_servicoForm);
     return response.isValid;
   }
+
   bool _isValidClienteForm() {
     _clienteFormKey.currentState?.validate();
     final ValidationResult response = _clienteValidator.validate(_clienteForm);
     return response.isValid;
   }
+
   void _onAddService() {
     if (_isValidClienteForm() == false && widget.isClientAndService) {
       return;
@@ -179,7 +186,8 @@ class _CreateServicoState extends State<CreateServico> {
       _servicoBloc.add(
         ServicoRegisterPlusClientEvent(
           servico: ServicoRequest.fromServicoForm(servico: _servicoForm),
-          cliente: ClienteRequest.fromClienteForm(cliente: _clienteForm, sobrenome: sobrenomeCliente),
+          cliente: ClienteRequest.fromClienteForm(
+              cliente: _clienteForm, sobrenome: sobrenomeCliente),
         ),
       );
 
@@ -584,7 +592,8 @@ class _CreateServicoState extends State<CreateServico> {
             dropdownValues: Constants.equipamentos,
             valueNotifier: _servicoForm.equipamento,
             hide: true,
-            validator: _servicoValidator.byField(_servicoForm, ErrorCodeKey.equipamento.name),
+            validator: _servicoValidator.byField(
+                _servicoForm, ErrorCodeKey.equipamento.name),
             onChanged: _servicoForm.setEquipamento,
             enabled: _isInputEnabled(),
           ),
@@ -593,7 +602,8 @@ class _CreateServicoState extends State<CreateServico> {
             valueNotifier: _servicoForm.marca,
             label: "Marca*",
             hide: true,
-            validator: _servicoValidator.byField(_servicoForm, ErrorCodeKey.marca.name),
+            validator: _servicoValidator.byField(
+                _servicoForm, ErrorCodeKey.marca.name),
             onChanged: _servicoForm.setMarca,
             enabled: _isInputEnabled(),
           ),
@@ -601,7 +611,8 @@ class _CreateServicoState extends State<CreateServico> {
             dropdownValues: Constants.filiais,
             valueNotifier: _servicoForm.filial,
             label: "Filial*",
-            validator: _servicoValidator.byField(_servicoForm, ErrorCodeKey.filial.name),
+            validator: _servicoValidator.byField(
+                _servicoForm, ErrorCodeKey.filial.name),
             onChanged: _servicoForm.setFilial,
             enabled: _isInputEnabled(),
           ),
@@ -622,27 +633,31 @@ class _CreateServicoState extends State<CreateServico> {
               }
             },
             child: ValueListenableBuilder(
-              valueListenable: _servicoForm.equipamento,
-              builder: (context, value, child) {
-                bool isFieldEnabled = (value.isNotEmpty && (widget.isClientAndService || _servicoForm.idCliente.value != null));
-                if (widget.isClientAndService) {
-                  isFieldEnabled = (value.isNotEmpty || (!widget.isClientAndService || _servicoForm.idCliente.value != null));
-                }
+                valueListenable: _servicoForm.equipamento,
+                builder: (context, value, child) {
+                  bool isFieldEnabled = (value.isNotEmpty &&
+                      (widget.isClientAndService ||
+                          _servicoForm.idCliente.value != null));
+                  if (widget.isClientAndService) {
+                    isFieldEnabled = (value.isNotEmpty ||
+                        (!widget.isClientAndService ||
+                            _servicoForm.idCliente.value != null));
+                  }
 
-                return CustomSearchDropDown(
-                  label: "Nome do Técnico*",
-                  dropdownValues: _dropdownNomeTecnicos,
-                  maxLength: 50,
-                  hide: false,
-                  controller: _nomeTecnicoController,
-                  valueNotifier: _servicoForm.nomeTecnico,
-                  validator: _servicoValidator.byField(_servicoForm, ErrorCodeKey.tecnico.name),
-                  onChanged: _onNomeTecnicoChanged,
-                  onSelected: _getTecnicoId,
-                  enabled: isFieldEnabled,
-                );
-              }
-            ),
+                  return CustomSearchDropDown(
+                    label: "Nome do Técnico*",
+                    dropdownValues: _dropdownNomeTecnicos,
+                    maxLength: 50,
+                    hide: false,
+                    controller: _nomeTecnicoController,
+                    valueNotifier: _servicoForm.nomeTecnico,
+                    validator: _servicoValidator.byField(
+                        _servicoForm, ErrorCodeKey.tecnico.name),
+                    onChanged: _onNomeTecnicoChanged,
+                    onSelected: _getTecnicoId,
+                    enabled: isFieldEnabled,
+                  );
+                }),
           ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -658,7 +673,8 @@ class _CreateServicoState extends State<CreateServico> {
                   maxLength: 10,
                   hide: true,
                   valueNotifier: _servicoForm.dataPrevista,
-                  validator: _servicoValidator.byField(_servicoForm, ErrorCodeKey.data.name),
+                  validator: _servicoValidator.byField(
+                      _servicoForm, ErrorCodeKey.data.name),
                   onChanged: _servicoForm.setDataPrevista,
                   enabled: _isInputEnabled(),
                 ),
@@ -670,7 +686,8 @@ class _CreateServicoState extends State<CreateServico> {
                   label: "Horário*",
                   leftPadding: 0,
                   valueNotifier: _servicoForm.horario,
-                  validator: _servicoValidator.byField(_servicoForm, ErrorCodeKey.horario.name),
+                  validator: _servicoValidator.byField(
+                      _servicoForm, ErrorCodeKey.horario.name),
                   onChanged: _servicoForm.setHorario,
                   enabled: _isInputEnabled(),
                 ),
@@ -686,7 +703,8 @@ class _CreateServicoState extends State<CreateServico> {
             minLines: 1,
             hide: false,
             valueNotifier: _servicoForm.descricao,
-            validator: _servicoValidator.byField(_servicoForm, ErrorCodeKey.descricao.name),
+            validator: _servicoValidator.byField(
+                _servicoForm, ErrorCodeKey.descricao.name),
             onChanged: _servicoForm.setDescricao,
             enabled: _isInputEnabled(),
           ),
