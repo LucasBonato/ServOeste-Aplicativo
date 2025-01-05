@@ -11,7 +11,8 @@ import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:dio/dio.dart';
 
 class ServicoRepository extends DioService {
-  Future<List<Servico>?> getServicosByFilter(ServicoFilterRequest servicoFilter) async {
+  Future<List<Servico>?> getServicosByFilter(
+      ServicoFilterRequest servicoFilter) async {
     try {
       final response = await dio.post(
         ServerEndpoints.servicoFilterEndpoint,
@@ -110,6 +111,19 @@ class ServicoRepository extends DioService {
       });
     } on DioException catch (e) {
       return onRequestError(e);
+    }
+    return null;
+  }
+
+  Future<Servico?> getServicoById({required int id}) async {
+    try {
+      final response = await dio.get("${ServerEndpoints.servicoEndpoint}/$id");
+
+      if (response.data != null && response.data is Map) {
+        return Servico.fromJson(response.data as Map<String, dynamic>);
+      }
+    } on DioException catch (e) {
+      throw Exception(onRequestError(e));
     }
     return null;
   }

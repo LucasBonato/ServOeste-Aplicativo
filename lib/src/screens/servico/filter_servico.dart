@@ -64,7 +64,7 @@ class FilterService extends StatelessWidget {
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 100),
+                    padding: const EdgeInsets.only(bottom: 80),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(15),
                       child: Image.asset(
@@ -78,6 +78,8 @@ class FilterService extends StatelessWidget {
                   CustomSearchDropDown(
                     label: 'Equipamento...',
                     dropdownValues: Constants.equipamentos,
+                    leftPadding: 4,
+                    rightPadding: 4,
                     onChanged: (value) {
                       provider.updateFilter(equipamento: value);
                     },
@@ -86,6 +88,8 @@ class FilterService extends StatelessWidget {
                   CustomDropdownField(
                     label: 'Situação...',
                     dropdownValues: Constants.situationServiceList,
+                    leftPadding: 4,
+                    rightPadding: 4,
                     onChanged: (value) {
                       if (value == null || value.isEmpty) {
                         provider.updateFilter(situacao: null);
@@ -99,6 +103,8 @@ class FilterService extends StatelessWidget {
                   CustomDropdownField(
                     label: 'Garantia...',
                     dropdownValues: Constants.garantias,
+                    leftPadding: 4,
+                    rightPadding: 4,
                     onChanged: (value) {
                       if (value == null || value.isEmpty) {
                         provider.updateFilter(garantia: null);
@@ -109,145 +115,322 @@ class FilterService extends StatelessWidget {
                     valueNotifier:
                         ValueNotifier(provider.filter.garantia ?? ''),
                   ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: CustomSearchTextField(
-                          hint: 'Código...',
-                          controller: TextEditingController(
-                              text: provider.filter.id != null &&
-                                      provider.filter.id! > 0
-                                  ? provider.filter.id.toString()
-                                  : ''),
-                          keyboardType: TextInputType.number,
-                          onChangedAction: (value) {
-                            final codigoInt =
-                                value.isNotEmpty ? int.tryParse(value) : null;
-                            provider.updateFilter(codigo: codigoInt);
-                          },
-                          rightPadding: 4,
-                        ),
-                      ),
-                      Expanded(
-                        child: CustomDropdownField(
-                          label: 'Filial...',
-                          dropdownValues: Constants.filiais,
-                          onChanged: (value) {
-                            if (value == null || value.isEmpty) {
-                              provider.updateFilter(filial: null);
-                            } else {
-                              provider.updateFilter(filial: value);
-                            }
-                          },
-                          valueNotifier:
-                              ValueNotifier(provider.filter.filial ?? ''),
-                          leftPadding: 4,
-                        ),
-                      ),
-                    ],
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      if (constraints.maxWidth < 400) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomSearchTextField(
+                              hint: 'Código...',
+                              leftPadding: 4,
+                              rightPadding: 4,
+                              controller: TextEditingController(
+                                  text: provider.filter.id != null &&
+                                          provider.filter.id! > 0
+                                      ? provider.filter.id.toString()
+                                      : ''),
+                              keyboardType: TextInputType.number,
+                              onChangedAction: (value) {
+                                final codigoInt = value.isNotEmpty
+                                    ? int.tryParse(value)
+                                    : null;
+                                provider.updateFilter(codigo: codigoInt);
+                              },
+                            ),
+                            const SizedBox(height: 16),
+                            CustomDropdownField(
+                              label: 'Filial...',
+                              dropdownValues: Constants.filiais,
+                              leftPadding: 4,
+                              rightPadding: 4,
+                              onChanged: (value) {
+                                if (value == null || value.isEmpty) {
+                                  provider.updateFilter(filial: null);
+                                } else {
+                                  provider.updateFilter(filial: value);
+                                }
+                              },
+                              valueNotifier:
+                                  ValueNotifier(provider.filter.filial ?? ''),
+                            ),
+                          ],
+                        );
+                      } else {
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: CustomSearchTextField(
+                                hint: 'Código...',
+                                leftPadding: 4,
+                                rightPadding: 4,
+                                controller: TextEditingController(
+                                    text: provider.filter.id != null &&
+                                            provider.filter.id! > 0
+                                        ? provider.filter.id.toString()
+                                        : ''),
+                                keyboardType: TextInputType.number,
+                                onChangedAction: (value) {
+                                  final codigoInt = value.isNotEmpty
+                                      ? int.tryParse(value)
+                                      : null;
+                                  provider.updateFilter(codigo: codigoInt);
+                                },
+                              ),
+                            ),
+                            Expanded(
+                              child: CustomDropdownField(
+                                label: 'Filial...',
+                                dropdownValues: Constants.filiais,
+                                leftPadding: 4,
+                                rightPadding: 4,
+                                onChanged: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    provider.updateFilter(filial: null);
+                                  } else {
+                                    provider.updateFilter(filial: value);
+                                  }
+                                },
+                                valueNotifier:
+                                    ValueNotifier(provider.filter.filial ?? ''),
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                    },
                   ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomDatePicker(
-                          label: 'Data Atendimento Previsto...',
-                          hint: 'dd/mm/aaaa',
-                          mask: InputMasks.maskData,
-                          maxLength: 10,
-                          hide: true,
-                          type: TextInputType.datetime,
-                          valueNotifier: ValueNotifier(
-                            provider.filter.dataAtendimentoPrevistoAntes != null
-                                ? Formatters.applyDateMask(provider
-                                    .filter.dataAtendimentoPrevistoAntes!)
-                                : '',
-                          ),
-                          onChanged: (value) {
-                            if (value != null && value.isNotEmpty) {
-                              final parsedDate =
-                                  DateFormat('dd/MM/yyyy').parse(value);
-                              provider.updateFilter(dataPrevista: parsedDate);
-                            } else {
-                              provider.updateFilter(dataPrevista: null);
-                            }
-                          },
-                          rightPadding: 4,
-                        ),
-                      ),
-                      Expanded(
-                        child: CustomDatePicker(
-                          label: 'Data Efetiva...',
-                          hint: 'dd/mm/aaaa',
-                          mask: InputMasks.maskData,
-                          maxLength: 10,
-                          hide: true,
-                          type: TextInputType.datetime,
-                          valueNotifier: ValueNotifier(
-                            provider.filter.dataAtendimentoEfetivoAntes != null
-                                ? Formatters.applyDateMask(provider
-                                    .filter.dataAtendimentoEfetivoAntes!)
-                                : '',
-                          ),
-                          onChanged: (value) {
-                            if (value != null && value.isNotEmpty) {
-                              final parsedDate =
-                                  DateFormat('dd/MM/yyyy').parse(value);
-                              provider.updateFilter(dataEfetiva: parsedDate);
-                            } else {
-                              provider.updateFilter(dataEfetiva: null);
-                            }
-                          },
-                          leftPadding: 4,
-                        ),
-                      ),
-                    ],
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      if (constraints.maxWidth < 400) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomDatePicker(
+                              label: 'Data Atendimento Previsto...',
+                              hint: 'dd/mm/aaaa',
+                              mask: InputMasks.maskData,
+                              maxLength: 10,
+                              hide: true,
+                              rightPadding: 4,
+                              leftPadding: 4,
+                              type: TextInputType.datetime,
+                              valueNotifier: ValueNotifier(
+                                provider.filter.dataAtendimentoPrevistoAntes !=
+                                        null
+                                    ? Formatters.applyDateMask(provider
+                                        .filter.dataAtendimentoPrevistoAntes!)
+                                    : '',
+                              ),
+                              onChanged: (value) {
+                                if (value != null && value.isNotEmpty) {
+                                  final parsedDate =
+                                      DateFormat('dd/MM/yyyy').parse(value);
+                                  provider.updateFilter(
+                                      dataPrevista: parsedDate);
+                                } else {
+                                  provider.updateFilter(dataPrevista: null);
+                                }
+                              },
+                            ),
+                            CustomDatePicker(
+                              label: 'Data Efetiva...',
+                              hint: 'dd/mm/aaaa',
+                              mask: InputMasks.maskData,
+                              maxLength: 10,
+                              hide: true,
+                              rightPadding: 4,
+                              leftPadding: 4,
+                              type: TextInputType.datetime,
+                              valueNotifier: ValueNotifier(
+                                provider.filter.dataAtendimentoEfetivoAntes !=
+                                        null
+                                    ? Formatters.applyDateMask(provider
+                                        .filter.dataAtendimentoEfetivoAntes!)
+                                    : '',
+                              ),
+                              onChanged: (value) {
+                                if (value != null && value.isNotEmpty) {
+                                  final parsedDate =
+                                      DateFormat('dd/MM/yyyy').parse(value);
+                                  provider.updateFilter(
+                                      dataEfetiva: parsedDate);
+                                } else {
+                                  provider.updateFilter(dataEfetiva: null);
+                                }
+                              },
+                            ),
+                          ],
+                        );
+                      } else {
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: CustomDatePicker(
+                                label: 'Data Atendimento Previsto...',
+                                hint: 'dd/mm/aaaa',
+                                mask: InputMasks.maskData,
+                                maxLength: 10,
+                                hide: true,
+                                rightPadding: 4,
+                                leftPadding: 4,
+                                type: TextInputType.datetime,
+                                valueNotifier: ValueNotifier(
+                                  provider.filter
+                                              .dataAtendimentoPrevistoAntes !=
+                                          null
+                                      ? Formatters.applyDateMask(provider
+                                          .filter.dataAtendimentoPrevistoAntes!)
+                                      : '',
+                                ),
+                                onChanged: (value) {
+                                  if (value != null && value.isNotEmpty) {
+                                    final parsedDate =
+                                        DateFormat('dd/MM/yyyy').parse(value);
+                                    provider.updateFilter(
+                                        dataPrevista: parsedDate);
+                                  } else {
+                                    provider.updateFilter(dataPrevista: null);
+                                  }
+                                },
+                              ),
+                            ),
+                            Expanded(
+                              child: CustomDatePicker(
+                                label: 'Data Efetiva...',
+                                hint: 'dd/mm/aaaa',
+                                mask: InputMasks.maskData,
+                                maxLength: 10,
+                                hide: true,
+                                rightPadding: 4,
+                                leftPadding: 4,
+                                type: TextInputType.datetime,
+                                valueNotifier: ValueNotifier(
+                                  provider.filter.dataAtendimentoEfetivoAntes !=
+                                          null
+                                      ? Formatters.applyDateMask(provider
+                                          .filter.dataAtendimentoEfetivoAntes!)
+                                      : '',
+                                ),
+                                onChanged: (value) {
+                                  if (value != null && value.isNotEmpty) {
+                                    final parsedDate =
+                                        DateFormat('dd/MM/yyyy').parse(value);
+                                    provider.updateFilter(
+                                        dataEfetiva: parsedDate);
+                                  } else {
+                                    provider.updateFilter(dataEfetiva: null);
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                    },
                   ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomDatePicker(
-                          label: 'Data Abertura...',
-                          hint: 'dd/mm/aaaa',
-                          mask: InputMasks.maskData,
-                          maxLength: 10,
-                          hide: true,
-                          type: TextInputType.datetime,
-                          valueNotifier: ValueNotifier(
-                            provider.filter.dataAberturaAntes != null
-                                ? Formatters.applyDateMask(
-                                    provider.filter.dataAberturaAntes!)
-                                : '',
-                          ),
-                          onChanged: (value) {
-                            if (value != null && value.isNotEmpty) {
-                              final parsedDate =
-                                  DateFormat('dd/MM/yyyy').parse(value);
-                              provider.updateFilter(dataAbertura: parsedDate);
-                            } else {
-                              provider.updateFilter(dataAbertura: null);
-                            }
-                          },
-                          rightPadding: 4,
-                        ),
-                      ),
-                      Expanded(
-                        child: CustomDropdownField(
-                          label: 'Horário...',
-                          dropdownValues: ['Manhã', 'Tarde'],
-                          onChanged: (value) {
-                            if (value == null || value.isEmpty) {
-                              provider.updateFilter(periodo: null);
-                            } else {
-                              provider.updateFilter(periodo: value);
-                            }
-                          },
-                          valueNotifier:
-                              ValueNotifier(provider.filter.periodo ?? ''),
-                          leftPadding: 4,
-                        ),
-                      ),
-                    ],
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      if (constraints.maxWidth < 400) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomDatePicker(
+                              label: 'Data Abertura...',
+                              hint: 'dd/mm/aaaa',
+                              mask: InputMasks.maskData,
+                              maxLength: 10,
+                              hide: true,
+                              rightPadding: 4,
+                              leftPadding: 4,
+                              type: TextInputType.datetime,
+                              valueNotifier: ValueNotifier(
+                                provider.filter.dataAberturaAntes != null
+                                    ? Formatters.applyDateMask(
+                                        provider.filter.dataAberturaAntes!)
+                                    : '',
+                              ),
+                              onChanged: (value) {
+                                if (value != null && value.isNotEmpty) {
+                                  final parsedDate =
+                                      DateFormat('dd/MM/yyyy').parse(value);
+                                  provider.updateFilter(
+                                      dataAbertura: parsedDate);
+                                } else {
+                                  provider.updateFilter(dataAbertura: null);
+                                }
+                              },
+                            ),
+                            CustomDropdownField(
+                              label: 'Horário...',
+                              dropdownValues: ['Manhã', 'Tarde'],
+                              rightPadding: 4,
+                              leftPadding: 4,
+                              onChanged: (value) {
+                                if (value == null || value.isEmpty) {
+                                  provider.updateFilter(periodo: null);
+                                } else {
+                                  provider.updateFilter(periodo: value);
+                                }
+                              },
+                              valueNotifier:
+                                  ValueNotifier(provider.filter.periodo ?? ''),
+                            ),
+                          ],
+                        );
+                      } else {
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: CustomDatePicker(
+                                label: 'Data Abertura...',
+                                hint: 'dd/mm/aaaa',
+                                mask: InputMasks.maskData,
+                                maxLength: 10,
+                                hide: true,
+                                rightPadding: 4,
+                                leftPadding: 4,
+                                type: TextInputType.datetime,
+                                valueNotifier: ValueNotifier(
+                                  provider.filter.dataAberturaAntes != null
+                                      ? Formatters.applyDateMask(
+                                          provider.filter.dataAberturaAntes!)
+                                      : '',
+                                ),
+                                onChanged: (value) {
+                                  if (value != null && value.isNotEmpty) {
+                                    final parsedDate =
+                                        DateFormat('dd/MM/yyyy').parse(value);
+                                    provider.updateFilter(
+                                        dataAbertura: parsedDate);
+                                  } else {
+                                    provider.updateFilter(dataAbertura: null);
+                                  }
+                                },
+                              ),
+                            ),
+                            Expanded(
+                              child: CustomDropdownField(
+                                label: 'Horário...',
+                                dropdownValues: ['Manhã', 'Tarde'],
+                                rightPadding: 4,
+                                leftPadding: 4,
+                                onChanged: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    provider.updateFilter(periodo: null);
+                                  } else {
+                                    provider.updateFilter(periodo: value);
+                                  }
+                                },
+                                valueNotifier: ValueNotifier(
+                                    provider.filter.periodo ?? ''),
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                    },
                   ),
                   const SizedBox(height: 42),
                   ElevatedButton(

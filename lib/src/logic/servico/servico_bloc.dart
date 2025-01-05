@@ -90,7 +90,21 @@ class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
   }
 
   Future<void> _fetchOneService(
-      ServicoSearchOneEvent event, Emitter emit) async {}
+      ServicoSearchOneEvent event, Emitter emit) async {
+    emit(ServicoLoadingState());
+    try {
+      final Servico? servico =
+          await _servicoRepository.getServicoById(id: event.id);
+      if (servico != null) {
+        emit(ServicoSearchOneSuccessState(servico: servico));
+        return;
+      }
+      emit(ServicoErrorState(error: ErrorEntity(id: 0, errorMessage: "")));
+    } on DioException catch (e) {
+      emit(ServicoErrorState(
+          error: ErrorEntity(id: 0, errorMessage: e.toString())));
+    }
+  }
 
   Future<void> _searchServices(ServicoSearchEvent event, Emitter emit) async {}
 

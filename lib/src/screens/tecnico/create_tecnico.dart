@@ -145,7 +145,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(8),
             child: SingleChildScrollView(
               child: Form(
                 key: _tecnicoFormKey,
@@ -165,62 +165,115 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                     CustomSearchDropDown(
                       label: "Nome*",
                       maxLength: 40,
+                      rightPadding: 4,
+                      leftPadding: 4,
                       dropdownValues: _dropdownValuesNomes,
                       controller: _nomeController,
                       validator: _tecnicoCreateValidator.byField(
                           _tecnicoCreateForm, ErrorCodeKey.nomeESobrenome.name),
                       onChanged: _onNomeChanged,
                     ),
-                    Transform.translate(
-                      offset: Offset(0, -18),
-                      child: Text(
-                        "Obs. os nomes que aparecerem já estão cadastrados",
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context)
-                              .size
-                              .width
-                              .clamp(9.0, 13.0),
-                          color: Colors.grey,
-                          fontStyle: FontStyle.italic,
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.65,
+                      child: Transform.translate(
+                        offset: Offset(0, -18),
+                        child: Text(
+                          "Obs. os nomes que aparecerem já estão cadastrados",
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context)
+                                .size
+                                .width
+                                .clamp(9.0, 13.0),
+                            color: Colors.grey,
+                            fontStyle: FontStyle.italic,
+                          ),
                         ),
                       ),
                     ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CustomTextFormField(
-                            hint: "(99) 9999-9999",
-                            label: "Telefone Fixo**",
-                            rightPadding: 8,
-                            maxLength: 14,
-                            hide: true,
-                            masks: InputMasks.maskTelefoneFixo,
-                            type: TextInputType.phone,
-                            valueNotifier: _tecnicoCreateForm.telefoneFixo,
-                            validator: _tecnicoCreateValidator.byField(
-                                _tecnicoCreateForm,
-                                ErrorCodeKey.telefones.name),
-                            onChanged: _tecnicoCreateForm.setTelefoneFixo,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: CustomTextFormField(
-                            hint: "(99) 99999-9999",
-                            label: "Telefone Celular**",
-                            leftPadding: 0,
-                            maxLength: 15,
-                            hide: true,
-                            masks: InputMasks.maskCelular,
-                            type: TextInputType.phone,
-                            valueNotifier: _tecnicoCreateForm.telefoneCelular,
-                            validator: _tecnicoCreateValidator.byField(
-                                _tecnicoCreateForm,
-                                ErrorCodeKey.telefones.name),
-                            onChanged: _tecnicoCreateForm.setTelefoneCelular,
-                          ),
-                        ),
-                      ],
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        if (constraints.maxWidth < 400) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomTextFormField(
+                                hint: "(99) 9999-9999",
+                                label: "Telefone Fixo**",
+                                maxLength: 14,
+                                hide: true,
+                                rightPadding: 4,
+                                leftPadding: 4,
+                                masks: InputMasks.maskTelefoneFixo,
+                                type: TextInputType.phone,
+                                valueNotifier: _tecnicoCreateForm.telefoneFixo,
+                                validator: _tecnicoCreateValidator.byField(
+                                    _tecnicoCreateForm,
+                                    ErrorCodeKey.telefones.name),
+                                onChanged: _tecnicoCreateForm.setTelefoneFixo,
+                              ),
+                              CustomTextFormField(
+                                hint: "(99) 99999-9999",
+                                label: "Telefone Celular**",
+                                maxLength: 15,
+                                hide: true,
+                                rightPadding: 4,
+                                leftPadding: 4,
+                                masks: InputMasks.maskCelular,
+                                type: TextInputType.phone,
+                                valueNotifier:
+                                    _tecnicoCreateForm.telefoneCelular,
+                                validator: _tecnicoCreateValidator.byField(
+                                    _tecnicoCreateForm,
+                                    ErrorCodeKey.telefones.name),
+                                onChanged:
+                                    _tecnicoCreateForm.setTelefoneCelular,
+                              ),
+                            ],
+                          );
+                        } else {
+                          return Row(
+                            children: [
+                              Expanded(
+                                child: CustomTextFormField(
+                                  hint: "(99) 9999-9999",
+                                  label: "Telefone Fixo**",
+                                  rightPadding: 4,
+                                  leftPadding: 4,
+                                  maxLength: 14,
+                                  hide: true,
+                                  masks: InputMasks.maskTelefoneFixo,
+                                  type: TextInputType.phone,
+                                  valueNotifier:
+                                      _tecnicoCreateForm.telefoneFixo,
+                                  validator: _tecnicoCreateValidator.byField(
+                                      _tecnicoCreateForm,
+                                      ErrorCodeKey.telefones.name),
+                                  onChanged: _tecnicoCreateForm.setTelefoneFixo,
+                                ),
+                              ),
+                              Expanded(
+                                child: CustomTextFormField(
+                                  hint: "(99) 99999-9999",
+                                  label: "Telefone Celular**",
+                                  rightPadding: 4,
+                                  leftPadding: 4,
+                                  maxLength: 15,
+                                  hide: true,
+                                  masks: InputMasks.maskCelular,
+                                  type: TextInputType.phone,
+                                  valueNotifier:
+                                      _tecnicoCreateForm.telefoneCelular,
+                                  validator: _tecnicoCreateValidator.byField(
+                                      _tecnicoCreateForm,
+                                      ErrorCodeKey.telefones.name),
+                                  onChanged:
+                                      _tecnicoCreateForm.setTelefoneCelular,
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+                      },
                     ),
                     const SizedBox(height: 24),
                     Column(

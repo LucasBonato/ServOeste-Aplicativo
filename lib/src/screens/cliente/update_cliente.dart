@@ -139,14 +139,14 @@ class _UpdateClienteState extends State<UpdateCliente> {
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 800),
                     child: Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(12),
                       child: SingleChildScrollView(
                         child: Form(
                           key: _clienteFormKey,
                           child:
                               Column(mainAxisSize: MainAxisSize.max, children: [
                             const Text(
-                              "Adicionar Cliente",
+                              "Atualizar Cliente",
                               style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
@@ -183,94 +183,201 @@ class _UpdateClienteState extends State<UpdateCliente> {
                                 onChanged: _clienteUpdateForm.setNome,
                               ),
                             ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: CustomTextFormField(
-                                    valueNotifier:
-                                        _clienteUpdateForm.telefoneFixo,
-                                    hint: "(99) 9999-9999",
-                                    label: "Telefone Fixo**",
-                                    masks: InputMasks.maskTelefoneFixo,
-                                    rightPadding: 8,
-                                    maxLength: 14,
-                                    type: TextInputType.phone,
-                                    hide: true,
-                                    validator: _clienteUpdateValidator.byField(
-                                        _clienteUpdateForm,
-                                        ErrorCodeKey.telefones.name),
-                                    onChanged:
-                                        _clienteUpdateForm.setTelefoneFixo,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: CustomTextFormField(
-                                    valueNotifier:
-                                        _clienteUpdateForm.telefoneCelular,
-                                    hint: "(99) 99999-9999",
-                                    label: "Telefone Celular**",
-                                    masks: InputMasks.maskCelular,
-                                    leftPadding: 0,
-                                    maxLength: 15,
-                                    hide: true,
-                                    type: TextInputType.phone,
-                                    validator: _clienteUpdateValidator.byField(
-                                        _clienteUpdateForm,
-                                        ErrorCodeKey.telefones.name),
-                                    onChanged:
-                                        _clienteUpdateForm.setTelefoneCelular,
-                                  ),
-                                ),
-                              ],
+                            LayoutBuilder(
+                              builder: (context, constraints) {
+                                if (constraints.maxWidth < 400) {
+                                  return Column(
+                                    children: [
+                                      CustomTextFormField(
+                                        valueNotifier:
+                                            _clienteUpdateForm.telefoneFixo,
+                                        hint: "(99) 9999-9999",
+                                        label: "Telefone Fixo**",
+                                        masks: InputMasks.maskTelefoneFixo,
+                                        maxLength: 14,
+                                        type: TextInputType.phone,
+                                        hide: true,
+                                        validator:
+                                            _clienteUpdateValidator.byField(
+                                                _clienteUpdateForm,
+                                                ErrorCodeKey.telefones.name),
+                                        onChanged:
+                                            _clienteUpdateForm.setTelefoneFixo,
+                                      ),
+                                      CustomTextFormField(
+                                        valueNotifier:
+                                            _clienteUpdateForm.telefoneCelular,
+                                        hint: "(99) 99999-9999",
+                                        label: "Telefone Celular**",
+                                        masks: InputMasks.maskCelular,
+                                        maxLength: 15,
+                                        hide: true,
+                                        type: TextInputType.phone,
+                                        validator:
+                                            _clienteUpdateValidator.byField(
+                                                _clienteUpdateForm,
+                                                ErrorCodeKey.telefones.name),
+                                        onChanged: _clienteUpdateForm
+                                            .setTelefoneCelular,
+                                      ),
+                                    ],
+                                  );
+                                } else {
+                                  return Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomTextFormField(
+                                          valueNotifier:
+                                              _clienteUpdateForm.telefoneFixo,
+                                          hint: "(99) 9999-9999",
+                                          label: "Telefone Fixo**",
+                                          masks: InputMasks.maskTelefoneFixo,
+                                          rightPadding: 8,
+                                          maxLength: 14,
+                                          type: TextInputType.phone,
+                                          hide: true,
+                                          validator:
+                                              _clienteUpdateValidator.byField(
+                                                  _clienteUpdateForm,
+                                                  ErrorCodeKey.telefones.name),
+                                          onChanged: _clienteUpdateForm
+                                              .setTelefoneFixo,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: CustomTextFormField(
+                                          valueNotifier: _clienteUpdateForm
+                                              .telefoneCelular,
+                                          hint: "(99) 99999-9999",
+                                          label: "Telefone Celular**",
+                                          masks: InputMasks.maskCelular,
+                                          leftPadding: 0,
+                                          maxLength: 15,
+                                          hide: true,
+                                          type: TextInputType.phone,
+                                          validator:
+                                              _clienteUpdateValidator.byField(
+                                                  _clienteUpdateForm,
+                                                  ErrorCodeKey.telefones.name),
+                                          onChanged: _clienteUpdateForm
+                                              .setTelefoneCelular,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }
+                              },
                             ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child:
+                            LayoutBuilder(
+                              builder: (context, constraints) {
+                                if (constraints.maxWidth < 400) {
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
                                       BlocListener<EnderecoBloc, EnderecoState>(
-                                    bloc: _enderecoBloc,
-                                    listener: (context, state) {
-                                      if (state is EnderecoSuccessState) {
-                                        _clienteUpdateForm
-                                            .setBairro(state.bairro);
-                                        _clienteUpdateForm.setRua(state.rua);
-                                        _clienteUpdateForm
-                                            .setMunicipio(state.municipio);
-                                        _municipioController.text =
-                                            state.municipio;
-                                      }
-                                    },
-                                    child: CustomTextFormField(
-                                      hint: "00000-000",
-                                      label: "CEP",
-                                      type: TextInputType.streetAddress,
-                                      rightPadding: 8,
-                                      maxLength: 9,
-                                      hide: true,
-                                      masks: InputMasks.maskCep,
-                                      valueNotifier: _clienteUpdateForm.cep,
-                                      validator:
-                                          _clienteUpdateValidator.byField(
-                                              _clienteUpdateForm,
-                                              ErrorCodeKey.cep.name),
-                                      onChanged: _fetchInformationAboutCep,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: CustomSearchDropDown(
-                                    label: "Município*",
-                                    dropdownValues: Constants.municipios,
-                                    leftPadding: 0,
-                                    valueNotifier: _clienteUpdateForm.municipio,
-                                    validator: _clienteUpdateValidator.byField(
-                                        _clienteUpdateForm,
-                                        ErrorCodeKey.municipio.name),
-                                    onChanged: _clienteUpdateForm.setMunicipio,
-                                  ),
-                                ),
-                              ],
+                                        bloc: _enderecoBloc,
+                                        listener: (context, state) {
+                                          if (state is EnderecoSuccessState) {
+                                            _clienteUpdateForm
+                                                .setBairro(state.bairro);
+                                            _clienteUpdateForm
+                                                .setRua(state.rua);
+                                            _clienteUpdateForm
+                                                .setMunicipio(state.municipio);
+                                            _municipioController.text =
+                                                state.municipio;
+                                          }
+                                        },
+                                        child: CustomTextFormField(
+                                          hint: "00000-000",
+                                          label: "CEP",
+                                          type: TextInputType.streetAddress,
+                                          maxLength: 9,
+                                          hide: true,
+                                          masks: InputMasks.maskCep,
+                                          valueNotifier: _clienteUpdateForm.cep,
+                                          validator:
+                                              _clienteUpdateValidator.byField(
+                                                  _clienteUpdateForm,
+                                                  ErrorCodeKey.cep.name),
+                                          onChanged: _fetchInformationAboutCep,
+                                        ),
+                                      ),
+                                      CustomSearchDropDown(
+                                        label: "Município*",
+                                        dropdownValues: Constants.municipios,
+                                        valueNotifier:
+                                            _clienteUpdateForm.municipio,
+                                        validator:
+                                            _clienteUpdateValidator.byField(
+                                                _clienteUpdateForm,
+                                                ErrorCodeKey.municipio.name),
+                                        onChanged:
+                                            _clienteUpdateForm.setMunicipio,
+                                      ),
+                                      const SizedBox(height: 16),
+                                    ],
+                                  );
+                                } else {
+                                  return Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: BlocListener<EnderecoBloc,
+                                            EnderecoState>(
+                                          bloc: _enderecoBloc,
+                                          listener: (context, state) {
+                                            if (state is EnderecoSuccessState) {
+                                              _clienteUpdateForm
+                                                  .setBairro(state.bairro);
+                                              _clienteUpdateForm
+                                                  .setRua(state.rua);
+                                              _clienteUpdateForm.setMunicipio(
+                                                  state.municipio);
+                                              _municipioController.text =
+                                                  state.municipio;
+                                            }
+                                          },
+                                          child: CustomTextFormField(
+                                            hint: "00000-000",
+                                            label: "CEP",
+                                            type: TextInputType.streetAddress,
+                                            rightPadding: 8,
+                                            maxLength: 9,
+                                            hide: true,
+                                            masks: InputMasks.maskCep,
+                                            valueNotifier:
+                                                _clienteUpdateForm.cep,
+                                            validator:
+                                                _clienteUpdateValidator.byField(
+                                                    _clienteUpdateForm,
+                                                    ErrorCodeKey.cep.name),
+                                            onChanged:
+                                                _fetchInformationAboutCep,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: CustomSearchDropDown(
+                                          label: "Município*",
+                                          dropdownValues: Constants.municipios,
+                                          leftPadding: 0,
+                                          valueNotifier:
+                                              _clienteUpdateForm.municipio,
+                                          validator:
+                                              _clienteUpdateValidator.byField(
+                                                  _clienteUpdateForm,
+                                                  ErrorCodeKey.municipio.name),
+                                          onChanged:
+                                              _clienteUpdateForm.setMunicipio,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }
+                              },
                             ),
                             CustomTextFormField(
                               valueNotifier: _clienteUpdateForm.bairro,
@@ -296,46 +403,94 @@ class _UpdateClienteState extends State<UpdateCliente> {
                               },
                               child: Column(
                                 children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        flex: 2,
-                                        child: CustomTextFormField(
-                                          valueNotifier: _clienteUpdateForm.rua,
-                                          hint: "Rua...",
-                                          label: "Rua*",
-                                          maxLength: 255,
-                                          rightPadding: 8,
-                                          hide: true,
-                                          type: TextInputType.text,
-                                          validator:
-                                              _clienteUpdateValidator.byField(
-                                                  _clienteUpdateForm,
-                                                  ErrorCodeKey.rua.name),
-                                          onChanged: _clienteUpdateForm.setRua,
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 1,
-                                        child: CustomTextFormField(
-                                          valueNotifier:
-                                              _clienteUpdateForm.numero,
-                                          hint: "Número...",
-                                          label: "Número*",
-                                          maxLength: 10,
-                                          leftPadding: 0,
-                                          hide: true,
-                                          type: TextInputType.number,
-                                          validator:
-                                              _clienteUpdateValidator.byField(
-                                                  _clienteUpdateForm,
-                                                  ErrorCodeKey.numero.name),
-                                          onChanged:
-                                              _clienteUpdateForm.setNumero,
-                                        ),
-                                      ),
-                                    ],
+                                  LayoutBuilder(
+                                    builder: (context, constraints) {
+                                      if (constraints.maxWidth < 400) {
+                                        return Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            CustomTextFormField(
+                                              valueNotifier:
+                                                  _clienteUpdateForm.rua,
+                                              hint: "Rua...",
+                                              label: "Rua*",
+                                              maxLength: 255,
+                                              hide: true,
+                                              type: TextInputType.text,
+                                              validator: _clienteUpdateValidator
+                                                  .byField(_clienteUpdateForm,
+                                                      ErrorCodeKey.rua.name),
+                                              onChanged:
+                                                  _clienteUpdateForm.setRua,
+                                            ),
+                                            CustomTextFormField(
+                                              valueNotifier:
+                                                  _clienteUpdateForm.numero,
+                                              hint: "Número...",
+                                              label: "Número*",
+                                              maxLength: 10,
+                                              hide: true,
+                                              type: TextInputType.number,
+                                              validator: _clienteUpdateValidator
+                                                  .byField(_clienteUpdateForm,
+                                                      ErrorCodeKey.numero.name),
+                                              onChanged:
+                                                  _clienteUpdateForm.setNumero,
+                                            ),
+                                          ],
+                                        );
+                                      } else {
+                                        return Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              flex: 2,
+                                              child: CustomTextFormField(
+                                                valueNotifier:
+                                                    _clienteUpdateForm.rua,
+                                                hint: "Rua...",
+                                                label: "Rua*",
+                                                maxLength: 255,
+                                                rightPadding: 8,
+                                                hide: true,
+                                                type: TextInputType.text,
+                                                validator:
+                                                    _clienteUpdateValidator
+                                                        .byField(
+                                                            _clienteUpdateForm,
+                                                            ErrorCodeKey
+                                                                .rua.name),
+                                                onChanged:
+                                                    _clienteUpdateForm.setRua,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 1,
+                                              child: CustomTextFormField(
+                                                valueNotifier:
+                                                    _clienteUpdateForm.numero,
+                                                hint: "Número...",
+                                                label: "Número*",
+                                                maxLength: 10,
+                                                leftPadding: 0,
+                                                hide: true,
+                                                type: TextInputType.number,
+                                                validator:
+                                                    _clienteUpdateValidator
+                                                        .byField(
+                                                            _clienteUpdateForm,
+                                                            ErrorCodeKey
+                                                                .numero.name),
+                                                onChanged: _clienteUpdateForm
+                                                    .setNumero,
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      }
+                                    },
                                   ),
                                   CustomTextFormField(
                                     valueNotifier:

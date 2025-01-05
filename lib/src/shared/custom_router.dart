@@ -5,6 +5,7 @@ import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/screens/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
+import 'package:serv_oeste/src/screens/servico/update_servico2.dart';
 import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
 import '../screens/cliente/create_cliente.dart';
 import '../screens/servico/create_servico.dart';
@@ -14,7 +15,8 @@ import '../screens/servico/servico.dart';
 import '../screens/servico/filter_servico.dart';
 
 class CustomRouter {
-  static Route<dynamic>? onGenerateRoute(RouteSettings settings, BuildContext context) {
+  static Route<dynamic>? onGenerateRoute(
+      RouteSettings settings, BuildContext context) {
     final TecnicoBloc tecnicoBloc = context.read<TecnicoBloc>();
     final ClienteBloc clienteBloc = context.read<ClienteBloc>();
     final ServicoBloc servicoBloc = context.read<ServicoBloc>();
@@ -39,13 +41,10 @@ class CustomRouter {
       case "/updateTecnico":
         final id = settings.arguments as int;
         return MaterialPageRoute(
-          builder: (context) {
-            final tecnicoBloc = context.read<TecnicoBloc>();
-            return BlocProvider.value(
-              value: tecnicoBloc,
-              child: UpdateTecnico(id: id),
-            );
-          },
+          builder: (context) => BlocProvider.value(
+            value: tecnicoBloc,
+            child: UpdateTecnico(id: id),
+          ),
         );
 
       case "/cliente":
@@ -67,13 +66,10 @@ class CustomRouter {
       case "/updateCliente":
         final id = settings.arguments as int;
         return MaterialPageRoute(
-          builder: (context) {
-            final clienteBloc = context.read<ClienteBloc>();
-            return BlocProvider.value(
-              value: clienteBloc,
-              child: UpdateCliente(id: id),
-            );
-          },
+          builder: (context) => BlocProvider.value(
+            value: clienteBloc,
+            child: UpdateCliente(id: id),
+          ),
         );
 
       case "/servico":
@@ -101,6 +97,16 @@ class CustomRouter {
             child: CreateServico(isClientAndService: isClientAndService),
           ),
         );
+
+      case "/updateServico":
+        final id = settings.arguments as int;
+        print(id);
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider.value(
+            value: servicoBloc,
+            child: UpdateServico(id: id),
+          ),
+        );
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
@@ -110,43 +116,6 @@ class CustomRouter {
           ),
         );
     }
-  }
-
-  static Map<String, WidgetBuilder> getRoutes(BuildContext context) {
-    final TecnicoBloc tecnicoBloc = context.read<TecnicoBloc>();
-    final ClienteBloc clienteBloc = context.read<ClienteBloc>();
-    final ServicoBloc servicoBloc = context.read<ServicoBloc>();
-
-    return {
-      "/tecnico": (context) => BlocProvider.value(
-            value: tecnicoBloc,
-            child: const TecnicoScreen(),
-          ),
-      "/createTecnico": (context) => BlocProvider.value(
-            value: tecnicoBloc,
-            child: const CreateTecnico(),
-          ),
-      "/cliente": (context) => BlocProvider.value(
-            value: clienteBloc,
-            child: const ClienteScreen(),
-          ),
-      "/createCliente": (context) => BlocProvider.value(
-            value: clienteBloc,
-            child: const CreateCliente(),
-          ),
-      "/servico": (context) => BlocProvider.value(
-            value: servicoBloc,
-            child: const ServicoScreen(),
-          ),
-      "/filterServico": (context) => BlocProvider.value(
-            value: servicoBloc,
-            child: FilterService(),
-          ),
-      "/createServico": (context) => BlocProvider.value(
-            value: servicoBloc,
-            child: const CreateServico(),
-          ),
-    };
   }
 
   static String getCurrentRoute(BuildContext context) {
