@@ -106,16 +106,44 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
   Future<void> _deleteListClients(
       ClienteDisableListEvent event, Emitter<ClienteState> emit) async {
     emit(ClienteLoadingState());
+    List<Cliente>? existingClientes = [];
+
     try {
+      if (state is ClienteSearchSuccessState) {
+        existingClientes = (state as ClienteSearchSuccessState).clientes;
+      } else if (state is ClienteErrorState) {
+        existingClientes = (state as ClienteErrorState).clientes;
+      }
+
       await _clienteRepository.deleteClientes(event.selectedList);
+    } catch (e) {
+      int errorId = 0;
+      String errorMessage = "Erro desconhecido";
+
+      if (e is Exception && e.toString().contains("ErrorEntity")) {
+        final errorEntity = e.toString();
+        final regex = RegExp(r"ErrorEntity\(id: (\d+), message: (.+)\)");
+        final match = regex.firstMatch(errorEntity);
+
+        if (match != null) {
+          errorId = int.tryParse(match.group(1) ?? '0') ?? 0;
+          errorMessage = match.group(2) ?? errorMessage;
+        }
+      }
+
+      emit(ClienteErrorState(
+        clientes: existingClientes,
+        error: ErrorEntity(id: errorId, errorMessage: errorMessage),
+      ));
+    } finally {
       await _fetchAllClients(
         ClienteLoadingEvent(
-            nome: _nome, telefone: _telefone, endereco: _endereco),
+          nome: _nome,
+          telefone: _telefone,
+          endereco: _endereco,
+        ),
         emit,
       );
-    } catch (e) {
-      emit(ClienteErrorState(
-          error: ErrorEntity(id: 0, errorMessage: "Erro ao deletar clientes")));
     }
   }
 }

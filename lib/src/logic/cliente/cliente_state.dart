@@ -25,6 +25,7 @@ final class ClienteUpdateSuccessState extends ClienteState {}
 
 final class ClienteErrorState extends ClienteState {
   final ErrorEntity error;
+  final List<Cliente>? clientes;
 
-  ClienteErrorState({required this.error});
+  ClienteErrorState({required this.error, this.clientes});
 }

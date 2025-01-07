@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/card_client.dart';
@@ -207,61 +206,101 @@ class _ClienteScreenState extends State<ClienteScreen> {
                 );
         },
       ),
-      body: Column(
-        children: [
-          _buildSearchInputs(),
-          Expanded(
-            child: BlocBuilder<ClienteBloc, ClienteState>(
-              bloc: _clienteBloc,
-              builder: (context, stateCliente) {
-                if (stateCliente is ClienteLoadingState) {
-                  return const Center(
-                      child: CircularProgressIndicator.adaptive());
-                } else if (stateCliente is ClienteSearchSuccessState) {
-                  return SingleChildScrollView(
-                    child: GridListView(
-                      aspectRatio: 1.65,
-                      dataList: stateCliente.clientes,
-                      buildCard: (cliente) =>
-                          BlocBuilder<ListaBloc, ListaState>(
-                        bloc: _listaBloc,
-                        builder: (context, stateLista) {
-                          bool isSelected = false;
+      body: BlocListener<ClienteBloc, ClienteState>(
+        listener: (context, state) {
+          if (state is ClienteErrorState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.error.errorMessage),
+                duration: Duration(seconds: 3),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
+        child: Column(
+          children: [
+            _buildSearchInputs(),
+            Expanded(
+              child: BlocBuilder<ClienteBloc, ClienteState>(
+                bloc: _clienteBloc,
+                builder: (context, stateCliente) {
+                  if (stateCliente is ClienteLoadingState) {
+                    return const Center(
+                      child: CircularProgressIndicator.adaptive(),
+                    );
+                  }
+                  if (stateCliente is ClienteSearchSuccessState ||
+                      stateCliente is ClienteErrorState) {
+                    final List<Cliente>? clientes =
+                        stateCliente is ClienteSearchSuccessState
+                            ? stateCliente.clientes
+                            : (stateCliente as ClienteErrorState).clientes;
 
-                          if (stateLista is ListaSelectState) {
-                            isSelected = stateLista.selectedIds
-                                .contains((cliente as Cliente).id);
-                          }
+                    if (stateCliente is ClienteErrorState) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(stateCliente.error.errorMessage),
+                            duration: const Duration(seconds: 3),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      });
+                    }
 
-                          return CardClient(
-                            onDoubleTap: () =>
-                                _onNavigateToUpdateScreen(cliente.id!),
-                            onLongPress: () =>
-                                _onLongPressSelectItemList(cliente.id!),
-                            name: (cliente as Cliente).nome!,
-                            phoneNumber: cliente.telefoneFixo!,
-                            cellphone: cliente.telefoneCelular!,
-                            city: cliente.municipio!,
-                            street: cliente.endereco!,
-                            isSelected: isSelected,
-                          );
-                        },
-                      ),
-                    ),
+                    if (clientes != null && clientes.isNotEmpty) {
+                      return SingleChildScrollView(
+                        child: GridListView(
+                          aspectRatio: 1.65,
+                          dataList: clientes,
+                          buildCard: (cliente) =>
+                              BlocBuilder<ListaBloc, ListaState>(
+                            bloc: _listaBloc,
+                            builder: (context, stateLista) {
+                              bool isSelected = false;
+
+                              if (stateLista is ListaSelectState) {
+                                isSelected = stateLista.selectedIds
+                                    .contains((cliente as Cliente).id);
+                              }
+
+                              return CardClient(
+                                onDoubleTap: () =>
+                                    _onNavigateToUpdateScreen(cliente.id!),
+                                onLongPress: () =>
+                                    _onLongPressSelectItemList(cliente.id!),
+                                name: (cliente as Cliente).nome!,
+                                phoneNumber: cliente.telefoneFixo!,
+                                cellphone: cliente.telefoneCelular!,
+                                city: cliente.municipio!,
+                                street: cliente.endereco!,
+                                isSelected: isSelected,
+                              );
+                            },
+                          ),
+                        ),
+                      );
+                    } else {
+                      // Mostra mensagem quando não há clientes
+                      return const Center(
+                        child: Text("Nenhum cliente encontrado."),
+                      );
+                    }
+                  }
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.not_interested, size: 30),
+                      const SizedBox(height: 16),
+                      const Text("Aconteceu um erro!!"),
+                    ],
                   );
-                }
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.not_interested, size: 30),
-                    const SizedBox(height: 16),
-                    const Text("Aconteceu um erro!!"),
-                  ],
-                );
-              },
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
