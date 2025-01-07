@@ -539,121 +539,129 @@ class _UpdateServicoState extends State<UpdateServico> {
                     constraints: const BoxConstraints(maxWidth: 1400),
                     child: Padding(
                       padding: const EdgeInsets.all(8),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 48),
-                            const Text(
-                              "Atualizar Serviço",
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
+                      child: ScrollConfiguration(
+                        behavior: ScrollBehavior()
+                            .copyWith(overscroll: false, scrollbars: false),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 48),
+                              const Text(
+                                "Atualizar Serviço",
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 48),
-                            LayoutBuilder(
-                              builder: (context, constraints) {
-                                if (constraints.maxWidth > 800) {
-                                  return Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        flex: 3,
-                                        child: Column(
-                                          children: [
-                                            _buildCard(
-                                                _buildClientForm(), 'Cliente'),
-                                            const SizedBox(height: 8),
-                                            BuildFieldLabels(
-                                                isClientAndService: false),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(width: 16),
-                                      Expanded(
-                                        flex: 4,
-                                        child: _buildCard(
-                                            _buildServiceForm(), 'Serviço'),
-                                      ),
-                                    ],
-                                  );
-                                } else {
-                                  return Column(
-                                    children: [
-                                      _buildCard(_buildClientForm(), 'Cliente'),
-                                      const SizedBox(height: 16),
-                                      _buildCard(
-                                          _buildServiceForm(), 'Serviço'),
-                                      const SizedBox(height: 8),
-                                      BuildFieldLabels(
-                                          isClientAndService: false),
-                                    ],
-                                  );
-                                }
-                              },
-                            ),
-                            const SizedBox(height: 24),
-                            ConstrainedBox(
-                              constraints: const BoxConstraints(maxWidth: 750),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  BlocListener<ServicoBloc, ServicoState>(
-                                    bloc: _servicoBloc,
-                                    listener: (context, state) {
-                                      if (state is ServicoUpdateSuccessState) {
-                                        _handleBackNavigation();
-                                      } else if (state is ServicoErrorState) {
-                                        ErrorEntity error = state.error;
-
-                                        _servicoUpdateValidator
-                                            .applyBackendError(error);
-                                        _servicoFormKey.currentState
-                                            ?.validate();
-                                        _servicoUpdateValidator
-                                            .cleanExternalErrors();
-
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              "[ERROR] Informação(ões) inválida(s) ao Atualizar o Serviço.",
-                                            ),
+                              const SizedBox(height: 48),
+                              LayoutBuilder(
+                                builder: (context, constraints) {
+                                  if (constraints.maxWidth > 800) {
+                                    return Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          flex: 3,
+                                          child: Column(
+                                            children: [
+                                              _buildCard(_buildClientForm(),
+                                                  'Cliente'),
+                                              const SizedBox(height: 8),
+                                              BuildFieldLabels(
+                                                  isClientAndService: false),
+                                            ],
                                           ),
-                                        );
-                                      }
-                                    },
-                                    child: ElevatedButton(
-                                      onPressed: _updateServico,
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            const Color(0xFF007BFF),
-                                        minimumSize:
-                                            const Size(double.infinity, 48),
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 18),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
                                         ),
-                                      ),
-                                      child: const Text(
-                                        "Atualizar Serviço",
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          color: Colors.white,
+                                        const SizedBox(width: 16),
+                                        Expanded(
+                                          flex: 4,
+                                          child: _buildCard(
+                                              _buildServiceForm(), 'Serviço'),
+                                        ),
+                                      ],
+                                    );
+                                  } else {
+                                    return Column(
+                                      children: [
+                                        _buildCard(
+                                            _buildClientForm(), 'Cliente'),
+                                        const SizedBox(height: 16),
+                                        _buildCard(
+                                            _buildServiceForm(), 'Serviço'),
+                                        const SizedBox(height: 8),
+                                        BuildFieldLabels(
+                                            isClientAndService: false),
+                                      ],
+                                    );
+                                  }
+                                },
+                              ),
+                              const SizedBox(height: 24),
+                              ConstrainedBox(
+                                constraints:
+                                    const BoxConstraints(maxWidth: 750),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    BlocListener<ServicoBloc, ServicoState>(
+                                      bloc: _servicoBloc,
+                                      listener: (context, state) {
+                                        if (state
+                                            is ServicoUpdateSuccessState) {
+                                          _handleBackNavigation();
+                                        } else if (state is ServicoErrorState) {
+                                          ErrorEntity error = state.error;
+
+                                          _servicoUpdateValidator
+                                              .applyBackendError(error);
+                                          _servicoFormKey.currentState
+                                              ?.validate();
+                                          _servicoUpdateValidator
+                                              .cleanExternalErrors();
+
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                "[ERROR] Informação(ões) inválida(s) ao Atualizar o Serviço.",
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      child: ElevatedButton(
+                                        onPressed: _updateServico,
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              const Color(0xFF007BFF),
+                                          minimumSize:
+                                              const Size(double.infinity, 48),
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 18),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                        ),
+                                        child: const Text(
+                                          "Atualizar Serviço",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),

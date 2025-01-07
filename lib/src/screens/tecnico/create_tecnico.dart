@@ -146,101 +146,67 @@ class _CreateTecnicoState extends State<CreateTecnico> {
           constraints: const BoxConstraints(maxWidth: 800),
           child: Padding(
             padding: const EdgeInsets.all(8),
-            child: SingleChildScrollView(
-              child: Form(
-                key: _tecnicoFormKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Adicionar Técnico",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+            child: ScrollConfiguration(
+              behavior: ScrollBehavior()
+                  .copyWith(overscroll: false, scrollbars: false),
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _tecnicoFormKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Adicionar Técnico",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 48),
-                    CustomSearchDropDown(
-                      label: "Nome*",
-                      maxLength: 40,
-                      rightPadding: 4,
-                      leftPadding: 4,
-                      dropdownValues: _dropdownValuesNomes,
-                      controller: _nomeController,
-                      validator: _tecnicoCreateValidator.byField(
-                          _tecnicoCreateForm, ErrorCodeKey.nomeESobrenome.name),
-                      onChanged: _onNomeChanged,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.65,
-                      child: Transform.translate(
-                        offset: Offset(0, -18),
-                        child: Text(
-                          "Obs. os nomes que aparecerem já estão cadastrados",
-                          style: TextStyle(
-                            fontSize: MediaQuery.of(context)
-                                .size
-                                .width
-                                .clamp(9.0, 13.0),
-                            color: Colors.grey,
-                            fontStyle: FontStyle.italic,
+                      const SizedBox(height: 48),
+                      CustomSearchDropDown(
+                        label: "Nome*",
+                        maxLength: 40,
+                        rightPadding: 4,
+                        leftPadding: 4,
+                        dropdownValues: _dropdownValuesNomes,
+                        controller: _nomeController,
+                        validator: _tecnicoCreateValidator.byField(
+                            _tecnicoCreateForm,
+                            ErrorCodeKey.nomeESobrenome.name),
+                        onChanged: _onNomeChanged,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.65,
+                        child: Transform.translate(
+                          offset: Offset(0, -18),
+                          child: Text(
+                            "Obs. os nomes que aparecerem já estão cadastrados",
+                            style: TextStyle(
+                              fontSize: MediaQuery.of(context)
+                                  .size
+                                  .width
+                                  .clamp(9.0, 13.0),
+                              color: Colors.grey,
+                              fontStyle: FontStyle.italic,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        if (constraints.maxWidth < 400) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomTextFormField(
-                                hint: "(99) 9999-9999",
-                                label: "Telefone Fixo**",
-                                maxLength: 14,
-                                hide: true,
-                                rightPadding: 4,
-                                leftPadding: 4,
-                                masks: InputMasks.maskTelefoneFixo,
-                                type: TextInputType.phone,
-                                valueNotifier: _tecnicoCreateForm.telefoneFixo,
-                                validator: _tecnicoCreateValidator.byField(
-                                    _tecnicoCreateForm,
-                                    ErrorCodeKey.telefones.name),
-                                onChanged: _tecnicoCreateForm.setTelefoneFixo,
-                              ),
-                              CustomTextFormField(
-                                hint: "(99) 99999-9999",
-                                label: "Telefone Celular**",
-                                maxLength: 15,
-                                hide: true,
-                                rightPadding: 4,
-                                leftPadding: 4,
-                                masks: InputMasks.maskCelular,
-                                type: TextInputType.phone,
-                                valueNotifier:
-                                    _tecnicoCreateForm.telefoneCelular,
-                                validator: _tecnicoCreateValidator.byField(
-                                    _tecnicoCreateForm,
-                                    ErrorCodeKey.telefones.name),
-                                onChanged:
-                                    _tecnicoCreateForm.setTelefoneCelular,
-                              ),
-                            ],
-                          );
-                        } else {
-                          return Row(
-                            children: [
-                              Expanded(
-                                child: CustomTextFormField(
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          if (constraints.maxWidth < 400) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CustomTextFormField(
                                   hint: "(99) 9999-9999",
                                   label: "Telefone Fixo**",
-                                  rightPadding: 4,
-                                  leftPadding: 4,
                                   maxLength: 14,
                                   hide: true,
+                                  rightPadding: 4,
+                                  leftPadding: 4,
                                   masks: InputMasks.maskTelefoneFixo,
                                   type: TextInputType.phone,
                                   valueNotifier:
@@ -250,15 +216,13 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                                       ErrorCodeKey.telefones.name),
                                   onChanged: _tecnicoCreateForm.setTelefoneFixo,
                                 ),
-                              ),
-                              Expanded(
-                                child: CustomTextFormField(
+                                CustomTextFormField(
                                   hint: "(99) 99999-9999",
                                   label: "Telefone Celular**",
-                                  rightPadding: 4,
-                                  leftPadding: 4,
                                   maxLength: 15,
                                   hide: true,
+                                  rightPadding: 4,
+                                  leftPadding: 4,
                                   masks: InputMasks.maskCelular,
                                   type: TextInputType.phone,
                                   valueNotifier:
@@ -269,84 +233,128 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                                   onChanged:
                                       _tecnicoCreateForm.setTelefoneCelular,
                                 ),
+                              ],
+                            );
+                          } else {
+                            return Row(
+                              children: [
+                                Expanded(
+                                  child: CustomTextFormField(
+                                    hint: "(99) 9999-9999",
+                                    label: "Telefone Fixo**",
+                                    rightPadding: 4,
+                                    leftPadding: 4,
+                                    maxLength: 14,
+                                    hide: true,
+                                    masks: InputMasks.maskTelefoneFixo,
+                                    type: TextInputType.phone,
+                                    valueNotifier:
+                                        _tecnicoCreateForm.telefoneFixo,
+                                    validator: _tecnicoCreateValidator.byField(
+                                        _tecnicoCreateForm,
+                                        ErrorCodeKey.telefones.name),
+                                    onChanged:
+                                        _tecnicoCreateForm.setTelefoneFixo,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: CustomTextFormField(
+                                    hint: "(99) 99999-9999",
+                                    label: "Telefone Celular**",
+                                    rightPadding: 4,
+                                    leftPadding: 4,
+                                    maxLength: 15,
+                                    hide: true,
+                                    masks: InputMasks.maskCelular,
+                                    type: TextInputType.phone,
+                                    valueNotifier:
+                                        _tecnicoCreateForm.telefoneCelular,
+                                    validator: _tecnicoCreateValidator.byField(
+                                        _tecnicoCreateForm,
+                                        ErrorCodeKey.telefones.name),
+                                    onChanged:
+                                        _tecnicoCreateForm.setTelefoneCelular,
+                                  ),
+                                ),
+                              ],
+                            );
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: 16),
+                            child: Text(
+                              "Conhecimentos*",
+                              style: TextStyle(
+                                fontSize: 16,
                               ),
-                            ],
-                          );
-                        }
-                      },
-                    ),
-                    const SizedBox(height: 24),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(left: 16),
-                          child: Text(
-                            "Conhecimentos*",
-                            style: TextStyle(
-                              fontSize: 16,
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        CustomGridCheckersFormField(
-                          validator: _tecnicoCreateValidator.byField(
-                              _tecnicoCreateForm,
-                              ErrorCodeKey.conhecimento.name),
-                          checkersMap: checkersMap,
-                        ),
-                      ],
-                    ),
-                    const Padding(
-                        padding: EdgeInsets.only(top: 8, left: 16),
-                        child: BuildFieldLabels()),
-                    const SizedBox(height: 32),
-                    BlocListener<TecnicoBloc, TecnicoState>(
-                      bloc: _tecnicoBloc,
-                      listener: (context, state) {
-                        if (state is TecnicoSearchSuccessState) {
-                          List<String> nomes = state.tecnicos
-                              .take(5)
-                              .map((tecnico) =>
-                                  '${tecnico.nome} ${tecnico.sobrenome}')
-                              .toList();
-
-                          setState(() {
-                            _dropdownValuesNomes = nomes;
-                          });
-                        } else if (state is TecnicoRegisterSuccessState) {
-                          _handleBackNavigation();
-                        } else if (state is TecnicoErrorState) {
-                          ErrorEntity error = state.error;
-
-                          _tecnicoCreateValidator.applyBackendError(error);
-                          _tecnicoFormKey.currentState?.validate();
-                          _tecnicoCreateValidator.cleanExternalErrors();
-
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text(
-                                  "[ERROR] Informação(ões) inválida(s) ao registrar o Técnico: ${error.errorMessage}")));
-                        }
-                      },
-                      child: Center(
-                        child: ElevatedButton(
-                          onPressed: _registerTecnico,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF007BFF),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            minimumSize: const Size(double.infinity, 48),
+                          const SizedBox(height: 8),
+                          CustomGridCheckersFormField(
+                            validator: _tecnicoCreateValidator.byField(
+                                _tecnicoCreateForm,
+                                ErrorCodeKey.conhecimento.name),
+                            checkersMap: checkersMap,
                           ),
-                          child: const Text(
-                            "Adicionar Técnico",
-                            style: TextStyle(fontSize: 16, color: Colors.white),
+                        ],
+                      ),
+                      const Padding(
+                          padding: EdgeInsets.only(top: 8, left: 16),
+                          child: BuildFieldLabels()),
+                      const SizedBox(height: 32),
+                      BlocListener<TecnicoBloc, TecnicoState>(
+                        bloc: _tecnicoBloc,
+                        listener: (context, state) {
+                          if (state is TecnicoSearchSuccessState) {
+                            List<String> nomes = state.tecnicos
+                                .take(5)
+                                .map((tecnico) =>
+                                    '${tecnico.nome} ${tecnico.sobrenome}')
+                                .toList();
+
+                            setState(() {
+                              _dropdownValuesNomes = nomes;
+                            });
+                          } else if (state is TecnicoRegisterSuccessState) {
+                            _handleBackNavigation();
+                          } else if (state is TecnicoErrorState) {
+                            ErrorEntity error = state.error;
+
+                            _tecnicoCreateValidator.applyBackendError(error);
+                            _tecnicoFormKey.currentState?.validate();
+                            _tecnicoCreateValidator.cleanExternalErrors();
+
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content: Text(
+                                    "[ERROR] Informação(ões) inválida(s) ao registrar o Técnico: ${error.errorMessage}")));
+                          }
+                        },
+                        child: Center(
+                          child: ElevatedButton(
+                            onPressed: _registerTecnico,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF007BFF),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              minimumSize: const Size(double.infinity, 48),
+                            ),
+                            child: const Text(
+                              "Adicionar Técnico",
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.white),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

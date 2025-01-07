@@ -242,106 +242,111 @@ class _CreateServicoState extends State<CreateServico> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           bool isMobile = constraints.maxWidth < 950;
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Center(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: 1500),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 42),
-                    Text(
-                      widget.isClientAndService
-                          ? 'Adicionar Cliente/Serviço'
-                          : 'Adicionar Serviço',
-                      style: TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
+          return ScrollConfiguration(
+            behavior:
+                ScrollBehavior().copyWith(overscroll: false, scrollbars: false),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 1500),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 42),
+                      Text(
+                        widget.isClientAndService
+                            ? 'Adicionar Cliente/Serviço'
+                            : 'Adicionar Serviço',
+                        style: TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 48),
-                    isMobile
-                        ? Column(
-                            children: [
-                              _buildCard(_buildClientForm(), 'Cliente'),
-                              const SizedBox(height: 16),
-                              _buildCard(_buildServiceForm(), 'Serviço'),
-                              const SizedBox(height: 8),
-                              widget.isClientAndService
-                                  ? BuildFieldLabels()
-                                  : BuildFieldLabels(isClientAndService: false),
-                            ],
-                          )
-                        : Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    _buildCard(_buildClientForm(), 'Cliente'),
-                                    const SizedBox(height: 8),
-                                    widget.isClientAndService
-                                        ? BuildFieldLabels()
-                                        : BuildFieldLabels(
-                                            isClientAndService: false),
-                                  ],
+                      const SizedBox(height: 48),
+                      isMobile
+                          ? Column(
+                              children: [
+                                _buildCard(_buildClientForm(), 'Cliente'),
+                                const SizedBox(height: 16),
+                                _buildCard(_buildServiceForm(), 'Serviço'),
+                                const SizedBox(height: 8),
+                                widget.isClientAndService
+                                    ? BuildFieldLabels()
+                                    : BuildFieldLabels(
+                                        isClientAndService: false),
+                              ],
+                            )
+                          : Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    children: [
+                                      _buildCard(_buildClientForm(), 'Cliente'),
+                                      const SizedBox(height: 8),
+                                      widget.isClientAndService
+                                          ? BuildFieldLabels()
+                                          : BuildFieldLabels(
+                                              isClientAndService: false),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child:
-                                    _buildCard(_buildServiceForm(), 'Serviço'),
-                              ),
-                            ],
-                          ),
-                    const SizedBox(height: 48),
-                    ValueListenableBuilder<String>(
-                      valueListenable: _servicoForm.equipamento,
-                      builder: (context, equipamentoSelecionado, child) {
-                        return _buildButton(
-                          'Verificar disponibilidade',
-                          equipamentoSelecionado.isNotEmpty
-                              ? Colors.blue
-                              : Colors.grey.withOpacity(0.5),
-                          equipamentoSelecionado.isNotEmpty
-                              ? _onShowAvailabilityTechnicianTable
-                              : () {},
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    BlocListener<ServicoBloc, ServicoState>(
-                      bloc: _servicoBloc,
-                      listener: (context, state) {
-                        if (state is ServicoRegisterSuccessState) {
-                          Navigator.pop(context);
-                        } else if (state is ServicoErrorState) {
-                          ErrorEntity error = state.error;
-                          if (widget.isClientAndService) {
-                            _clienteValidator.applyBackendError(error);
-                            _clienteFormKey.currentState?.validate();
-                            _clienteValidator.cleanExternalErrors();
-                          }
-                          _servicoValidator.applyBackendError(error);
-                          _servicoFormKey.currentState?.validate();
-                          _servicoValidator.cleanExternalErrors();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                  "[ERROR] Informação(ões) inválida(s) ao registrar o Serviço: ${error.errorMessage}"),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: _buildCard(
+                                      _buildServiceForm(), 'Serviço'),
+                                ),
+                              ],
                             ),
+                      const SizedBox(height: 48),
+                      ValueListenableBuilder<String>(
+                        valueListenable: _servicoForm.equipamento,
+                        builder: (context, equipamentoSelecionado, child) {
+                          return _buildButton(
+                            'Verificar disponibilidade',
+                            equipamentoSelecionado.isNotEmpty
+                                ? Colors.blue
+                                : Colors.grey.withOpacity(0.5),
+                            equipamentoSelecionado.isNotEmpty
+                                ? _onShowAvailabilityTechnicianTable
+                                : () {},
                           );
-                        }
-                      },
-                      child: _buildButton(
-                          widget.isClientAndService
-                              ? 'Adicionar Cliente/Serviço'
-                              : 'Adicionar Serviço',
-                          Colors.blue,
-                          _onAddService),
-                    ),
-                  ],
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      BlocListener<ServicoBloc, ServicoState>(
+                        bloc: _servicoBloc,
+                        listener: (context, state) {
+                          if (state is ServicoRegisterSuccessState) {
+                            Navigator.pop(context);
+                          } else if (state is ServicoErrorState) {
+                            ErrorEntity error = state.error;
+                            if (widget.isClientAndService) {
+                              _clienteValidator.applyBackendError(error);
+                              _clienteFormKey.currentState?.validate();
+                              _clienteValidator.cleanExternalErrors();
+                            }
+                            _servicoValidator.applyBackendError(error);
+                            _servicoFormKey.currentState?.validate();
+                            _servicoValidator.cleanExternalErrors();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    "[ERROR] Informação(ões) inválida(s) ao registrar o Serviço: ${error.errorMessage}"),
+                              ),
+                            );
+                          }
+                        },
+                        child: _buildButton(
+                            widget.isClientAndService
+                                ? 'Adicionar Cliente/Serviço'
+                                : 'Adicionar Serviço',
+                            Colors.blue,
+                            _onAddService),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
