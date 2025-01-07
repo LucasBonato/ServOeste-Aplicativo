@@ -97,10 +97,14 @@ class BaseLayoutState extends State<BaseLayout> {
   }
 
   void _loadHome() {
+    // DateTime today = DateTime.now();
+    // DateTime week = today.add(Duration(days: 7));
+
     _servicoBloc.add(
       ServicoLoadingEvent(
         filterRequest: ServicoFilterRequest(
-            // dataAtendimentoPrevistoAntes: DateTime.now().toUtc()
+            // dataAtendimentoPrevistoAntes: today.toUtc(),
+            // dataAtendimentoPrevistoDepois: week.toUtc(),
             ),
       ),
     );
@@ -167,4 +171,3 @@ class BaseLayoutState extends State<BaseLayout> {
     );
   }
 }
-//TODO - no `_loadHome` passar uma semana inteira de intervalo

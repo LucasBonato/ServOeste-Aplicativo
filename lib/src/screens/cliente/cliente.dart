@@ -174,7 +174,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
   }
 
   void _disableClientes(BuildContext context, List<int> selectedIds) {
-    _clienteBloc.add(TecnicoDisableListEvent(selectedList: selectedIds));
+    _clienteBloc.add(ClienteDisableListEvent(selectedList: selectedIds));
     _listaBloc.add(ListaClearSelectionEvent());
   }
 

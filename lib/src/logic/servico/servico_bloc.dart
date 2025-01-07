@@ -83,6 +83,8 @@ class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
       periodo: newFilter.periodo ?? oldFilter.periodo,
       dataAtendimentoPrevistoAntes: newFilter.dataAtendimentoPrevistoAntes ??
           oldFilter.dataAtendimentoPrevistoAntes,
+      dataAtendimentoPrevistoDepois: newFilter.dataAtendimentoPrevistoDepois ??
+          oldFilter.dataAtendimentoPrevistoDepois,
       dataAtendimentoEfetivoAntes: newFilter.dataAtendimentoEfetivoAntes ??
           oldFilter.dataAtendimentoEfetivoAntes,
       dataAberturaAntes:

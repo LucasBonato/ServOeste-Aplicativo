@@ -16,7 +16,7 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
     on<ClienteSearchOneEvent>(_fetchOneClient);
     on<ClienteLoadingEvent>(_fetchAllClients);
     on<ClienteSearchEvent>(_searchClients);
-    on<TecnicoDisableListEvent>(_deleteListClients);
+    on<ClienteDisableListEvent>(_deleteListClients);
     on<ClienteUpdateEvent>(_updateClient);
     on<ClienteRegisterEvent>(_registerClient);
   }
@@ -38,7 +38,8 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
     }
   }
 
-  Future<void> _fetchAllClients(ClienteLoadingEvent event, Emitter<ClienteState> emit) async {
+  Future<void> _fetchAllClients(
+      ClienteLoadingEvent event, Emitter<ClienteState> emit) async {
     emit(ClienteLoadingState());
     try {
       final List<Cliente>? response =
@@ -103,7 +104,7 @@ class ClienteBloc extends Bloc<ClienteEvent, ClienteState> {
   }
 
   Future<void> _deleteListClients(
-      TecnicoDisableListEvent event, Emitter<ClienteState> emit) async {
+      ClienteDisableListEvent event, Emitter<ClienteState> emit) async {
     emit(ClienteLoadingState());
     try {
       await _clienteRepository.deleteClientes(event.selectedList);
