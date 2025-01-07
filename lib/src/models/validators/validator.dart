@@ -152,7 +152,7 @@ class ClienteValidator extends LucidValidator<ClienteForm>
             ErrorCodeKey.nomeESobrenome.name)
         .must(
             (nome) =>
-                (nome.split(" ").length > 1 && nome.split(" ")[1].length > 2),
+                (nome.split(" ").length > 1 && nome.split(" ")[1].length >= 2),
             "O sobrenome precisa ter 2 caracteres!",
             ErrorCodeKey.nomeESobrenome.name)
         .customValidExternalErrors(

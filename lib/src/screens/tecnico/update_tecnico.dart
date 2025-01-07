@@ -79,7 +79,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
               border: Border.all(color: Colors.grey, width: 1.5),
               borderRadius: BorderRadius.circular(8),
             ),
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(8),
             child: GridView.count(
               shrinkWrap: true,
               crossAxisCount: 2,
@@ -273,83 +273,184 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                             ),
                           ),
                           const SizedBox(height: 48),
-                          Row(
-                            children: [
-                              Expanded(
-                                flex: 2,
-                                child: CustomTextFormField(
-                                  hint: "Nome...",
-                                  label: "Nome*",
-                                  type: TextInputType.name,
-                                  maxLength: 40,
-                                  rightPadding: 8,
-                                  hide: false,
-                                  valueNotifier: _tecnicoUpdateForm.nome,
-                                  validator: _tecnicoUpdateValidator.byField(
-                                      _tecnicoUpdateForm,
-                                      ErrorCodeKey.nomeESobrenome.name),
-                                  onChanged: _tecnicoUpdateForm.setNome,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: CustomDropdownField(
-                                  label: "Situação",
-                                  dropdownValues: Constants.situationTecnicoList,
-                                  leftPadding: 0,
-                                  valueNotifier: _dropDownSituacaoValue,
-                                  validator: _tecnicoUpdateValidator.byField(
-                                      _tecnicoUpdateForm,
-                                      ErrorCodeKey.situacao.name),
-                                  onChanged: (String? value) {
-                                    _tecnicoUpdateForm.setSituacao(value);
-                                    setState(() {
-                                      _dropDownSituacaoValue.value = value!;
-                                    });
-                                  },
-                                ),
-                              ),
-                            ],
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              if (constraints.maxWidth < 400) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    CustomTextFormField(
+                                      hint: "Nome...",
+                                      label: "Nome*",
+                                      type: TextInputType.name,
+                                      maxLength: 40,
+                                      leftPadding: 4,
+                                      rightPadding: 4,
+                                      hide: false,
+                                      valueNotifier: _tecnicoUpdateForm.nome,
+                                      validator:
+                                          _tecnicoUpdateValidator.byField(
+                                              _tecnicoUpdateForm,
+                                              ErrorCodeKey.nomeESobrenome.name),
+                                      onChanged: _tecnicoUpdateForm.setNome,
+                                    ),
+                                    CustomDropdownField(
+                                      label: "Situação",
+                                      dropdownValues:
+                                          Constants.situationTecnicoList,
+                                      leftPadding: 4,
+                                      rightPadding: 4,
+                                      valueNotifier: _dropDownSituacaoValue,
+                                      validator:
+                                          _tecnicoUpdateValidator.byField(
+                                              _tecnicoUpdateForm,
+                                              ErrorCodeKey.situacao.name),
+                                      onChanged: (String? value) {
+                                        _tecnicoUpdateForm.setSituacao(value);
+                                        setState(() {
+                                          _dropDownSituacaoValue.value = value!;
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                );
+                              } else {
+                                return Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 2,
+                                      child: CustomTextFormField(
+                                        hint: "Nome...",
+                                        label: "Nome*",
+                                        type: TextInputType.name,
+                                        maxLength: 40,
+                                        rightPadding: 4,
+                                        hide: false,
+                                        valueNotifier: _tecnicoUpdateForm.nome,
+                                        validator:
+                                            _tecnicoUpdateValidator.byField(
+                                                _tecnicoUpdateForm,
+                                                ErrorCodeKey
+                                                    .nomeESobrenome.name),
+                                        onChanged: _tecnicoUpdateForm.setNome,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: CustomDropdownField(
+                                        label: "Situação",
+                                        dropdownValues:
+                                            Constants.situationTecnicoList,
+                                        leftPadding: 4,
+                                        valueNotifier: _dropDownSituacaoValue,
+                                        validator:
+                                            _tecnicoUpdateValidator.byField(
+                                                _tecnicoUpdateForm,
+                                                ErrorCodeKey.situacao.name),
+                                        onChanged: (String? value) {
+                                          _tecnicoUpdateForm.setSituacao(value);
+                                          setState(() {
+                                            _dropDownSituacaoValue.value =
+                                                value!;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }
+                            },
                           ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: CustomTextFormField(
-                                  hint: "Telefone Fixo...",
-                                  label: "Telefone Fixo**",
-                                  type: TextInputType.phone,
-                                  maxLength: 14,
-                                  rightPadding: 8,
-                                  hide: true,
-                                  masks: InputMasks.maskTelefoneFixo,
-                                  valueNotifier:
-                                      _tecnicoUpdateForm.telefoneFixo,
-                                  validator: _tecnicoUpdateValidator.byField(
-                                      _tecnicoUpdateForm,
-                                      ErrorCodeKey.telefones.name),
-                                  onChanged: _tecnicoUpdateForm.setTelefoneFixo,
-                                ),
-                              ),
-                              Expanded(
-                                child: CustomTextFormField(
-                                  hint: "Telefone Celular...",
-                                  label: "Telefone Celular**",
-                                  type: TextInputType.phone,
-                                  maxLength: 15,
-                                  leftPadding: 0,
-                                  hide: true,
-                                  masks: InputMasks.maskCelular,
-                                  valueNotifier:
-                                      _tecnicoUpdateForm.telefoneCelular,
-                                  validator: _tecnicoUpdateValidator.byField(
-                                      _tecnicoUpdateForm,
-                                      ErrorCodeKey.telefones.name),
-                                  onChanged:
-                                      _tecnicoUpdateForm.setTelefoneCelular,
-                                ),
-                              ),
-                            ],
+                          SizedBox(height: 8),
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              if (constraints.maxWidth < 400) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    CustomTextFormField(
+                                      hint: "Telefone Fixo...",
+                                      label: "Telefone Fixo**",
+                                      type: TextInputType.phone,
+                                      maxLength: 14,
+                                      leftPadding: 4,
+                                      rightPadding: 4,
+                                      hide: true,
+                                      masks: InputMasks.maskTelefoneFixo,
+                                      valueNotifier:
+                                          _tecnicoUpdateForm.telefoneFixo,
+                                      validator:
+                                          _tecnicoUpdateValidator.byField(
+                                              _tecnicoUpdateForm,
+                                              ErrorCodeKey.telefones.name),
+                                      onChanged:
+                                          _tecnicoUpdateForm.setTelefoneFixo,
+                                    ),
+                                    CustomTextFormField(
+                                      hint: "Telefone Celular...",
+                                      label: "Telefone Celular**",
+                                      type: TextInputType.phone,
+                                      maxLength: 15,
+                                      leftPadding: 4,
+                                      rightPadding: 4,
+                                      hide: true,
+                                      masks: InputMasks.maskCelular,
+                                      valueNotifier:
+                                          _tecnicoUpdateForm.telefoneCelular,
+                                      validator:
+                                          _tecnicoUpdateValidator.byField(
+                                              _tecnicoUpdateForm,
+                                              ErrorCodeKey.telefones.name),
+                                      onChanged:
+                                          _tecnicoUpdateForm.setTelefoneCelular,
+                                    ),
+                                  ],
+                                );
+                              } else {
+                                return Row(
+                                  children: [
+                                    Expanded(
+                                      child: CustomTextFormField(
+                                        hint: "Telefone Fixo...",
+                                        label: "Telefone Fixo**",
+                                        type: TextInputType.phone,
+                                        maxLength: 14,
+                                        rightPadding: 4,
+                                        hide: true,
+                                        masks: InputMasks.maskTelefoneFixo,
+                                        valueNotifier:
+                                            _tecnicoUpdateForm.telefoneFixo,
+                                        validator:
+                                            _tecnicoUpdateValidator.byField(
+                                                _tecnicoUpdateForm,
+                                                ErrorCodeKey.telefones.name),
+                                        onChanged:
+                                            _tecnicoUpdateForm.setTelefoneFixo,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: CustomTextFormField(
+                                        hint: "Telefone Celular...",
+                                        label: "Telefone Celular**",
+                                        type: TextInputType.phone,
+                                        maxLength: 15,
+                                        leftPadding: 4,
+                                        hide: true,
+                                        masks: InputMasks.maskCelular,
+                                        valueNotifier:
+                                            _tecnicoUpdateForm.telefoneCelular,
+                                        validator:
+                                            _tecnicoUpdateValidator.byField(
+                                                _tecnicoUpdateForm,
+                                                ErrorCodeKey.telefones.name),
+                                        onChanged: _tecnicoUpdateForm
+                                            .setTelefoneCelular,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }
+                            },
                           ),
                           const SizedBox(height: 16),
                           Column(

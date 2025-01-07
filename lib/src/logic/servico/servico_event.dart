@@ -15,12 +15,16 @@ final class ServicoInitialLoadingEvent extends ServicoEvent {
   ServicoInitialLoadingEvent({required this.filterRequest});
 }
 
-final class ServicoSearchOneEvent extends ServicoEvent {}
+final class ServicoSearchOneEvent extends ServicoEvent {
+  final int id;
+
+  ServicoSearchOneEvent({required this.id});
+}
 
 final class ServicoSearchEvent extends ServicoEvent {
-  final ServicoFilterRequest filterRequest;
+  final ServicoFilterRequest? filterRequest;
 
-  ServicoSearchEvent({required this.filterRequest});
+  ServicoSearchEvent({this.filterRequest});
 }
 
 final class ServicoRegisterEvent extends ServicoEvent {
@@ -37,7 +41,11 @@ final class ServicoRegisterPlusClientEvent extends ServicoEvent {
       {required this.cliente, required this.servico});
 }
 
-final class ServicoUpdateEvent extends ServicoEvent {}
+final class ServicoUpdateEvent extends ServicoEvent {
+  final Servico servico;
+
+  ServicoUpdateEvent({required this.servico});
+}
 
 final class ServicoDisableListEvent extends ServicoEvent {
   final List<int> selectedList;

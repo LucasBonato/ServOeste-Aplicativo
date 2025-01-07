@@ -426,6 +426,8 @@ class _CreateServicoState extends State<CreateServico> {
               label: "Nome do Cliente*",
               dropdownValues: _dropdownNomeClientes,
               maxLength: 40,
+              rightPadding: 4,
+              leftPadding: 4,
               valueNotifier: _clienteForm.nome,
               validator: _clienteValidator.byField(
                   _clienteForm, ErrorCodeKey.nomeESobrenome.name),
@@ -438,83 +440,176 @@ class _CreateServicoState extends State<CreateServico> {
               child: Column(
                 children: [
                   const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextFormField(
-                          hint: "(99) 9999-9999",
-                          label: "Telefone Fixo**",
-                          type: TextInputType.phone,
-                          maxLength: 14,
-                          hide: true,
-                          rightPadding: 8,
-                          masks: InputMasks.maskTelefoneFixo,
-                          valueNotifier: _clienteForm.telefoneFixo,
-                          validator: _clienteValidator.byField(
-                              _clienteForm, ErrorCodeKey.telefones.name),
-                          onChanged: _clienteForm.setTelefoneFixo,
-                        ),
-                      ),
-                      Expanded(
-                        child: CustomTextFormField(
-                          hint: "(99) 99999-9999",
-                          label: "Telefone Celular**",
-                          type: TextInputType.phone,
-                          maxLength: 15,
-                          hide: true,
-                          leftPadding: 0,
-                          masks: InputMasks.maskCelular,
-                          valueNotifier: _clienteForm.telefoneCelular,
-                          validator: _clienteValidator.byField(
-                              _clienteForm, ErrorCodeKey.telefones.name),
-                          onChanged: _clienteForm.setTelefoneCelular,
-                        ),
-                      ),
-                    ],
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      if (constraints.maxWidth < 400) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomTextFormField(
+                              hint: "(99) 9999-9999",
+                              label: "Telefone Fixo**",
+                              type: TextInputType.phone,
+                              maxLength: 14,
+                              hide: true,
+                              rightPadding: 4,
+                              leftPadding: 4,
+                              masks: InputMasks.maskTelefoneFixo,
+                              valueNotifier: _clienteForm.telefoneFixo,
+                              validator: _clienteValidator.byField(
+                                  _clienteForm, ErrorCodeKey.telefones.name),
+                              onChanged: _clienteForm.setTelefoneFixo,
+                            ),
+                            CustomTextFormField(
+                              hint: "(99) 99999-9999",
+                              label: "Telefone Celular**",
+                              type: TextInputType.phone,
+                              maxLength: 15,
+                              rightPadding: 4,
+                              leftPadding: 4,
+                              hide: true,
+                              masks: InputMasks.maskCelular,
+                              valueNotifier: _clienteForm.telefoneCelular,
+                              validator: _clienteValidator.byField(
+                                  _clienteForm, ErrorCodeKey.telefones.name),
+                              onChanged: _clienteForm.setTelefoneCelular,
+                            ),
+                          ],
+                        );
+                      } else {
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: CustomTextFormField(
+                                hint: "(99) 9999-9999",
+                                label: "Telefone Fixo**",
+                                type: TextInputType.phone,
+                                maxLength: 14,
+                                hide: true,
+                                rightPadding: 4,
+                                leftPadding: 4,
+                                masks: InputMasks.maskTelefoneFixo,
+                                valueNotifier: _clienteForm.telefoneFixo,
+                                validator: _clienteValidator.byField(
+                                    _clienteForm, ErrorCodeKey.telefones.name),
+                                onChanged: _clienteForm.setTelefoneFixo,
+                              ),
+                            ),
+                            Expanded(
+                              child: CustomTextFormField(
+                                hint: "(99) 99999-9999",
+                                label: "Telefone Celular**",
+                                type: TextInputType.phone,
+                                maxLength: 15,
+                                hide: true,
+                                rightPadding: 4,
+                                leftPadding: 4,
+                                masks: InputMasks.maskCelular,
+                                valueNotifier: _clienteForm.telefoneCelular,
+                                validator: _clienteValidator.byField(
+                                    _clienteForm, ErrorCodeKey.telefones.name),
+                                onChanged: _clienteForm.setTelefoneCelular,
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                    },
                   ),
                   const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: BlocListener<EnderecoBloc, EnderecoState>(
-                          bloc: _enderecoBloc,
-                          listener: (context, state) {
-                            if (state is EnderecoSuccessState) {
-                              _clienteForm.setBairro(state.bairro);
-                              _clienteForm.setRua(state.rua);
-                              _clienteForm.setMunicipio(state.municipio);
-                              _municipioController.text = state.municipio;
-                            }
-                          },
-                          child: CustomTextFormField(
-                            hint: "00000-000",
-                            label: "CEP",
-                            rightPadding: 8,
-                            type: TextInputType.number,
-                            maxLength: 9,
-                            hide: true,
-                            masks: InputMasks.maskCep,
-                            valueNotifier: _clienteForm.cep,
-                            validator: _clienteValidator.byField(
-                                _clienteForm, ErrorCodeKey.cep.name),
-                            onChanged: _fetchInformationAboutCep,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: CustomSearchDropDown(
-                          label: "Município*",
-                          dropdownValues: Constants.municipios,
-                          leftPadding: 0,
-                          maxLength: 20,
-                          controller: _municipioController,
-                          valueNotifier: _clienteForm.municipio,
-                          validator: _clienteValidator.byField(
-                              _clienteForm, ErrorCodeKey.municipio.name),
-                          onChanged: _clienteForm.setMunicipio,
-                        ),
-                      ),
-                    ],
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      if (constraints.maxWidth < 400) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            BlocListener<EnderecoBloc, EnderecoState>(
+                              bloc: _enderecoBloc,
+                              listener: (context, state) {
+                                if (state is EnderecoSuccessState) {
+                                  _clienteForm.setBairro(state.bairro);
+                                  _clienteForm.setRua(state.rua);
+                                  _clienteForm.setMunicipio(state.municipio);
+                                  _municipioController.text = state.municipio;
+                                }
+                              },
+                              child: CustomTextFormField(
+                                hint: "00000-000",
+                                label: "CEP",
+                                type: TextInputType.number,
+                                maxLength: 9,
+                                hide: true,
+                                masks: InputMasks.maskCep,
+                                valueNotifier: _clienteForm.cep,
+                                validator: _clienteValidator.byField(
+                                    _clienteForm, ErrorCodeKey.cep.name),
+                                onChanged: _fetchInformationAboutCep,
+                                rightPadding: 4,
+                                leftPadding: 4,
+                              ),
+                            ),
+                            CustomSearchDropDown(
+                              label: "Município*",
+                              dropdownValues: Constants.municipios,
+                              maxLength: 20,
+                              controller: _municipioController,
+                              valueNotifier: _clienteForm.municipio,
+                              validator: _clienteValidator.byField(
+                                  _clienteForm, ErrorCodeKey.municipio.name),
+                              onChanged: _clienteForm.setMunicipio,
+                              rightPadding: 4,
+                              leftPadding: 4,
+                            ),
+                          ],
+                        );
+                      } else {
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: BlocListener<EnderecoBloc, EnderecoState>(
+                                bloc: _enderecoBloc,
+                                listener: (context, state) {
+                                  if (state is EnderecoSuccessState) {
+                                    _clienteForm.setBairro(state.bairro);
+                                    _clienteForm.setRua(state.rua);
+                                    _clienteForm.setMunicipio(state.municipio);
+                                    _municipioController.text = state.municipio;
+                                  }
+                                },
+                                child: CustomTextFormField(
+                                  hint: "00000-000",
+                                  label: "CEP",
+                                  type: TextInputType.number,
+                                  maxLength: 9,
+                                  hide: true,
+                                  masks: InputMasks.maskCep,
+                                  valueNotifier: _clienteForm.cep,
+                                  validator: _clienteValidator.byField(
+                                      _clienteForm, ErrorCodeKey.cep.name),
+                                  onChanged: _fetchInformationAboutCep,
+                                  rightPadding: 4,
+                                  leftPadding: 4,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: CustomSearchDropDown(
+                                label: "Município*",
+                                dropdownValues: Constants.municipios,
+                                maxLength: 20,
+                                controller: _municipioController,
+                                valueNotifier: _clienteForm.municipio,
+                                validator: _clienteValidator.byField(
+                                    _clienteForm, ErrorCodeKey.municipio.name),
+                                onChanged: _clienteForm.setMunicipio,
+                                rightPadding: 4,
+                                leftPadding: 4,
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                    },
                   ),
                   const SizedBox(height: 8),
                   CustomTextFormField(
@@ -523,45 +618,88 @@ class _CreateServicoState extends State<CreateServico> {
                     type: TextInputType.text,
                     maxLength: 255,
                     hide: true,
+                    rightPadding: 4,
+                    leftPadding: 4,
                     valueNotifier: _clienteForm.bairro,
                     validator: _clienteValidator.byField(
                         _clienteForm, ErrorCodeKey.bairro.name),
                     onChanged: _clienteForm.setBairro,
                   ),
                   const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: CustomTextFormField(
-                          hint: "Rua...",
-                          label: "Rua*",
-                          rightPadding: 8,
-                          type: TextInputType.text,
-                          maxLength: 255,
-                          hide: true,
-                          valueNotifier: _clienteForm.rua,
-                          validator: _clienteValidator.byField(
-                              _clienteForm, ErrorCodeKey.rua.name),
-                          onChanged: _clienteForm.setRua,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: CustomTextFormField(
-                          hint: "Número...",
-                          label: "Número*",
-                          leftPadding: 0,
-                          type: TextInputType.number,
-                          maxLength: 10,
-                          hide: true,
-                          valueNotifier: _clienteForm.numero,
-                          validator: _clienteValidator.byField(
-                              _clienteForm, ErrorCodeKey.numero.name),
-                          onChanged: _clienteForm.setNumero,
-                        ),
-                      ),
-                    ],
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      if (constraints.maxWidth < 400) {
+                        // Tela menor que 400px - campos empilhados
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomTextFormField(
+                              hint: "Rua...",
+                              label: "Rua*",
+                              type: TextInputType.text,
+                              maxLength: 255,
+                              hide: true,
+                              valueNotifier: _clienteForm.rua,
+                              validator: _clienteValidator.byField(
+                                  _clienteForm, ErrorCodeKey.rua.name),
+                              onChanged: _clienteForm.setRua,
+                              rightPadding: 4,
+                              leftPadding: 4,
+                            ),
+                            CustomTextFormField(
+                              hint: "Número...",
+                              label: "Número*",
+                              type: TextInputType.number,
+                              maxLength: 10,
+                              hide: true,
+                              valueNotifier: _clienteForm.numero,
+                              validator: _clienteValidator.byField(
+                                  _clienteForm, ErrorCodeKey.numero.name),
+                              onChanged: _clienteForm.setNumero,
+                              rightPadding: 4,
+                              leftPadding: 4,
+                            ),
+                          ],
+                        );
+                      } else {
+                        return Row(
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: CustomTextFormField(
+                                hint: "Rua...",
+                                label: "Rua*",
+                                type: TextInputType.text,
+                                maxLength: 255,
+                                hide: true,
+                                valueNotifier: _clienteForm.rua,
+                                validator: _clienteValidator.byField(
+                                    _clienteForm, ErrorCodeKey.rua.name),
+                                onChanged: _clienteForm.setRua,
+                                rightPadding: 4,
+                                leftPadding: 4,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: CustomTextFormField(
+                                hint: "Número...",
+                                label: "Número*",
+                                type: TextInputType.number,
+                                maxLength: 10,
+                                hide: true,
+                                valueNotifier: _clienteForm.numero,
+                                validator: _clienteValidator.byField(
+                                    _clienteForm, ErrorCodeKey.numero.name),
+                                onChanged: _clienteForm.setNumero,
+                                rightPadding: 4,
+                                leftPadding: 4,
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                    },
                   ),
                   const SizedBox(height: 8),
                   CustomTextFormField(
@@ -570,6 +708,8 @@ class _CreateServicoState extends State<CreateServico> {
                     type: TextInputType.text,
                     maxLength: 255,
                     hide: false,
+                    rightPadding: 4,
+                    leftPadding: 4,
                     valueNotifier: _clienteForm.complemento,
                     validator: _clienteValidator.byField(
                         _clienteForm, ErrorCodeKey.complemento.name),
@@ -592,6 +732,8 @@ class _CreateServicoState extends State<CreateServico> {
             dropdownValues: Constants.equipamentos,
             valueNotifier: _servicoForm.equipamento,
             hide: true,
+            leftPadding: 4,
+            rightPadding: 4,
             validator: _servicoValidator.byField(
                 _servicoForm, ErrorCodeKey.equipamento.name),
             onChanged: _servicoForm.setEquipamento,
@@ -602,6 +744,8 @@ class _CreateServicoState extends State<CreateServico> {
             valueNotifier: _servicoForm.marca,
             label: "Marca*",
             hide: true,
+            leftPadding: 4,
+            rightPadding: 4,
             validator: _servicoValidator.byField(
                 _servicoForm, ErrorCodeKey.marca.name),
             onChanged: _servicoForm.setMarca,
@@ -611,6 +755,8 @@ class _CreateServicoState extends State<CreateServico> {
             dropdownValues: Constants.filiais,
             valueNotifier: _servicoForm.filial,
             label: "Filial*",
+            leftPadding: 4,
+            rightPadding: 4,
             validator: _servicoValidator.byField(
                 _servicoForm, ErrorCodeKey.filial.name),
             onChanged: _servicoForm.setFilial,
@@ -649,6 +795,8 @@ class _CreateServicoState extends State<CreateServico> {
                     dropdownValues: _dropdownNomeTecnicos,
                     maxLength: 50,
                     hide: false,
+                    leftPadding: 4,
+                    rightPadding: 4,
                     controller: _nomeTecnicoController,
                     valueNotifier: _servicoForm.nomeTecnico,
                     validator: _servicoValidator.byField(
@@ -659,40 +807,80 @@ class _CreateServicoState extends State<CreateServico> {
                   );
                 }),
           ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 1,
-                child: CustomDatePicker(
-                  label: "Data Atendimento Previsto*",
-                  hint: 'dd/mm/aaaa',
-                  rightPadding: 8,
-                  mask: InputMasks.maskData,
-                  type: TextInputType.datetime,
-                  maxLength: 10,
-                  hide: true,
-                  valueNotifier: _servicoForm.dataPrevista,
-                  validator: _servicoValidator.byField(
-                      _servicoForm, ErrorCodeKey.data.name),
-                  onChanged: _servicoForm.setDataPrevista,
-                  enabled: _isInputEnabled(),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: CustomDropdownField(
-                  dropdownValues: Constants.dataAtendimento,
-                  label: "Horário*",
-                  leftPadding: 0,
-                  valueNotifier: _servicoForm.horario,
-                  validator: _servicoValidator.byField(
-                      _servicoForm, ErrorCodeKey.horario.name),
-                  onChanged: _servicoForm.setHorario,
-                  enabled: _isInputEnabled(),
-                ),
-              ),
-            ],
+          LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth < 400) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomDatePicker(
+                      label: "Data Prevista*",
+                      hint: 'dd/mm/aaaa',
+                      leftPadding: 4,
+                      rightPadding: 4,
+                      mask: InputMasks.maskData,
+                      type: TextInputType.datetime,
+                      maxLength: 10,
+                      hide: true,
+                      valueNotifier: _servicoForm.dataPrevista,
+                      validator: _servicoValidator.byField(
+                          _servicoForm, ErrorCodeKey.data.name),
+                      onChanged: _servicoForm.setDataPrevista,
+                      enabled: _isInputEnabled(),
+                    ),
+                    CustomDropdownField(
+                      dropdownValues: Constants.dataAtendimento,
+                      label: "Horário*",
+                      leftPadding: 4,
+                      rightPadding: 4,
+                      valueNotifier: _servicoForm.horario,
+                      validator: _servicoValidator.byField(
+                          _servicoForm, ErrorCodeKey.horario.name),
+                      onChanged: _servicoForm.setHorario,
+                      enabled: _isInputEnabled(),
+                    ),
+                  ],
+                );
+              } else {
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: CustomDatePicker(
+                        label: "Data Prevista*",
+                        hint: 'dd/mm/aaaa',
+                        leftPadding: 4,
+                        rightPadding: 4,
+                        mask: InputMasks.maskData,
+                        type: TextInputType.datetime,
+                        maxLength: 10,
+                        hide: true,
+                        valueNotifier: _servicoForm.dataPrevista,
+                        validator: _servicoValidator.byField(
+                            _servicoForm, ErrorCodeKey.data.name),
+                        onChanged: _servicoForm.setDataPrevista,
+                        enabled: _isInputEnabled(),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: CustomDropdownField(
+                        dropdownValues: Constants.dataAtendimento,
+                        label: "Horário*",
+                        leftPadding: 4,
+                        rightPadding: 4,
+                        valueNotifier: _servicoForm.horario,
+                        validator: _servicoValidator.byField(
+                            _servicoForm, ErrorCodeKey.horario.name),
+                        onChanged: _servicoForm.setHorario,
+                        enabled: _isInputEnabled(),
+                      ),
+                    ),
+                  ],
+                );
+              }
+            },
           ),
           CustomTextFormField(
             hint: "Descrição...",
@@ -702,6 +890,8 @@ class _CreateServicoState extends State<CreateServico> {
             maxLines: 3,
             minLines: 1,
             hide: false,
+            leftPadding: 4,
+            rightPadding: 4,
             valueNotifier: _servicoForm.descricao,
             validator: _servicoValidator.byField(
                 _servicoForm, ErrorCodeKey.descricao.name),

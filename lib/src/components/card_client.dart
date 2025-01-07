@@ -33,96 +33,94 @@ class CardClient extends StatelessWidget {
         return GestureDetector(
           onLongPress: onLongPress,
           onDoubleTap: onDoubleTap,
-          child: Container(
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? const Color(0xFFE9E7E7)
-                  : const Color(0xFCFDFDFF),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: isSelected
-                    ? Colors.black
-                    : (hovered ? Colors.black38 : const Color(0xFFEAE6E5)),
-                width: 1.5,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return Container(
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? const Color(0xFFE9E7E7)
+                      : const Color(0xFCFDFDFF),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isSelected
+                        ? Colors.black
+                        : (hovered ? Colors.black38 : const Color(0xFFEAE6E5)),
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: MouseRegion(
-              cursor: SystemMouseCursors.click,
-              onEnter: (_) => isHovered.value = true,
-              onExit: (_) => isHovered.value = false,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 24.0),
-                    child: Text(
-                      name,
-                      style: TextStyle(
-                        fontSize:
-                            MediaQuery.of(context).size.width.clamp(16.0, 18.0),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  if (phoneNumber != null && phoneNumber!.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 32.0),
-                      child: Text(
-                        'Telefone: ${Formatters.applyTelefoneMask(phoneNumber!)}',
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context)
-                              .size
-                              .width
-                              .clamp(13.0, 15.0),
+                child: MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  onEnter: (_) => isHovered.value = true,
+                  onExit: (_) => isHovered.value = false,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8, top: 16),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 24),
+                          child: Text(
+                            name,
+                            style: TextStyle(
+                              fontSize: constraints.maxWidth * 0.05,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  if (cellphone != null && cellphone!.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 32.0),
-                      child: Text(
-                        'Celular: ${Formatters.applyCelularMask(cellphone!)}',
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context)
-                              .size
-                              .width
-                              .clamp(13.0, 15.0),
+                        const SizedBox(height: 4),
+                        if (phoneNumber != null && phoneNumber!.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 32.0),
+                            child: Text(
+                              'Telefone: ${Formatters.applyTelefoneMask(phoneNumber!)}',
+                              style: TextStyle(
+                                fontSize: constraints.maxWidth * 0.045,
+                              ),
+                            ),
+                          ),
+                        if (cellphone != null && cellphone!.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 32.0),
+                            child: Text(
+                              'Celular: ${Formatters.applyCelularMask(cellphone!)}',
+                              style: TextStyle(
+                                fontSize: constraints.maxWidth * 0.045,
+                              ),
+                            ),
+                          ),
+                        const SizedBox(height: 10),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 32.0),
+                          child: Text(
+                            '$city - SP',
+                            style: TextStyle(
+                              fontSize: constraints.maxWidth * 0.045,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  const SizedBox(height: 12),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 32.0),
-                    child: Text(
-                      '$city - SP',
-                      style: TextStyle(
-                        fontSize:
-                            MediaQuery.of(context).size.width.clamp(13.0, 15.0),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 36.0),
-                    child: Text(
-                      street,
-                      style: TextStyle(
-                        fontSize:
-                            MediaQuery.of(context).size.width.clamp(13.0, 15.0),
-                      ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 36.0),
+                          child: Text(
+                            street,
+                            style: TextStyle(
+                              fontSize: constraints.maxWidth * 0.045,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           ),
         );
       },
