@@ -163,7 +163,7 @@ class _CreateClienteState extends State<CreateCliente> {
                             ),
                             onChanged: _onNomeChanged,
                           ),
-                          Container(
+                          SizedBox(
                             width: MediaQuery.of(context).size.width * 0.65,
                             child: Transform.translate(
                               offset: Offset(24, -18),

@@ -5,7 +5,7 @@ import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/screens/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
-import 'package:serv_oeste/src/screens/servico/update_servico2.dart';
+import 'package:serv_oeste/src/screens/servico/update_servico.dart';
 import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
 import '../screens/cliente/create_cliente.dart';
 import '../screens/servico/create_servico.dart';
@@ -100,7 +100,6 @@ class CustomRouter {
 
       case "/updateServico":
         final id = settings.arguments as int;
-        print(id);
         return MaterialPageRoute(
           builder: (context) => BlocProvider.value(
             value: servicoBloc,

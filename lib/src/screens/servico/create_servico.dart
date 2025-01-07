@@ -814,7 +814,7 @@ class _CreateServicoState extends State<CreateServico> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CustomDatePicker(
-                      label: "Data Atendimento Previsto*",
+                      label: "Data Prevista*",
                       hint: 'dd/mm/aaaa',
                       leftPadding: 4,
                       rightPadding: 4,
@@ -848,7 +848,7 @@ class _CreateServicoState extends State<CreateServico> {
                     Expanded(
                       flex: 1,
                       child: CustomDatePicker(
-                        label: "Data Atendimento Previsto*",
+                        label: "Data Prevista*",
                         hint: 'dd/mm/aaaa',
                         leftPadding: 4,
                         rightPadding: 4,

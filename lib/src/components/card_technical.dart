@@ -51,100 +51,96 @@ class CardTechnical extends StatelessWidget {
           return GestureDetector(
             onLongPress: onLongPress,
             onDoubleTap: onDoubleTap,
-            child: Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? const Color(0xFFE9E7E7)
-                    : const Color(0xFCFDFDFF),
-                borderRadius: BorderRadius.circular(8.0),
-                border: Border.all(
-                  color: isSelected
-                      ? Colors.black38
-                      : (hovered ? Colors.black38 : const Color(0xFFEAE6E5)),
-                  width: 1.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    blurRadius: 6,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    "$id",
-                    style: TextStyle(
-                      fontSize:
-                          MediaQuery.of(context).size.width.clamp(20.0, 22.0),
-                      fontWeight: FontWeight.bold,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return Container(
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? const Color(0xFFE9E7E7)
+                        : const Color(0xFCFDFDFF),
+                    borderRadius: BorderRadius.circular(8.0),
+                    border: Border.all(
+                      color: isSelected
+                          ? Colors.black38
+                          : (hovered
+                              ? Colors.black38
+                              : const Color(0xFFEAE6E5)),
+                      width: 1.5,
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
                   ),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 20),
-                          child: Text(
-                            "$nome ${getCompostName(sobrenome)}",
-                            style: TextStyle(
-                              fontSize: MediaQuery.of(context)
-                                  .size
-                                  .width
-                                  .clamp(16.0, 18.0),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        "$id",
+                        style: TextStyle(
+                          fontSize: constraints.maxWidth * 0.065,
+                          fontWeight: FontWeight.bold,
                         ),
-                        SizedBox(height: 4),
-                        if (telefone != null && telefone!.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(left: 28),
-                            child: Text(
-                              "Telefone: ${Formatters.applyTelefoneMask(telefone!)}",
-                              style: TextStyle(
-                                fontSize: MediaQuery.of(context)
-                                    .size
-                                    .width
-                                    .clamp(13.0, 15.0),
+                      ),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 20),
+                              child: Text(
+                                "$nome ${getCompostName(sobrenome)}",
+                                style: TextStyle(
+                                  fontSize: constraints.maxWidth * 0.055,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                          ),
-                        if (celular != null && celular!.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(left: 28),
-                            child: Text(
-                              "Celular: ${Formatters.applyCelularMask(celular!)}",
-                              style: TextStyle(
-                                fontSize: MediaQuery.of(context)
-                                    .size
-                                    .width
-                                    .clamp(13.0, 15.0),
+                            const SizedBox(height: 4),
+                            if (telefone != null && telefone!.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(left: 28),
+                                child: Text(
+                                  "Telefone: ${Formatters.applyTelefoneMask(telefone!)}",
+                                  style: TextStyle(
+                                    fontSize: constraints.maxWidth * 0.045,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                      ],
-                    ),
+                            if (celular != null && celular!.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(left: 28),
+                                child: Text(
+                                  "Celular: ${Formatters.applyCelularMask(celular!)}",
+                                  style: TextStyle(
+                                    fontSize: constraints.maxWidth * 0.045,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        status,
+                        style: TextStyle(
+                          fontSize: constraints.maxWidth * 0.05,
+                          color: status.toLowerCase() == "ativo"
+                              ? const Color.fromARGB(255, 4, 80, 16)
+                              : status.toLowerCase() == "licenca"
+                                  ? const Color.fromARGB(255, 16, 6, 102)
+                                  : Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                  Text(
-                    status,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: status.toLowerCase() == "ativo"
-                          ? const Color.fromARGB(255, 4, 80, 16)
-                          : status.toLowerCase() == "licenca"
-                              ? const Color.fromARGB(255, 16, 6, 102)
-                              : Colors.red,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+                );
+              },
             ),
           );
         },

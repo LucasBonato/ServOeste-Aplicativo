@@ -10,7 +10,7 @@ import 'package:serv_oeste/src/components/custom_search_field.dart';
 import 'package:serv_oeste/src/screens/servico/filter_servico.dart';
 import 'package:serv_oeste/src/components/expandable_fab_items.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
-import 'package:serv_oeste/src/screens/servico/update_servico2.dart';
+import 'package:serv_oeste/src/screens/servico/update_servico.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
 
 class ServicoScreen extends StatefulWidget {

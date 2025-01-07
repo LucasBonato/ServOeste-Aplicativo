@@ -173,7 +173,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                           _tecnicoCreateForm, ErrorCodeKey.nomeESobrenome.name),
                       onChanged: _onNomeChanged,
                     ),
-                    Container(
+                    SizedBox(
                       width: MediaQuery.of(context).size.width * 0.65,
                       child: Transform.translate(
                         offset: Offset(0, -18),

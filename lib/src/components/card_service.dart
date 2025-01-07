@@ -181,7 +181,7 @@ class CardService extends StatelessWidget {
                             child: Text(
                               cliente,
                               style: TextStyle(
-                                fontSize: constraints.maxWidth * 0.05,
+                                fontSize: constraints.maxWidth * 0.055,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
                               ),
@@ -196,7 +196,7 @@ class CardService extends StatelessWidget {
                               child: Text(
                                 "$equipamento - $marca",
                                 style: TextStyle(
-                                  fontSize: constraints.maxWidth * 0.045,
+                                  fontSize: constraints.maxWidth * 0.05,
                                   color: Colors.black,
                                 ),
                                 maxLines: 2,
@@ -211,7 +211,7 @@ class CardService extends StatelessWidget {
                             child: Text(
                               "Técnico - $tecnico",
                               style: TextStyle(
-                                fontSize: constraints.maxWidth * 0.045,
+                                fontSize: constraints.maxWidth * 0.05,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
                               ),
@@ -224,7 +224,7 @@ class CardService extends StatelessWidget {
                             child: Text(
                               filial,
                               style: TextStyle(
-                                fontSize: constraints.maxWidth * 0.04,
+                                fontSize: constraints.maxWidth * 0.045,
                                 color: Colors.black,
                               ),
                             ),
@@ -238,7 +238,7 @@ class CardService extends StatelessWidget {
                               child: Text(
                                 "Data Prevista: ${dataPrevista.day}/${dataPrevista.month}/${dataPrevista.year}",
                                 style: TextStyle(
-                                  fontSize: constraints.maxWidth * 0.04,
+                                  fontSize: constraints.maxWidth * 0.045,
                                   color: Colors.black,
                                 ),
                               ),
@@ -251,7 +251,7 @@ class CardService extends StatelessWidget {
                               child: Text(
                                 "Data Prevista: ${dataPrevista.day}/${dataPrevista.month}/${dataPrevista.year} - ${formatHorario(horario)}",
                                 style: TextStyle(
-                                  fontSize: constraints.maxWidth * 0.04,
+                                  fontSize: constraints.maxWidth * 0.045,
                                   color: Colors.black,
                                 ),
                               ),
@@ -264,7 +264,7 @@ class CardService extends StatelessWidget {
                               child: Text(
                                 "Data Efetiva: ${dataEfetiva!.day}/${dataEfetiva!.month}/${dataEfetiva!.year}",
                                 style: TextStyle(
-                                  fontSize: constraints.maxWidth * 0.04,
+                                  fontSize: constraints.maxWidth * 0.045,
                                   color: Colors.black,
                                 ),
                               ),
@@ -277,7 +277,7 @@ class CardService extends StatelessWidget {
                               child: Text(
                                 "Data Abertura: ${dataAbertura!.day}/${dataAbertura!.month}/${dataAbertura!.year} - ${formatHorario(horario)}",
                                 style: TextStyle(
-                                  fontSize: constraints.maxWidth * 0.04,
+                                  fontSize: constraints.maxWidth * 0.045,
                                   color: Colors.black,
                                 ),
                               ),
@@ -290,7 +290,7 @@ class CardService extends StatelessWidget {
                               child: Text(
                                 garantia!,
                                 style: TextStyle(
-                                  fontSize: constraints.maxWidth * 0.04,
+                                  fontSize: constraints.maxWidth * 0.045,
                                   color: Colors.black,
                                 ),
                               ),
@@ -302,11 +302,11 @@ class CardService extends StatelessWidget {
                                   left: constraints.maxWidth * 0.05,
                                   top: constraints.maxWidth * 0.05),
                               child: SizedBox(
-                                width: constraints.maxWidth * 0.4,
+                                width: constraints.maxWidth * 0.45,
                                 child: Text(
                                   _convertEnumStatusToString(status),
                                   style: TextStyle(
-                                    fontSize: constraints.maxWidth * 0.045,
+                                    fontSize: constraints.maxWidth * 0.05,
                                     fontWeight: FontWeight.bold,
                                     color: _getStatusColor(
                                         _mapStringStatusToEnumStatus(status)),
