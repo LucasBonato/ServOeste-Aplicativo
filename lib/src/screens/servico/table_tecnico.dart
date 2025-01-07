@@ -88,21 +88,6 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
     ];
   }
 
-  // List<DateTime> _getNextValidDates() {
-  //   // Obs. Existem jeitos melhores de fazer isso aqui, cuidado com muitos loops na aplicação
-  //   final List<DateTime> dates = [];
-  //   DateTime currentDate = DateTime.now();
-
-  //   while (dates.length < 3) {
-  //     if (currentDate.weekday != DateTime.sunday) {
-  //       dates.add(currentDate);
-  //     }
-  //     currentDate = currentDate.add(Duration(days: 1));
-  //   }
-
-  //   return dates;
-  // }
-
   List<DateTime> _getNextValidDates() {
     final DateTime currentDate = DateTime.now();
     final List<DateTime> dates = [];
@@ -115,7 +100,7 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
       }
     }
 
-    return dates; // acha q assim ficou melhor? tentei diminuir ao maximo o uso dos loops
+    return dates;
   }
 
   String getCompostName(String? sobrenome) {
@@ -142,11 +127,32 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
       bloc: _tecnicoBloc,
       builder: (context, state) {
         if (state is TecnicoSearchAvailabilitySuccessState) {
-          // if (state.tecnicosDisponiveis == null || state.tecnicosDisponiveis!.isEmpty) {
-          //   return SizedBox();
-          // }
+          if (state.tecnicosDisponiveis == null ||
+              state.tecnicosDisponiveis!.isEmpty) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                width: dialogWidth,
+                height: MediaQuery.of(context).size.height * 0.3,
+                child: Center(
+                  child: Text(
+                    'Nenhum técnico ocupado.',
+                    style: TextStyle(fontSize: 16, color: Colors.black87),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            );
+          }
 
-          state.tecnicosDisponiveis?.sort((tecnico1, tecnico2) => (tecnico1.quantidadeTotalServicos! > tecnico2.quantidadeTotalServicos!) ? 0 : 1);
+          state.tecnicosDisponiveis?.sort((tecnico1, tecnico2) =>
+              (tecnico1.quantidadeTotalServicos! >
+                      tecnico2.quantidadeTotalServicos!)
+                  ? 0
+                  : 1);
 
           Logger().e(state.tecnicosDisponiveis);
 
