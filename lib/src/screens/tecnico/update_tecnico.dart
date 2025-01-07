@@ -35,7 +35,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
 
   final Map<String, String> situationMap = {
     'ATIVO': 'Ativo',
-    'LICENCA': 'Licenca',
+    'LICENCA': 'Licença',
     'DESATIVADO': 'Desativado',
   };
 

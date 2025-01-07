@@ -102,7 +102,7 @@ class _HomeState extends State<Home> {
                   );
                 }
                 return GridListView(
-                  aspectRatio: 1,
+                  aspectRatio: .9,
                   dataList: stateServico.servicos,
                   buildCard: (dynamic servico) => CardService(
                     cliente: (servico as Servico).nomeCliente,

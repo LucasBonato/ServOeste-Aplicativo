@@ -212,7 +212,7 @@ class ServicoScreenState extends State<ServicoScreen> {
                 } else if (stateServico is ServicoSearchSuccessState) {
                   return SingleChildScrollView(
                     child: GridListView(
-                      aspectRatio: 1,
+                      aspectRatio: .9,
                       dataList: stateServico.servicos,
                       buildCard: (servico) =>
                           BlocBuilder<ListaBloc, ListaState>(

@@ -101,13 +101,14 @@ class BaseLayoutState extends State<BaseLayout> {
       ServicoLoadingEvent(
         filterRequest: ServicoFilterRequest(
             // dataAtendimentoPrevistoAntes: DateTime.now().toUtc()
-          ),
+            ),
       ),
     );
   }
 
   void _loadTecnico() {
-    _tecnicoBloc.add(TecnicoLoadingEvent(situacao: Constants.situationTecnicoList.first));
+    _tecnicoBloc.add(
+        TecnicoLoadingEvent(situacao: Constants.situationTecnicoList.first));
   }
 
   void _loadCliente() {

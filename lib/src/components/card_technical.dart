@@ -128,7 +128,7 @@ class CardTechnical extends StatelessWidget {
                       Text(
                         status,
                         style: TextStyle(
-                          fontSize: constraints.maxWidth * 0.05,
+                          fontSize: constraints.maxWidth * 0.045,
                           color: status.toLowerCase() == "ativo"
                               ? const Color.fromARGB(255, 4, 80, 16)
                               : status.toLowerCase() == "licenca"

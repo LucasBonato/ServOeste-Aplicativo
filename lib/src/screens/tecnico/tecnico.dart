@@ -34,8 +34,10 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     _listaBloc = context.read<ListaBloc>();
     _idController = TextEditingController();
     _nomeController = TextEditingController();
-    _situacaoController = SingleSelectController<String>(Constants.situationTecnicoList.first);
-    _situacaoNotifier = ValueNotifier<String>(Constants.situationTecnicoList.first);
+    _situacaoController =
+        SingleSelectController<String>(Constants.situationTecnicoList.first);
+    _situacaoNotifier =
+        ValueNotifier<String>(Constants.situationTecnicoList.first);
     _listaBloc.add(ListaInitialEvent());
   }
 
@@ -243,8 +245,10 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
           Expanded(
             child: BlocBuilder<TecnicoBloc, TecnicoState>(
               builder: (context, stateTecnico) {
-                if (stateTecnico is TecnicoInitialState || stateTecnico is TecnicoLoadingState) {
-                  return const Center(child: CircularProgressIndicator.adaptive());
+                if (stateTecnico is TecnicoInitialState ||
+                    stateTecnico is TecnicoLoadingState) {
+                  return const Center(
+                      child: CircularProgressIndicator.adaptive());
                 } else if (stateTecnico is TecnicoSearchSuccessState) {
                   return SingleChildScrollView(
                     child: GridListView(
@@ -256,12 +260,15 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                           bool isSelected = false;
 
                           if (stateLista is ListaSelectState) {
-                            isSelected = stateLista.selectedIds.contains(tecnico.id);
+                            isSelected =
+                                stateLista.selectedIds.contains(tecnico.id);
                           }
 
                           return CardTechnical(
-                            onDoubleTap: () => _onNavigateToUpdateScreen(tecnico.id!),
-                            onLongPress: () => _onLongPressSelectItemLista(tecnico.id!),
+                            onDoubleTap: () =>
+                                _onNavigateToUpdateScreen(tecnico.id!),
+                            onLongPress: () =>
+                                _onLongPressSelectItemLista(tecnico.id!),
                             id: tecnico.id!,
                             nome: tecnico.nome!,
                             sobrenome: tecnico.sobrenome!,
