@@ -60,9 +60,6 @@ class _UpdateClienteState extends State<UpdateCliente> {
     _clienteBloc.add(ClienteUpdateEvent(
         cliente: Cliente.fromForm(_clienteUpdateForm), sobrenome: sobrenome));
     _clienteUpdateForm.nome.value = "${nomes.first} $sobrenome";
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Cliente atualizado com sucesso!')),
-    );
   }
 
   bool _isValidForm() {
@@ -588,6 +585,10 @@ class _UpdateClienteState extends State<UpdateCliente> {
                                             if (state
                                                 is ClienteUpdateSuccessState) {
                                               _handleBackNavigation();
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                      content: Text(
+                                                          'Cliente atualizado com sucesso!')));
                                             } else if (state
                                                 is ClienteErrorState) {
                                               ErrorEntity error = state.error;

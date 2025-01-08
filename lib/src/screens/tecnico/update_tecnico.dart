@@ -157,9 +157,6 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
     _tecnicoBloc.add(TecnicoUpdateEvent(
         tecnico: Tecnico.fromForm(_tecnicoUpdateForm), sobrenome: sobrenome));
     _tecnicoUpdateForm.nome.value = "${nomes.first} $sobrenome";
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Técnico atualizado com sucesso!')),
-    );
   }
 
   void _handleBackNavigation() {
@@ -196,6 +193,11 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
         listener: (context, state) {
           if (state is TecnicoUpdateSuccessState) {
             _handleBackNavigation();
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+                "Técnico atualizado com sucesso!",
+              ),
+            ));
           } else if (state is TecnicoErrorState) {
             ErrorEntity error = state.error;
 

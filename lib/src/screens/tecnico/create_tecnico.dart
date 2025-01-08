@@ -109,9 +109,6 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     _tecnicoBloc.add(TecnicoRegisterEvent(
         tecnico: Tecnico.fromForm(_tecnicoCreateForm), sobrenome: sobrenome));
     _tecnicoCreateForm.nome.value = "${nomes.first} $sobrenome";
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Técnico adicionado com sucesso!')),
-    );
   }
 
   void _handleBackNavigation() {
@@ -324,6 +321,9 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                             });
                           } else if (state is TecnicoRegisterSuccessState) {
                             _handleBackNavigation();
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content:
+                                    Text('Técnico adicionado com sucesso!')));
                           } else if (state is TecnicoErrorState) {
                             ErrorEntity error = state.error;
 

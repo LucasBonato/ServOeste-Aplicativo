@@ -79,9 +79,6 @@ class _CreateClienteState extends State<CreateCliente> {
     _clienteBloc.add(ClienteRegisterEvent(
         cliente: Cliente.fromForm(_clienteCreateForm), sobrenome: sobrenome));
     _clienteCreateForm.nome.value = "${nomes.first} $sobrenome";
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Cliente adicionado com sucesso!')),
-    );
   }
 
   void _handleBackNavigation() {
@@ -508,6 +505,11 @@ class _CreateClienteState extends State<CreateCliente> {
                                 listener: (context, state) {
                                   if (state is ClienteRegisterSuccessState) {
                                     _handleBackNavigation();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              'Cliente adicionado com sucesso!')),
+                                    );
                                   } else if (state is ClienteErrorState) {
                                     ErrorEntity error = state.error;
 
