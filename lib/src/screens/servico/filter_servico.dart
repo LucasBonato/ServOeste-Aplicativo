@@ -211,7 +211,7 @@ class FilterService extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               CustomDatePicker(
-                                label: 'Data Atendimento Previsto...',
+                                label: 'Data Prevista...',
                                 hint: 'dd/mm/aaaa',
                                 mask: InputMasks.maskData,
                                 maxLength: 10,
@@ -272,7 +272,7 @@ class FilterService extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: CustomDatePicker(
-                                  label: 'Data Atendimento Previsto...',
+                                  label: 'Data Prevista...',
                                   hint: 'dd/mm/aaaa',
                                   mask: InputMasks.maskData,
                                   maxLength: 10,

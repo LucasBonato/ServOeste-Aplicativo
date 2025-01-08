@@ -47,6 +47,8 @@ class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
 
   Future<void> _fetchAllServicesInitial(
       ServicoInitialLoadingEvent event, Emitter<ServicoState> emit) async {
+    _filterRequest = event.filterRequest;
+
     emit(ServicoLoadingState());
     try {
       List<Servico>? response =
@@ -63,12 +65,43 @@ class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
   ServicoFilterRequest _combineFilters(
       ServicoFilterRequest oldFilter, ServicoFilterRequest newFilter) {
     int? id;
+    String? periodo;
+    String? equipamento;
+    String? situacao;
+    String? garantia;
+    String? filial;
+    DateTime? dataAtendimentoPrevistoAntes;
+    DateTime? dataAtendimentoPrevistoDepois;
+    DateTime? dataAtendimentoEfetivoAntes;
+    DateTime? dataAberturaAntes;
 
     if (isFirstRequest) {
       id = newFilter.id;
+      periodo = newFilter.periodo;
+      equipamento = newFilter.equipamento;
+      situacao = newFilter.situacao;
+      garantia = newFilter.garantia;
+      filial = newFilter.filial;
+      dataAtendimentoPrevistoAntes = newFilter.dataAtendimentoPrevistoAntes;
+      dataAtendimentoPrevistoDepois = newFilter.dataAtendimentoPrevistoDepois;
+      dataAtendimentoEfetivoAntes = newFilter.dataAtendimentoEfetivoAntes;
+      dataAberturaAntes = newFilter.dataAberturaAntes;
       isFirstRequest = false;
     } else {
       id = newFilter.id ?? oldFilter.id;
+      periodo = newFilter.periodo ?? oldFilter.periodo;
+      equipamento = newFilter.equipamento ?? oldFilter.equipamento;
+      situacao = newFilter.situacao ?? oldFilter.situacao;
+      garantia = newFilter.garantia ?? oldFilter.garantia;
+      filial = newFilter.filial ?? oldFilter.filial;
+      dataAtendimentoPrevistoAntes = newFilter.dataAtendimentoPrevistoAntes ??
+          oldFilter.dataAtendimentoPrevistoAntes;
+      dataAtendimentoPrevistoDepois = newFilter.dataAtendimentoPrevistoDepois ??
+          oldFilter.dataAtendimentoPrevistoDepois;
+      dataAtendimentoEfetivoAntes = newFilter.dataAtendimentoEfetivoAntes ??
+          oldFilter.dataAtendimentoEfetivoAntes;
+      dataAberturaAntes =
+          newFilter.dataAberturaAntes ?? oldFilter.dataAberturaAntes;
       isFirstRequest = true;
     }
 
@@ -76,19 +109,15 @@ class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
       id: id,
       clienteNome: newFilter.clienteNome ?? oldFilter.clienteNome,
       tecnicoNome: newFilter.tecnicoNome ?? oldFilter.tecnicoNome,
-      equipamento: newFilter.equipamento ?? oldFilter.equipamento,
-      situacao: newFilter.situacao ?? oldFilter.situacao,
-      garantia: newFilter.garantia ?? oldFilter.garantia,
-      filial: newFilter.filial ?? oldFilter.filial,
-      periodo: newFilter.periodo ?? oldFilter.periodo,
-      dataAtendimentoPrevistoAntes: newFilter.dataAtendimentoPrevistoAntes ??
-          oldFilter.dataAtendimentoPrevistoAntes,
-      dataAtendimentoPrevistoDepois: newFilter.dataAtendimentoPrevistoDepois ??
-          oldFilter.dataAtendimentoPrevistoDepois,
-      dataAtendimentoEfetivoAntes: newFilter.dataAtendimentoEfetivoAntes ??
-          oldFilter.dataAtendimentoEfetivoAntes,
-      dataAberturaAntes:
-          newFilter.dataAberturaAntes ?? oldFilter.dataAberturaAntes,
+      equipamento: equipamento,
+      situacao: situacao,
+      garantia: garantia,
+      filial: filial,
+      periodo: periodo,
+      dataAtendimentoPrevistoAntes: dataAtendimentoPrevistoAntes,
+      dataAtendimentoPrevistoDepois: dataAtendimentoPrevistoDepois,
+      dataAtendimentoEfetivoAntes: dataAtendimentoEfetivoAntes,
+      dataAberturaAntes: dataAberturaAntes,
     );
   }
 

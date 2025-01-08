@@ -14,6 +14,7 @@ import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
 import 'package:lucid_validation/lucid_validation.dart';
+import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/shared/input_masks.dart';
 
 class CreateTecnico extends StatefulWidget {
@@ -114,7 +115,8 @@ class _CreateTecnicoState extends State<CreateTecnico> {
   }
 
   void _handleBackNavigation() {
-    _tecnicoBloc.add(TecnicoSearchEvent());
+    _tecnicoBloc.add(
+        TecnicoSearchEvent(situacao: Constants.situationTecnicoList.first));
     Navigator.pop(context, "Back");
   }
 

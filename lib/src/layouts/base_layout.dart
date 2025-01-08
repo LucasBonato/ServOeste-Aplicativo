@@ -97,15 +97,15 @@ class BaseLayoutState extends State<BaseLayout> {
   }
 
   void _loadHome() {
-    // DateTime today = DateTime.now();
-    // DateTime week = today.add(Duration(days: 7));
+    DateTime today = DateTime.now();
+    DateTime week = today.add(Duration(days: 7));
 
     _servicoBloc.add(
-      ServicoLoadingEvent(
+      ServicoInitialLoadingEvent(
         filterRequest: ServicoFilterRequest(
-            // dataAtendimentoPrevistoAntes: today.toUtc(),
-            // dataAtendimentoPrevistoDepois: week.toUtc(),
-            ),
+          dataAtendimentoPrevistoAntes: today.toUtc(),
+          dataAtendimentoPrevistoDepois: week.toUtc(),
+        ),
       ),
     );
   }
