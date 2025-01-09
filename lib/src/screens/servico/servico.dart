@@ -11,7 +11,7 @@ import 'package:serv_oeste/src/screens/servico/filter_servico.dart';
 import 'package:serv_oeste/src/components/expandable_fab_items.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/screens/servico/update_servico.dart';
-import 'package:serv_oeste/src/util/buildwidgets.dart';
+import 'package:serv_oeste/src/util/build_widgets.dart';
 
 class ServicoScreen extends StatefulWidget {
   const ServicoScreen({super.key});
@@ -210,44 +210,65 @@ class ServicoScreenState extends State<ServicoScreen> {
                     child: CircularProgressIndicator.adaptive(),
                   );
                 } else if (stateServico is ServicoSearchSuccessState) {
-                  return SingleChildScrollView(
-                    child: GridListView(
-                      aspectRatio: .9,
-                      dataList: stateServico.servicos,
-                      buildCard: (servico) =>
-                          BlocBuilder<ListaBloc, ListaState>(
-                        bloc: _listaBloc,
-                        builder: (context, stateLista) {
-                          bool isSelected = false;
+                  if (stateServico.servicos.isNotEmpty) {
+                    return SingleChildScrollView(
+                      child: GridListView(
+                        aspectRatio: .9,
+                        dataList: stateServico.servicos,
+                        buildCard: (servico) =>
+                            BlocBuilder<ListaBloc, ListaState>(
+                          bloc: _listaBloc,
+                          builder: (context, stateLista) {
+                            bool isSelected = false;
 
-                          if (stateLista is ListaSelectState) {
-                            isSelected = stateLista.selectedIds
-                                .contains((servico as Servico).id);
-                          }
+                            if (stateLista is ListaSelectState) {
+                              isSelected = stateLista.selectedIds
+                                  .contains((servico as Servico).id);
+                            }
 
-                          return CardService(
-                            onLongPress: () =>
-                                _onLongPressSelectItemList(servico.id),
-                            onDoubleTap: () =>
-                                _onNavigateToUpdateScreen(servico.id),
-                            cliente: (servico as Servico).nomeCliente,
-                            tecnico: servico.nomeTecnico,
-                            codigo: servico.id,
-                            equipamento: servico.equipamento,
-                            marca: servico.marca,
-                            filial: servico.filial,
-                            horario: servico.horarioPrevisto,
-                            dataPrevista: servico.dataAtendimentoPrevisto,
-                            dataAbertura: servico.dataAtendimentoAbertura,
-                            dataEfetiva: servico.dataAtendimentoEfetivo,
-                            garantia: servico.garantia,
-                            status: servico.situacao,
-                            isSelected: isSelected,
-                          );
-                        },
+                            return CardService(
+                              onLongPress: () =>
+                                  _onLongPressSelectItemList(servico.id),
+                              onDoubleTap: () =>
+                                  _onNavigateToUpdateScreen(servico.id),
+                              cliente: (servico as Servico).nomeCliente,
+                              tecnico: servico.nomeTecnico,
+                              codigo: servico.id,
+                              equipamento: servico.equipamento,
+                              marca: servico.marca,
+                              filial: servico.filial,
+                              horario: servico.horarioPrevisto,
+                              dataPrevista: servico.dataAtendimentoPrevisto,
+                              dataAbertura: servico.dataAtendimentoAbertura,
+                              dataEfetiva: servico.dataAtendimentoEfetivo,
+                              garantia: servico.garantia,
+                              status: servico.situacao,
+                              isSelected: isSelected,
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  );
+                    );
+                  } else {
+                    return const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.search_off,
+                            color: Colors.grey,
+                            size: 40.0,
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            "Nenhum serviço encontrado.",
+                            style:
+                                TextStyle(fontSize: 18.0, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
                 }
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,

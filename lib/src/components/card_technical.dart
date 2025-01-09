@@ -82,7 +82,7 @@ class CardTechnical extends StatelessWidget {
                       Text(
                         "$id",
                         style: TextStyle(
-                          fontSize: constraints.maxWidth * 0.065,
+                          fontSize: constraints.maxWidth * 0.06,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

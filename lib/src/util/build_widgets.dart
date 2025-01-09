@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../components/dialog_box.dart';
 
 class BuildWidgets {
-  static FloatingActionButton buildFabAdd(BuildContext context, String route, dynamic event, {String tooltip = ''}) {
+  static FloatingActionButton buildFabAdd(
+      BuildContext context, String route, dynamic event,
+      {String tooltip = ''}) {
     return FloatingActionButton(
       heroTag: "Add_$route",
       backgroundColor: Colors.blue,
@@ -16,7 +18,9 @@ class BuildWidgets {
     );
   }
 
-  static FloatingActionButton buildFabRemove(BuildContext context, dynamic removeMethod, {String tooltip = ''}) {
+  static FloatingActionButton buildFabRemove(
+      BuildContext context, dynamic removeMethod,
+      {String tooltip = ''}) {
     return FloatingActionButton(
       heroTag: "Remove_$tooltip",
       backgroundColor: Colors.red,

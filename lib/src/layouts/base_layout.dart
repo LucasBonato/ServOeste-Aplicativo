@@ -98,13 +98,15 @@ class BaseLayoutState extends State<BaseLayout> {
 
   void _loadHome() {
     DateTime today = DateTime.now();
-    DateTime week = today.add(Duration(days: 7));
+
+    DateTime startOfDay = DateTime(today.year, today.month, today.day);
+    DateTime week = startOfDay.add(Duration(days: 7));
 
     _servicoBloc.add(
       ServicoInitialLoadingEvent(
         filterRequest: ServicoFilterRequest(
-          dataAtendimentoPrevistoAntes: today.toUtc(),
-          dataAtendimentoPrevistoDepois: week.toUtc(),
+          dataAtendimentoPrevistoAntes: startOfDay,
+          dataAtendimentoPrevistoDepois: week,
         ),
       ),
     );

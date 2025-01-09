@@ -6,7 +6,7 @@ import 'package:serv_oeste/src/components/grid_view.dart';
 import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
-import 'package:serv_oeste/src/util/buildwidgets.dart';
+import 'package:serv_oeste/src/util/build_widgets.dart';
 import 'package:serv_oeste/src/components/custom_search_field.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 
@@ -282,9 +282,23 @@ class _ClienteScreenState extends State<ClienteScreen> {
                         ),
                       );
                     } else {
-                      // Mostra mensagem quando não há clientes
                       return const Center(
-                        child: Text("Nenhum cliente encontrado."),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.search_off,
+                              color: Colors.grey,
+                              size: 40.0,
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              "Nenhum cliente encontrado.",
+                              style:
+                                  TextStyle(fontSize: 18.0, color: Colors.grey),
+                            ),
+                          ],
+                        ),
                       );
                     }
                   }

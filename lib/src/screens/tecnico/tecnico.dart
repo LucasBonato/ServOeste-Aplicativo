@@ -10,7 +10,7 @@ import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
-import 'package:serv_oeste/src/util/buildwidgets.dart';
+import 'package:serv_oeste/src/util/build_widgets.dart';
 
 class TecnicoScreen extends StatefulWidget {
   const TecnicoScreen({super.key});
@@ -250,37 +250,58 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                   return const Center(
                       child: CircularProgressIndicator.adaptive());
                 } else if (stateTecnico is TecnicoSearchSuccessState) {
-                  return SingleChildScrollView(
-                    child: GridListView(
-                      aspectRatio: 2.5,
-                      dataList: stateTecnico.tecnicos,
-                      buildCard: (tecnico) =>
-                          BlocBuilder<ListaBloc, ListaState>(
-                        builder: (context, stateLista) {
-                          bool isSelected = false;
+                  if (stateTecnico.tecnicos.isNotEmpty) {
+                    return SingleChildScrollView(
+                      child: GridListView(
+                        aspectRatio: 2,
+                        dataList: stateTecnico.tecnicos,
+                        buildCard: (tecnico) =>
+                            BlocBuilder<ListaBloc, ListaState>(
+                          builder: (context, stateLista) {
+                            bool isSelected = false;
 
-                          if (stateLista is ListaSelectState) {
-                            isSelected =
-                                stateLista.selectedIds.contains(tecnico.id);
-                          }
+                            if (stateLista is ListaSelectState) {
+                              isSelected =
+                                  stateLista.selectedIds.contains(tecnico.id);
+                            }
 
-                          return CardTechnical(
-                            onDoubleTap: () =>
-                                _onNavigateToUpdateScreen(tecnico.id!),
-                            onLongPress: () =>
-                                _onLongPressSelectItemLista(tecnico.id!),
-                            id: tecnico.id!,
-                            nome: tecnico.nome!,
-                            sobrenome: tecnico.sobrenome!,
-                            telefone: tecnico.telefoneFixo!,
-                            celular: tecnico.telefoneCelular!,
-                            status: tecnico.situacao!,
-                            isSelected: isSelected,
-                          );
-                        },
+                            return CardTechnical(
+                              onDoubleTap: () =>
+                                  _onNavigateToUpdateScreen(tecnico.id!),
+                              onLongPress: () =>
+                                  _onLongPressSelectItemLista(tecnico.id!),
+                              id: tecnico.id!,
+                              nome: tecnico.nome!,
+                              sobrenome: tecnico.sobrenome!,
+                              telefone: tecnico.telefoneFixo!,
+                              celular: tecnico.telefoneCelular!,
+                              status: tecnico.situacao!,
+                              isSelected: isSelected,
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  );
+                    );
+                  } else {
+                    return const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.search_off,
+                            color: Colors.grey,
+                            size: 40.0,
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            "Nenhum técnico encontrado.",
+                            style:
+                                TextStyle(fontSize: 18.0, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
                 }
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
