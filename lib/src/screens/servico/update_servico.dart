@@ -1,8 +1,8 @@
-import 'package:serv_oeste/src/components/date_picker.dart';
-import 'package:serv_oeste/src/components/dropdown_field.dart';
+import 'package:serv_oeste/src/components/formFields/date_picker_form_field.dart';
+import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
-import 'package:serv_oeste/src/components/formFields/search_dropdown_field.dart';
+import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
@@ -110,7 +110,7 @@ class _UpdateServicoState extends State<UpdateServico> {
       key: _clienteFormKey,
       child: Column(
         children: [
-          CustomSearchDropDown(
+          CustomSearchDropDownFormField(
             label: 'Nome Cliente*',
             dropdownValues: Constants.filiais,
             leftPadding: 4,
@@ -139,7 +139,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomSearchDropDown(
+                    CustomSearchDropDownFormField(
                       label: 'Equipamento*',
                       dropdownValues: Constants.equipamentos,
                       leftPadding: 4,
@@ -152,7 +152,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    CustomSearchDropDown(
+                    CustomSearchDropDownFormField(
                       label: 'Marca*',
                       dropdownValues: Constants.marcas,
                       leftPadding: 4,
@@ -171,7 +171,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: CustomSearchDropDown(
+                      child: CustomSearchDropDownFormField(
                         label: 'Equipamento*',
                         dropdownValues: Constants.equipamentos,
                         leftPadding: 4,
@@ -185,7 +185,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       ),
                     ),
                     Expanded(
-                      child: CustomSearchDropDown(
+                      child: CustomSearchDropDownFormField(
                         label: 'Marca*',
                         dropdownValues: Constants.marcas,
                         leftPadding: 4,
@@ -204,7 +204,7 @@ class _UpdateServicoState extends State<UpdateServico> {
             },
           ),
           const SizedBox(height: 16),
-          CustomSearchDropDown(
+          CustomSearchDropDownFormField(
             label: 'Nome Técnico*',
             dropdownValues: Constants.filiais,
             leftPadding: 4,
@@ -217,7 +217,7 @@ class _UpdateServicoState extends State<UpdateServico> {
             ),
           ),
           const SizedBox(height: 16),
-          CustomDropdownField(
+          CustomDropdownFormField(
             label: 'Filial*',
             dropdownValues: Constants.filiais,
             leftPadding: 4,
@@ -235,7 +235,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomDropdownField(
+                    CustomDropdownFormField(
                       label: 'Garantia',
                       dropdownValues: Constants.garantias,
                       leftPadding: 4,
@@ -243,7 +243,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       valueNotifier: _servicoUpdateForm.garantia,
                       onChanged: _servicoUpdateForm.setGarantia,
                     ),
-                    CustomDropdownField(
+                    CustomDropdownFormField(
                       label: 'Situação*',
                       dropdownValues: Constants.situationServiceList,
                       leftPadding: 4,
@@ -262,7 +262,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: CustomDropdownField(
+                      child: CustomDropdownFormField(
                         label: 'Garantia',
                         dropdownValues: Constants.garantias,
                         leftPadding: 4,
@@ -272,7 +272,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       ),
                     ),
                     Expanded(
-                      child: CustomDropdownField(
+                      child: CustomDropdownFormField(
                         label: 'Situação*',
                         dropdownValues: Constants.situationServiceList,
                         leftPadding: 4,
@@ -296,7 +296,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomDropdownField(
+                    CustomDropdownFormField(
                       label: 'Horário*',
                       dropdownValues: Constants.dataAtendimento,
                       leftPadding: 4,
@@ -308,7 +308,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                         'horarioPrevisto',
                       ),
                     ),
-                    CustomDatePicker(
+                    CustomDatePickerFormField(
                       hint: 'dd/mm/yyyy',
                       label: 'Data Atendimento Previsto*',
                       mask: [],
@@ -331,7 +331,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: CustomDropdownField(
+                      child: CustomDropdownFormField(
                         label: 'Horário*',
                         dropdownValues: Constants.dataAtendimento,
                         leftPadding: 4,
@@ -345,7 +345,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       ),
                     ),
                     Expanded(
-                      child: CustomDatePicker(
+                      child: CustomDatePickerFormField(
                         hint: 'dd/mm/yyyy',
                         label: 'Data Atendimento Previsto*',
                         mask: [],
@@ -375,7 +375,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomDatePicker(
+                    CustomDatePickerFormField(
                       hint: 'dd/mm/yyyy',
                       label: 'Data Efetiva',
                       mask: [],
@@ -391,7 +391,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                         'dataAtendimentoEfetivo',
                       ),
                     ),
-                    CustomDatePicker(
+                    CustomDatePickerFormField(
                       hint: 'dd/mm/yyyy',
                       label: 'Data de Abertura',
                       mask: [],
@@ -414,7 +414,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: CustomDatePicker(
+                      child: CustomDatePickerFormField(
                         hint: 'dd/mm/yyyy',
                         label: 'Data Efetiva',
                         mask: [],
@@ -433,7 +433,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       ),
                     ),
                     Expanded(
-                      child: CustomDatePicker(
+                      child: CustomDatePickerFormField(
                         hint: 'dd/mm/yyyy',
                         label: 'Data de Abertura',
                         mask: [],

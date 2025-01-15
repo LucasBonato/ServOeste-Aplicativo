@@ -4,7 +4,7 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 
 // ignore: must_be_immutable
-class CustomDatePicker extends StatefulWidget {
+class CustomDatePickerFormField extends StatefulWidget {
   final String? restorationId;
   final String hint;
   final String label;
@@ -20,7 +20,7 @@ class CustomDatePicker extends StatefulWidget {
   final ValueNotifier<String> valueNotifier;
   final bool hide;
 
-  CustomDatePicker({
+  CustomDatePickerFormField({
     super.key,
     this.hide = false,
     this.enabled,
@@ -39,10 +39,10 @@ class CustomDatePicker extends StatefulWidget {
   });
 
   @override
-  State<CustomDatePicker> createState() => _CustomDatePickerState();
+  State<CustomDatePickerFormField> createState() => _CustomDatePickerFormFieldState();
 }
 
-class _CustomDatePickerState extends State<CustomDatePicker>
+class _CustomDatePickerFormFieldState extends State<CustomDatePickerFormField>
     with RestorationMixin {
   @override
   String? get restorationId => widget.restorationId;

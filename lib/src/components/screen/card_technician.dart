@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/src/shared/formatters.dart';
 
-class CardTechnical extends StatelessWidget {
+class CardTechnician extends StatelessWidget {
   final int id;
   final String nome;
   final String sobrenome;
@@ -12,7 +12,7 @@ class CardTechnical extends StatelessWidget {
   final void Function()? onLongPress;
   final void Function()? onDoubleTap;
 
-  const CardTechnical({
+  const CardTechnician({
     super.key,
     required this.id,
     required this.nome,

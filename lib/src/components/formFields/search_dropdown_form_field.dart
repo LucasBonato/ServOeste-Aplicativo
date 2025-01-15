@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:drop_down_search_field/drop_down_search_field.dart';
 
-class CustomSearchDropDown extends StatefulWidget {
+class CustomSearchDropDownFormField extends StatefulWidget {
   final List<String> dropdownValues;
   final Function(String) onChanged;
   final int? maxLength;
@@ -18,7 +18,7 @@ class CustomSearchDropDown extends StatefulWidget {
   final Widget Function(BuildContext, String)? itemWidgetBuilder;
   final ValueNotifier<String?>? valueNotifier;
 
-  const CustomSearchDropDown({
+  const CustomSearchDropDownFormField({
     super.key,
     this.hide = false,
     this.enabled = true,
@@ -38,10 +38,10 @@ class CustomSearchDropDown extends StatefulWidget {
   });
 
   @override
-  State<CustomSearchDropDown> createState() => _CustomSearchDropDown();
+  State<CustomSearchDropDownFormField> createState() => _CustomSearchDropDown();
 }
 
-class _CustomSearchDropDown extends State<CustomSearchDropDown> {
+class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
   late final TextEditingController _customSearchController;
   late Color labelColor;
 

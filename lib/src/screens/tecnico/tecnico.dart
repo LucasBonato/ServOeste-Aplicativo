@@ -2,10 +2,10 @@ import 'dart:async';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:serv_oeste/src/components/dropdown_field.dart';
-import 'package:serv_oeste/src/components/grid_view.dart';
-import 'package:serv_oeste/src/components/card_technical.dart';
-import 'package:serv_oeste/src/components/custom_search_field.dart';
+import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
+import 'package:serv_oeste/src/components/screen/grid_view.dart';
+import 'package:serv_oeste/src/components/screen/card_technician.dart';
+import 'package:serv_oeste/src/components/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
@@ -83,7 +83,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
             {required String hint,
             TextEditingController? controller,
             TextInputType? keyboardType}) =>
-        CustomSearchTextField(
+        CustomSearchTextFormField(
           hint: hint,
           leftPadding: 4,
           rightPadding: 4,
@@ -97,7 +97,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
             required SingleSelectController<String> controller,
             required ValueNotifier<String> valueNotifier,
             required List<String> dropdownValues}) =>
-        CustomDropdownField(
+        CustomDropdownFormField(
           label: label,
           dropdownValues: dropdownValues,
           controller: controller,
@@ -264,7 +264,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                                 stateLista.selectedIds.contains(tecnico.id);
                           }
 
-                          return CardTechnical(
+                          return CardTechnician(
                             onDoubleTap: () =>
                                 _onNavigateToUpdateScreen(tecnico.id!),
                             onLongPress: () =>

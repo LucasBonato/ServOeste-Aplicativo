@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:masked_text/masked_text.dart';
 
 //ignore: must_be_immutable
-class CustomMaskField extends StatefulWidget {
+class CustomMaskFormField extends StatefulWidget {
   final String hint;
   final String label;
   final String? mask;
@@ -19,7 +19,7 @@ class CustomMaskField extends StatefulWidget {
   String? Function([String?])? validator;
   bool hide;
 
-  CustomMaskField({
+  CustomMaskFormField({
     super.key,
     required this.hint,
     required this.label,
@@ -39,10 +39,10 @@ class CustomMaskField extends StatefulWidget {
   });
 
   @override
-  State<CustomMaskField> createState() => _CustomMaskFieldState();
+  State<CustomMaskFormField> createState() => _CustomMaskFormFieldState();
 }
 
-class _CustomMaskFieldState extends State<CustomMaskField> {
+class _CustomMaskFormFieldState extends State<CustomMaskFormField> {
   @override
   Widget build(BuildContext context) {
     return Padding(

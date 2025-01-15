@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 
-class CustomDropdownField extends StatefulWidget {
+class CustomDropdownFormField extends StatefulWidget {
   final String label;
   final bool? enabled;
   final double? leftPadding;
@@ -12,7 +12,7 @@ class CustomDropdownField extends StatefulWidget {
   final void Function(String?) onChanged;
   final SingleSelectController<String>? controller;
 
-  const CustomDropdownField({
+  const CustomDropdownFormField({
     super.key,
     required this.dropdownValues,
     required this.valueNotifier,
@@ -26,10 +26,10 @@ class CustomDropdownField extends StatefulWidget {
   });
 
   @override
-  State<CustomDropdownField> createState() => _CustomDropdownFieldState();
+  State<CustomDropdownFormField> createState() => _CustomDropdownFormFieldState();
 }
 
-class _CustomDropdownFieldState extends State<CustomDropdownField> {
+class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
   late SingleSelectController<String> _internalController;
   late SingleSelectController<String> _effectiveController;
   bool _isHovered = false;

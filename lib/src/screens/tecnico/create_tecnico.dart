@@ -6,7 +6,7 @@ import 'package:logger/logger.dart';
 import 'package:serv_oeste/src/components/formFields/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/custom_grid_checkers_form_field.dart';
-import 'package:serv_oeste/src/components/formFields/search_dropdown_field.dart';
+import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
@@ -164,7 +164,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                         ),
                       ),
                       const SizedBox(height: 48),
-                      CustomSearchDropDown(
+                      CustomSearchDropDownFormField(
                         label: "Nome*",
                         maxLength: 40,
                         rightPadding: 4,

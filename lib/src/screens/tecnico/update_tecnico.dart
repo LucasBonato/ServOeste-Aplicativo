@@ -1,4 +1,4 @@
-import 'package:serv_oeste/src/components/dropdown_field.dart';
+import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
@@ -302,7 +302,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                                                     .nomeESobrenome.name),
                                         onChanged: _tecnicoUpdateForm.setNome,
                                       ),
-                                      CustomDropdownField(
+                                      CustomDropdownFormField(
                                         label: "Situação",
                                         dropdownValues:
                                             Constants.situationTecnicoList,
@@ -347,7 +347,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                                       ),
                                       Expanded(
                                         flex: 1,
-                                        child: CustomDropdownField(
+                                        child: CustomDropdownFormField(
                                           label: "Situação",
                                           dropdownValues:
                                               Constants.situationTecnicoList,

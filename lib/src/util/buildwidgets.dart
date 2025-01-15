@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../components/dialog_box.dart';
+import 'dialog_box.dart';
 
 class BuildWidgets {
   static FloatingActionButton buildFabAdd(BuildContext context, String route, dynamic event, {String tooltip = ''}) {

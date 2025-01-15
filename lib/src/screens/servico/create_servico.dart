@@ -2,11 +2,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucid_validation/lucid_validation.dart';
-import 'package:serv_oeste/src/components/date_picker.dart';
-import 'package:serv_oeste/src/components/dropdown_field.dart';
+import 'package:serv_oeste/src/components/formFields/date_picker_form_field.dart';
+import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
-import 'package:serv_oeste/src/components/formFields/search_dropdown_field.dart';
+import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
@@ -403,7 +403,7 @@ class _CreateServicoState extends State<CreateServico> {
                 }
               }
             },
-            child: CustomSearchDropDown(
+            child: CustomSearchDropDownFormField(
               label: "Nome do Cliente*",
               dropdownValues: _dropdownNomeClientes,
               maxLength: 40,
@@ -523,7 +523,7 @@ class _CreateServicoState extends State<CreateServico> {
                                 leftPadding: 4,
                               ),
                             ),
-                            CustomSearchDropDown(
+                            CustomSearchDropDownFormField(
                               label: "Município*",
                               dropdownValues: Constants.municipios,
                               maxLength: 20,
@@ -566,7 +566,7 @@ class _CreateServicoState extends State<CreateServico> {
                               ),
                             ),
                             Expanded(
-                              child: CustomSearchDropDown(
+                              child: CustomSearchDropDownFormField(
                                 label: "Município*",
                                 dropdownValues: Constants.municipios,
                                 maxLength: 20,
@@ -693,7 +693,7 @@ class _CreateServicoState extends State<CreateServico> {
       key: _servicoFormKey,
       child: Column(
         children: [
-          CustomSearchDropDown(
+          CustomSearchDropDownFormField(
             label: "Equipamento*",
             dropdownValues: Constants.equipamentos,
             valueNotifier: _servicoForm.equipamento,
@@ -704,7 +704,7 @@ class _CreateServicoState extends State<CreateServico> {
             onChanged: _servicoForm.setEquipamento,
             enabled: _isInputEnabled(),
           ),
-          CustomSearchDropDown(
+          CustomSearchDropDownFormField(
             dropdownValues: Constants.marcas,
             valueNotifier: _servicoForm.marca,
             label: "Marca*",
@@ -715,7 +715,7 @@ class _CreateServicoState extends State<CreateServico> {
             onChanged: _servicoForm.setMarca,
             enabled: _isInputEnabled(),
           ),
-          CustomDropdownField(
+          CustomDropdownFormField(
             dropdownValues: Constants.filiais,
             valueNotifier: _servicoForm.filial,
             label: "Filial*",
@@ -749,7 +749,7 @@ class _CreateServicoState extends State<CreateServico> {
                   return Tooltip(
                     message: (isFieldEnabled) ? "" : "Selecione um equipamento para continuar",
                     textAlign: TextAlign.center,
-                    child: CustomSearchDropDown(
+                    child: CustomSearchDropDownFormField(
                       label: "Nome do Técnico*",
                       dropdownValues: _dropdownNomeTecnicos,
                       maxLength: 50,
@@ -772,7 +772,7 @@ class _CreateServicoState extends State<CreateServico> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomDatePicker(
+                    CustomDatePickerFormField(
                       label: "Data Prevista*",
                       hint: 'dd/mm/aaaa',
                       leftPadding: 4,
@@ -786,7 +786,7 @@ class _CreateServicoState extends State<CreateServico> {
                       onChanged: _servicoForm.setDataPrevista,
                       enabled: _isInputEnabled(),
                     ),
-                    CustomDropdownField(
+                    CustomDropdownFormField(
                       dropdownValues: Constants.dataAtendimento,
                       label: "Horário*",
                       leftPadding: 4,
@@ -804,7 +804,7 @@ class _CreateServicoState extends State<CreateServico> {
                   children: [
                     Expanded(
                       flex: 1,
-                      child: CustomDatePicker(
+                      child: CustomDatePickerFormField(
                         label: "Data Prevista*",
                         hint: 'dd/mm/aaaa',
                         leftPadding: 4,
@@ -821,7 +821,7 @@ class _CreateServicoState extends State<CreateServico> {
                     ),
                     Expanded(
                       flex: 1,
-                      child: CustomDropdownField(
+                      child: CustomDropdownFormField(
                         dropdownValues: Constants.dataAtendimento,
                         label: "Horário*",
                         leftPadding: 4,

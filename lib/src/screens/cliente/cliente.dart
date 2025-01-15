@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:serv_oeste/src/components/card_client.dart';
-import 'package:serv_oeste/src/components/grid_view.dart';
+import 'package:serv_oeste/src/components/screen/card_client.dart';
+import 'package:serv_oeste/src/components/screen/grid_view.dart';
 import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
-import 'package:serv_oeste/src/components/custom_search_field.dart';
+import 'package:serv_oeste/src/components/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 
 class ClienteScreen extends StatefulWidget {
@@ -69,7 +69,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
     final isMediumScreen = screenWidth >= 500 && screenWidth < 1000;
     final maxContainerWidth = 1200.0;
 
-    Widget buildSearchField({required String hint, TextEditingController? controller, TextInputType? keyboardType}) => CustomSearchTextField(
+    Widget buildSearchField({required String hint, TextEditingController? controller, TextInputType? keyboardType}) => CustomSearchTextFormField(
           hint: hint,
           leftPadding: 4,
           rightPadding: 4,

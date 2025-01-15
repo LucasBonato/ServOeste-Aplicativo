@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CustomSearchTextField extends StatefulWidget {
+class CustomSearchTextFormField extends StatefulWidget {
   final String hint;
   final TextInputType? keyboardType;
   final TextEditingController? controller;
@@ -8,7 +8,7 @@ class CustomSearchTextField extends StatefulWidget {
   final double? leftPadding;
   final double? rightPadding;
 
-  const CustomSearchTextField({
+  const CustomSearchTextFormField({
     super.key,
     required this.hint,
     this.onChangedAction,
@@ -19,10 +19,10 @@ class CustomSearchTextField extends StatefulWidget {
   });
 
   @override
-  State<CustomSearchTextField> createState() => _CustomSearchTextFieldState();
+  State<CustomSearchTextFormField> createState() => _CustomSearchTextFormFieldState();
 }
 
-class _CustomSearchTextFieldState extends State<CustomSearchTextField> {
+class _CustomSearchTextFormFieldState extends State<CustomSearchTextFormField> {
   late final TextEditingController _internalController;
 
   @override

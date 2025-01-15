@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:serv_oeste/src/components/grid_view.dart';
+import 'package:serv_oeste/src/components/screen/grid_view.dart';
 import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
-import 'package:serv_oeste/src/components/card_service.dart';
+import 'package:serv_oeste/src/components/screen/card_service.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
-import 'package:serv_oeste/src/components/custom_search_field.dart';
+import 'package:serv_oeste/src/components/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/src/screens/servico/filter_servico.dart';
-import 'package:serv_oeste/src/components/expandable_fab_items.dart';
+import 'package:serv_oeste/src/components/screen/expandable_fab_items.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/screens/servico/update_servico.dart';
 import 'package:serv_oeste/src/util/buildwidgets.dart';
@@ -73,7 +73,7 @@ class ServicoScreenState extends State<ServicoScreen> {
 
     Widget buildSearchField(
             {required String hint, TextEditingController? controller}) =>
-        CustomSearchTextField(
+        CustomSearchTextFormField(
           hint: hint,
           leftPadding: 4,
           rightPadding: 4,
