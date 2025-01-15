@@ -10,7 +10,7 @@ import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
-import 'package:serv_oeste/src/util/buildwidgets.dart';
+import 'package:serv_oeste/src/util/build_widgets.dart';
 
 class TecnicoScreen extends StatefulWidget {
   const TecnicoScreen({super.key});

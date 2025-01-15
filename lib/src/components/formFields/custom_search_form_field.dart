@@ -28,7 +28,18 @@ class _CustomSearchTextFormFieldState extends State<CustomSearchTextFormField> {
   @override
   void initState() {
     _internalController = widget.controller ?? TextEditingController();
+    _internalController.addListener(() {
+      setState(() {});
+    });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    if (widget.controller == null) {
+      _internalController.dispose();
+    }
+    super.dispose();
   }
 
   @override
@@ -49,6 +60,20 @@ class _CustomSearchTextFormFieldState extends State<CustomSearchTextFormField> {
             Icons.search_outlined,
             color: Color(0xFF948F8F),
           ),
+          suffixIcon: _internalController.text.isNotEmpty
+              ? IconButton(
+                  icon: const Icon(
+                    Icons.clear,
+                    color: Color(0xFF948F8F),
+                  ),
+                  onPressed: () {
+                    _internalController.clear();
+                    if (widget.onChangedAction != null) {
+                      widget.onChangedAction!("");
+                    }
+                  },
+                )
+              : null,
           isDense: true,
           hintText: widget.hint,
           hintStyle: const TextStyle(

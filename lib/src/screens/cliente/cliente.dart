@@ -6,7 +6,7 @@ import 'package:serv_oeste/src/components/screen/grid_view.dart';
 import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
-import 'package:serv_oeste/src/util/buildwidgets.dart';
+import 'package:serv_oeste/src/util/build_widgets.dart';
 import 'package:serv_oeste/src/components/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 

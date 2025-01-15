@@ -11,7 +11,7 @@ import 'package:serv_oeste/src/screens/servico/filter_servico.dart';
 import 'package:serv_oeste/src/components/screen/expandable_fab_items.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/screens/servico/update_servico.dart';
-import 'package:serv_oeste/src/util/buildwidgets.dart';
+import 'package:serv_oeste/src/util/build_widgets.dart';
 
 class ServicoScreen extends StatefulWidget {
   const ServicoScreen({super.key});
