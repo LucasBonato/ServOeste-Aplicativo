@@ -12,7 +12,7 @@ import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/src/util/formatters.dart';
+import 'package:serv_oeste/src/shared/formatters.dart';
 import 'package:serv_oeste/src/shared/input_masks.dart';
 
 class UpdateCliente extends StatefulWidget {

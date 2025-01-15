@@ -20,9 +20,7 @@ class ClienteScreen extends StatefulWidget {
 class _ClienteScreenState extends State<ClienteScreen> {
   late final ListaBloc _listaBloc;
   late final ClienteBloc _clienteBloc;
-  late final TextEditingController _nomeController,
-      _telefoneController,
-      _enderecoController;
+  late final TextEditingController _nomeController, _telefoneController, _enderecoController;
   bool isSelected = false;
   Timer? _debounce;
 
@@ -71,11 +69,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
     final isMediumScreen = screenWidth >= 500 && screenWidth < 1000;
     final maxContainerWidth = 1200.0;
 
-    Widget buildSearchField(
-            {required String hint,
-            TextEditingController? controller,
-            TextInputType? keyboardType}) =>
-        CustomSearchTextField(
+    Widget buildSearchField({required String hint, TextEditingController? controller, TextInputType? keyboardType}) => CustomSearchTextField(
           hint: hint,
           leftPadding: 4,
           rightPadding: 4,
@@ -183,8 +177,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
       resizeToAvoidBottomInset: true,
       floatingActionButton: BlocBuilder<ListaBloc, ListaState>(
         builder: (context, state) {
-          final bool hasSelection =
-              state is ListaSelectState && state.selectedIds.isNotEmpty;
+          final bool hasSelection = state is ListaSelectState && state.selectedIds.isNotEmpty;
 
           return !hasSelection
               ? BuildWidgets.buildFabAdd(
@@ -230,12 +223,8 @@ class _ClienteScreenState extends State<ClienteScreen> {
                       child: CircularProgressIndicator.adaptive(),
                     );
                   }
-                  if (stateCliente is ClienteSearchSuccessState ||
-                      stateCliente is ClienteErrorState) {
-                    final List<Cliente>? clientes =
-                        stateCliente is ClienteSearchSuccessState
-                            ? stateCliente.clientes
-                            : (stateCliente as ClienteErrorState).clientes;
+                  if (stateCliente is ClienteSearchSuccessState || stateCliente is ClienteErrorState) {
+                    final List<Cliente>? clientes = stateCliente is ClienteSearchSuccessState ? stateCliente.clientes : (stateCliente as ClienteErrorState).clientes;
 
                     if (stateCliente is ClienteErrorState) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -254,22 +243,18 @@ class _ClienteScreenState extends State<ClienteScreen> {
                         child: GridListView(
                           aspectRatio: 1.65,
                           dataList: clientes,
-                          buildCard: (cliente) =>
-                              BlocBuilder<ListaBloc, ListaState>(
+                          buildCard: (cliente) => BlocBuilder<ListaBloc, ListaState>(
                             bloc: _listaBloc,
                             builder: (context, stateLista) {
                               bool isSelected = false;
 
                               if (stateLista is ListaSelectState) {
-                                isSelected = stateLista.selectedIds
-                                    .contains((cliente as Cliente).id);
+                                isSelected = stateLista.selectedIds.contains((cliente as Cliente).id);
                               }
 
                               return CardClient(
-                                onDoubleTap: () =>
-                                    _onNavigateToUpdateScreen(cliente.id!),
-                                onLongPress: () =>
-                                    _onLongPressSelectItemList(cliente.id!),
+                                onDoubleTap: () => _onNavigateToUpdateScreen(cliente.id!),
+                                onLongPress: () => _onLongPressSelectItemList(cliente.id!),
                                 name: (cliente as Cliente).nome!,
                                 phoneNumber: cliente.telefoneFixo!,
                                 cellphone: cliente.telefoneCelular!,

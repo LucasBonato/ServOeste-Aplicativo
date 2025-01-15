@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
-import 'package:serv_oeste/src/util/formatters.dart';
+import 'package:serv_oeste/src/shared/formatters.dart';
 
 List<Cliente> clienteFromJson(String str) =>
     List<Cliente>.from(json.decode(str));
