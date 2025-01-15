@@ -25,6 +25,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
   late TextEditingController _idController, _nomeController;
   late SingleSelectController<String> _situacaoController;
   late ValueNotifier<String> _situacaoNotifier;
+  bool isTheFirstSelection = true;
   Timer? _debounce;
 
   @override
@@ -34,10 +35,8 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     _listaBloc = context.read<ListaBloc>();
     _idController = TextEditingController();
     _nomeController = TextEditingController();
-    _situacaoController =
-        SingleSelectController<String>(Constants.situationTecnicoList.first);
-    _situacaoNotifier =
-        ValueNotifier<String>(Constants.situationTecnicoList.first);
+    _situacaoController = SingleSelectController<String>(Constants.situationTecnicoList.first);
+    _situacaoNotifier = ValueNotifier<String>(Constants.situationTecnicoList.first);
     _listaBloc.add(ListaInitialEvent());
   }
 
@@ -50,7 +49,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     _listaBloc.add(ListaClearSelectionEvent());
   }
 
-  void _onLongPressSelectItemLista(int id) {
+  void _onSelectItemList(int id) {
     _listaBloc.add(ListaToggleItemSelectEvent(id: id));
   }
 
@@ -58,19 +57,34 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
     _debounce = Timer(
-        Duration(milliseconds: 150),
-        () => _tecnicoBloc.add(
-              TecnicoSearchEvent(
-                nome: _nomeController.text,
-                id: int.tryParse(_idController.text),
-                situacao: _situacaoNotifier.value,
-              ),
-            ));
+      Duration(milliseconds: 150),
+      () => _tecnicoBloc.add(
+        TecnicoSearchEvent(
+          nome: _nomeController.text,
+          id: int.tryParse(_idController.text),
+          situacao: _situacaoNotifier.value,
+        ),
+      ),
+    );
   }
 
   void _disableTecnicos(BuildContext context, List<int> selectedIds) {
     _tecnicoBloc.add(TecnicoDisableListEvent(selectedList: selectedIds));
     _listaBloc.add(ListaClearSelectionEvent());
+  }
+
+  bool _isTecnicoSelected(int id, ListaState stateLista) {
+    if (stateLista is ListaSelectState) {
+      return stateLista.selectedIds.contains(id);
+    }
+    return false;
+  }
+
+  bool _isSelectionMode(ListaState stateLista) {
+    if (stateLista is ListaSelectState) {
+      return stateLista.selectedIds.isNotEmpty;
+    }
+    return false;
   }
 
   Widget _buildSearchInputs() {
@@ -79,11 +93,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     final isMediumScreen = screenWidth >= 500 && screenWidth < 1000;
     final maxContainerWidth = 1200.0;
 
-    Widget buildSearchField(
-            {required String hint,
-            TextEditingController? controller,
-            TextInputType? keyboardType}) =>
-        CustomSearchTextFormField(
+    Widget buildSearchField({required String hint, TextEditingController? controller, TextInputType? keyboardType}) => CustomSearchTextFormField(
           hint: hint,
           leftPadding: 4,
           rightPadding: 4,
@@ -92,11 +102,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
           onChangedAction: (value) => _onSearchFieldChanged(),
         );
 
-    Widget buildDropdownField(
-            {required String label,
-            required SingleSelectController<String> controller,
-            required ValueNotifier<String> valueNotifier,
-            required List<String> dropdownValues}) =>
+    Widget buildDropdownField({required String label, required SingleSelectController<String> controller, required ValueNotifier<String> valueNotifier, required List<String> dropdownValues}) =>
         CustomDropdownFormField(
           label: label,
           dropdownValues: dropdownValues,
@@ -217,8 +223,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
       resizeToAvoidBottomInset: true,
       floatingActionButton: BlocBuilder<ListaBloc, ListaState>(
         builder: (context, state) {
-          final bool hasSelection =
-              state is ListaSelectState && state.selectedIds.isNotEmpty;
+          final bool hasSelection = state is ListaSelectState && state.selectedIds.isNotEmpty;
 
           return !hasSelection
               ? BuildWidgets.buildFabAdd(
@@ -245,30 +250,27 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
           Expanded(
             child: BlocBuilder<TecnicoBloc, TecnicoState>(
               builder: (context, stateTecnico) {
-                if (stateTecnico is TecnicoInitialState ||
-                    stateTecnico is TecnicoLoadingState) {
-                  return const Center(
-                      child: CircularProgressIndicator.adaptive());
-                } else if (stateTecnico is TecnicoSearchSuccessState) {
+                if (stateTecnico is TecnicoInitialState || stateTecnico is TecnicoLoadingState) {
+                  return const Center(child: CircularProgressIndicator.adaptive());
+                }
+                else if (stateTecnico is TecnicoSearchSuccessState) {
                   return SingleChildScrollView(
                     child: GridListView(
                       aspectRatio: 2.5,
                       dataList: stateTecnico.tecnicos,
-                      buildCard: (tecnico) =>
-                          BlocBuilder<ListaBloc, ListaState>(
+                      buildCard: (tecnico) => BlocBuilder<ListaBloc, ListaState>(
                         builder: (context, stateLista) {
-                          bool isSelected = false;
-
-                          if (stateLista is ListaSelectState) {
-                            isSelected =
-                                stateLista.selectedIds.contains(tecnico.id);
-                          }
+                          final bool isSelected = _isTecnicoSelected(tecnico.id, stateLista);
+                          final bool isSelectionMode = _isSelectionMode(stateLista);
 
                           return CardTechnician(
-                            onDoubleTap: () =>
-                                _onNavigateToUpdateScreen(tecnico.id!),
-                            onLongPress: () =>
-                                _onLongPressSelectItemLista(tecnico.id!),
+                            onDoubleTap: () => _onNavigateToUpdateScreen(tecnico.id!),
+                            onLongPress: () => _onSelectItemList(tecnico.id),
+                            onTap: () {
+                              if (isSelectionMode) {
+                                _onSelectItemList(tecnico.id);
+                              }
+                            },
                             id: tecnico.id!,
                             nome: tecnico.nome!,
                             sobrenome: tecnico.sobrenome!,

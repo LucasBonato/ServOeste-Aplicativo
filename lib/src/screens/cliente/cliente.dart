@@ -59,8 +59,22 @@ class _ClienteScreenState extends State<ClienteScreen> {
     _listaBloc.add(ListaClearSelectionEvent());
   }
 
-  void _onLongPressSelectItemList(int id) {
+  void _onSelectItemList(int id) {
     _listaBloc.add(ListaToggleItemSelectEvent(id: id));
+  }
+
+  bool _isClienteSelected(int id, ListaState stateLista) {
+    if (stateLista is ListaSelectState) {
+      return stateLista.selectedIds.contains(id);
+    }
+    return false;
+  }
+
+  bool _isSelectionMode(ListaState stateLista) {
+    if (stateLista is ListaSelectState) {
+      return stateLista.selectedIds.isNotEmpty;
+    }
+    return false;
   }
 
   Widget _buildSearchInputs() {
@@ -246,15 +260,17 @@ class _ClienteScreenState extends State<ClienteScreen> {
                           buildCard: (cliente) => BlocBuilder<ListaBloc, ListaState>(
                             bloc: _listaBloc,
                             builder: (context, stateLista) {
-                              bool isSelected = false;
-
-                              if (stateLista is ListaSelectState) {
-                                isSelected = stateLista.selectedIds.contains((cliente as Cliente).id);
-                              }
+                              final bool isSelected = _isClienteSelected(cliente.id, stateLista);
+                              final bool isSelectionMode = _isSelectionMode(stateLista);
 
                               return CardClient(
                                 onDoubleTap: () => _onNavigateToUpdateScreen(cliente.id!),
-                                onLongPress: () => _onLongPressSelectItemList(cliente.id!),
+                                onLongPress: () => _onSelectItemList(cliente.id!),
+                                onTap: () {
+                                  if (isSelectionMode) {
+                                    _onSelectItemList(cliente.id!);
+                                  }
+                                },
                                 name: (cliente as Cliente).nome!,
                                 phoneNumber: cliente.telefoneFixo!,
                                 cellphone: cliente.telefoneCelular!,
