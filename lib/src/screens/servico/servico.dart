@@ -218,40 +218,60 @@ class ServicoScreenState extends State<ServicoScreen> {
                   );
                 }
                 else if (stateServico is ServicoSearchSuccessState) {
-                  return SingleChildScrollView(
-                    child: GridListView(
-                      aspectRatio: .9,
-                      dataList: stateServico.servicos,
-                      buildCard: (servico) => BlocBuilder<ListaBloc, ListaState>(
-                        bloc: _listaBloc,
-                        builder: (context, stateLista) {
-                          final bool isSelected = _isServicoSelected(servico.id, stateLista);
-                          final bool isSelectionMode = _isSelectionMode(stateLista);
+                  if (stateServico.servicos.isNotEmpty) {
+                    return SingleChildScrollView(
+                      child: GridListView(
+                        aspectRatio: .9,
+                        dataList: stateServico.servicos,
+                        buildCard: (servico) => BlocBuilder<ListaBloc, ListaState>(
+                          bloc: _listaBloc,
+                          builder: (context, stateLista) {
+                            final bool isSelected = _isServicoSelected(servico.id, stateLista);
+                            final bool isSelectionMode = _isSelectionMode(stateLista);
 
-                          return CardService(
-                            onDoubleTap: () => _onNavigateToUpdateScreen(servico.id),
-                            onLongPress: () => _onSelectItemList(servico.id),
-                            onTap: () {
-                              if (isSelectionMode) {
-                                _onSelectItemList(servico.id);
-                              }
-                            },
-                            cliente: (servico as Servico).nomeCliente,
-                            tecnico: servico.nomeTecnico,
-                            codigo: servico.id,
-                            equipamento: servico.equipamento,
-                            marca: servico.marca,
-                            filial: servico.filial,
-                            horario: servico.horarioPrevisto,
-                            dataPrevista: servico.dataAtendimentoPrevisto,
-                            dataAbertura: servico.dataAtendimentoAbertura,
-                            dataEfetiva: servico.dataAtendimentoEfetivo,
-                            garantia: servico.garantia,
-                            status: servico.situacao,
-                            isSelected: isSelected,
-                          );
-                        },
+                            return CardService(
+                              onDoubleTap: () => _onNavigateToUpdateScreen(servico.id),
+                              onLongPress: () => _onSelectItemList(servico.id),
+                              onTap: () {
+                                if (isSelectionMode) {
+                                  _onSelectItemList(servico.id);
+                                }
+                              },
+                              cliente: (servico as Servico).nomeCliente,
+                              tecnico: servico.nomeTecnico,
+                              codigo: servico.id,
+                              equipamento: servico.equipamento,
+                              marca: servico.marca,
+                              filial: servico.filial,
+                              horario: servico.horarioPrevisto,
+                              dataPrevista: servico.dataAtendimentoPrevisto,
+                              dataAbertura: servico.dataAtendimentoAbertura,
+                              dataEfetiva: servico.dataAtendimentoEfetivo,
+                              garantia: servico.garantia,
+                              status: servico.situacao,
+                              isSelected: isSelected,
+                            );
+                          },
+                        ),
                       ),
+                    );
+                  }
+                  return const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.search_off,
+                          color: Colors.grey,
+                          size: 40.0,
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          "Nenhum serviço encontrado.",
+                          style:
+                          TextStyle(fontSize: 18.0, color: Colors.grey),
+                        ),
+                      ],
                     ),
                   );
                 }

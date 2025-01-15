@@ -102,7 +102,8 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
           onChangedAction: (value) => _onSearchFieldChanged(),
         );
 
-    Widget buildDropdownField({required String label, required SingleSelectController<String> controller, required ValueNotifier<String> valueNotifier, required List<String> dropdownValues}) =>
+    Widget buildDropdownField(
+            {required String label, required SingleSelectController<String> controller, required ValueNotifier<String> valueNotifier, required List<String> dropdownValues}) =>
         CustomDropdownFormField(
           label: label,
           dropdownValues: dropdownValues,
@@ -252,35 +253,53 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
               builder: (context, stateTecnico) {
                 if (stateTecnico is TecnicoInitialState || stateTecnico is TecnicoLoadingState) {
                   return const Center(child: CircularProgressIndicator.adaptive());
-                }
-                else if (stateTecnico is TecnicoSearchSuccessState) {
-                  return SingleChildScrollView(
-                    child: GridListView(
-                      aspectRatio: 2.5,
-                      dataList: stateTecnico.tecnicos,
-                      buildCard: (tecnico) => BlocBuilder<ListaBloc, ListaState>(
-                        builder: (context, stateLista) {
-                          final bool isSelected = _isTecnicoSelected(tecnico.id, stateLista);
-                          final bool isSelectionMode = _isSelectionMode(stateLista);
+                } else if (stateTecnico is TecnicoSearchSuccessState) {
+                  if (stateTecnico.tecnicos.isNotEmpty) {
+                    return SingleChildScrollView(
+                      child: GridListView(
+                        aspectRatio: 2.5,
+                        dataList: stateTecnico.tecnicos,
+                        buildCard: (tecnico) => BlocBuilder<ListaBloc, ListaState>(
+                          builder: (context, stateLista) {
+                            final bool isSelected = _isTecnicoSelected(tecnico.id, stateLista);
+                            final bool isSelectionMode = _isSelectionMode(stateLista);
 
-                          return CardTechnician(
-                            onDoubleTap: () => _onNavigateToUpdateScreen(tecnico.id!),
-                            onLongPress: () => _onSelectItemList(tecnico.id),
-                            onTap: () {
-                              if (isSelectionMode) {
-                                _onSelectItemList(tecnico.id);
-                              }
-                            },
-                            id: tecnico.id!,
-                            nome: tecnico.nome!,
-                            sobrenome: tecnico.sobrenome!,
-                            telefone: tecnico.telefoneFixo!,
-                            celular: tecnico.telefoneCelular!,
-                            status: tecnico.situacao!,
-                            isSelected: isSelected,
-                          );
-                        },
+                            return CardTechnician(
+                              onDoubleTap: () => _onNavigateToUpdateScreen(tecnico.id!),
+                              onLongPress: () => _onSelectItemList(tecnico.id),
+                              onTap: () {
+                                if (isSelectionMode) {
+                                  _onSelectItemList(tecnico.id);
+                                }
+                              },
+                              id: tecnico.id!,
+                              nome: tecnico.nome!,
+                              sobrenome: tecnico.sobrenome!,
+                              telefone: tecnico.telefoneFixo!,
+                              celular: tecnico.telefoneCelular!,
+                              status: tecnico.situacao!,
+                              isSelected: isSelected,
+                            );
+                          },
+                        ),
                       ),
+                    );
+                  }
+                  return const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.search_off,
+                          color: Colors.grey,
+                          size: 40.0,
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          "Nenhum técnico encontrado.",
+                          style: TextStyle(fontSize: 18.0, color: Colors.grey),
+                        ),
+                      ],
                     ),
                   );
                 }

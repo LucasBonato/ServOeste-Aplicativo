@@ -283,9 +283,23 @@ class _ClienteScreenState extends State<ClienteScreen> {
                         ),
                       );
                     } else {
-                      // Mostra mensagem quando não há clientes
                       return const Center(
-                        child: Text("Nenhum cliente encontrado."),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.search_off,
+                              color: Colors.grey,
+                              size: 40.0,
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              "Nenhum cliente encontrado.",
+                              style:
+                              TextStyle(fontSize: 18.0, color: Colors.grey),
+                            ),
+                          ],
+                        ),
                       );
                     }
                   }
