@@ -178,7 +178,7 @@ class TecnicoValidator extends LucidValidator<TecnicoForm> with BackendErrorsVal
         .customValidExternalErrors(externalErrors, ErrorCodeKey.telefoneCelular.name);
 
     ruleFor((tecnico) => tecnico.telefoneFixo.value, key: ErrorCodeKey.telefoneFixo.name)
-        .must((fixo) => ((fixo.isNotEmpty && fixo.length < 15) ? false : true), "Tamanho inválido do telefone fixo!", ErrorCodeKey.telefoneFixo.name)
+        .must((fixo) => ((fixo.isNotEmpty && fixo.length < 14) ? false : true), "Tamanho inválido do telefone fixo!", ErrorCodeKey.telefoneFixo.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.telefoneFixo.name);
 
     ruleFor((cliente) => cliente, key: ErrorCodeKey.telefones.name)
