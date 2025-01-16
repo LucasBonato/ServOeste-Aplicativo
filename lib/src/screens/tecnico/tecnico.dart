@@ -71,6 +71,10 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
   void _disableTecnicos(BuildContext context, List<int> selectedIds) {
     _tecnicoBloc.add(TecnicoDisableListEvent(selectedList: selectedIds));
     _listaBloc.add(ListaClearSelectionEvent());
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Técnico desativado com sucesso!')),
+    );
   }
 
   Widget _buildSearchInputs() {

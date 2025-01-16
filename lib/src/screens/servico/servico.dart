@@ -64,6 +64,12 @@ class ServicoScreenState extends State<ServicoScreen> {
   void _disableServicos(BuildContext context, List<int> selectedIds) {
     _servicoBloc.add(ServicoDisableListEvent(selectedList: selectedIds));
     _listaBloc.add(ListaClearSelectionEvent());
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+          content: Text(
+              'Serviço deletado com sucesso! (Caso ele continue, recarregue a página)')),
+    );
   }
 
   Widget _buildSearchInputs() {

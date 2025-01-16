@@ -4,6 +4,7 @@ import 'package:serv_oeste/src/components/formFields/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/search_dropdown_field.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
+import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
@@ -25,6 +26,7 @@ class UpdateServico extends StatefulWidget {
 class _UpdateServicoState extends State<UpdateServico> {
   late final ServicoBloc _servicoBloc;
   final ServicoForm _servicoUpdateForm = ServicoForm();
+  final ClienteForm _clienteUpdateForm = ClienteForm();
   final ServicoValidator _servicoUpdateValidator = ServicoValidator();
   final GlobalKey<FormState> _servicoFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _clienteFormKey = GlobalKey<FormState>();
@@ -121,6 +123,166 @@ class _UpdateServicoState extends State<UpdateServico> {
               _servicoUpdateForm,
               'nomeCliente',
             ),
+            enabled: false,
+          ),
+          const SizedBox(height: 16),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth < 400) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomTextFormField(
+                      label: "Município",
+                      hint: "Município...",
+                      type: TextInputType.text,
+                      maxLength: 255,
+                      hide: true,
+                      valueNotifier: _clienteUpdateForm.municipio,
+                      validator: _servicoUpdateValidator.byField(
+                          _servicoUpdateForm, ErrorCodeKey.municipio.name),
+                      rightPadding: 4,
+                      leftPadding: 4,
+                      enabled: false,
+                    ),
+                    CustomTextFormField(
+                      hint: "Bairro...",
+                      label: "Bairro*",
+                      type: TextInputType.text,
+                      maxLength: 255,
+                      hide: true,
+                      valueNotifier: _clienteUpdateForm.bairro,
+                      validator: _servicoUpdateValidator.byField(
+                          _servicoUpdateForm, ErrorCodeKey.bairro.name),
+                      rightPadding: 4,
+                      leftPadding: 4,
+                      enabled: false,
+                    ),
+                  ],
+                );
+              } else {
+                return Row(
+                  children: [
+                    Expanded(
+                      child: CustomTextFormField(
+                        label: "Município",
+                        hint: "Município...",
+                        type: TextInputType.text,
+                        maxLength: 255,
+                        hide: true,
+                        valueNotifier: _clienteUpdateForm.municipio,
+                        validator: _servicoUpdateValidator.byField(
+                            _servicoUpdateForm, ErrorCodeKey.municipio.name),
+                        rightPadding: 4,
+                        leftPadding: 4,
+                        enabled: false,
+                      ),
+                    ),
+                    Expanded(
+                      child: CustomTextFormField(
+                        hint: "Bairro...",
+                        label: "Bairro*",
+                        type: TextInputType.text,
+                        maxLength: 255,
+                        hide: true,
+                        valueNotifier: _clienteUpdateForm.bairro,
+                        validator: _servicoUpdateValidator.byField(
+                            _servicoUpdateForm, ErrorCodeKey.bairro.name),
+                        rightPadding: 4,
+                        leftPadding: 4,
+                        enabled: false,
+                      ),
+                    ),
+                  ],
+                );
+              }
+            },
+          ),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth < 400) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomTextFormField(
+                      hint: "Rua...",
+                      label: "Rua",
+                      type: TextInputType.text,
+                      maxLength: 255,
+                      hide: true,
+                      valueNotifier: _clienteUpdateForm.rua,
+                      validator: _servicoUpdateValidator.byField(
+                          _servicoUpdateForm, ErrorCodeKey.rua.name),
+                      rightPadding: 4,
+                      leftPadding: 4,
+                      enabled: false,
+                    ),
+                    CustomTextFormField(
+                      hint: "Número...",
+                      label: "Número*",
+                      type: TextInputType.number,
+                      maxLength: 10,
+                      hide: true,
+                      valueNotifier: _clienteUpdateForm.numero,
+                      validator: _servicoUpdateValidator.byField(
+                          _servicoUpdateForm, ErrorCodeKey.numero.name),
+                      rightPadding: 4,
+                      leftPadding: 4,
+                      enabled: false,
+                    ),
+                  ],
+                );
+              } else {
+                return Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: CustomTextFormField(
+                        hint: "Rua...",
+                        label: "Rua*",
+                        type: TextInputType.text,
+                        maxLength: 255,
+                        hide: true,
+                        valueNotifier: _clienteUpdateForm.rua,
+                        validator: _servicoUpdateValidator.byField(
+                            _servicoUpdateForm, ErrorCodeKey.rua.name),
+                        rightPadding: 4,
+                        leftPadding: 4,
+                        enabled: false,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: CustomTextFormField(
+                        hint: "Número...",
+                        label: "Número*",
+                        type: TextInputType.number,
+                        maxLength: 10,
+                        hide: true,
+                        valueNotifier: _clienteUpdateForm.numero,
+                        validator: _servicoUpdateValidator.byField(
+                            _servicoUpdateForm, ErrorCodeKey.numero.name),
+                        rightPadding: 4,
+                        leftPadding: 4,
+                        enabled: false,
+                      ),
+                    ),
+                  ],
+                );
+              }
+            },
+          ),
+          CustomTextFormField(
+            hint: "Complemento...",
+            label: "Complemento",
+            type: TextInputType.text,
+            maxLength: 255,
+            hide: false,
+            rightPadding: 4,
+            leftPadding: 4,
+            valueNotifier: _clienteUpdateForm.complemento,
+            validator: _servicoUpdateValidator.byField(
+                _servicoUpdateForm, ErrorCodeKey.complemento.name),
             enabled: false,
           ),
         ],
@@ -457,6 +619,249 @@ class _UpdateServicoState extends State<UpdateServico> {
               }
             },
           ),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth < 400) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomTextFormField(
+                      label: 'Valor Serviço',
+                      hint: 'Valor Serviço...',
+                      leftPadding: 4,
+                      rightPadding: 4,
+                      maxLength: 8,
+                      hide: true,
+                      type: TextInputType.number,
+                      valueNotifier: _servicoUpdateForm.equipamento,
+                      onChanged: _servicoUpdateForm.setEquipamento,
+                      validator: _servicoUpdateValidator.byField(
+                        _servicoUpdateForm,
+                        'equipamento',
+                      ),
+                    ),
+                    CustomTextFormField(
+                      label: 'Valor Peças',
+                      hint: 'Valor Peças...',
+                      leftPadding: 4,
+                      rightPadding: 4,
+                      maxLength: 8,
+                      hide: true,
+                      type: TextInputType.number,
+                      valueNotifier: _servicoUpdateForm.equipamento,
+                      onChanged: _servicoUpdateForm.setEquipamento,
+                      validator: _servicoUpdateValidator.byField(
+                        _servicoUpdateForm,
+                        'equipamento',
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: CustomTextFormField(
+                        label: 'Valor Serviço',
+                        hint: 'Valor Serviço...',
+                        leftPadding: 4,
+                        rightPadding: 4,
+                        maxLength: 8,
+                        hide: true,
+                        type: TextInputType.number,
+                        valueNotifier: _servicoUpdateForm.equipamento,
+                        onChanged: _servicoUpdateForm.setEquipamento,
+                        validator: _servicoUpdateValidator.byField(
+                          _servicoUpdateForm,
+                          'equipamento',
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: CustomTextFormField(
+                        label: 'Valor Peças',
+                        hint: 'Valor Peças...',
+                        leftPadding: 4,
+                        rightPadding: 4,
+                        maxLength: 8,
+                        hide: true,
+                        type: TextInputType.number,
+                        valueNotifier: _servicoUpdateForm.equipamento,
+                        onChanged: _servicoUpdateForm.setEquipamento,
+                        validator: _servicoUpdateValidator.byField(
+                          _servicoUpdateForm,
+                          'equipamento',
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }
+            },
+          ),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth < 400) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomDropdownField(
+                      label: 'Forma de Pagamento',
+                      dropdownValues: Constants.formasPagamento,
+                      leftPadding: 4,
+                      rightPadding: 4,
+                      valueNotifier: _servicoUpdateForm.equipamento,
+                      onChanged: _servicoUpdateForm.setEquipamento,
+                      validator: _servicoUpdateValidator.byField(
+                        _servicoUpdateForm,
+                        'equipamento',
+                      ),
+                    ),
+                    CustomDatePicker(
+                      hint: 'dd/mm/yyyy',
+                      label: 'Data Encerramento',
+                      mask: [],
+                      maxLength: 10,
+                      hide: true,
+                      leftPadding: 4,
+                      rightPadding: 4,
+                      type: TextInputType.datetime,
+                      valueNotifier: _servicoUpdateForm.dataAtendimentoEfetivo,
+                      onChanged: _servicoUpdateForm.setDataAtendimentoEfetivo,
+                      validator: _servicoUpdateValidator.byField(
+                        _servicoUpdateForm,
+                        'dataAtendimentoEfetivo',
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: CustomDropdownField(
+                        label: 'Forma de Pagamento',
+                        dropdownValues: Constants.formasPagamento,
+                        leftPadding: 4,
+                        rightPadding: 4,
+                        valueNotifier: _servicoUpdateForm.equipamento,
+                        onChanged: _servicoUpdateForm.setEquipamento,
+                        validator: _servicoUpdateValidator.byField(
+                          _servicoUpdateForm,
+                          'equipamento',
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: CustomDatePicker(
+                        hint: 'dd/mm/yyyy',
+                        label: 'Data Encerramento',
+                        mask: [],
+                        maxLength: 10,
+                        hide: true,
+                        leftPadding: 4,
+                        rightPadding: 4,
+                        type: TextInputType.datetime,
+                        valueNotifier:
+                            _servicoUpdateForm.dataAtendimentoEfetivo,
+                        onChanged: _servicoUpdateForm.setDataAtendimentoEfetivo,
+                        validator: _servicoUpdateValidator.byField(
+                          _servicoUpdateForm,
+                          'dataAtendimentoEfetivo',
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }
+            },
+          ),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth < 400) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomTextFormField(
+                      label: 'Valor Comissão',
+                      hint: 'Valor Comissão...',
+                      leftPadding: 4,
+                      rightPadding: 4,
+                      maxLength: 8,
+                      hide: true,
+                      type: TextInputType.number,
+                      valueNotifier: _servicoUpdateForm.equipamento,
+                      onChanged: _servicoUpdateForm.setEquipamento,
+                      validator: _servicoUpdateValidator.byField(
+                        _servicoUpdateForm,
+                        'equipamento',
+                      ),
+                    ),
+                    CustomDatePicker(
+                      hint: 'dd/mm/yyyy',
+                      label: 'Data Pgto. comissão',
+                      mask: [],
+                      maxLength: 10,
+                      hide: true,
+                      leftPadding: 4,
+                      rightPadding: 4,
+                      type: TextInputType.datetime,
+                      valueNotifier: _servicoUpdateForm.dataAtendimentoEfetivo,
+                      onChanged: _servicoUpdateForm.setDataAtendimentoEfetivo,
+                      validator: _servicoUpdateValidator.byField(
+                        _servicoUpdateForm,
+                        'dataAtendimentoEfetivo',
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: CustomTextFormField(
+                        label: 'Valor Comissão',
+                        hint: 'Valor Comissão...',
+                        leftPadding: 4,
+                        rightPadding: 4,
+                        maxLength: 8,
+                        hide: true,
+                        type: TextInputType.number,
+                        valueNotifier: _servicoUpdateForm.equipamento,
+                        onChanged: _servicoUpdateForm.setEquipamento,
+                        validator: _servicoUpdateValidator.byField(
+                          _servicoUpdateForm,
+                          'equipamento',
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: CustomDatePicker(
+                        hint: 'dd/mm/yyyy',
+                        label: 'Data Pgto. comissão',
+                        mask: [],
+                        maxLength: 10,
+                        hide: true,
+                        leftPadding: 4,
+                        rightPadding: 4,
+                        type: TextInputType.datetime,
+                        valueNotifier:
+                            _servicoUpdateForm.dataAtendimentoEfetivo,
+                        onChanged: _servicoUpdateForm.setDataAtendimentoEfetivo,
+                        validator: _servicoUpdateValidator.byField(
+                          _servicoUpdateForm,
+                          'dataAtendimentoEfetivo',
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }
+            },
+          ),
           CustomTextFormField(
             hint: "Descrição...",
             label: "Descrição*",
@@ -634,27 +1039,56 @@ class _UpdateServicoState extends State<UpdateServico> {
                                           );
                                         }
                                       },
-                                      child: ElevatedButton(
-                                        onPressed: _updateServico,
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              const Color(0xFF007BFF),
-                                          minimumSize:
-                                              const Size(double.infinity, 48),
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 18),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
+                                      child: Column(
+                                        children: [
+                                          ElevatedButton(
+                                            onPressed: _updateServico,
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  const Color(0xFF8BB0DD),
+                                              minimumSize: const Size(
+                                                  double.infinity, 48),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 18),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                            ),
+                                            child: const Text(
+                                              "Ver Histórico de Atendimento",
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.white,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                        child: const Text(
-                                          "Atualizar Serviço",
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.white,
+                                          const SizedBox(height: 16),
+                                          ElevatedButton(
+                                            onPressed: _updateServico,
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  const Color(0xFF007BFF),
+                                              minimumSize: const Size(
+                                                  double.infinity, 48),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 18),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                            ),
+                                            child: const Text(
+                                              "Atualizar Serviço",
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.white,
+                                              ),
+                                            ),
                                           ),
-                                        ),
+                                        ],
                                       ),
                                     ),
                                   ],
