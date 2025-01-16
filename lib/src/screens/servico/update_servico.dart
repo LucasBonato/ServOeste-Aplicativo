@@ -706,7 +706,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomDropdownField(
+                    CustomDropdownFormField(
                       label: 'Forma de Pagamento',
                       dropdownValues: Constants.formasPagamento,
                       leftPadding: 4,
@@ -718,7 +718,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                         'equipamento',
                       ),
                     ),
-                    CustomDatePicker(
+                    CustomDatePickerFormField(
                       hint: 'dd/mm/yyyy',
                       label: 'Data Encerramento',
                       mask: [],
@@ -741,7 +741,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: CustomDropdownField(
+                      child: CustomDropdownFormField(
                         label: 'Forma de Pagamento',
                         dropdownValues: Constants.formasPagamento,
                         leftPadding: 4,
@@ -755,7 +755,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       ),
                     ),
                     Expanded(
-                      child: CustomDatePicker(
+                      child: CustomDatePickerFormField(
                         hint: 'dd/mm/yyyy',
                         label: 'Data Encerramento',
                         mask: [],
@@ -799,7 +799,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                         'equipamento',
                       ),
                     ),
-                    CustomDatePicker(
+                    CustomDatePickerFormField(
                       hint: 'dd/mm/yyyy',
                       label: 'Data Pgto. comissão',
                       mask: [],
@@ -839,7 +839,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       ),
                     ),
                     Expanded(
-                      child: CustomDatePicker(
+                      child: CustomDatePickerFormField(
                         hint: 'dd/mm/yyyy',
                         label: 'Data Pgto. comissão',
                         mask: [],
