@@ -21,8 +21,7 @@ class DialogUtils {
             actions: [
               TextButton(
                 style: const ButtonStyle(
-                    shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5)))),
+                    shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5)))),
                     backgroundColor: WidgetStatePropertyAll(Colors.blue),
                     foregroundColor: WidgetStatePropertyAll(Colors.white)),
                 onPressed: () {
@@ -33,10 +32,10 @@ class DialogUtils {
               ),
               TextButton(
                 style: const ButtonStyle(
-                    shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5)))),
-                    backgroundColor: WidgetStatePropertyAll(Colors.red),
-                    foregroundColor: WidgetStatePropertyAll(Colors.white)),
+                  shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5)))),
+                  backgroundColor: WidgetStatePropertyAll(Colors.red),
+                  foregroundColor: WidgetStatePropertyAll(Colors.white),
+                ),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },

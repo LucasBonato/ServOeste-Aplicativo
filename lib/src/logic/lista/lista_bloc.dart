@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
 part 'lista_event.dart';
+
 part 'lista_state.dart';
 
 class ListaBloc extends Bloc<ListaEvent, ListaState> {
@@ -15,26 +16,20 @@ class ListaBloc extends Bloc<ListaEvent, ListaState> {
     emit(ListaSelectState(selectedIds: []));
   }
 
-  void _onToggleItemsSelect(
-      ListaToggleItemSelectEvent event, Emitter<ListaState> emit) {
+  void _onToggleItemsSelect(ListaToggleItemSelectEvent event, Emitter<ListaState> emit) {
     if (state is ListaSelectState) {
       final currentState = state as ListaSelectState;
-      List<int> updatedSelectedIds = List.from(currentState.selectedIds);
+      final updatedSelectedIds = List<int>.from(currentState.selectedIds);
 
-      if (updatedSelectedIds.contains(event.id)) {
-        updatedSelectedIds.remove(event.id);
-      } else {
-        updatedSelectedIds.add(event.id);
-      }
+      updatedSelectedIds.contains(event.id)
+          ? updatedSelectedIds.remove(event.id)
+          : updatedSelectedIds.add(event.id);
 
-      emit(ListaSelectState(
-        selectedIds: updatedSelectedIds,
-      ));
+      emit(ListaSelectState(selectedIds: updatedSelectedIds));
     }
   }
 
-  void _onClearSelection(
-      ListaClearSelectionEvent event, Emitter<ListaState> emit) {
+  void _onClearSelection(ListaClearSelectionEvent event, Emitter<ListaState> emit) {
     if (state is ListaSelectState) {
       final currentState = state as ListaSelectState;
       emit(currentState.copyWith(selectedIds: []));

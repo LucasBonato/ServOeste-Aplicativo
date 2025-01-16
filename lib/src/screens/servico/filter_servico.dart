@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:serv_oeste/src/logic/filtro_servico/filtro_servico_provider.dart';
-import 'package:serv_oeste/src/components/date_picker.dart';
-import 'package:serv_oeste/src/components/dropdown_field.dart';
-import 'package:serv_oeste/src/components/formFields/search_dropdown_field.dart';
-import 'package:serv_oeste/src/components/custom_search_field.dart';
+import 'package:serv_oeste/src/components/formFields/date_picker_form_field.dart';
+import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
+import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
+import 'package:serv_oeste/src/components/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
-import 'package:serv_oeste/src/util/formatters.dart';
+import 'package:serv_oeste/src/shared/formatters.dart';
 import 'package:serv_oeste/src/shared/input_masks.dart';
 
 class FilterService extends StatelessWidget {
@@ -78,7 +78,7 @@ class FilterService extends StatelessWidget {
                         ),
                       ),
                     ),
-                    CustomSearchDropDown(
+                    CustomSearchDropDownFormField(
                       label: 'Equipamento...',
                       dropdownValues: Constants.equipamentos,
                       leftPadding: 4,
@@ -88,7 +88,7 @@ class FilterService extends StatelessWidget {
                       },
                     ),
                     const SizedBox(height: 16),
-                    CustomDropdownField(
+                    CustomDropdownFormField(
                       label: 'Situação...',
                       dropdownValues: Constants.situationServiceList,
                       leftPadding: 4,
@@ -103,7 +103,7 @@ class FilterService extends StatelessWidget {
                       valueNotifier:
                           ValueNotifier(provider.filter.situacao ?? ''),
                     ),
-                    CustomDropdownField(
+                    CustomDropdownFormField(
                       label: 'Garantia...',
                       dropdownValues: Constants.garantias,
                       leftPadding: 4,
@@ -124,7 +124,7 @@ class FilterService extends StatelessWidget {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              CustomSearchTextField(
+                              CustomSearchTextFormField(
                                 hint: 'Código...',
                                 leftPadding: 4,
                                 rightPadding: 4,
@@ -142,7 +142,7 @@ class FilterService extends StatelessWidget {
                                 },
                               ),
                               const SizedBox(height: 16),
-                              CustomDropdownField(
+                              CustomDropdownFormField(
                                 label: 'Filial...',
                                 dropdownValues: Constants.filiais,
                                 leftPadding: 4,
@@ -164,7 +164,7 @@ class FilterService extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Expanded(
-                                child: CustomSearchTextField(
+                                child: CustomSearchTextFormField(
                                   hint: 'Código...',
                                   leftPadding: 4,
                                   rightPadding: 4,
@@ -183,7 +183,7 @@ class FilterService extends StatelessWidget {
                                 ),
                               ),
                               Expanded(
-                                child: CustomDropdownField(
+                                child: CustomDropdownFormField(
                                   label: 'Filial...',
                                   dropdownValues: Constants.filiais,
                                   leftPadding: 4,
@@ -210,7 +210,7 @@ class FilterService extends StatelessWidget {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              CustomDatePicker(
+                              CustomDatePickerFormField(
                                 label: 'Data Prevista...',
                                 hint: 'dd/mm/aaaa',
                                 mask: InputMasks.maskData,
@@ -238,7 +238,7 @@ class FilterService extends StatelessWidget {
                                   }
                                 },
                               ),
-                              CustomDatePicker(
+                              CustomDatePickerFormField(
                                 label: 'Data Efetiva...',
                                 hint: 'dd/mm/aaaa',
                                 mask: InputMasks.maskData,
@@ -271,7 +271,7 @@ class FilterService extends StatelessWidget {
                           return Row(
                             children: [
                               Expanded(
-                                child: CustomDatePicker(
+                                child: CustomDatePickerFormField(
                                   label: 'Data Prevista...',
                                   hint: 'dd/mm/aaaa',
                                   mask: InputMasks.maskData,
@@ -302,7 +302,7 @@ class FilterService extends StatelessWidget {
                                 ),
                               ),
                               Expanded(
-                                child: CustomDatePicker(
+                                child: CustomDatePickerFormField(
                                   label: 'Data Efetiva...',
                                   hint: 'dd/mm/aaaa',
                                   mask: InputMasks.maskData,
@@ -343,7 +343,7 @@ class FilterService extends StatelessWidget {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              CustomDatePicker(
+                              CustomDatePickerFormField(
                                 label: 'Data Abertura...',
                                 hint: 'dd/mm/aaaa',
                                 mask: InputMasks.maskData,
@@ -369,7 +369,7 @@ class FilterService extends StatelessWidget {
                                   }
                                 },
                               ),
-                              CustomDropdownField(
+                              CustomDropdownFormField(
                                 label: 'Horário...',
                                 dropdownValues: ['Manhã', 'Tarde'],
                                 rightPadding: 4,
@@ -390,7 +390,7 @@ class FilterService extends StatelessWidget {
                           return Row(
                             children: [
                               Expanded(
-                                child: CustomDatePicker(
+                                child: CustomDatePickerFormField(
                                   label: 'Data Abertura...',
                                   hint: 'dd/mm/aaaa',
                                   mask: InputMasks.maskData,
@@ -418,7 +418,7 @@ class FilterService extends StatelessWidget {
                                 ),
                               ),
                               Expanded(
-                                child: CustomDropdownField(
+                                child: CustomDropdownFormField(
                                   label: 'Horário...',
                                   dropdownValues: ['Manhã', 'Tarde'],
                                   rightPadding: 4,

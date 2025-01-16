@@ -12,6 +12,10 @@ final class ListaSelectState extends ListaState {
     this.selectedIds = const [],
   });
 
+  bool isItemSelected(int id) => selectedIds.contains(id);
+
+  bool get isSelectionMode => selectedIds.isNotEmpty;
+
   ListaSelectState copyWith({
     List<int>? selectedIds,
   }) {

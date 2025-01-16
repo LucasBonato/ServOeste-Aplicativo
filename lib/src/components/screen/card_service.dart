@@ -17,6 +17,7 @@ class CardService extends StatelessWidget {
   final bool isSelected;
   final void Function()? onLongPress;
   final void Function()? onDoubleTap;
+  final void Function()? onTap;
 
   const CardService({
     super.key,
@@ -35,6 +36,7 @@ class CardService extends StatelessWidget {
     this.isSelected = false,
     this.onLongPress,
     this.onDoubleTap,
+    this.onTap,
   });
 
   Color _getStatusColor(ServiceStatus status) {
@@ -122,6 +124,7 @@ class CardService extends StatelessWidget {
             return GestureDetector(
               onLongPress: onLongPress,
               onDoubleTap: onDoubleTap,
+              onTap: onTap,
               child: ConstrainedBox(
                 constraints: BoxConstraints(
                   minHeight: 100,

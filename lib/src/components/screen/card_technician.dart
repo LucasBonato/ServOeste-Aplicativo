@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/src/util/formatters.dart';
+import 'package:serv_oeste/src/shared/formatters.dart';
 
-class CardTechnical extends StatelessWidget {
+class CardTechnician extends StatelessWidget {
   final int id;
   final String nome;
   final String sobrenome;
@@ -11,8 +11,9 @@ class CardTechnical extends StatelessWidget {
   final bool isSelected;
   final void Function()? onLongPress;
   final void Function()? onDoubleTap;
+  final void Function()? onTap;
 
-  const CardTechnical({
+  const CardTechnician({
     super.key,
     required this.id,
     required this.nome,
@@ -23,6 +24,7 @@ class CardTechnical extends StatelessWidget {
     this.isSelected = false,
     this.onLongPress,
     this.onDoubleTap,
+    this.onTap,
   });
 
   String getCompostName(String sobrenome) {
@@ -51,6 +53,7 @@ class CardTechnical extends StatelessWidget {
           return GestureDetector(
             onLongPress: onLongPress,
             onDoubleTap: onDoubleTap,
+            onTap: onTap,
             child: LayoutBuilder(
               builder: (context, constraints) {
                 return Container(

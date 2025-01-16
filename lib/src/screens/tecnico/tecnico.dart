@@ -2,10 +2,10 @@ import 'dart:async';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:serv_oeste/src/components/dropdown_field.dart';
-import 'package:serv_oeste/src/components/grid_view.dart';
-import 'package:serv_oeste/src/components/card_technical.dart';
-import 'package:serv_oeste/src/components/custom_search_field.dart';
+import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
+import 'package:serv_oeste/src/components/screen/grid_view.dart';
+import 'package:serv_oeste/src/components/screen/card_technician.dart';
+import 'package:serv_oeste/src/components/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
@@ -25,6 +25,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
   late TextEditingController _idController, _nomeController;
   late SingleSelectController<String> _situacaoController;
   late ValueNotifier<String> _situacaoNotifier;
+  bool isTheFirstSelection = true;
   Timer? _debounce;
 
   @override
@@ -34,10 +35,8 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     _listaBloc = context.read<ListaBloc>();
     _idController = TextEditingController();
     _nomeController = TextEditingController();
-    _situacaoController =
-        SingleSelectController<String>(Constants.situationTecnicoList.first);
-    _situacaoNotifier =
-        ValueNotifier<String>(Constants.situationTecnicoList.first);
+    _situacaoController = SingleSelectController<String>(Constants.situationTecnicoList.first);
+    _situacaoNotifier = ValueNotifier<String>(Constants.situationTecnicoList.first);
     _listaBloc.add(ListaInitialEvent());
   }
 
@@ -50,7 +49,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     _listaBloc.add(ListaClearSelectionEvent());
   }
 
-  void _onLongPressSelectItemLista(int id) {
+  void _onSelectItemList(int id) {
     _listaBloc.add(ListaToggleItemSelectEvent(id: id));
   }
 
@@ -58,14 +57,15 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
     _debounce = Timer(
-        Duration(milliseconds: 150),
-        () => _tecnicoBloc.add(
-              TecnicoSearchEvent(
-                nome: _nomeController.text,
-                id: int.tryParse(_idController.text),
-                situacao: _situacaoNotifier.value,
-              ),
-            ));
+      Duration(milliseconds: 150),
+      () => _tecnicoBloc.add(
+        TecnicoSearchEvent(
+          nome: _nomeController.text,
+          id: int.tryParse(_idController.text),
+          situacao: _situacaoNotifier.value,
+        ),
+      ),
+    );
   }
 
   void _disableTecnicos(BuildContext context, List<int> selectedIds) {
@@ -77,17 +77,27 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     );
   }
 
+  bool _isTecnicoSelected(int id, ListaState stateLista) {
+    if (stateLista is ListaSelectState) {
+      return stateLista.selectedIds.contains(id);
+    }
+    return false;
+  }
+
+  bool _isSelectionMode(ListaState stateLista) {
+    if (stateLista is ListaSelectState) {
+      return stateLista.selectedIds.isNotEmpty;
+    }
+    return false;
+  }
+
   Widget _buildSearchInputs() {
     final screenWidth = MediaQuery.of(context).size.width;
     final isLargeScreen = screenWidth >= 1000;
     final isMediumScreen = screenWidth >= 500 && screenWidth < 1000;
     final maxContainerWidth = 1200.0;
 
-    Widget buildSearchField(
-            {required String hint,
-            TextEditingController? controller,
-            TextInputType? keyboardType}) =>
-        CustomSearchTextField(
+    Widget buildSearchField({required String hint, TextEditingController? controller, TextInputType? keyboardType}) => CustomSearchTextFormField(
           hint: hint,
           leftPadding: 4,
           rightPadding: 4,
@@ -97,11 +107,8 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
         );
 
     Widget buildDropdownField(
-            {required String label,
-            required SingleSelectController<String> controller,
-            required ValueNotifier<String> valueNotifier,
-            required List<String> dropdownValues}) =>
-        CustomDropdownField(
+            {required String label, required SingleSelectController<String> controller, required ValueNotifier<String> valueNotifier, required List<String> dropdownValues}) =>
+        CustomDropdownFormField(
           label: label,
           dropdownValues: dropdownValues,
           controller: controller,
@@ -221,8 +228,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
       resizeToAvoidBottomInset: true,
       floatingActionButton: BlocBuilder<ListaBloc, ListaState>(
         builder: (context, state) {
-          final bool hasSelection =
-              state is ListaSelectState && state.selectedIds.isNotEmpty;
+          final bool hasSelection = state is ListaSelectState && state.selectedIds.isNotEmpty;
 
           return !hasSelection
               ? BuildWidgets.buildFabAdd(
@@ -249,31 +255,27 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
           Expanded(
             child: BlocBuilder<TecnicoBloc, TecnicoState>(
               builder: (context, stateTecnico) {
-                if (stateTecnico is TecnicoInitialState ||
-                    stateTecnico is TecnicoLoadingState) {
-                  return const Center(
-                      child: CircularProgressIndicator.adaptive());
+                if (stateTecnico is TecnicoInitialState || stateTecnico is TecnicoLoadingState) {
+                  return const Center(child: CircularProgressIndicator.adaptive());
                 } else if (stateTecnico is TecnicoSearchSuccessState) {
                   if (stateTecnico.tecnicos.isNotEmpty) {
                     return SingleChildScrollView(
                       child: GridListView(
-                        aspectRatio: 2,
+                        aspectRatio: 2.5,
                         dataList: stateTecnico.tecnicos,
-                        buildCard: (tecnico) =>
-                            BlocBuilder<ListaBloc, ListaState>(
+                        buildCard: (tecnico) => BlocBuilder<ListaBloc, ListaState>(
                           builder: (context, stateLista) {
-                            bool isSelected = false;
+                            final bool isSelected = _isTecnicoSelected(tecnico.id, stateLista);
+                            final bool isSelectionMode = _isSelectionMode(stateLista);
 
-                            if (stateLista is ListaSelectState) {
-                              isSelected =
-                                  stateLista.selectedIds.contains(tecnico.id);
-                            }
-
-                            return CardTechnical(
-                              onDoubleTap: () =>
-                                  _onNavigateToUpdateScreen(tecnico.id!),
-                              onLongPress: () =>
-                                  _onLongPressSelectItemLista(tecnico.id!),
+                            return CardTechnician(
+                              onDoubleTap: () => _onNavigateToUpdateScreen(tecnico.id!),
+                              onLongPress: () => _onSelectItemList(tecnico.id),
+                              onTap: () {
+                                if (isSelectionMode) {
+                                  _onSelectItemList(tecnico.id);
+                                }
+                              },
                               id: tecnico.id!,
                               nome: tecnico.nome!,
                               sobrenome: tecnico.sobrenome!,
@@ -286,26 +288,24 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
                         ),
                       ),
                     );
-                  } else {
-                    return const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.search_off,
-                            color: Colors.grey,
-                            size: 40.0,
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            "Nenhum técnico encontrado.",
-                            style:
-                                TextStyle(fontSize: 18.0, color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    );
                   }
+                  return const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.search_off,
+                          color: Colors.grey,
+                          size: 40.0,
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          "Nenhum técnico encontrado.",
+                          style: TextStyle(fontSize: 18.0, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  );
                 }
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,

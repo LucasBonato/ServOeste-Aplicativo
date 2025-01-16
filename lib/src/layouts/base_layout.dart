@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:serv_oeste/src/components/bottom_nav_bar.dart';
-import 'package:serv_oeste/src/components/sidebar_navigation.dart';
-import 'package:serv_oeste/src/components/header.dart';
+import 'package:serv_oeste/src/components/layout/bottom_nav_bar.dart';
+import 'package:serv_oeste/src/components/layout/sidebar_navigation.dart';
+import 'package:serv_oeste/src/components/layout/header.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';

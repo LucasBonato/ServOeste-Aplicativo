@@ -11,7 +11,7 @@ import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
 import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
-import 'package:serv_oeste/src/components/formFields/search_dropdown_field.dart';
+import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/shared/input_masks.dart';
@@ -151,7 +151,7 @@ class _CreateClienteState extends State<CreateCliente> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            CustomSearchDropDown(
+                            CustomSearchDropDownFormField(
                               label: "Nome*",
                               maxLength: 40,
                               dropdownValues: _dropdownValuesNomes,
@@ -314,7 +314,7 @@ class _CreateClienteState extends State<CreateCliente> {
                                     onChanged: _fetchInformationAboutCep,
                                   ),
                                 ),
-                                CustomSearchDropDown(
+                                CustomSearchDropDownFormField(
                                   label: "Município*",
                                   dropdownValues: Constants.municipios,
                                   leftPadding: 4,
@@ -366,7 +366,7 @@ class _CreateClienteState extends State<CreateCliente> {
                                   ),
                                 ),
                                 Expanded(
-                                  child: CustomSearchDropDown(
+                                  child: CustomSearchDropDownFormField(
                                     label: "Município*",
                                     dropdownValues: Constants.municipios,
                                     leftPadding: 4,
