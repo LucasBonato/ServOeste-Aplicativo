@@ -28,42 +28,35 @@ class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
     on<ServicoDisableListEvent>(_deleteService);
   }
 
-  Future<void> _fetchAllServicesWithFilter(
-      ServicoLoadingEvent event, Emitter<ServicoState> emit) async {
+  Future<void> _fetchAllServicesWithFilter(ServicoLoadingEvent event, Emitter<ServicoState> emit) async {
     _filterRequest = _combineFilters(_filterRequest, event.filterRequest);
 
     emit(ServicoLoadingState());
     try {
-      List<Servico>? response =
-          await _servicoRepository.getServicosByFilter(_filterRequest);
+      List<Servico>? response = await _servicoRepository.getServicosByFilter(_filterRequest);
       emit(ServicoSearchSuccessState(servicos: response ?? []));
     } on DioException catch (e) {
       emit(ServicoErrorState(
-        error:
-            ErrorEntity(id: 0, errorMessage: e.message ?? 'Erro desconhecido'),
+        error: ErrorEntity(id: 0, errorMessage: e.message ?? 'Erro desconhecido'),
       ));
     }
   }
 
-  Future<void> _fetchAllServicesInitial(
-      ServicoInitialLoadingEvent event, Emitter<ServicoState> emit) async {
+  Future<void> _fetchAllServicesInitial(ServicoInitialLoadingEvent event, Emitter<ServicoState> emit) async {
     _filterRequest = event.filterRequest;
 
     emit(ServicoLoadingState());
     try {
-      List<Servico>? response =
-          await _servicoRepository.getServicosByFilter(_filterRequest);
+      List<Servico>? response = await _servicoRepository.getServicosByFilter(_filterRequest);
       emit(ServicoSearchSuccessState(servicos: response ?? []));
     } on DioException catch (e) {
       emit(ServicoErrorState(
-        error:
-            ErrorEntity(id: 0, errorMessage: e.message ?? 'Erro desconhecido'),
+        error: ErrorEntity(id: 0, errorMessage: e.message ?? 'Erro desconhecido'),
       ));
     }
   }
 
-  ServicoFilterRequest _combineFilters(
-      ServicoFilterRequest oldFilter, ServicoFilterRequest newFilter) {
+  ServicoFilterRequest _combineFilters(ServicoFilterRequest oldFilter, ServicoFilterRequest newFilter) {
     int? id;
     String? periodo;
     String? equipamento;
@@ -94,14 +87,10 @@ class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
       situacao = newFilter.situacao ?? oldFilter.situacao;
       garantia = newFilter.garantia ?? oldFilter.garantia;
       filial = newFilter.filial ?? oldFilter.filial;
-      dataAtendimentoPrevistoAntes = newFilter.dataAtendimentoPrevistoAntes ??
-          oldFilter.dataAtendimentoPrevistoAntes;
-      dataAtendimentoPrevistoDepois = newFilter.dataAtendimentoPrevistoDepois ??
-          oldFilter.dataAtendimentoPrevistoDepois;
-      dataAtendimentoEfetivoAntes = newFilter.dataAtendimentoEfetivoAntes ??
-          oldFilter.dataAtendimentoEfetivoAntes;
-      dataAberturaAntes =
-          newFilter.dataAberturaAntes ?? oldFilter.dataAberturaAntes;
+      dataAtendimentoPrevistoAntes = newFilter.dataAtendimentoPrevistoAntes ?? oldFilter.dataAtendimentoPrevistoAntes;
+      dataAtendimentoPrevistoDepois = newFilter.dataAtendimentoPrevistoDepois ?? oldFilter.dataAtendimentoPrevistoDepois;
+      dataAtendimentoEfetivoAntes = newFilter.dataAtendimentoEfetivoAntes ?? oldFilter.dataAtendimentoEfetivoAntes;
+      dataAberturaAntes = newFilter.dataAberturaAntes ?? oldFilter.dataAberturaAntes;
       isFirstRequest = true;
     }
 
@@ -121,54 +110,41 @@ class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
     );
   }
 
-  Future<void> _fetchOneService(
-      ServicoSearchOneEvent event, Emitter emit) async {
+  Future<void> _fetchOneService(ServicoSearchOneEvent event, Emitter emit) async {
     emit(ServicoLoadingState());
     try {
-      final Servico? servico =
-          await _servicoRepository.getServicoById(id: event.id);
-      if (servico != null) {
-        emit(ServicoSearchOneSuccessState(servico: servico));
+      final List<Servico>? servicos = await _servicoRepository.getServicosByFilter(ServicoFilterRequest(id: event.id));
+      if (servicos != null) {
+        emit(ServicoSearchOneSuccessState(servico: servicos[0]));
         return;
       }
       emit(ServicoErrorState(error: ErrorEntity(id: 0, errorMessage: "")));
     } on DioException catch (e) {
-      emit(ServicoErrorState(
-          error: ErrorEntity(id: 0, errorMessage: e.toString())));
+      emit(ServicoErrorState(error: ErrorEntity(id: 0, errorMessage: e.toString())));
     }
   }
 
   Future<void> _searchServices(ServicoSearchEvent event, Emitter emit) async {}
 
-  Future<void> _registerService(
-      ServicoRegisterEvent event, Emitter emit) async {
+  Future<void> _registerService(ServicoRegisterEvent event, Emitter emit) async {
     emit(ServicoLoadingState());
-    ErrorEntity? error = await _servicoRepository
-        .createServicoComClienteExistente(event.servico);
-    emit((error == null)
-        ? ServicoRegisterSuccessState()
-        : ServicoErrorState(error: error));
+    ErrorEntity? error = await _servicoRepository.createServicoComClienteExistente(event.servico);
+    emit((error == null) ? ServicoRegisterSuccessState() : ServicoErrorState(error: error));
   }
 
-  Future<void> _registerServicePlusClient(
-      ServicoRegisterPlusClientEvent event, Emitter emit) async {
+  Future<void> _registerServicePlusClient(ServicoRegisterPlusClientEvent event, Emitter emit) async {
     emit(ServicoLoadingState());
-    ErrorEntity? error = await _servicoRepository
-        .createServicoComClienteNaoExistente(event.servico, event.cliente);
-    emit((error == null)
-        ? ServicoRegisterSuccessState()
-        : ServicoErrorState(error: error));
+    ErrorEntity? error = await _servicoRepository.createServicoComClienteNaoExistente(event.servico, event.cliente);
+    emit((error == null) ? ServicoRegisterSuccessState() : ServicoErrorState(error: error));
   }
 
   Future<void> _updateService(ServicoUpdateEvent event, Emitter emit) async {}
 
-  Future<void> _deleteService(
-      ServicoDisableListEvent event, Emitter<ServicoState> emit) async {
+  Future<void> _deleteService(ServicoDisableListEvent event, Emitter<ServicoState> emit) async {
     emit(ServicoLoadingState());
     try {
       await _servicoRepository.disableListOfServico(event.selectedList);
-      await _fetchAllServicesInitial(
-          ServicoInitialLoadingEvent(filterRequest: _filterRequest), emit);
+      await _fetchAllServicesInitial(ServicoInitialLoadingEvent(filterRequest: _filterRequest), emit);
     } catch (e) {
       emit(ServicoErrorState(
         error: ErrorEntity(id: 0, errorMessage: "Erro ao deletar serviço"),
