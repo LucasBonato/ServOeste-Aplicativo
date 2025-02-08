@@ -81,8 +81,10 @@ class ServicoScreenState extends State<ServicoScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-          content: Text(
-              'Serviço deletado com sucesso! (Caso ele continue, recarregue a página)')),
+        content: Text(
+          'Serviço deletado com sucesso! (Caso ele continue, recarregue a página)',
+        ),
+      ),
     );
   }
 
@@ -222,8 +224,7 @@ class ServicoScreenState extends State<ServicoScreen> {
                   return const Center(
                     child: CircularProgressIndicator.adaptive(),
                   );
-                }
-                else if (stateServico is ServicoSearchSuccessState) {
+                } else if (stateServico is ServicoSearchSuccessState) {
                   if (stateServico.servicos.isNotEmpty) {
                     return SingleChildScrollView(
                       child: GridListView(
@@ -274,8 +275,7 @@ class ServicoScreenState extends State<ServicoScreen> {
                         SizedBox(height: 10),
                         Text(
                           "Nenhum serviço encontrado.",
-                          style:
-                          TextStyle(fontSize: 18.0, color: Colors.grey),
+                          style: TextStyle(fontSize: 18.0, color: Colors.grey),
                         ),
                       ],
                     ),
