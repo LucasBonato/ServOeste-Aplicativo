@@ -26,7 +26,10 @@ class DioService {
 
   Dio get dio => _dio;
 
-  ErrorEntity? onRequestError(DioException e) {
+  ErrorEntity? onRequestError(DioException? e) {
+    if (e == null) {
+      return null;
+    }
     if (e.error is JsonUnsupportedObjectError) {
       try {
         final unsupportedObject = (e.error as JsonUnsupportedObjectError).unsupportedObject;
