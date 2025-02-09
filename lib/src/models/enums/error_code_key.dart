@@ -20,5 +20,8 @@ enum ErrorCodeKey {
   conhecimento,
   rua,
   numero,
-  complemento
+  complemento,
+  valor,
+  valorPecas,
+  valorComissao,
 }

@@ -24,8 +24,7 @@ class Constants {
     'Não Retira há 3 Meses',
     'Orçamento Aprovado',
     'Resolvido',
-    'Sem Defeito',
-    'Fechada'
+    'Sem Defeito'
   ];
   static const List<String> municipios = [
     'Osasco',
