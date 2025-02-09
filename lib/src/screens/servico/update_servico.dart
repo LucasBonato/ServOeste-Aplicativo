@@ -6,6 +6,8 @@ import 'package:serv_oeste/src/components/formFields/date_picker_form_field.dart
 import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
+import 'package:serv_oeste/src/components/layout/app_bar_form.dart';
+import 'package:serv_oeste/src/components/screen/elevated_form_button.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
@@ -829,17 +831,9 @@ class _UpdateServicoState extends State<UpdateServico> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9FF),
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: _handleBackNavigation,
-        ),
-        title: const Text(
-          "Voltar",
-          style: TextStyle(color: Colors.black, fontSize: 16),
-        ),
-        backgroundColor: const Color(0xFCFDFDFF),
-        elevation: 0,
+      appBar: AppBarForm(
+        onPressed: _handleBackNavigation,
+        title: "Voltar",
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16),
@@ -937,76 +931,44 @@ class _UpdateServicoState extends State<UpdateServico> {
                           const SizedBox(height: 24),
                           ConstrainedBox(
                             constraints: const BoxConstraints(maxWidth: 750),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                BlocListener<ServicoBloc, ServicoState>(
-                                  bloc: _servicoBloc,
-                                  listener: (context, state) {
-                                    if (state is ServicoUpdateSuccessState) {
-                                      _handleBackNavigation();
-                                    }
-                                    else if (state is ServicoErrorState) {
-                                      ErrorEntity error = state.error;
+                            child: BlocListener<ServicoBloc, ServicoState>(
+                              bloc: _servicoBloc,
+                              listener: (context, state) {
+                                if (state is ServicoUpdateSuccessState) {
+                                  _handleBackNavigation();
+                                }
+                                else if (state is ServicoErrorState) {
+                                  ErrorEntity error = state.error;
 
-                                      _servicoUpdateValidator.applyBackendError(error);
-                                      _servicoFormKey.currentState?.validate();
-                                      _servicoUpdateValidator.cleanExternalErrors();
+                                  _servicoUpdateValidator.applyBackendError(error);
+                                  _servicoFormKey.currentState?.validate();
+                                  _servicoUpdateValidator.cleanExternalErrors();
 
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            "[ERROR] Informação(ões) inválida(s) ao Atualizar o Serviço.",
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  },
-                                  child: Column(
-                                    children: [
-                                      ElevatedButton(
-                                        onPressed: _updateServico, // TODO - Change this to show the history
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color(0xFF8BB0DD),
-                                          minimumSize: const Size(double.infinity, 48),
-                                          padding: const EdgeInsets.symmetric(vertical: 18),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(8),
-                                          ),
-                                        ),
-                                        child: const Text(
-                                          "Ver Histórico de Atendimento",
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ), // TODO - This could be an component
-                                      const SizedBox(height: 16),
-                                      ElevatedButton(
-                                        onPressed: _updateServico,
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color(0xFF007BFF),
-                                          minimumSize: const Size(double.infinity, 48),
-                                          padding: const EdgeInsets.symmetric(vertical: 18),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(8),
-                                          ),
-                                        ),
-                                        child: const Text(
-                                          "Atualizar Serviço",
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.white,
-                                          ),
-                                        ),
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        "[ERROR] Informação(ões) inválida(s) ao Atualizar o Serviço.",
                                       ),
-                                    ],
+                                    ),
+                                  );
+                                }
+                              },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  ElevatedFormButton(
+                                    text: "Ver Histórico de Atendimento",
+                                    onPressed: () {},
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(height: 16),
+                                  ElevatedFormButton(
+                                    text: "Atualizar Serviço",
+                                    onPressed: _updateServico,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],
@@ -1018,7 +980,7 @@ class _UpdateServicoState extends State<UpdateServico> {
             );
           }
           return const Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator.adaptive(),
           );
         },
       ),
