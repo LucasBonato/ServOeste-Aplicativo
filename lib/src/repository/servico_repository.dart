@@ -104,6 +104,45 @@ class ServicoRepository extends DioService {
     return null;
   }
 
+  Future<Servico?> update(Servico servico) async {
+    try {
+      final response = await dio.put(
+        ServerEndpoints.servicoEndpoint,
+        queryParameters: {
+          "id": servico.id
+        },
+        data: {
+          "idTecnico": servico.idTecnico,
+          "idCliente": servico.idCliente,
+          "equipamento": servico.equipamento,
+          "marca": servico.marca,
+          "filial": servico.marca,
+          "descricao": servico.descricao,
+          "situacao": servico.situacao,
+          "formaPagamento": servico.formaPagamento,
+          "horarioPrevisto": servico.horarioPrevisto,
+          "valor": servico.valor,
+          "valorComissao": servico.valorComissao,
+          "valorPecas": servico.valorPecas,
+          "dataFechamento": servico.dataFechamento,
+          "dataInicioGarantia": servico.dataInicioGarantia,
+          "dataFimGarantia": servico.dataFimGarantia,
+          "dataAtendimentoPrevisto": servico.dataAtendimentoPrevisto,
+          "dataAtendimentoEfetiva": servico.dataAtendimentoEfetivo,
+          "dataPagamentoComissao": servico.dataPagamentoComissao
+        }
+      );
+
+      if (response.data != null && response.data is Map) {
+        return Servico.fromJson(response.data as Map<String, dynamic>);
+      }
+
+    } on DioException catch(e) {
+      throw Exception(onRequestError(e));
+    }
+    return null;
+  }
+
   Future<void> disableListOfServico(List<int> selectedItems) async {
     try {
       await dio.delete(ServerEndpoints.servicoEndpoint, data: jsonEncode(selectedItems));

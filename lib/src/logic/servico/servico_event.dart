@@ -21,12 +21,6 @@ final class ServicoSearchOneEvent extends ServicoEvent {
   ServicoSearchOneEvent({required this.id});
 }
 
-final class ServicoSearchEvent extends ServicoEvent {
-  final ServicoFilterRequest? filterRequest;
-
-  ServicoSearchEvent({this.filterRequest});
-}
-
 final class ServicoRegisterEvent extends ServicoEvent {
   final ServicoRequest servico;
 
@@ -37,8 +31,7 @@ final class ServicoRegisterPlusClientEvent extends ServicoEvent {
   final ClienteRequest cliente;
   final ServicoRequest servico;
 
-  ServicoRegisterPlusClientEvent(
-      {required this.cliente, required this.servico});
+  ServicoRegisterPlusClientEvent({required this.cliente, required this.servico});
 }
 
 final class ServicoUpdateEvent extends ServicoEvent {

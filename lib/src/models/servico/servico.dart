@@ -9,6 +9,7 @@ class Servico {
   final String horarioPrevisto;
   final String marca;
   final String situacao;
+  final String? descricao;
   final bool? garantia;
   final String? formaPagamento;
   final double? valor;
@@ -34,6 +35,7 @@ class Servico {
     required this.marca,
     required this.situacao,
     required this.dataAtendimentoPrevisto,
+    this.descricao,
     this.dataFechamento,
     this.garantia,
     this.formaPagamento,

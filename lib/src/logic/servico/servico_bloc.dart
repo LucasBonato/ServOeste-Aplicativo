@@ -21,7 +21,6 @@ class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
     on<ServicoLoadingEvent>(_fetchAllServicesWithFilter);
     on<ServicoInitialLoadingEvent>(_fetchAllServicesInitial);
     on<ServicoSearchOneEvent>(_fetchOneService);
-    on<ServicoSearchEvent>(_searchServices);
     on<ServicoRegisterEvent>(_registerService);
     on<ServicoRegisterPlusClientEvent>(_registerServicePlusClient);
     on<ServicoUpdateEvent>(_updateService);
@@ -124,8 +123,6 @@ class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
     }
   }
 
-  Future<void> _searchServices(ServicoSearchEvent event, Emitter emit) async {}
-
   Future<void> _registerService(ServicoRegisterEvent event, Emitter emit) async {
     emit(ServicoLoadingState());
     ErrorEntity? error = await _servicoRepository.createServicoComClienteExistente(event.servico);
@@ -138,7 +135,17 @@ class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
     emit((error == null) ? ServicoRegisterSuccessState() : ServicoErrorState(error: error));
   }
 
-  Future<void> _updateService(ServicoUpdateEvent event, Emitter emit) async {}
+  Future<void> _updateService(ServicoUpdateEvent event, Emitter emit) async {
+    emit(ServicoLoadingState());
+    try {
+      Servico? servico = await _servicoRepository.update(event.servico);
+      if (servico != null) {
+        emit(ServicoUpdateSuccessState(servico: servico));
+      }
+    } catch (e) {
+      emit(ServicoErrorState(error: e as ErrorEntity));
+    }
+  }
 
   Future<void> _deleteService(ServicoDisableListEvent event, Emitter<ServicoState> emit) async {
     emit(ServicoLoadingState());
