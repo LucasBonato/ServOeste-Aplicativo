@@ -69,12 +69,6 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   }
 
   @override
-  void dispose() {
-    _internalController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsetsDirectional.fromSTEB(widget.leftPadding ?? 16, 4, widget.rightPadding ?? 16, widget.hide ? 16 : 0),
