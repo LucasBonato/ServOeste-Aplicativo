@@ -162,35 +162,72 @@ class ServicoForm extends ChangeNotifier {
   }
 
   void setValor(String? valor) {
+    if (valor == "null") {
+      valor = null;
+    }
     if (valor != null) {
-      double? valueConverted = double.tryParse(valor);
+      double valueConverted = double.tryParse(valor)?? 0;
 
-      if (valueConverted != null && valueConverted > 0) {
+      if (valueConverted > 0) {
         this.valor.value = valueConverted.toString();
+        _calculateCommission();
         notifyListeners();
       }
     }
   }
 
   void setValorPecas(String? valorPecas) {
+    if (valorPecas == "null") {
+      valorPecas = null;
+    }
     if (valorPecas != null) {
-      double? valueConverted = double.tryParse(valorPecas);
+      double valueConverted = double.tryParse(valorPecas)?? 0;
 
-      if (valueConverted != null && valueConverted > 0) {
+      if (valueConverted >= 0) {
         this.valorPecas.value = valueConverted.toString();
+        _calculateCommission();
         notifyListeners();
       }
     }
   }
 
-  void setValorComissao(String? valorComissao) {
-    if (valorComissao != null) {
-      double? valueConverted = double.tryParse(valorComissao);
+  void _calculateCommission() {
+    if (valor.value.isNotEmpty && valor.value.isNotEmpty) {
+      double pieceValue = double.tryParse(valorPecas.value)?? 0;
+      double value = double.tryParse(valor.value)?? 0;
 
-      if (valueConverted != null && valueConverted > 0) {
+      double commission = (value - pieceValue) / 2;
+      setValorComissao(commission.toString());
+    }
+  }
+
+  void setValorComissao(String? valorComissao) {
+    if (valorComissao == "null") {
+      valorComissao = "";
+    }
+    if (valorComissao != null) {
+      double valueConverted = double.tryParse(valorComissao)?? 0;
+
+      if (valueConverted >= 0) {
         this.valorComissao.value = valueConverted.toString();
         notifyListeners();
       }
     }
+  }
+
+  int? getId() {
+    return id.value;
+  }
+
+  int? getIdCliente() {
+    return idCliente.value;
+  }
+
+  int? getIdTecnico() {
+    return idTecnico.value;
+  }
+
+  String getGarantia() {
+    return garantia.value;
   }
 }
