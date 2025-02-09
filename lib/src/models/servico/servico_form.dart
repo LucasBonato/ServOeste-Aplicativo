@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:serv_oeste/src/shared/formatters.dart';
 
 class ServicoForm extends ChangeNotifier {
   ValueNotifier<int?> id = ValueNotifier(null);
@@ -64,8 +65,10 @@ class ServicoForm extends ChangeNotifier {
   }
 
   void setHorario(String? horario) {
-    this.horario.value = horario ?? "";
-    notifyListeners();
+    if (horario != null) {
+      this.horario.value = (horario == "manha") ? "Manhã" : "Tarde";
+      notifyListeners();
+    }
   }
 
   void setDescricao(String? descricao) {
@@ -79,8 +82,17 @@ class ServicoForm extends ChangeNotifier {
   }
 
   void setSituacao(String? situacao) {
-    this.situacao.value = situacao ?? "";
-    notifyListeners();
+    if (situacao != null) {
+      this.situacao.value = Formatters.mapStringStatusToEnumStatus(situacao).getSituacao();
+      notifyListeners();
+    }
+  }
+
+  void setDataAtendimentoPrevistoDate(DateTime? dataAtendimentoPrevisto) {
+    if (dataAtendimentoPrevisto != null) {
+      this.dataAtendimentoPrevisto.value = Formatters.applyDateMask(dataAtendimentoPrevisto);
+      notifyListeners();
+    }
   }
 
   void setDataAtendimentoPrevisto(String? dataAtendimentoPrevisto) {
@@ -88,9 +100,23 @@ class ServicoForm extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setDataAtendimentoEfetivoDate(DateTime? dataAtendimentoEfetivo) {
+    if (dataAtendimentoEfetivo != null) {
+      this.dataAtendimentoEfetivo.value = Formatters.applyDateMask(dataAtendimentoEfetivo);
+      notifyListeners();
+    }
+  }
+
   void setDataAtendimentoEfetivo(String? dataAtendimentoEfetivo) {
     this.dataAtendimentoEfetivo.value = dataAtendimentoEfetivo ?? "";
     notifyListeners();
+  }
+
+  void setDataAtendimentoAberturaDate(DateTime? dataAtendimentoAbertura) {
+    if (dataAtendimentoAbertura != null) {
+      this.dataAtendimentoAbertura.value = Formatters.applyDateMask(dataAtendimentoAbertura);
+      notifyListeners();
+    }
   }
 
   void setDataAtendimentoAbertura(String? dataAtendimentoAbertura) {
