@@ -9,6 +9,7 @@ import 'package:serv_oeste/src/components/formFields/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/layout/app_bar_form.dart';
+import 'package:serv_oeste/src/components/screen/card_builder_form.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
@@ -275,11 +276,20 @@ class _CreateServicoState extends State<CreateServico> {
                       isMobile
                           ? Column(
                               children: [
-                                _buildCard(_buildClientForm(), 'Cliente'),
+                                CardBuilderForm(
+                                  title: "Cliente",
+                                  child: _buildClientForm()
+                                ),
                                 const SizedBox(height: 12),
-                                _buildCard(_buildFilteredClientsTable(), 'Selecione um Cliente'),
+                                CardBuilderForm(
+                                  title: "Selecione um Cliente",
+                                  child: _buildFilteredClientsTable()
+                                ),
                                 const SizedBox(height: 16),
-                                _buildCard(_buildServiceForm(), 'Serviço'),
+                                CardBuilderForm(
+                                    title: "Serviço",
+                                    child: _buildServiceForm()
+                                ),
                                 const SizedBox(height: 8),
                                 isClientAndService ? BuildFieldLabels() : BuildFieldLabels(isClientAndService: false),
                               ],
@@ -290,11 +300,17 @@ class _CreateServicoState extends State<CreateServico> {
                                 Expanded(
                                   child: Column(
                                     children: [
-                                      _buildCard(_buildClientForm(), 'Cliente'),
+                                      CardBuilderForm(
+                                        title: "Cliente",
+                                        child: _buildClientForm()
+                                      ),
                                       if (!isClientAndService)
                                         Padding(
                                           padding: EdgeInsets.only(top: 12),
-                                          child: _buildCard(_buildFilteredClientsTable(), 'Selecione um Cliente'),
+                                          child: CardBuilderForm(
+                                            title: "Selecione um Cliente",
+                                            child: _buildFilteredClientsTable()
+                                          ),
                                         ),
                                       const SizedBox(height: 8),
                                       isClientAndService ? BuildFieldLabels() : BuildFieldLabels(isClientAndService: false),
@@ -303,7 +319,10 @@ class _CreateServicoState extends State<CreateServico> {
                                 ),
                                 const SizedBox(width: 16),
                                 Expanded(
-                                  child: _buildCard(_buildServiceForm(), 'Serviço'),
+                                  child: CardBuilderForm(
+                                    title: "Serviço",
+                                    child: _buildServiceForm()
+                                  ),
                                 ),
                               ],
                             ),
@@ -350,36 +369,6 @@ class _CreateServicoState extends State<CreateServico> {
             ),
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildCard(Widget child, String title) {
-    return Align(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: const Color(0xFFEAE6E5),
-            width: 1,
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-            child,
-          ],
-        ),
       ),
     );
   }

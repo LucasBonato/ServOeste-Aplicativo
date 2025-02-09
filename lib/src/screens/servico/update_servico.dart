@@ -7,6 +7,7 @@ import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/layout/app_bar_form.dart';
+import 'package:serv_oeste/src/components/screen/card_builder_form.dart';
 import 'package:serv_oeste/src/components/screen/elevated_form_button.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
@@ -83,36 +84,6 @@ class _UpdateServicoState extends State<UpdateServico> {
     _servicoUpdateForm.setDataFechamentoDate(state.servico.dataFechamento);
     _servicoUpdateForm.setValorComissao(state.servico.valorComissao.toString());
     _servicoUpdateForm.setDataPagamentoComissaoDate(state.servico.dataPagamentoComissao);
-  }
-
-  Widget _buildCard(Widget child, String title) {
-    return Align(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: const Color(0xFFEAE6E5),
-            width: 1,
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-            child,
-          ],
-        ),
-      ),
-    );
   }
 
   Widget _buildClientForm() {
@@ -866,7 +837,6 @@ class _UpdateServicoState extends State<UpdateServico> {
         ],
       ),
       body: BlocBuilder<ServicoBloc, ServicoState>(
-        bloc: _servicoBloc,
         buildWhen: (previousState, state) => (state is ServicoSearchOneSuccessState),
         builder: (context, state) {
           if (state is ServicoSearchOneSuccessState) {
@@ -881,16 +851,17 @@ class _UpdateServicoState extends State<UpdateServico> {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          const SizedBox(height: 48),
-                          const Text(
-                            "Atualizar Serviço",
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 48.0),
+                            child: const Text(
+                              "Atualizar Serviço",
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
-                          const SizedBox(height: 48),
                           LayoutBuilder(
                             builder: (context, constraints) {
                               if (constraints.maxWidth > 800) {
@@ -901,7 +872,10 @@ class _UpdateServicoState extends State<UpdateServico> {
                                       flex: 3,
                                       child: Column(
                                         children: [
-                                          _buildCard(_buildClientForm(), 'Cliente'),
+                                          CardBuilderForm(
+                                            title: "Cliente",
+                                            child: _buildClientForm()
+                                          ),
                                           const SizedBox(height: 8),
                                           BuildFieldLabels(isClientAndService: false),
                                         ],
@@ -910,22 +884,29 @@ class _UpdateServicoState extends State<UpdateServico> {
                                     const SizedBox(width: 16),
                                     Expanded(
                                       flex: 4,
-                                      child: _buildCard(_buildServiceForm(), 'Serviço'),
+                                      child: CardBuilderForm(
+                                        title: "Serviço",
+                                        child: _buildServiceForm()
+                                      ),
                                     ),
                                   ],
                                 );
                               }
-                              else {
-                                return Column(
-                                  children: [
-                                    _buildCard(_buildClientForm(), 'Cliente'),
-                                    const SizedBox(height: 16),
-                                    _buildCard(_buildServiceForm(), 'Serviço'),
-                                    const SizedBox(height: 8),
-                                    BuildFieldLabels(isClientAndService: false),
-                                  ],
-                                );
-                              }
+                              return Column(
+                                children: [
+                                  CardBuilderForm(
+                                    title: "Cliente",
+                                    child: _buildClientForm()
+                                  ),
+                                  const SizedBox(height: 16),
+                                  CardBuilderForm(
+                                      title: "Serviço",
+                                      child: _buildServiceForm()
+                                  ),
+                                  const SizedBox(height: 8),
+                                  BuildFieldLabels(isClientAndService: false),
+                                ],
+                              );
                             },
                           ),
                           const SizedBox(height: 24),
