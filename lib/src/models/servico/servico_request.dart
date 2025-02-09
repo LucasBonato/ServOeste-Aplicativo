@@ -28,7 +28,7 @@ class ServicoRequest {
       equipamento: servico.equipamento.value,
       marca: servico.marca.value,
       filial: servico.filial.value,
-      dataAtendimento: servico.dataPrevista.value,
+      dataAtendimento: servico.dataAtendimentoPrevisto.value,
       horarioPrevisto: servico.horario.value.toLowerCase().replaceAll("ã", "a"),
       descricao: servico.descricao.value,
     );

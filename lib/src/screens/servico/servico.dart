@@ -254,7 +254,6 @@ class ServicoScreenState extends State<ServicoScreen> {
                               dataPrevista: servico.dataAtendimentoPrevisto,
                               dataAbertura: servico.dataAtendimentoAbertura,
                               dataEfetiva: servico.dataAtendimentoEfetivo,
-                              garantia: servico.garantia,
                               status: servico.situacao,
                               isSelected: isSelected,
                             );

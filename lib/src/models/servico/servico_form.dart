@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/shared/formatters.dart';
 
 class ServicoForm extends ChangeNotifier {
@@ -10,7 +11,6 @@ class ServicoForm extends ChangeNotifier {
   ValueNotifier<String> filial = ValueNotifier<String>("");
   ValueNotifier<String> nomeCliente = ValueNotifier<String>("");
   ValueNotifier<String> nomeTecnico = ValueNotifier<String>("");
-  ValueNotifier<String> dataPrevista = ValueNotifier<String>("");
   ValueNotifier<String> horario = ValueNotifier<String>("");
   ValueNotifier<String> descricao = ValueNotifier<String>("");
   ValueNotifier<String> garantia = ValueNotifier<String>("");
@@ -18,6 +18,12 @@ class ServicoForm extends ChangeNotifier {
   ValueNotifier<String> dataAtendimentoPrevisto = ValueNotifier<String>("");
   ValueNotifier<String> dataAtendimentoEfetivo = ValueNotifier<String>("");
   ValueNotifier<String> dataAtendimentoAbertura = ValueNotifier<String>("");
+  ValueNotifier<String> dataFechamento = ValueNotifier<String>("");
+  ValueNotifier<String> dataPagamentoComissao = ValueNotifier<String>("");
+  ValueNotifier<String> formaPagamento = ValueNotifier<String>("");
+  ValueNotifier<String> valor = ValueNotifier("");
+  ValueNotifier<String> valorPecas = ValueNotifier("");
+  ValueNotifier<String> valorComissao = ValueNotifier("");
 
   void setId(int? id) {
     this.id.value = id;
@@ -59,11 +65,6 @@ class ServicoForm extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setDataPrevista(String? dataPrevista) {
-    this.dataPrevista.value = dataPrevista ?? "";
-    notifyListeners();
-  }
-
   void setHorario(String? horario) {
     if (horario != null) {
       this.horario.value = (horario == "manha") ? "Manhã" : "Tarde";
@@ -77,8 +78,15 @@ class ServicoForm extends ChangeNotifier {
   }
 
   void setGarantia(String? garantia) {
-    this.garantia.value = garantia ?? "";
+    this.garantia.value = garantia?? "";
     notifyListeners();
+  }
+
+  void setGarantiaBool(bool? garantia) {
+    if (garantia != null) {
+      this.garantia.value = (garantia) ? Constants.garantias.first : Constants.garantias.last;
+      notifyListeners();
+    }
   }
 
   void setSituacao(String? situacao) {
@@ -122,5 +130,67 @@ class ServicoForm extends ChangeNotifier {
   void setDataAtendimentoAbertura(String? dataAtendimentoAbertura) {
     this.dataAtendimentoAbertura.value = dataAtendimentoAbertura ?? "";
     notifyListeners();
+  }
+
+  void setDataFechamentoDate(DateTime? dataFechamento) {
+    if (dataFechamento != null) {
+      this.dataFechamento.value = Formatters.applyDateMask(dataFechamento);
+      notifyListeners();
+    }
+  }
+
+  void setDataFechamento(String? dataFechamento) {
+    this.dataFechamento.value = dataFechamento ?? "";
+    notifyListeners();
+  }
+
+  void setDataPagamentoComissaoDate(DateTime? dataPagamentoComissao) {
+    if (dataPagamentoComissao != null) {
+      this.dataPagamentoComissao.value = Formatters.applyDateMask(dataPagamentoComissao);
+      notifyListeners();
+    }
+  }
+
+  void setDataPagamentoComissao(String? dataPagamentoComissao) {
+    this.dataPagamentoComissao.value = dataPagamentoComissao ?? "";
+    notifyListeners();
+  }
+
+  void setFormaPagamento(String? formaPagamento) {
+    this.formaPagamento.value = formaPagamento?? "";
+    notifyListeners();
+  }
+
+  void setValor(String? valor) {
+    if (valor != null) {
+      double? valueConverted = double.tryParse(valor);
+
+      if (valueConverted != null && valueConverted > 0) {
+        this.valor.value = valueConverted.toString();
+        notifyListeners();
+      }
+    }
+  }
+
+  void setValorPecas(String? valorPecas) {
+    if (valorPecas != null) {
+      double? valueConverted = double.tryParse(valorPecas);
+
+      if (valueConverted != null && valueConverted > 0) {
+        this.valorPecas.value = valueConverted.toString();
+        notifyListeners();
+      }
+    }
+  }
+
+  void setValorComissao(String? valorComissao) {
+    if (valorComissao != null) {
+      double? valueConverted = double.tryParse(valorComissao);
+
+      if (valueConverted != null && valueConverted > 0) {
+        this.valorComissao.value = valueConverted.toString();
+        notifyListeners();
+      }
+    }
   }
 }

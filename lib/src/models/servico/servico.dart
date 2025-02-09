@@ -8,11 +8,19 @@ class Servico {
   final String filial;
   final String horarioPrevisto;
   final String marca;
-  final String? garantia;
   final String situacao;
+  final bool? garantia;
+  final String? formaPagamento;
+  final double? valor;
+  final double? valorComissao;
+  final double? valorPecas;
   final DateTime dataAtendimentoPrevisto;
   final DateTime? dataAtendimentoEfetivo;
   final DateTime? dataAtendimentoAbertura;
+  final DateTime? dataFechamento;
+  final DateTime? dataInicioGarantia;
+  final DateTime? dataFimGarantia;
+  final DateTime? dataPagamentoComissao;
 
   Servico({
     required this.id,
@@ -25,10 +33,18 @@ class Servico {
     required this.horarioPrevisto,
     required this.marca,
     required this.situacao,
-    this.garantia,
     required this.dataAtendimentoPrevisto,
+    this.dataFechamento,
+    this.garantia,
+    this.formaPagamento,
+    this.valor,
+    this.valorPecas,
+    this.valorComissao,
     this.dataAtendimentoEfetivo,
     this.dataAtendimentoAbertura,
+    this.dataInicioGarantia,
+    this.dataFimGarantia,
+    this.dataPagamentoComissao,
   });
 
   factory Servico.fromJson(Map<String, dynamic> json) => Servico(
@@ -43,13 +59,16 @@ class Servico {
         marca: json["marca"],
         situacao: json["situacao"],
         garantia: json["garantia"],
-        dataAtendimentoPrevisto:
-            DateTime.parse(json["dataAtendimentoPrevisto"]),
-        dataAtendimentoEfetivo: json["dataAtendimentoEfetivo"] != null
-            ? DateTime.parse(json["dataAtendimentoEfetivo"])
-            : null,
-        dataAtendimentoAbertura: json["dataAtendimentoAbertura"] != null
-            ? DateTime.parse(json["dataAtendimentoAbertura"])
-            : null,
+        formaPagamento: json["formaPagamento"],
+        valor: json["valor"],
+        valorPecas: json["valorPecas"],
+        valorComissao: json["valorComissao"],
+        dataInicioGarantia: json["dataInicioGarantia"] != null ? DateTime.parse(json["dataInicioGarantia"]) : null,
+        dataFimGarantia: json["dataFimGarantia"] != null ? DateTime.parse(json["dataFimGarantia"]) : null,
+        dataPagamentoComissao: json["dataPagamentoComissao"] != null ? DateTime.parse(json["dataPagamentoComissao"]) : null,
+        dataAtendimentoPrevisto: DateTime.parse(json["dataAtendimentoPrevisto"]),
+        dataFechamento: json["dataFechamento"] != null ? DateTime.parse(json["dataFechamento"]) : null,
+        dataAtendimentoEfetivo: json["dataAtendimentoEfetiva"] != null ? DateTime.parse(json["dataAtendimentoEfetiva"]) : null,
+        dataAtendimentoAbertura: json["dataAtendimentoAbertura"] != null ? DateTime.parse(json["dataAtendimentoAbertura"]) : null,
       );
 }

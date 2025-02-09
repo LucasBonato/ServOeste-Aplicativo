@@ -179,7 +179,7 @@ class _CreateServicoState extends State<CreateServico> {
   void _setTableValues(String nomeTecnico, String data, String periodo, int idTecnico) {
     _servicoForm.setNomeTecnico(nomeTecnico);
     _nomeTecnicoController.text = nomeTecnico;
-    _servicoForm.setDataPrevista(data);
+    _servicoForm.setDataAtendimentoPrevisto(data);
     _servicoForm.setHorario(periodo);
     _servicoForm.setIdTecnico(idTecnico);
   }
@@ -881,9 +881,9 @@ class _CreateServicoState extends State<CreateServico> {
                       type: TextInputType.datetime,
                       maxLength: 10,
                       hide: true,
-                      valueNotifier: _servicoForm.dataPrevista,
+                      valueNotifier: _servicoForm.dataAtendimentoPrevisto,
                       validator: _servicoValidator.byField(_servicoForm, ErrorCodeKey.data.name),
-                      onChanged: _servicoForm.setDataPrevista,
+                      onChanged: _servicoForm.setDataAtendimentoPrevisto,
                       enabled: _isInputEnabled(),
                     ),
                     CustomDropdownFormField(
@@ -913,9 +913,9 @@ class _CreateServicoState extends State<CreateServico> {
                         type: TextInputType.datetime,
                         maxLength: 10,
                         hide: true,
-                        valueNotifier: _servicoForm.dataPrevista,
+                        valueNotifier: _servicoForm.dataAtendimentoPrevisto,
                         validator: _servicoValidator.byField(_servicoForm, ErrorCodeKey.data.name),
-                        onChanged: _servicoForm.setDataPrevista,
+                        onChanged: _servicoForm.setDataAtendimentoPrevisto,
                         enabled: _isInputEnabled(),
                       ),
                     ),

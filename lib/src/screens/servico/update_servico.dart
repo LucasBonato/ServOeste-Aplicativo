@@ -64,16 +64,22 @@ class _UpdateServicoState extends State<UpdateServico> {
 
   void _populateFormWithState(ServicoSearchOneSuccessState state) {
     _servicoUpdateForm.setNomeCliente(state.servico.nomeCliente);
-    _servicoUpdateForm.setNomeTecnico(state.servico.nomeTecnico);
     _servicoUpdateForm.setEquipamento(state.servico.equipamento);
-    _servicoUpdateForm.setHorario(state.servico.horarioPrevisto);
-    _servicoUpdateForm.setGarantia(state.servico.garantia);
-    _servicoUpdateForm.setSituacao(state.servico.situacao);
-    _servicoUpdateForm.setFilial(state.servico.filial);
     _servicoUpdateForm.setMarca(state.servico.marca);
+    _servicoUpdateForm.setNomeTecnico(state.servico.nomeTecnico);
+    _servicoUpdateForm.setFilial(state.servico.filial);
+    _servicoUpdateForm.setGarantiaBool(state.servico.garantia);
+    _servicoUpdateForm.setSituacao(state.servico.situacao);
+    _servicoUpdateForm.setHorario(state.servico.horarioPrevisto);
     _servicoUpdateForm.setDataAtendimentoPrevistoDate(state.servico.dataAtendimentoPrevisto);
     _servicoUpdateForm.setDataAtendimentoEfetivoDate(state.servico.dataAtendimentoEfetivo);
     _servicoUpdateForm.setDataAtendimentoAberturaDate(state.servico.dataAtendimentoAbertura);
+    _servicoUpdateForm.setValor(state.servico.valor.toString());
+    _servicoUpdateForm.setValorPecas(state.servico.valorPecas.toString());
+    _servicoUpdateForm.setFormaPagamento(state.servico.formaPagamento);
+    _servicoUpdateForm.setDataFechamentoDate(state.servico.dataFechamento);
+    _servicoUpdateForm.setValorComissao(state.servico.valorComissao.toString());
+    _servicoUpdateForm.setDataPagamentoComissaoDate(state.servico.dataPagamentoComissao);
   }
 
   Widget _buildCard(Widget child, String title) {
@@ -454,11 +460,11 @@ class _UpdateServicoState extends State<UpdateServico> {
                       dropdownValues: Constants.formasPagamento,
                       leftPadding: 4,
                       rightPadding: 4,
-                      valueNotifier: _servicoUpdateForm.equipamento,
-                      onChanged: _servicoUpdateForm.setEquipamento,
+                      valueNotifier: _servicoUpdateForm.formaPagamento,
+                      onChanged: _servicoUpdateForm.setFormaPagamento,
                       validator: _servicoUpdateValidator.byField(
                         _servicoUpdateForm,
-                        'equipamento',
+                        'formaPagamento',
                       ),
                     ), // Forma de Pagamento
                     CustomDatePickerFormField(
@@ -722,11 +728,11 @@ class _UpdateServicoState extends State<UpdateServico> {
                           dropdownValues: Constants.formasPagamento,
                           leftPadding: 4,
                           rightPadding: 4,
-                          valueNotifier: _servicoUpdateForm.equipamento,
-                          onChanged: _servicoUpdateForm.setEquipamento,
+                          valueNotifier: _servicoUpdateForm.formaPagamento,
+                          onChanged: _servicoUpdateForm.setFormaPagamento,
                           validator: _servicoUpdateValidator.byField(
                             _servicoUpdateForm,
-                            'equipamento',
+                            'formaPagamento',
                           ),
                         ),
                       ), // Forma de Pagamento

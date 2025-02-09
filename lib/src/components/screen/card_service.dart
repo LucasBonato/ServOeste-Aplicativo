@@ -9,7 +9,6 @@ class CardService extends StatelessWidget {
   final String marca;
   final String tecnico;
   final String filial;
-  final String? garantia;
   final String status;
   final DateTime dataPrevista;
   final DateTime? dataEfetiva;
@@ -28,7 +27,6 @@ class CardService extends StatelessWidget {
     required this.marca,
     required this.tecnico,
     required this.filial,
-    this.garantia,
     required this.dataPrevista,
     this.dataEfetiva,
     this.dataAbertura,
@@ -246,19 +244,6 @@ class CardService extends StatelessWidget {
                               ),
                               child: Text(
                                 "Data Abertura: ${dataAbertura!.day}/${dataAbertura!.month}/${dataAbertura!.year} - ${formatHorario(horario)}",
-                                style: TextStyle(
-                                  fontSize: constraints.maxWidth * 0.045,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          if (garantia != null && garantia!.isNotEmpty)
-                            Padding(
-                              padding: EdgeInsets.only(
-                                left: constraints.maxWidth * 0.15,
-                              ),
-                              child: Text(
-                                garantia!,
                                 style: TextStyle(
                                   fontSize: constraints.maxWidth * 0.045,
                                   color: Colors.black,

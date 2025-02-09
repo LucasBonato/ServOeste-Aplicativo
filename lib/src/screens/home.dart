@@ -115,7 +115,6 @@ class _HomeState extends State<Home> {
                     dataPrevista: servico.dataAtendimentoPrevisto,
                     dataEfetiva: servico.dataAtendimentoEfetivo,
                     dataAbertura: servico.dataAtendimentoAbertura,
-                    garantia: servico.garantia,
                     status: servico.situacao,
                   ),
                 );

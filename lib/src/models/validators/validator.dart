@@ -101,7 +101,7 @@ class ServicoValidator extends LucidValidator<ServicoForm> with BackendErrorsVal
         .must((filial) => filial != "", "Selecione uma filial!", ErrorCodeKey.filial.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.filial.name);
 
-    ruleFor((servico) => servico.dataPrevista.value, key: ErrorCodeKey.data.name)
+    ruleFor((servico) => servico.dataAtendimentoPrevisto.value, key: ErrorCodeKey.data.name)
         .customValidNotSunday(code: ErrorCodeKey.data.name)
         .must((dataPrevista) => dataPrevista != "", "Selecione uma data!", ErrorCodeKey.data.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.data.name);
