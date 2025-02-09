@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:serv_oeste/src/models/enums/service_status.dart';
 
 class Formatters {
   static String applyTelefoneMask(String telefone) {
@@ -26,5 +27,25 @@ class Formatters {
 
   static DateTime transformDateMask(String dateString) {
     return DateFormat('dd/MM/yyyy').parseStrict(dateString);
+  }
+
+  static ServiceStatus mapStringStatusToEnumStatus(String status) {
+    return switch (status) {
+      "AGUARDANDO_AGENDAMENTO" => ServiceStatus.aguardandoAgendamento,
+      "AGUARDANDO_ATENDIMENTO" => ServiceStatus.aguardandoAtendimento,
+      "AGUARDANDO_APROVACAO" => ServiceStatus.aguardandoAprovacaoCliente,
+      "AGUARDANDO_CLIENTE_RETIRAR" => ServiceStatus.aguardandoClienteRetirar,
+      "AGUARDANDO_ORCAMENTO" => ServiceStatus.aguardandoOrcamento,
+      "CANCELADO" => ServiceStatus.cancelado,
+      "COMPRA" => ServiceStatus.compra,
+      "CORTESIA" => ServiceStatus.cortesia,
+      "GARANTIA" => ServiceStatus.garantia,
+      "NAO_APROVADO" => ServiceStatus.naoAprovadoPeloCliente,
+      "NAO_RETIRA_3_MESES" => ServiceStatus.naoRetira3Meses,
+      "ORCAMENTO_APROVADO" => ServiceStatus.orcamentoAprovado,
+      "RESOLVIDO" => ServiceStatus.resolvido,
+      "SEM_DEFEITO" => ServiceStatus.semDefeito,
+      _ => ServiceStatus.aguardandoAgendamento
+    };
   }
 }
