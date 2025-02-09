@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/date_picker_form_field.dart';
@@ -16,6 +17,7 @@ import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
+import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/models/servico/servico_form.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
@@ -87,7 +89,7 @@ class _UpdateServicoState extends State<UpdateServico> {
       return;
     }
 
-    // _servicoBloc.add(ServicoUpdateEvent(servico: Servico.fromForm(_servicoUpdateForm)));
+    _servicoBloc.add(ServicoUpdateEvent(servico: Servico.fromForm(_servicoUpdateForm)));
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Serviço atualizado com sucesso!')),
@@ -123,10 +125,12 @@ class _UpdateServicoState extends State<UpdateServico> {
   }
 
   void _populateFormWithState(ServicoSearchOneSuccessState state) {
+    _servicoUpdateForm.setIdCliente(state.servico.idCliente);
     _servicoUpdateForm.setNomeCliente(state.servico.nomeCliente);
     _servicoUpdateForm.setEquipamento(state.servico.equipamento);
     _servicoUpdateForm.setMarca(state.servico.marca);
     _servicoUpdateForm.setNomeTecnico(state.servico.nomeTecnico);
+    _servicoUpdateForm.setIdTecnico(state.servico.idTecnico);
     _servicoUpdateForm.setFilial(state.servico.filial);
     _servicoUpdateForm.setGarantiaBool(state.servico.garantia);
     _servicoUpdateForm.setSituacao(state.servico.situacao);
@@ -442,7 +446,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       onChanged: _servicoUpdateForm.setDataAtendimentoPrevisto,
                       validator: _servicoUpdateValidator.byField(
                         _servicoUpdateForm,
-                        'dataAtendimentoPrevisto',
+                        ErrorCodeKey.data.name,
                       ),
                     ), // Data Atendimento Previsto
 
@@ -459,7 +463,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       onChanged: _servicoUpdateForm.setDataAtendimentoEfetivo,
                       validator: _servicoUpdateValidator.byField(
                         _servicoUpdateForm,
-                        'dataAtendimentoEfetivo',
+                        "ErrorCodeKey.data.name",
                       ),
                     ), // Data Atendimento Efetivo
                     CustomDatePickerFormField(
@@ -534,11 +538,11 @@ class _UpdateServicoState extends State<UpdateServico> {
                       leftPadding: 4,
                       rightPadding: 4,
                       type: TextInputType.datetime,
-                      valueNotifier: _servicoUpdateForm.dataAtendimentoEfetivo,
-                      onChanged: _servicoUpdateForm.setDataAtendimentoEfetivo,
+                      valueNotifier: _servicoUpdateForm.dataFechamento,
+                      onChanged: _servicoUpdateForm.setDataFechamento,
                       validator: _servicoUpdateValidator.byField(
                         _servicoUpdateForm,
-                        'dataAtendimentoEfetivo',
+                        'trocar',
                       ),
                     ), // Data Encerramento
 
@@ -568,11 +572,11 @@ class _UpdateServicoState extends State<UpdateServico> {
                       leftPadding: 4,
                       rightPadding: 4,
                       type: TextInputType.datetime,
-                      valueNotifier: _servicoUpdateForm.dataAtendimentoEfetivo,
-                      onChanged: _servicoUpdateForm.setDataAtendimentoEfetivo,
+                      valueNotifier: _servicoUpdateForm.dataPagamentoComissao,
+                      onChanged: _servicoUpdateForm.setDataPagamentoComissao,
                       validator: _servicoUpdateValidator.byField(
                         _servicoUpdateForm,
-                        'dataAtendimentoEfetivo',
+                        'trocar',
                       ),
                     ), // Data Pagamento Comissão
                   ],
@@ -720,7 +724,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                           onChanged: _servicoUpdateForm.setDataAtendimentoPrevisto,
                           validator: _servicoUpdateValidator.byField(
                             _servicoUpdateForm,
-                            'dataAtendimentoPrevisto',
+                            ErrorCodeKey.data.name,
                           ),
                         ),
                       ), // Data Atendimento Previsto
@@ -742,7 +746,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                           onChanged: _servicoUpdateForm.setDataAtendimentoEfetivo,
                           validator: _servicoUpdateValidator.byField(
                             _servicoUpdateForm,
-                            'dataAtendimentoEfetivo',
+                            "ErrorCodeKey.data.name",
                           ),
                         ),
                       ), // Data Atendimento Efetivo
@@ -832,11 +836,11 @@ class _UpdateServicoState extends State<UpdateServico> {
                           leftPadding: 4,
                           rightPadding: 4,
                           type: TextInputType.datetime,
-                          valueNotifier: _servicoUpdateForm.dataAtendimentoEfetivo,
-                          onChanged: _servicoUpdateForm.setDataAtendimentoEfetivo,
+                          valueNotifier: _servicoUpdateForm.dataFechamento,
+                          onChanged: _servicoUpdateForm.setDataFechamento,
                           validator: _servicoUpdateValidator.byField(
                             _servicoUpdateForm,
-                            'dataAtendimentoEfetivo',
+                            'trocar',
                           ),
                         ),
                       ), // Data Encerramento
@@ -877,7 +881,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                           onChanged: _servicoUpdateForm.setDataPagamentoComissao,
                           validator: _servicoUpdateValidator.byField(
                             _servicoUpdateForm,
-                            ErrorCodeKey.data.name,
+                            'ErrorCodeKey.data',
                           ),
                         ),
                       ), // Data Pagamento Comissão
