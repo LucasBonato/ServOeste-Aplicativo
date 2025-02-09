@@ -14,6 +14,7 @@ import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/models/servico/servico_form.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:serv_oeste/src/shared/input_masks.dart';
 
 class UpdateServico extends StatefulWidget {
   final int id;
@@ -431,13 +432,14 @@ class _UpdateServicoState extends State<UpdateServico> {
                       rightPadding: 4,
                       maxLength: 8,
                       hide: true,
-                      type: TextInputType.number,
-                      valueNotifier: _servicoUpdateForm.equipamento,
-                      onChanged: _servicoUpdateForm.setEquipamento,
+                      type: TextInputType.numberWithOptions(decimal: true),
+                      valueNotifier: _servicoUpdateForm.valor,
+                      onChanged: _servicoUpdateForm.setValor,
                       validator: _servicoUpdateValidator.byField(
                         _servicoUpdateForm,
                         'valor',
                       ),
+                      inputFormatters: InputMasks.maskAlphanumericLetters,
                     ), // Valor
                     CustomTextFormField(
                       label: 'Valor Peças',
@@ -446,13 +448,14 @@ class _UpdateServicoState extends State<UpdateServico> {
                       rightPadding: 4,
                       maxLength: 8,
                       hide: true,
-                      type: TextInputType.number,
-                      valueNotifier: _servicoUpdateForm.equipamento,
-                      onChanged: _servicoUpdateForm.setEquipamento,
+                      type: TextInputType.numberWithOptions(decimal: true),
+                      valueNotifier: _servicoUpdateForm.valorPecas,
+                      onChanged: _servicoUpdateForm.setValorPecas,
                       validator: _servicoUpdateValidator.byField(
                         _servicoUpdateForm,
                         'valorPecas',
                       ),
+                      inputFormatters: InputMasks.maskAlphanumericLetters,
                     ), // Valor Peças
                     
                     CustomDropdownFormField(
@@ -491,13 +494,14 @@ class _UpdateServicoState extends State<UpdateServico> {
                       rightPadding: 4,
                       maxLength: 8,
                       hide: true,
-                      type: TextInputType.number,
-                      valueNotifier: _servicoUpdateForm.equipamento,
-                      onChanged: _servicoUpdateForm.setEquipamento,
+                      type: TextInputType.numberWithOptions(decimal: true),
+                      valueNotifier: _servicoUpdateForm.valorComissao,
+                      onChanged: _servicoUpdateForm.setValorComissao,
                       validator: _servicoUpdateValidator.byField(
                         _servicoUpdateForm,
                         'valorComissao',
                       ),
+                      inputFormatters: InputMasks.maskAlphanumericLetters,
                     ), // Valor Comissão
                     CustomDatePickerFormField(
                       hint: 'dd/mm/yyyy',
@@ -692,13 +696,14 @@ class _UpdateServicoState extends State<UpdateServico> {
                           rightPadding: 4,
                           maxLength: 8,
                           hide: true,
-                          type: TextInputType.number,
-                          valueNotifier: _servicoUpdateForm.equipamento,
-                          onChanged: _servicoUpdateForm.setEquipamento,
+                          type: TextInputType.numberWithOptions(decimal: true),
+                          valueNotifier: _servicoUpdateForm.valor,
+                          onChanged: _servicoUpdateForm.setValor,
                           validator: _servicoUpdateValidator.byField(
                             _servicoUpdateForm,
                             'valor',
                           ),
+                          inputFormatters: InputMasks.maskAlphanumericLetters,
                         ),
                       ), // Valor
                       Expanded(
@@ -709,13 +714,14 @@ class _UpdateServicoState extends State<UpdateServico> {
                           rightPadding: 4,
                           maxLength: 8,
                           hide: true,
-                          type: TextInputType.number,
-                          valueNotifier: _servicoUpdateForm.equipamento,
-                          onChanged: _servicoUpdateForm.setEquipamento,
+                          type: TextInputType.numberWithOptions(decimal: true),
+                          valueNotifier: _servicoUpdateForm.valorPecas,
+                          onChanged: _servicoUpdateForm.setValorPecas,
                           validator: _servicoUpdateValidator.byField(
                             _servicoUpdateForm,
                             'valorPecas',
                           ),
+                          inputFormatters: InputMasks.maskAlphanumericLetters,
                         ),
                       ), // Valor Peças
                     ],
@@ -766,13 +772,14 @@ class _UpdateServicoState extends State<UpdateServico> {
                           rightPadding: 4,
                           maxLength: 8,
                           hide: true,
-                          type: TextInputType.number,
-                          valueNotifier: _servicoUpdateForm.equipamento,
-                          onChanged: _servicoUpdateForm.setEquipamento,
+                          type: TextInputType.numberWithOptions(decimal: true),
+                          valueNotifier: _servicoUpdateForm.valorComissao,
+                          onChanged: _servicoUpdateForm.setValorComissao,
                           validator: _servicoUpdateValidator.byField(
                             _servicoUpdateForm,
                             'valorComissao',
                           ),
+                          inputFormatters: InputMasks.maskAlphanumericLetters,
                         ),
                       ), // Valor Comissão
                       Expanded(

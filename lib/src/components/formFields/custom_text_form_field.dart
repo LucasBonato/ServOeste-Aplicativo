@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class CustomTextFormField extends StatefulWidget {
@@ -17,6 +18,7 @@ class CustomTextFormField extends StatefulWidget {
   final void Function(String?)? onChanged;
   final void Function()? onTap;
   final List<MaskTextInputFormatter>? masks;
+  final List<TextInputFormatter>? inputFormatters;
   final String? Function([String?])? validator;
   final ValueNotifier<String> valueNotifier;
   final TextEditingController? controller;
@@ -30,6 +32,7 @@ class CustomTextFormField extends StatefulWidget {
     required this.hint,
     required this.hide,
     required this.type,
+    this.inputFormatters,
     this.initialValue,
     this.rightPadding,
     this.leftPadding,
@@ -80,7 +83,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         builder: (BuildContext context, String value, Widget? child) => TextFormField(
           enabled: widget.enabled,
           controller: _internalController,
-          inputFormatters: widget.masks,
+          inputFormatters: widget.masks?? widget.inputFormatters,
           maxLength: widget.maxLength,
           keyboardType: widget.type,
           maxLines: widget.maxLines ?? 1,

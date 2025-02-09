@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class InputMasks {
@@ -24,5 +25,8 @@ class InputMasks {
       mask: '##/##/####',
       filter: {"#": RegExp(r'[0-9]')},
     ),
+  ];
+  static final List<TextInputFormatter> maskAlphanumericLetters = [
+    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$'))
   ];
 }
