@@ -88,7 +88,9 @@ mixin BackendErrorsValidator {
 }
 
 class ServicoValidator extends LucidValidator<ServicoForm> with BackendErrorsValidator {
-  ServicoValidator() {
+  final bool isUpdate;
+
+  ServicoValidator({this.isUpdate = false}) {
     ruleFor((servico) => servico.equipamento.value, key: ErrorCodeKey.equipamento.name)
         .must((equipamento) => equipamento != "", "Selecione um equipamento!", ErrorCodeKey.equipamento.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.equipamento.name);

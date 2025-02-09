@@ -2,6 +2,7 @@ import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/layout/app_bar_form.dart';
+import 'package:serv_oeste/src/components/screen/elevated_form_button.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
@@ -407,20 +408,9 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                             const Padding(padding: EdgeInsets.only(top: 8, left: 16), child: BuildFieldLabels()),
                             const SizedBox(height: 28),
                             Center(
-                              child: ElevatedButton(
+                              child: ElevatedFormButton(
+                                text: "Atualizar Técnico",
                                 onPressed: _updateTecnico,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF007BFF),
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  minimumSize: const Size(double.infinity, 48),
-                                ),
-                                child: const Text(
-                                  "Atualizar Técnico",
-                                  style: TextStyle(fontSize: 16, color: Colors.white),
-                                ),
                               ),
                             ),
                           ],

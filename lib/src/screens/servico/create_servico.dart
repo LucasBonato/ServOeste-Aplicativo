@@ -10,6 +10,7 @@ import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart
 import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/layout/app_bar_form.dart';
 import 'package:serv_oeste/src/components/screen/card_builder_form.dart';
+import 'package:serv_oeste/src/components/screen/elevated_form_button.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
@@ -332,8 +333,8 @@ class _CreateServicoState extends State<CreateServico> {
                         builder: (context, equipamentoSelecionado, child) {
                           return _buildButton(
                             'Verificar disponibilidade',
-                            equipamentoSelecionado.isNotEmpty ? Colors.blue : Colors.grey.withOpacity(0.5),
                             equipamentoSelecionado.isNotEmpty ? _onShowAvailabilityTechnicianTable : () {},
+                            color: (equipamentoSelecionado.isNotEmpty) ? null : Colors.grey.withOpacity(0.5),
                           );
                         },
                       ),
@@ -360,7 +361,7 @@ class _CreateServicoState extends State<CreateServico> {
                             );
                           }
                         },
-                        child: _buildButton(isClientAndService ? 'Adicionar Cliente/Serviço' : 'Adicionar Serviço', Colors.blue, _onAddService),
+                        child: _buildButton(isClientAndService ? 'Adicionar Cliente/Serviço' : 'Adicionar Serviço', _onAddService),
                       ),
                     ],
                   ),
@@ -373,22 +374,13 @@ class _CreateServicoState extends State<CreateServico> {
     );
   }
 
-  Widget _buildButton(String text, Color color, VoidCallback onPressed) {
+  Widget _buildButton(String text, VoidCallback onPressed, {Color? color}) {
     return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 800),
-      child: ElevatedButton(
+      constraints: const BoxConstraints(maxWidth: 750),
+      child: ElevatedFormButton(
+        text: text,
         onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color,
-          minimumSize: const Size(600, 50),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-        child: Text(
-          text,
-          style: const TextStyle(fontSize: 18, color: Colors.white),
-        ),
+        color: color,
       ),
     );
   }

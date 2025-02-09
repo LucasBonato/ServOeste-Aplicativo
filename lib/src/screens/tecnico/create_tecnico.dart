@@ -8,6 +8,7 @@ import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart
 import 'package:serv_oeste/src/components/formFields/custom_grid_checkers_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/layout/app_bar_form.dart';
+import 'package:serv_oeste/src/components/screen/elevated_form_button.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
@@ -284,20 +285,9 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                           }
                         },
                         child: Center(
-                          child: ElevatedButton(
+                          child: ElevatedFormButton(
+                            text: "Adicionar Técnico",
                             onPressed: _registerTecnico,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF007BFF),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              minimumSize: const Size(double.infinity, 48),
-                            ),
-                            child: const Text(
-                              "Adicionar Técnico",
-                              style: TextStyle(fontSize: 16, color: Colors.white),
-                            ),
                           ),
                         ),
                       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:serv_oeste/src/components/layout/app_bar_form.dart';
+import 'package:serv_oeste/src/components/screen/elevated_form_button.dart';
 import 'package:serv_oeste/src/logic/filtro_servico/filtro_servico_provider.dart';
 import 'package:serv_oeste/src/components/formFields/date_picker_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
@@ -434,20 +435,9 @@ class FilterService extends StatelessWidget {
                       },
                     ),
                     const SizedBox(height: 42),
-                    ElevatedButton(
+                    ElevatedFormButton(
+                      text: "Filtrar",
                       onPressed: () => applyFilters(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF007BFF),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        minimumSize: const Size(double.infinity, 48),
-                      ),
-                      child: const Text(
-                        "Filtrar",
-                        style: TextStyle(fontSize: 18, color: Colors.white),
-                      ),
                     ),
                   ],
                 ),
