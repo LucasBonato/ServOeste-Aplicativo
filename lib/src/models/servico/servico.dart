@@ -25,6 +25,13 @@ class Servico {
   late DateTime? dataInicioGarantia;
   late DateTime? dataFimGarantia;
   late DateTime? dataPagamentoComissao;
+  late String? dataAtendimentoPrevistoString;
+  late String? dataAtendimentoEfetivoString;
+  late String? dataAtendimentoAberturaString;
+  late String? dataFechamentoString;
+  late String? dataInicioGarantiaString;
+  late String? dataFimGarantiaString;
+  late String? dataPagamentoComissaoString;
 
   Servico({
     required this.id,
@@ -58,7 +65,7 @@ class Servico {
     idTecnico = servicoForm.getIdTecnico()!;
     equipamento = servicoForm.equipamento.value;
     filial = servicoForm.filial.value;
-    horarioPrevisto = servicoForm.horario.value;
+    horarioPrevisto = servicoForm.horario.value.toLowerCase().replaceAll("ã", "a");
     marca = servicoForm.marca.value;
     situacao = servicoForm.situacao.value;
     descricao = servicoForm.descricao.value;
@@ -67,11 +74,13 @@ class Servico {
     valor = double.tryParse(servicoForm.valor.value);
     valorComissao = double.tryParse(servicoForm.valorComissao.value);
     valorPecas = double.tryParse(servicoForm.valorPecas.value);
-    dataAtendimentoPrevisto = DateTime.parse(servicoForm.dataAtendimentoPrevisto.value);
-    dataAtendimentoEfetivo = (servicoForm.dataAtendimentoEfetivo.value != "") ? null : DateTime.parse(servicoForm.dataAtendimentoEfetivo.value);
-    dataAtendimentoAbertura = (servicoForm.dataAtendimentoAbertura.value != "") ? null : DateTime.parse(servicoForm.dataAtendimentoAbertura.value);
-    dataFechamento = (servicoForm.dataFechamento.value != "") ? null : DateTime.parse(servicoForm.dataFechamento.value);
-    dataPagamentoComissao = (servicoForm.dataPagamentoComissao.value != "") ? null : DateTime.parse(servicoForm.dataPagamentoComissao.value);
+    dataAtendimentoPrevistoString = servicoForm.dataAtendimentoPrevisto.value;
+    dataAtendimentoEfetivoString = (servicoForm.dataAtendimentoEfetivo.value.isEmpty) ? null : servicoForm.dataAtendimentoEfetivo.value;
+    dataAtendimentoAberturaString = (servicoForm.dataAtendimentoAbertura.value.isEmpty) ? null : servicoForm.dataAtendimentoAbertura.value;
+    dataFechamentoString = (servicoForm.dataFechamento.value.isEmpty) ? null : servicoForm.dataFechamento.value;
+    dataPagamentoComissaoString = (servicoForm.dataPagamentoComissao.value.isEmpty) ? null : servicoForm.dataPagamentoComissao.value;
+    dataInicioGarantiaString = null;
+    dataFimGarantiaString = null;
   }
 
   factory Servico.fromJson(Map<String, dynamic> json) => Servico(

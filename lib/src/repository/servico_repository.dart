@@ -9,6 +9,7 @@ import 'package:serv_oeste/src/models/servico/servico_request.dart';
 import 'package:serv_oeste/src/repository/dio/dio_service.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:dio/dio.dart';
+import 'package:serv_oeste/src/shared/formatters.dart';
 
 class ServicoRepository extends DioService {
   Future<List<Servico>?> getServicosByFilter(ServicoFilterRequest servicoFilter) async {
@@ -118,18 +119,18 @@ class ServicoRepository extends DioService {
           "marca": servico.marca,
           "filial": servico.marca,
           "descricao": servico.descricao,
-          "situacao": servico.situacao,
-          "formaPagamento": servico.formaPagamento,
+          "situacao": Formatters.mapSituationToEnumSituation(servico.situacao),
+          "formaPagamento": servico.formaPagamento?.replaceAll("é", "e").toUpperCase(),
           "horarioPrevisto": servico.horarioPrevisto,
           "valor": servico.valor,
           "valorComissao": servico.valorComissao,
           "valorPecas": servico.valorPecas,
-          "dataFechamento": servico.dataFechamento,
-          "dataInicioGarantia": servico.dataInicioGarantia,
-          "dataFimGarantia": servico.dataFimGarantia,
-          "dataAtendimentoPrevisto": servico.dataAtendimentoPrevisto,
-          "dataAtendimentoEfetiva": servico.dataAtendimentoEfetivo,
-          "dataPagamentoComissao": servico.dataPagamentoComissao
+          "dataFechamento": servico.dataFechamentoString,
+          "dataInicioGarantia": servico.dataInicioGarantiaString,
+          "dataFimGarantia": servico.dataFimGarantiaString,
+          "dataAtendimentoPrevisto": servico.dataAtendimentoPrevistoString,
+          "dataAtendimentoEfetiva": servico.dataAtendimentoEfetivoString,
+          "dataPagamentoComissao": servico.dataPagamentoComissaoString
         }
       );
 
