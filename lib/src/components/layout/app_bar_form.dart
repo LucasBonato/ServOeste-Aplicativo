@@ -20,7 +20,7 @@ class AppBarForm extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: Colors.black),
-        onPressed: onPressed?? () => Navigator.of(context).pop(),
+        onPressed: onPressed?? () => Navigator.pop(context, "Back"),
       ),
       title: Text(
         title,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/components/formFields/field_labels.dart';
+import 'package:serv_oeste/src/components/layout/app_bar_form.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
@@ -90,24 +91,9 @@ class _CreateClienteState extends State<CreateCliente> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9FF),
-      appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
-          child: Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black),
-                onPressed: _handleBackNavigation,
-              )
-            ],
-          ),
-        ),
-        title: const Text(
-          "Voltar",
-          style: TextStyle(color: Colors.black, fontSize: 16),
-        ),
-        backgroundColor: Color(0xFCFDFDFF),
-        elevation: 0,
+      appBar: AppBarForm(
+        title: "Voltar",
+        onPressed: _handleBackNavigation,
       ),
       body: Center(
         child: ConstrainedBox(

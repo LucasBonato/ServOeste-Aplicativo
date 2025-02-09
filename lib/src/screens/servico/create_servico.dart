@@ -8,6 +8,7 @@ import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
+import 'package:serv_oeste/src/components/layout/app_bar_form.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
@@ -246,24 +247,8 @@ class _CreateServicoState extends State<CreateServico> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9FF),
-      appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
-          child: Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black),
-                onPressed: () => Navigator.pop(context, "Back"),
-              )
-            ],
-          ),
-        ),
-        title: const Text(
-          "Voltar",
-          style: TextStyle(color: Colors.black, fontSize: 16),
-        ),
-        backgroundColor: Color(0xFCFDFDFF),
-        elevation: 0,
+      appBar: AppBarForm(
+        title: "Voltar",
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:serv_oeste/src/components/layout/app_bar_form.dart';
 import 'package:serv_oeste/src/logic/filtro_servico/filtro_servico_provider.dart';
 import 'package:serv_oeste/src/components/formFields/date_picker_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
@@ -45,15 +46,8 @@ class FilterService extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9FF),
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context, "Back"),
-        ),
-        title: const Text("Voltar",
-            style: TextStyle(color: Colors.black, fontSize: 16)),
-        backgroundColor: const Color(0xFCFDFDFF),
-        elevation: 0,
+      appBar: AppBarForm(
+        title: "Voltar",
       ),
       body: Center(
         child: ConstrainedBox(
