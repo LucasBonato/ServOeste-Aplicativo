@@ -1032,7 +1032,21 @@ class _UpdateServicoState extends State<UpdateServico> {
                                 children: [
                                   ElevatedFormButton(
                                     text: "Ver Histórico de Atendimento",
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      showAdaptiveDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: Text("Histórico", textAlign: TextAlign.center,),
+                                          content: Text(_servicoUpdateForm.descricao.value, textAlign: TextAlign.center,),
+                                          actions: [
+                                            ElevatedFormButton(
+                                              text: "Ok",
+                                              onPressed: () => Navigator.pop(context),
+                                            )
+                                          ],
+                                        ),
+                                      );
+                                    },
                                   ),
                                   const SizedBox(height: 16),
                                   ElevatedFormButton(

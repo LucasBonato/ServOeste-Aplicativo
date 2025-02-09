@@ -10,7 +10,7 @@ class CardService extends StatelessWidget {
   final String tecnico;
   final String filial;
   final String status;
-  final DateTime dataPrevista;
+  final DateTime? dataPrevista;
   final DateTime? dataEfetiva;
   final DateTime? dataAbertura;
   final String horario;
@@ -198,26 +198,26 @@ class CardService extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 5),
-                          if (dataAbertura != null)
+                          if (dataPrevista != null)
                             Padding(
                               padding: EdgeInsets.only(
                                 left: constraints.maxWidth * 0.15,
                               ),
                               child: Text(
-                                "Data Prevista: ${dataPrevista.day}/${dataPrevista.month}/${dataPrevista.year}",
+                                "Data Prevista: ${dataPrevista?.day}/${dataPrevista?.month}/${dataPrevista?.year} - ${formatHorario(horario)}",
                                 style: TextStyle(
                                   fontSize: constraints.maxWidth * 0.045,
                                   color: Colors.black,
                                 ),
                               ),
                             ),
-                          if (dataAbertura == null)
+                          if (dataPrevista == null)
                             Padding(
                               padding: EdgeInsets.only(
                                 left: constraints.maxWidth * 0.15,
                               ),
                               child: Text(
-                                "Data Prevista: ${dataPrevista.day}/${dataPrevista.month}/${dataPrevista.year} - ${formatHorario(horario)}",
+                                "Data Prevista: ",
                                 style: TextStyle(
                                   fontSize: constraints.maxWidth * 0.045,
                                   color: Colors.black,

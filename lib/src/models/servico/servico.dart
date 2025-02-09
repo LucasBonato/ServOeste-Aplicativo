@@ -13,12 +13,12 @@ class Servico {
   late String marca;
   late String situacao;
   late String? descricao;
-  late bool? garantia;
   late String? formaPagamento;
+  late bool? garantia;
   late double? valor;
   late double? valorComissao;
   late double? valorPecas;
-  late DateTime dataAtendimentoPrevisto;
+  late DateTime? dataAtendimentoPrevisto;
   late DateTime? dataAtendimentoEfetivo;
   late DateTime? dataAtendimentoAbertura;
   late DateTime? dataFechamento;
@@ -94,7 +94,7 @@ class Servico {
     dataInicioGarantia: json["dataInicioGarantia"] != null ? DateTime.parse(json["dataInicioGarantia"]) : null,
     dataFimGarantia: json["dataFimGarantia"] != null ? DateTime.parse(json["dataFimGarantia"]) : null,
     dataPagamentoComissao: json["dataPagamentoComissao"] != null ? DateTime.parse(json["dataPagamentoComissao"]) : null,
-    dataAtendimentoPrevisto: DateTime.parse(json["dataAtendimentoPrevisto"]),
+    dataAtendimentoPrevisto: json["dataAtendimentoPrevisto"] != null ? DateTime.parse(json["dataAtendimentoPrevisto"]) : null,
     dataFechamento: json["dataFechamento"] != null ? DateTime.parse(json["dataFechamento"]) : null,
     dataAtendimentoEfetivo: json["dataAtendimentoEfetiva"] != null ? DateTime.parse(json["dataAtendimentoEfetiva"]) : null,
     dataAtendimentoAbertura: json["dataAtendimentoAbertura"] != null ? DateTime.parse(json["dataAtendimentoAbertura"]) : null,
