@@ -66,6 +66,22 @@ class _UpdateServicoState extends State<UpdateServico> {
     Navigator.pop(context, "Back");
   }
 
+  void _handleError(ServicoErrorState state) {
+    ErrorEntity error = state.error;
+
+    _servicoUpdateValidator.applyBackendError(error);
+    _servicoFormKey.currentState?.validate();
+    _servicoUpdateValidator.cleanExternalErrors();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          "[ERROR] Informação(ões) inválida(s) ao Atualizar o Serviço.",
+        ),
+      ),
+    );
+  }
+
   void _populateFormWithState(ServicoSearchOneSuccessState state) {
     _servicoUpdateForm.setNomeCliente(state.servico.nomeCliente);
     _servicoUpdateForm.setEquipamento(state.servico.equipamento);
@@ -900,8 +916,8 @@ class _UpdateServicoState extends State<UpdateServico> {
                                   ),
                                   const SizedBox(height: 16),
                                   CardBuilderForm(
-                                      title: "Serviço",
-                                      child: _buildServiceForm()
+                                    title: "Serviço",
+                                    child: _buildServiceForm()
                                   ),
                                   const SizedBox(height: 8),
                                   BuildFieldLabels(isClientAndService: false),
@@ -913,31 +929,15 @@ class _UpdateServicoState extends State<UpdateServico> {
                           ConstrainedBox(
                             constraints: const BoxConstraints(maxWidth: 750),
                             child: BlocListener<ServicoBloc, ServicoState>(
-                              bloc: _servicoBloc,
                               listener: (context, state) {
                                 if (state is ServicoUpdateSuccessState) {
                                   _handleBackNavigation();
                                 }
                                 else if (state is ServicoErrorState) {
-                                  ErrorEntity error = state.error;
-
-                                  _servicoUpdateValidator.applyBackendError(error);
-                                  _servicoFormKey.currentState?.validate();
-                                  _servicoUpdateValidator.cleanExternalErrors();
-
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        "[ERROR] Informação(ões) inválida(s) ao Atualizar o Serviço.",
-                                      ),
-                                    ),
-                                  );
+                                  _handleError(state);
                                 }
                               },
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.max,
                                 children: [
                                   ElevatedFormButton(
                                     text: "Ver Histórico de Atendimento",
