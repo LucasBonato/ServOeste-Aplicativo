@@ -56,8 +56,6 @@ class Servico {
     id = servicoForm.getId()!;
     idCliente = servicoForm.getIdCliente()!;
     idTecnico = servicoForm.getIdTecnico()!;
-    nomeCliente = servicoForm.nomeCliente.value;
-    nomeTecnico = servicoForm.nomeTecnico.value;
     equipamento = servicoForm.equipamento.value;
     filial = servicoForm.filial.value;
     horarioPrevisto = servicoForm.horario.value;
@@ -65,7 +63,7 @@ class Servico {
     situacao = servicoForm.situacao.value;
     descricao = servicoForm.descricao.value;
     garantia = (servicoForm.getGarantia() == Constants.garantias.first || servicoForm.getGarantia() == Constants.garantias.last) ? servicoForm.getGarantia() == Constants.garantias.first : null;
-    formaPagamento = servicoForm.formaPagamento.value;
+    formaPagamento = servicoForm.formaPagamento.value.isEmpty ? null : servicoForm.formaPagamento.value;
     valor = double.tryParse(servicoForm.valor.value);
     valorComissao = double.tryParse(servicoForm.valorComissao.value);
     valorPecas = double.tryParse(servicoForm.valorPecas.value);
