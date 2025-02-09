@@ -9,7 +9,6 @@ import 'package:serv_oeste/src/models/servico/servico_request.dart';
 import 'package:serv_oeste/src/repository/servico_repository.dart';
 
 part 'servico_event.dart';
-
 part 'servico_state.dart';
 
 class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
