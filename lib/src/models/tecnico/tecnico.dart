@@ -2,8 +2,7 @@ import 'dart:convert';
 import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
 import 'package:serv_oeste/src/shared/formatters.dart';
 
-List<Tecnico> tecnicoFromJson(String str) =>
-    List<Tecnico>.from(json.decode(str));
+List<Tecnico> tecnicoFromJson(String str) => List<Tecnico>.from(json.decode(str));
 
 class Tecnico {
   int? id;
@@ -16,25 +15,14 @@ class Tecnico {
   List<int>? especialidadesIds;
   List<Map<String, dynamic>>? disponibilidade;
 
-  Tecnico(
-      {this.id,
-      this.nome,
-      this.sobrenome,
-      this.telefoneFixo,
-      this.telefoneCelular,
-      this.situacao,
-      this.especialidades,
-      this.especialidadesIds,
-      this.disponibilidade});
+  Tecnico({this.id, this.nome, this.sobrenome, this.telefoneFixo, this.telefoneCelular, this.situacao, this.especialidades, this.especialidadesIds, this.disponibilidade});
 
   Tecnico.fromForm(TecnicoForm tecnicoForm) {
     id = tecnicoForm.id;
     nome = tecnicoForm.nome.value;
     situacao = tecnicoForm.situacao.value;
-    telefoneFixo =
-        Formatters.transformTelefoneMask(tecnicoForm.telefoneFixo.value);
-    telefoneCelular =
-        Formatters.transformTelefoneMask(tecnicoForm.telefoneCelular.value);
+    telefoneFixo = Formatters.transformTelefoneMask(tecnicoForm.telefoneFixo.value);
+    telefoneCelular = Formatters.transformTelefoneMask(tecnicoForm.telefoneCelular.value);
     especialidadesIds = tecnicoForm.conhecimentos.value;
   }
 
@@ -45,8 +33,7 @@ class Tecnico {
         telefoneFixo: json["telefoneFixo"],
         telefoneCelular: json["telefoneCelular"],
         situacao: json["situacao"],
-        especialidades: List<Especialidade>.from(
-            json["especialidades"].map((x) => Especialidade.fromJson(x))),
+        especialidades: List<Especialidade>.from(json["especialidades"].map((x) => Especialidade.fromJson(x))),
       );
 
   @override
