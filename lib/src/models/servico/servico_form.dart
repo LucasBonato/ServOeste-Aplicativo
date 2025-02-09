@@ -13,6 +13,7 @@ class ServicoForm extends ChangeNotifier {
   ValueNotifier<String> nomeTecnico = ValueNotifier<String>("");
   ValueNotifier<String> horario = ValueNotifier<String>("");
   ValueNotifier<String> descricao = ValueNotifier<String>("");
+  ValueNotifier<String> historico = ValueNotifier<String>("");
   ValueNotifier<String> garantia = ValueNotifier<String>("");
   ValueNotifier<String> situacao = ValueNotifier<String>("");
   ValueNotifier<String> dataAtendimentoPrevisto = ValueNotifier<String>("");
@@ -74,6 +75,11 @@ class ServicoForm extends ChangeNotifier {
 
   void setDescricao(String? descricao) {
     this.descricao.value = descricao ?? "";
+    notifyListeners();
+  }
+
+  void setHistorico(String? historico) {
+    this.historico.value = historico ?? "";
     notifyListeners();
   }
 

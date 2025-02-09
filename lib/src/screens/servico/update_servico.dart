@@ -140,6 +140,7 @@ class _UpdateServicoState extends State<UpdateServico> {
     _servicoUpdateForm.setDataFechamentoDate(state.servico.dataFechamento);
     _servicoUpdateForm.setValorComissao(state.servico.valorComissao.toString());
     _servicoUpdateForm.setDataPagamentoComissaoDate(state.servico.dataPagamentoComissao);
+    _servicoUpdateForm.setHistorico(state.servico.descricao);
   }
 
   Widget _buildClientForm() {
@@ -1037,7 +1038,20 @@ class _UpdateServicoState extends State<UpdateServico> {
                                         context: context,
                                         builder: (context) => AlertDialog(
                                           title: Text("Histórico", textAlign: TextAlign.center,),
-                                          content: Text(_servicoUpdateForm.descricao.value, textAlign: TextAlign.center,),
+                                          backgroundColor: const Color(0xFFF9F9FF),
+                                          content: Container(
+                                            padding: const EdgeInsets.all(4),
+                                            decoration: BoxDecoration(
+                                              color: Colors.transparent,
+                                              borderRadius: BorderRadius.circular(12),
+                                              border: Border.all(
+                                                color: const Color(0xFFEAE6E5),
+                                                width: 1,
+                                              ),
+                                            ),
+                                            child: Text(_servicoUpdateForm.historico.value, textAlign: TextAlign.center,)
+                                          ),
+
                                           actions: [
                                             ElevatedFormButton(
                                               text: "Ok",
