@@ -2,31 +2,31 @@ import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class InputMasks {
-  static final List<MaskTextInputFormatter> maskCep = [
+  static final List<MaskTextInputFormatter> cep = [
     MaskTextInputFormatter(
       mask: '#####-###',
       filter: {"#": RegExp(r'[0-9]')},
     ),
   ];
-  static final List<MaskTextInputFormatter> maskCelular = [
+  static final List<MaskTextInputFormatter> telefoneCelular = [
     MaskTextInputFormatter(
       mask: '(##) #####-####',
       filter: {"#": RegExp(r'[0-9]')},
     ),
   ];
-  static final List<MaskTextInputFormatter> maskTelefoneFixo = [
+  static final List<MaskTextInputFormatter> telefoneFixo = [
     MaskTextInputFormatter(
       mask: '(##) ####-####',
       filter: {"#": RegExp(r'[0-9]')},
     ),
   ];
-  static final List<MaskTextInputFormatter> maskData = [
+  static final List<MaskTextInputFormatter> data = [
     MaskTextInputFormatter(
       mask: '##/##/####',
       filter: {"#": RegExp(r'[0-9]')},
     ),
   ];
-  static final List<TextInputFormatter> maskAlphanumericLetters = [
+  static final List<TextInputFormatter> alphanumericLetters = [
     FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$'))
   ];
 }

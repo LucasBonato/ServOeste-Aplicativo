@@ -501,7 +501,7 @@ class _CreateServicoState extends State<CreateServico> {
                               hide: true,
                               rightPadding: 4,
                               leftPadding: 4,
-                              masks: InputMasks.maskTelefoneFixo,
+                              masks: InputMasks.telefoneFixo,
                               valueNotifier: _clienteForm.telefoneFixo,
                               validator: _clienteValidator.byField(_clienteForm, ErrorCodeKey.telefones.name),
                               onChanged: _clienteForm.setTelefoneFixo,
@@ -514,7 +514,7 @@ class _CreateServicoState extends State<CreateServico> {
                               rightPadding: 4,
                               leftPadding: 4,
                               hide: true,
-                              masks: InputMasks.maskCelular,
+                              masks: InputMasks.telefoneCelular,
                               valueNotifier: _clienteForm.telefoneCelular,
                               validator: _clienteValidator.byField(_clienteForm, ErrorCodeKey.telefones.name),
                               onChanged: _clienteForm.setTelefoneCelular,
@@ -533,7 +533,7 @@ class _CreateServicoState extends State<CreateServico> {
                                 hide: true,
                                 rightPadding: 4,
                                 leftPadding: 4,
-                                masks: InputMasks.maskTelefoneFixo,
+                                masks: InputMasks.telefoneFixo,
                                 valueNotifier: _clienteForm.telefoneFixo,
                                 validator: _clienteValidator.byField(_clienteForm, ErrorCodeKey.telefones.name),
                                 onChanged: _clienteForm.setTelefoneFixo,
@@ -548,7 +548,7 @@ class _CreateServicoState extends State<CreateServico> {
                                 hide: true,
                                 rightPadding: 4,
                                 leftPadding: 4,
-                                masks: InputMasks.maskCelular,
+                                masks: InputMasks.telefoneCelular,
                                 valueNotifier: _clienteForm.telefoneCelular,
                                 validator: _clienteValidator.byField(_clienteForm, ErrorCodeKey.telefones.name),
                                 onChanged: _clienteForm.setTelefoneCelular,
@@ -582,7 +582,7 @@ class _CreateServicoState extends State<CreateServico> {
                                 type: TextInputType.number,
                                 maxLength: 9,
                                 hide: true,
-                                masks: InputMasks.maskCep,
+                                masks: InputMasks.cep,
                                 valueNotifier: _clienteForm.cep,
                                 validator: _clienteValidator.byField(_clienteForm, ErrorCodeKey.cep.name),
                                 onChanged: _fetchInformationAboutCep,
@@ -623,7 +623,7 @@ class _CreateServicoState extends State<CreateServico> {
                                   type: TextInputType.number,
                                   maxLength: 9,
                                   hide: true,
-                                  masks: InputMasks.maskCep,
+                                  masks: InputMasks.cep,
                                   valueNotifier: _clienteForm.cep,
                                   validator: _clienteValidator.byField(_clienteForm, ErrorCodeKey.cep.name),
                                   onChanged: _fetchInformationAboutCep,
@@ -805,32 +805,33 @@ class _CreateServicoState extends State<CreateServico> {
               }
             },
             child: ValueListenableBuilder(
-                valueListenable: _servicoForm.equipamento,
-                builder: (context, value, child) {
-                  bool isFieldEnabled = (value.isNotEmpty && (isClientAndService || _servicoForm.idCliente.value != null));
-                  if (isClientAndService) {
-                    isFieldEnabled = (value.isNotEmpty || (!isClientAndService || _servicoForm.idCliente.value != null));
-                  }
+              valueListenable: _servicoForm.equipamento,
+              builder: (context, value, child) {
+                bool isFieldEnabled = (value.isNotEmpty && (isClientAndService || _servicoForm.idCliente.value != null));
+                if (isClientAndService) {
+                  isFieldEnabled = (value.isNotEmpty || (!isClientAndService || _servicoForm.idCliente.value != null));
+                }
 
-                  return Tooltip(
-                    message: (isFieldEnabled) ? "" : "Selecione um equipamento para continuar",
-                    textAlign: TextAlign.center,
-                    child: CustomSearchDropDownFormField(
-                      label: "Nome do Técnico*",
-                      dropdownValues: _dropdownNomeTecnicos,
-                      maxLength: 50,
-                      hide: false,
-                      leftPadding: 4,
-                      rightPadding: 4,
-                      controller: _nomeTecnicoController,
-                      valueNotifier: _servicoForm.nomeTecnico,
-                      validator: _servicoValidator.byField(_servicoForm, ErrorCodeKey.tecnico.name),
-                      onChanged: _onNomeTecnicoChanged,
-                      onSelected: _getTecnicoId,
-                      enabled: isFieldEnabled,
-                    ),
-                  );
-                }),
+                return Tooltip(
+                  message: (isFieldEnabled) ? "" : "Selecione um equipamento para continuar",
+                  textAlign: TextAlign.center,
+                  child: CustomSearchDropDownFormField(
+                    label: "Nome do Técnico*",
+                    dropdownValues: _dropdownNomeTecnicos,
+                    maxLength: 50,
+                    hide: false,
+                    leftPadding: 4,
+                    rightPadding: 4,
+                    controller: _nomeTecnicoController,
+                    valueNotifier: _servicoForm.nomeTecnico,
+                    validator: _servicoValidator.byField(_servicoForm, ErrorCodeKey.tecnico.name),
+                    onChanged: _onNomeTecnicoChanged,
+                    onSelected: _getTecnicoId,
+                    enabled: isFieldEnabled,
+                  ),
+                );
+              },
+            ),
           ),
           LayoutBuilder(
             builder: (context, constraints) {
@@ -843,7 +844,7 @@ class _CreateServicoState extends State<CreateServico> {
                       hint: 'dd/mm/aaaa',
                       leftPadding: 4,
                       rightPadding: 4,
-                      mask: InputMasks.maskData,
+                      mask: InputMasks.data,
                       type: TextInputType.datetime,
                       maxLength: 10,
                       hide: true,
@@ -875,7 +876,7 @@ class _CreateServicoState extends State<CreateServico> {
                         hint: 'dd/mm/aaaa',
                         leftPadding: 4,
                         rightPadding: 4,
-                        mask: InputMasks.maskData,
+                        mask: InputMasks.data,
                         type: TextInputType.datetime,
                         maxLength: 10,
                         hide: true,

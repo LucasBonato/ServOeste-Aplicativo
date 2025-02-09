@@ -208,7 +208,7 @@ class FilterService extends StatelessWidget {
                               CustomDatePickerFormField(
                                 label: 'Data Prevista...',
                                 hint: 'dd/mm/aaaa',
-                                mask: InputMasks.maskData,
+                                mask: InputMasks.data,
                                 maxLength: 10,
                                 hide: true,
                                 rightPadding: 4,
@@ -236,7 +236,7 @@ class FilterService extends StatelessWidget {
                               CustomDatePickerFormField(
                                 label: 'Data Efetiva...',
                                 hint: 'dd/mm/aaaa',
-                                mask: InputMasks.maskData,
+                                mask: InputMasks.data,
                                 maxLength: 10,
                                 hide: true,
                                 rightPadding: 4,
@@ -269,7 +269,7 @@ class FilterService extends StatelessWidget {
                                 child: CustomDatePickerFormField(
                                   label: 'Data Prevista...',
                                   hint: 'dd/mm/aaaa',
-                                  mask: InputMasks.maskData,
+                                  mask: InputMasks.data,
                                   maxLength: 10,
                                   hide: true,
                                   rightPadding: 4,
@@ -300,7 +300,7 @@ class FilterService extends StatelessWidget {
                                 child: CustomDatePickerFormField(
                                   label: 'Data Efetiva...',
                                   hint: 'dd/mm/aaaa',
-                                  mask: InputMasks.maskData,
+                                  mask: InputMasks.data,
                                   maxLength: 10,
                                   hide: true,
                                   rightPadding: 4,
@@ -341,7 +341,7 @@ class FilterService extends StatelessWidget {
                               CustomDatePickerFormField(
                                 label: 'Data Abertura...',
                                 hint: 'dd/mm/aaaa',
-                                mask: InputMasks.maskData,
+                                mask: InputMasks.data,
                                 maxLength: 10,
                                 hide: true,
                                 rightPadding: 4,
@@ -388,7 +388,7 @@ class FilterService extends StatelessWidget {
                                 child: CustomDatePickerFormField(
                                   label: 'Data Abertura...',
                                   hint: 'dd/mm/aaaa',
-                                  mask: InputMasks.maskData,
+                                  mask: InputMasks.data,
                                   maxLength: 10,
                                   hide: true,
                                   rightPadding: 4,
