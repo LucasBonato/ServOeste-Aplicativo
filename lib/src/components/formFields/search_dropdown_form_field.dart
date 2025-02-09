@@ -66,14 +66,6 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
   }
 
   @override
-  void dispose() {
-    if (widget.controller == null) {
-      _customSearchController.dispose();
-    }
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsetsDirectional.fromSTEB(widget.leftPadding ?? 16, 4,
