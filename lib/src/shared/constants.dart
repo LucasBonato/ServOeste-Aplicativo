@@ -62,9 +62,8 @@ class Constants {
   static const List<String> dataAtendimento = ["Manhã", "Tarde"];
   static const List<String> formasPagamento = [
     "Pix",
-    "Dinheiro",
     "Crédito",
     "Débito",
-    "Boleto",
+    "Dinheiro",
   ];
 }
