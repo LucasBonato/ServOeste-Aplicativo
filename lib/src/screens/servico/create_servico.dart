@@ -8,6 +8,7 @@ import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
+import 'package:serv_oeste/src/components/screen/filtered_clients_table.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
@@ -464,50 +465,9 @@ class _CreateServicoState extends State<CreateServico> {
           }
         }
 
-        return ScrollConfiguration(
-          behavior:
-              ScrollBehavior().copyWith(overscroll: true, scrollbars: true),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: SizedBox(
-              height: 225,
-              child: SingleChildScrollView(
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: DataTable(
-                    columns: const [
-                      DataColumn(label: Text('ID')),
-                      DataColumn(label: Text('Nome')),
-                      DataColumn(label: Text('Endereço')),
-                    ],
-                    rows: _clientesFiltrados.isEmpty
-                        ? [
-                            DataRow(cells: [
-                              DataCell(Text('')),
-                              DataCell(Text('Nenhum cliente encontrado')),
-                              DataCell(Text('')),
-                            ]),
-                          ]
-                        : _clientesFiltrados.map((cliente) {
-                            return DataRow(
-                              cells: [
-                                DataCell(Text(cliente['id']!),
-                                    onDoubleTap: () =>
-                                        _getClienteId(cliente['nome']!)),
-                                DataCell(Text(cliente['nome']!),
-                                    onDoubleTap: () =>
-                                        _getClienteId(cliente['nome']!)),
-                                DataCell(Text(cliente['endereco']!),
-                                    onDoubleTap: () =>
-                                        _getClienteId(cliente['nome']!)),
-                              ],
-                            );
-                          }).toList(),
-                  ),
-                ),
-              ),
-            ),
-          ),
+        return FilteredClientsTable(
+          clientesFiltrados: _clientesFiltrados,
+          onClientSelected: _getClienteId,
         );
       },
     );

@@ -10,10 +10,12 @@ import 'package:serv_oeste/src/components/formFields/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/layout/app_bar_form.dart';
 import 'package:serv_oeste/src/components/screen/card_builder_form.dart';
+import 'package:serv_oeste/src/components/screen/client_selection_modal.dart';
 import 'package:serv_oeste/src/components/screen/elevated_form_button.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
+import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
@@ -42,7 +44,10 @@ class _UpdateServicoState extends State<UpdateServico> {
 
   late List<String> _dropdownNomeTecnicos;
   late List<Tecnico> _tecnicos;
+  late List<Cliente> _clientes;
   late TextEditingController _nomeTecnicoController;
+  late TextEditingController _nomeClienteController;
+  late TextEditingController _enderecoController;
 
   final ServicoForm _servicoUpdateForm = ServicoForm();
   final ClienteForm _clienteUpdateForm = ClienteForm();
@@ -56,8 +61,11 @@ class _UpdateServicoState extends State<UpdateServico> {
     super.initState();
     _servicoUpdateForm.setId(widget.id);
     _tecnicos = [];
+    _clientes = [];
     _dropdownNomeTecnicos = [];
     _nomeTecnicoController = TextEditingController();
+    _nomeClienteController = TextEditingController();
+    _enderecoController = TextEditingController();
     _servicoBloc = context.read<ServicoBloc>();
     _tecnicoBloc = context.read<TecnicoBloc>();
     _clienteBloc = context.read<ClienteBloc>();
@@ -86,6 +94,18 @@ class _UpdateServicoState extends State<UpdateServico> {
       if ("${tecnico.nome!} ${tecnico.sobrenome!}" ==
           _servicoUpdateForm.nomeTecnico.value) {
         _servicoUpdateForm.setIdTecnico(tecnico.id);
+      }
+    }
+  }
+
+  void _getClienteId(String nome) {
+    _clienteUpdateForm.setNome(nome);
+
+    for (Cliente cliente in _clientes) {
+      if (cliente.nome! == _clienteUpdateForm.nome.value) {
+        _nomeClienteController.text = cliente.nome ?? '';
+        _enderecoController.text = cliente.endereco ?? '';
+        _servicoUpdateForm.setIdCliente(cliente.id);
       }
     }
   }
@@ -130,6 +150,21 @@ class _UpdateServicoState extends State<UpdateServico> {
           "[ERROR] Informação(ões) inválida(s) ao Atualizar o Serviço.",
         ),
       ),
+    );
+  }
+
+  void _showClientSelectionModal(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: ClientSelectionModal(
+            nomeController: _nomeClienteController,
+            enderecoController: _enderecoController,
+            onClientSelected: _getClienteId,
+          ),
+        );
+      },
     );
   }
 
@@ -1068,6 +1103,13 @@ class _UpdateServicoState extends State<UpdateServico> {
                                                 const SizedBox(height: 8),
                                                 BuildFieldLabels(
                                                     isClientAndService: false),
+                                                const SizedBox(height: 28),
+                                                ElevatedFormButton(
+                                                  text: "Alterar Cliente",
+                                                  onPressed: () =>
+                                                      _showClientSelectionModal(
+                                                          context),
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -1184,5 +1226,14 @@ class _UpdateServicoState extends State<UpdateServico> {
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _nomeTecnicoController.dispose();
+    _nomeClienteController.dispose();
+    _enderecoController.dispose();
+    super.dispose();
   }
 }
