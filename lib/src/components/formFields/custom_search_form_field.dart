@@ -19,7 +19,8 @@ class CustomSearchTextFormField extends StatefulWidget {
   });
 
   @override
-  State<CustomSearchTextFormField> createState() => _CustomSearchTextFormFieldState();
+  State<CustomSearchTextFormField> createState() =>
+      _CustomSearchTextFormFieldState();
 }
 
 class _CustomSearchTextFormFieldState extends State<CustomSearchTextFormField> {
@@ -27,11 +28,8 @@ class _CustomSearchTextFormFieldState extends State<CustomSearchTextFormField> {
 
   @override
   void initState() {
-    _internalController = widget.controller ?? TextEditingController();
-    _internalController.addListener(() {
-      setState(() {});
-    });
     super.initState();
+    _internalController = widget.controller ?? TextEditingController();
   }
 
   @override
@@ -51,64 +49,69 @@ class _CustomSearchTextFormFieldState extends State<CustomSearchTextFormField> {
         widget.rightPadding ?? 16,
         0,
       ),
-      child: TextFormField(
-        obscureText: false,
-        controller: _internalController,
-        keyboardType: widget.keyboardType ?? TextInputType.text,
-        decoration: InputDecoration(
-          prefixIcon: const Icon(
-            Icons.search_outlined,
-            color: Color(0xFF948F8F),
-          ),
-          suffixIcon: _internalController.text.isNotEmpty
-              ? IconButton(
-                  icon: const Icon(
-                    Icons.clear,
-                    color: Color(0xFF948F8F),
-                  ),
-                  onPressed: () {
-                    _internalController.clear();
-                    if (widget.onChangedAction != null) {
-                      widget.onChangedAction!("");
-                    }
-                  },
-                )
-              : null,
-          isDense: true,
-          hintText: widget.hint,
-          hintStyle: const TextStyle(
-            color: Color(0xFF948F8F),
-            fontSize: 16,
-          ),
-          filled: true,
-          fillColor: const Color(0xFFFFF8F7),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(
-              color: Color(0xFFEAE6E5),
-              width: 1,
+      child: ValueListenableBuilder<TextEditingValue>(
+        valueListenable: _internalController,
+        builder: (context, value, child) {
+          return TextFormField(
+            obscureText: false,
+            controller: _internalController,
+            keyboardType: widget.keyboardType ?? TextInputType.text,
+            decoration: InputDecoration(
+              prefixIcon: const Icon(
+                Icons.search_outlined,
+                color: Color(0xFF948F8F),
+              ),
+              suffixIcon: value.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(
+                        Icons.clear,
+                        color: Color(0xFF948F8F),
+                      ),
+                      onPressed: () {
+                        _internalController.clear();
+                        if (widget.onChangedAction != null) {
+                          widget.onChangedAction!("");
+                        }
+                      },
+                    )
+                  : null,
+              isDense: true,
+              hintText: widget.hint,
+              hintStyle: const TextStyle(
+                color: Color(0xFF948F8F),
+                fontSize: 16,
+              ),
+              filled: true,
+              fillColor: const Color(0xFFFFF8F7),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFFEAE6E5),
+                  width: 1,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFFEAE6E5),
+                  width: 1,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFF6C757D),
+                  width: 1,
+                ),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 16,
+                horizontal: 20,
+              ),
             ),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(
-              color: Color(0xFFEAE6E5),
-              width: 1,
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(
-              color: Color(0xFF6C757D),
-              width: 1,
-            ),
-          ),
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 16,
-            horizontal: 20,
-          ),
-        ),
-        onChanged: widget.onChangedAction,
+            onChanged: widget.onChangedAction,
+          );
+        },
       ),
     );
   }

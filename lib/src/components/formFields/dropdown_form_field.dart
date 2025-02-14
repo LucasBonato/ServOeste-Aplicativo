@@ -26,7 +26,8 @@ class CustomDropdownFormField extends StatefulWidget {
   });
 
   @override
-  State<CustomDropdownFormField> createState() => _CustomDropdownFormFieldState();
+  State<CustomDropdownFormField> createState() =>
+      _CustomDropdownFormFieldState();
 }
 
 class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
@@ -40,7 +41,9 @@ class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
     super.initState();
 
     _internalController = SingleSelectController(
-      widget.dropdownValues.contains(widget.valueNotifier.value) ? widget.valueNotifier.value : null,
+      widget.dropdownValues.contains(widget.valueNotifier.value)
+          ? widget.valueNotifier.value
+          : null,
     );
 
     _effectiveController = widget.controller ?? _internalController;
@@ -55,7 +58,8 @@ class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(widget.leftPadding ?? 16, 4, widget.rightPadding ?? 16, 16),
+      padding: EdgeInsets.fromLTRB(
+          widget.leftPadding ?? 16, 4, widget.rightPadding ?? 16, 16),
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         onEnter: (_) => setState(() {
@@ -72,23 +76,31 @@ class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
           },
           child: ValueListenableBuilder<String>(
             valueListenable: widget.valueNotifier,
-            builder: (BuildContext context, String value, Widget? child) => CustomDropdown<String>(
+            builder: (BuildContext context, String value, Widget? child) =>
+                CustomDropdown<String>(
               enabled: widget.enabled ?? true,
               disabledDecoration: CustomDropdownDisabledDecoration(
-                  fillColor: const Color(0xFFFFF8F7), border: Border.all(color: Colors.black38), suffixIcon: Icon(Icons.arrow_drop_down, color: Colors.black38, size: 20)),
+                  fillColor: const Color(0xFFFFF8F7),
+                  border: Border.all(color: Colors.black38),
+                  suffixIcon: Icon(Icons.arrow_drop_down,
+                      color: Colors.black38, size: 20)),
               items: widget.dropdownValues,
               controller: _effectiveController,
               hintText: widget.label,
               hintBuilder: (context, hint, enabled) => Text(
                 hint,
-                style: const TextStyle(color: Color(0xFF948F8F), fontSize: 16, overflow: TextOverflow.ellipsis),
+                style: const TextStyle(
+                    color: Color(0xFF948F8F),
+                    fontSize: 16,
+                    overflow: TextOverflow.ellipsis),
               ),
               decoration: CustomDropdownDecoration(
                   errorStyle: TextStyle(
                     fontSize: 12,
                     decoration: TextDecoration.none,
                   ),
-                  closedSuffixIcon: Icon(Icons.arrow_drop_down, color: Colors.black38, size: 20),
+                  closedSuffixIcon: Icon(Icons.arrow_drop_down,
+                      color: Colors.black38, size: 20),
                   closedFillColor: _isHovered
                       ? const Color(0xFFF5EEED)
                       : (widget.enabled ?? true)

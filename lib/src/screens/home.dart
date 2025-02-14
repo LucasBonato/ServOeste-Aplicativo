@@ -82,7 +82,6 @@ class _HomeState extends State<Home> {
                 if (stateServico.servicos.isEmpty) {
                   return Center(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
                           Icons.calendar_today,

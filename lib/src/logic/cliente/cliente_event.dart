@@ -25,6 +25,12 @@ final class ClienteSearchEvent extends ClienteEvent {
   ClienteSearchEvent({this.nome, this.telefone, this.endereco});
 }
 
+final class RestoreClienteStateEvent extends ClienteEvent {
+  final ClienteState state;
+
+  RestoreClienteStateEvent({required this.state});
+}
+
 final class ClienteRegisterEvent extends ClienteEvent {
   final Cliente cliente;
   final String sobrenome;

@@ -44,7 +44,7 @@ class ClientSelectionModalState extends State<ClientSelectionModal> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -101,15 +101,34 @@ class ClientSelectionModalState extends State<ClientSelectionModal> {
                       .toList();
 
                   if (_clientesFiltrados.isEmpty) {
-                    return const Center(
-                      child: Text('Nenhum cliente encontrado'),
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.search_off,
+                            size: 80,
+                            color: Colors.grey[400],
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            "Nenhum cliente encontrado",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                        ],
+                      ),
                     );
                   }
 
                   return FilteredClientsTable(
                     clientesFiltrados: _clientesFiltrados,
-                    onClientSelected: (nome) {
-                      widget.onClientSelected(nome);
+                    onClientSelected: (id) {
+                      widget.onClientSelected(id);
+                      widget.nomeController.text = '';
+                      widget.enderecoController.text = '';
                       Navigator.pop(context);
                     },
                   );

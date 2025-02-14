@@ -44,7 +44,6 @@ class _UpdateServicoState extends State<UpdateServico> {
 
   late List<String> _dropdownNomeTecnicos;
   late List<Tecnico> _tecnicos;
-  late List<Cliente> _clientes;
   late TextEditingController _nomeTecnicoController;
   late TextEditingController _nomeClienteController;
   late TextEditingController _enderecoController;
@@ -61,7 +60,6 @@ class _UpdateServicoState extends State<UpdateServico> {
     super.initState();
     _servicoUpdateForm.setId(widget.id);
     _tecnicos = [];
-    _clientes = [];
     _dropdownNomeTecnicos = [];
     _nomeTecnicoController = TextEditingController();
     _nomeClienteController = TextEditingController();
@@ -70,17 +68,18 @@ class _UpdateServicoState extends State<UpdateServico> {
     _tecnicoBloc = context.read<TecnicoBloc>();
     _clienteBloc = context.read<ClienteBloc>();
     _servicoBloc.add(ServicoSearchOneEvent(id: widget.id));
+    _clienteBloc.add(ClienteSearchEvent());
   }
 
-  void _onNomeTecnicoChanged(String nome) {
+  void _onNameTechnicalChanged(String nome) {
     _servicoUpdateForm.setIdTecnico(null);
     if (_servicoUpdateForm.equipamento.value.isEmpty) return;
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce =
-        Timer(Duration(milliseconds: 150), () => _fetchTecnicoNames(nome));
+        Timer(Duration(milliseconds: 150), () => _fetchTechnicalNames(nome));
   }
 
-  void _fetchTecnicoNames(String nome) {
+  void _fetchTechnicalNames(String nome) {
     _servicoUpdateForm.setNomeTecnico(nome);
     if (nome == "") return;
     if (nome.split(" ").length > 1 && _dropdownNomeTecnicos.isEmpty) return;
@@ -88,26 +87,49 @@ class _UpdateServicoState extends State<UpdateServico> {
         nome: nome, equipamento: _servicoUpdateForm.equipamento.value));
   }
 
-  void _getTecnicoId(String nome) {
+  void _getTechnicalId(String nome) {
     _servicoUpdateForm.setNomeTecnico(nome);
     for (Tecnico tecnico in _tecnicos) {
-      if ("${tecnico.nome!} ${tecnico.sobrenome!}" ==
+      if ("${tecnico.nome} ${tecnico.sobrenome}" ==
           _servicoUpdateForm.nomeTecnico.value) {
         _servicoUpdateForm.setIdTecnico(tecnico.id);
       }
     }
   }
 
-  void _getClienteId(String nome) {
-    _clienteUpdateForm.setNome(nome);
+  void _getSelectedClientById(String id) {
+    int? convertedId = int.tryParse(id);
 
-    for (Cliente cliente in _clientes) {
-      if (cliente.nome! == _clienteUpdateForm.nome.value) {
-        _nomeClienteController.text = cliente.nome ?? '';
-        _enderecoController.text = cliente.endereco ?? '';
-        _servicoUpdateForm.setIdCliente(cliente.id);
-      }
+    if (convertedId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("ID inválido. Por favor, insira um número."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
     }
+
+    _clienteBloc.add(ClienteSearchOneEvent(id: convertedId));
+  }
+
+  void _setClientFieldsValues(Cliente cliente) {
+    _clienteUpdateForm.setNome(cliente.nome ?? '');
+    _clienteUpdateForm.setMunicipio(cliente.municipio ?? '');
+    _clienteUpdateForm.setBairro(cliente.bairro ?? '');
+
+    List<String> enderecoParts = cliente.endereco?.split(',') ?? [];
+
+    _clienteUpdateForm
+        .setRua(enderecoParts.isNotEmpty ? enderecoParts.first.trim() : '');
+    _clienteUpdateForm
+        .setNumero(enderecoParts.length > 1 ? enderecoParts[1].trim() : '');
+    _clienteUpdateForm.setComplemento(enderecoParts.length > 2
+        ? enderecoParts.sublist(2).join(',').trim()
+        : '');
+
+    _servicoUpdateForm.setIdCliente(cliente.id);
+    _servicoUpdateForm.setNomeCliente(cliente.nome ?? '');
   }
 
   void _updateServico() {
@@ -154,6 +176,8 @@ class _UpdateServicoState extends State<UpdateServico> {
   }
 
   void _showClientSelectionModal(BuildContext context) {
+    final currentState = _clienteBloc.state;
+
     showDialog(
       context: context,
       builder: (context) {
@@ -161,11 +185,13 @@ class _UpdateServicoState extends State<UpdateServico> {
           content: ClientSelectionModal(
             nomeController: _nomeClienteController,
             enderecoController: _enderecoController,
-            onClientSelected: _getClienteId,
+            onClientSelected: _getSelectedClientById,
           ),
         );
       },
-    );
+    ).then((_) {
+      _clienteBloc.add(RestoreClienteStateEvent(state: currentState));
+    });
   }
 
   void _populateFormWithState(ServicoSearchOneSuccessState stateServico,
@@ -198,6 +224,7 @@ class _UpdateServicoState extends State<UpdateServico> {
         stateServico.servico.dataPagamentoComissao);
     _servicoUpdateForm.setHistorico(stateServico.servico.descricao);
 
+    _clienteUpdateForm.setNome(stateCliente.cliente.nome ?? "");
     _clienteUpdateForm.setMunicipio(stateCliente.cliente.municipio ?? "");
     _clienteUpdateForm.setBairro(stateCliente.cliente.bairro ?? "");
     _clienteUpdateForm
@@ -220,14 +247,16 @@ class _UpdateServicoState extends State<UpdateServico> {
       key: _clienteFormKey,
       child: Column(
         children: [
-          CustomSearchDropDownFormField(
-            label: 'Nome Cliente*',
-            dropdownValues: Constants.filiais,
+          CustomTextFormField(
+            label: 'Nome Cliente',
+            hint: 'Nome Cliente...',
+            type: TextInputType.text,
             leftPadding: 4,
             rightPadding: 4,
+            maxLength: 255,
             hide: true,
-            valueNotifier: _servicoUpdateForm.nomeCliente,
-            onChanged: _servicoUpdateForm.setNomeCliente,
+            valueNotifier: _clienteUpdateForm.nome,
+            onChanged: _clienteUpdateForm.setNome,
             validator: _servicoUpdateValidator.byField(
               _servicoUpdateForm,
               'nomeCliente',
@@ -253,8 +282,8 @@ class _UpdateServicoState extends State<UpdateServico> {
                       enabled: false,
                     ),
                     CustomTextFormField(
+                      label: "Bairro",
                       hint: "Bairro...",
-                      label: "Bairro*",
                       type: TextInputType.text,
                       maxLength: 255,
                       hide: true,
@@ -279,8 +308,8 @@ class _UpdateServicoState extends State<UpdateServico> {
                       enabled: false,
                     ),
                     CustomTextFormField(
+                      label: "Número",
                       hint: "Número...",
-                      label: "Número*",
                       type: TextInputType.number,
                       maxLength: 10,
                       hide: true,
@@ -315,8 +344,8 @@ class _UpdateServicoState extends State<UpdateServico> {
                       ),
                       Expanded(
                         child: CustomTextFormField(
+                          label: "Bairro",
                           hint: "Bairro...",
-                          label: "Bairro*",
                           type: TextInputType.text,
                           maxLength: 255,
                           hide: true,
@@ -335,8 +364,8 @@ class _UpdateServicoState extends State<UpdateServico> {
                       Expanded(
                         flex: 2,
                         child: CustomTextFormField(
+                          label: "Rua",
                           hint: "Rua...",
-                          label: "Rua*",
                           type: TextInputType.text,
                           maxLength: 255,
                           hide: true,
@@ -351,8 +380,8 @@ class _UpdateServicoState extends State<UpdateServico> {
                       Expanded(
                         flex: 1,
                         child: CustomTextFormField(
+                          label: "Número",
                           hint: "Número...",
-                          label: "Número*",
                           type: TextInputType.number,
                           maxLength: 10,
                           hide: true,
@@ -371,8 +400,8 @@ class _UpdateServicoState extends State<UpdateServico> {
             },
           ),
           CustomTextFormField(
-            hint: "Complemento...",
             label: "Complemento",
+            hint: "Complemento...",
             type: TextInputType.text,
             maxLength: 255,
             hide: false,
@@ -433,7 +462,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                           List<String> nomes = state.tecnicos
                               .take(5)
                               .map((tecnico) =>
-                                  "${tecnico.nome!} ${tecnico.sobrenome}")
+                                  "${tecnico.nome} ${tecnico.sobrenome}")
                               .toList();
                           if (_dropdownNomeTecnicos != nomes) {
                             setState(() {
@@ -464,8 +493,8 @@ class _UpdateServicoState extends State<UpdateServico> {
                               validator: _servicoUpdateValidator.byField(
                                   _servicoUpdateForm,
                                   ErrorCodeKey.tecnico.name),
-                              onChanged: _onNomeTecnicoChanged,
-                              onSelected: _getTecnicoId,
+                              onChanged: _onNameTechnicalChanged,
+                              onSelected: _getTechnicalId,
                               enabled: isFieldEnabled,
                             ),
                           );
@@ -710,7 +739,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                         List<String> nomes = state.tecnicos
                             .take(5)
                             .map((tecnico) =>
-                                "${tecnico.nome!} ${tecnico.sobrenome}")
+                                "${tecnico.nome} ${tecnico.sobrenome}")
                             .toList();
                         if (_dropdownNomeTecnicos != nomes) {
                           setState(() {
@@ -740,8 +769,8 @@ class _UpdateServicoState extends State<UpdateServico> {
                             valueNotifier: _servicoUpdateForm.nomeTecnico,
                             validator: _servicoUpdateValidator.byField(
                                 _servicoUpdateForm, ErrorCodeKey.tecnico.name),
-                            onChanged: _onNomeTecnicoChanged,
-                            onSelected: _getTecnicoId,
+                            onChanged: _onNameTechnicalChanged,
+                            onSelected: _getTechnicalId,
                             enabled: isFieldEnabled,
                           ),
                         );
@@ -913,42 +942,6 @@ class _UpdateServicoState extends State<UpdateServico> {
                   Row(
                     children: [
                       Expanded(
-                        child: CustomDropdownFormField(
-                          label: 'Forma de Pagamento',
-                          dropdownValues: Constants.formasPagamento,
-                          leftPadding: 4,
-                          rightPadding: 4,
-                          valueNotifier: _servicoUpdateForm.formaPagamento,
-                          onChanged: _servicoUpdateForm.setFormaPagamento,
-                          validator: _servicoUpdateValidator.byField(
-                            _servicoUpdateForm,
-                            'formaPagamento',
-                          ),
-                        ),
-                      ), // Forma de Pagamento
-                      Expanded(
-                        child: CustomDatePickerFormField(
-                          hint: 'dd/mm/yyyy',
-                          label: 'Data Encerramento',
-                          mask: InputMasks.data,
-                          maxLength: 10,
-                          hide: true,
-                          leftPadding: 4,
-                          rightPadding: 4,
-                          type: TextInputType.datetime,
-                          valueNotifier: _servicoUpdateForm.dataFechamento,
-                          onChanged: _servicoUpdateForm.setDataFechamento,
-                          validator: _servicoUpdateValidator.byField(
-                            _servicoUpdateForm,
-                            'trocar',
-                          ),
-                        ),
-                      ), // Data Encerramento
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
                         child: CustomTextFormField(
                           label: 'Valor Comissão',
                           hint: 'Valor Comissão...',
@@ -967,6 +960,42 @@ class _UpdateServicoState extends State<UpdateServico> {
                           inputFormatters: InputMasks.alphanumericLetters,
                         ),
                       ), // Valor Comissão
+                      Expanded(
+                        child: CustomDropdownFormField(
+                          label: 'Forma de Pagamento',
+                          dropdownValues: Constants.formasPagamento,
+                          leftPadding: 4,
+                          rightPadding: 4,
+                          valueNotifier: _servicoUpdateForm.formaPagamento,
+                          onChanged: _servicoUpdateForm.setFormaPagamento,
+                          validator: _servicoUpdateValidator.byField(
+                            _servicoUpdateForm,
+                            'formaPagamento',
+                          ),
+                        ),
+                      ), // Forma de Pagamento
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomDatePickerFormField(
+                          hint: 'dd/mm/yyyy',
+                          label: 'Data Encerramento',
+                          mask: InputMasks.data,
+                          maxLength: 10,
+                          hide: true,
+                          leftPadding: 4,
+                          rightPadding: 4,
+                          type: TextInputType.datetime,
+                          valueNotifier: _servicoUpdateForm.dataFechamento,
+                          onChanged: _servicoUpdateForm.setDataFechamento,
+                          validator: _servicoUpdateValidator.byField(
+                            _servicoUpdateForm,
+                            'trocar',
+                          ),
+                        ),
+                      ), // Data Encerramento
                       Expanded(
                         child: CustomDatePickerFormField(
                           hint: 'dd/mm/yyyy',
@@ -1062,6 +1091,7 @@ class _UpdateServicoState extends State<UpdateServico> {
             return BlocBuilder<ClienteBloc, ClienteState>(
               builder: (context, clienteState) {
                 if (clienteState is ClienteSearchOneSuccessState) {
+                  _setClientFieldsValues(clienteState.cliente);
                   _populateFormWithState(servicoState, clienteState);
                   return Center(
                     child: ConstrainedBox(
@@ -1128,7 +1158,14 @@ class _UpdateServicoState extends State<UpdateServico> {
                                         CardBuilderForm(
                                             title: "Cliente",
                                             child: _buildClientForm()),
-                                        const SizedBox(height: 16),
+                                        const SizedBox(height: 12),
+                                        ElevatedFormButton(
+                                          text: "Alterar Cliente",
+                                          onPressed: () =>
+                                              _showClientSelectionModal(
+                                                  context),
+                                        ),
+                                        const SizedBox(height: 12),
                                         CardBuilderForm(
                                             title: "Serviço",
                                             child: _buildServiceForm()),

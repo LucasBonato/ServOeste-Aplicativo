@@ -27,9 +27,12 @@ class UpdateTecnico extends StatefulWidget {
 class _UpdateTecnicoState extends State<UpdateTecnico> {
   final TecnicoBloc _tecnicoBloc = TecnicoBloc();
   final TecnicoForm _tecnicoUpdateForm = TecnicoForm();
-  final TecnicoValidator _tecnicoUpdateValidator = TecnicoValidator(isUpdate: true);
+  final TecnicoValidator _tecnicoUpdateValidator =
+      TecnicoValidator(isUpdate: true);
   final GlobalKey<FormState> _tecnicoFormKey = GlobalKey<FormState>();
-  late final TextEditingController _nomeController, _telefoneCelularController, _telefoneFixoController;
+  late final TextEditingController _nomeController,
+      _telefoneCelularController,
+      _telefoneFixoController;
   late ValueNotifier<String> _dropDownSituacaoValue;
 
   final Map<String, String> situationMap = {
@@ -68,7 +71,8 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
 
   Widget gridCheckersMap() {
     return FormField(
-      validator: _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, "conhecimentos"),
+      validator:
+          _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, "conhecimentos"),
       builder: (field) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -141,7 +145,8 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
         _tecnicoUpdateForm.removeConhecimentos(idConhecimento);
       }
     });
-    _tecnicoUpdateValidator.setConhecimentos(_tecnicoUpdateForm.conhecimentos.value);
+    _tecnicoUpdateValidator
+        .setConhecimentos(_tecnicoUpdateForm.conhecimentos.value);
 
     if (_isValidForm() == false) {
       return;
@@ -151,12 +156,14 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
     _tecnicoUpdateForm.nome.value = nomes.first;
     String sobrenome = nomes.sublist(1).join(" ").trim();
 
-    _tecnicoBloc.add(TecnicoUpdateEvent(tecnico: Tecnico.fromForm(_tecnicoUpdateForm), sobrenome: sobrenome));
+    _tecnicoBloc.add(TecnicoUpdateEvent(
+        tecnico: Tecnico.fromForm(_tecnicoUpdateForm), sobrenome: sobrenome));
     _tecnicoUpdateForm.nome.value = "${nomes.first} $sobrenome";
   }
 
   void _handleBackNavigation() {
-    _tecnicoBloc.add(TecnicoSearchEvent(situacao: Constants.situationTecnicoList.first));
+    _tecnicoBloc.add(
+        TecnicoSearchEvent(situacao: Constants.situationTecnicoList.first));
     Navigator.pop(context, "Back");
   }
 
@@ -196,21 +203,34 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
           bloc: _tecnicoBloc,
           buildWhen: (previousState, currentState) {
             if (currentState is TecnicoSearchOneSuccessState) {
-              String nomeCompletoTecnico = "${currentState.tecnico.nome} ${currentState.tecnico.sobrenome}";
+              String nomeCompletoTecnico =
+                  "${currentState.tecnico.nome} ${currentState.tecnico.sobrenome}";
               _tecnicoUpdateForm.setNome(nomeCompletoTecnico);
-              _tecnicoUpdateForm.telefoneFixo.value = (currentState.tecnico.telefoneFixo!.isEmpty ? "" : Formatters.applyTelefoneMask(currentState.tecnico.telefoneFixo!));
-              _tecnicoUpdateForm.telefoneCelular.value = (currentState.tecnico.telefoneCelular!.isEmpty ? "" : Formatters.applyCelularMask(currentState.tecnico.telefoneCelular!));
+              _tecnicoUpdateForm.telefoneFixo.value =
+                  (currentState.tecnico.telefoneFixo!.isEmpty
+                      ? ""
+                      : Formatters.applyTelefoneMask(
+                          currentState.tecnico.telefoneFixo!));
+              _tecnicoUpdateForm.telefoneCelular.value =
+                  (currentState.tecnico.telefoneCelular!.isEmpty
+                      ? ""
+                      : Formatters.applyCelularMask(
+                          currentState.tecnico.telefoneCelular!));
               _nomeController.text = nomeCompletoTecnico;
-              _telefoneFixoController.text = currentState.tecnico.telefoneFixo ?? '';
-              _telefoneCelularController.text = currentState.tecnico.telefoneCelular ?? '';
+              _telefoneFixoController.text =
+                  currentState.tecnico.telefoneFixo ?? '';
+              _telefoneCelularController.text =
+                  currentState.tecnico.telefoneCelular ?? '';
 
               final tecnicoSituacao = currentState.tecnico.situacao ?? '';
-              final mappedSituacao = situationMap[tecnicoSituacao] ?? 'Situação...';
+              final mappedSituacao =
+                  situationMap[tecnicoSituacao] ?? 'Situação...';
 
               _dropDownSituacaoValue.value = mappedSituacao;
 
               if (currentState.tecnico.especialidades != null) {
-                for (Especialidade especialidade in currentState.tecnico.especialidades!) {
+                for (Especialidade especialidade
+                    in currentState.tecnico.especialidades!) {
                   if (!checkersMap.keys.contains(especialidade.conhecimento)) {
                     continue;
                   }
@@ -228,7 +248,8 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: ScrollConfiguration(
-                    behavior: ScrollBehavior().copyWith(overscroll: false, scrollbars: false),
+                    behavior: ScrollBehavior()
+                        .copyWith(overscroll: false, scrollbars: false),
                     child: SingleChildScrollView(
                       child: Form(
                         key: _tecnicoFormKey,
@@ -249,7 +270,8 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                               builder: (context, constraints) {
                                 if (constraints.maxWidth < 400) {
                                   return Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       CustomTextFormField(
                                         hint: "Nome...",
@@ -260,20 +282,29 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                                         rightPadding: 4,
                                         hide: false,
                                         valueNotifier: _tecnicoUpdateForm.nome,
-                                        validator: _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, ErrorCodeKey.nomeESobrenome.name),
+                                        validator:
+                                            _tecnicoUpdateValidator.byField(
+                                                _tecnicoUpdateForm,
+                                                ErrorCodeKey
+                                                    .nomeESobrenome.name),
                                         onChanged: _tecnicoUpdateForm.setNome,
                                       ),
                                       CustomDropdownFormField(
                                         label: "Situação",
-                                        dropdownValues: Constants.situationTecnicoList,
+                                        dropdownValues:
+                                            Constants.situationTecnicoList,
                                         leftPadding: 4,
                                         rightPadding: 4,
                                         valueNotifier: _dropDownSituacaoValue,
-                                        validator: _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, ErrorCodeKey.situacao.name),
+                                        validator:
+                                            _tecnicoUpdateValidator.byField(
+                                                _tecnicoUpdateForm,
+                                                ErrorCodeKey.situacao.name),
                                         onChanged: (String? value) {
                                           _tecnicoUpdateForm.setSituacao(value);
                                           setState(() {
-                                            _dropDownSituacaoValue.value = value!;
+                                            _dropDownSituacaoValue.value =
+                                                value!;
                                           });
                                         },
                                       ),
@@ -291,8 +322,13 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                                           maxLength: 40,
                                           rightPadding: 4,
                                           hide: false,
-                                          valueNotifier: _tecnicoUpdateForm.nome,
-                                          validator: _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, ErrorCodeKey.nomeESobrenome.name),
+                                          valueNotifier:
+                                              _tecnicoUpdateForm.nome,
+                                          validator:
+                                              _tecnicoUpdateValidator.byField(
+                                                  _tecnicoUpdateForm,
+                                                  ErrorCodeKey
+                                                      .nomeESobrenome.name),
                                           onChanged: _tecnicoUpdateForm.setNome,
                                         ),
                                       ),
@@ -300,14 +336,20 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                                         flex: 1,
                                         child: CustomDropdownFormField(
                                           label: "Situação",
-                                          dropdownValues: Constants.situationTecnicoList,
+                                          dropdownValues:
+                                              Constants.situationTecnicoList,
                                           leftPadding: 4,
                                           valueNotifier: _dropDownSituacaoValue,
-                                          validator: _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, ErrorCodeKey.situacao.name),
+                                          validator:
+                                              _tecnicoUpdateValidator.byField(
+                                                  _tecnicoUpdateForm,
+                                                  ErrorCodeKey.situacao.name),
                                           onChanged: (String? value) {
-                                            _tecnicoUpdateForm.setSituacao(value);
+                                            _tecnicoUpdateForm
+                                                .setSituacao(value);
                                             setState(() {
-                                              _dropDownSituacaoValue.value = value!;
+                                              _dropDownSituacaoValue.value =
+                                                  value!;
                                             });
                                           },
                                         ),
@@ -322,7 +364,8 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                               builder: (context, constraints) {
                                 if (constraints.maxWidth < 400) {
                                   return Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       CustomTextFormField(
                                         hint: "Telefone Fixo...",
@@ -333,9 +376,14 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                                         rightPadding: 4,
                                         hide: true,
                                         masks: InputMasks.telefoneFixo,
-                                        valueNotifier: _tecnicoUpdateForm.telefoneFixo,
-                                        validator: _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, ErrorCodeKey.telefones.name),
-                                        onChanged: _tecnicoUpdateForm.setTelefoneFixo,
+                                        valueNotifier:
+                                            _tecnicoUpdateForm.telefoneFixo,
+                                        validator:
+                                            _tecnicoUpdateValidator.byField(
+                                                _tecnicoUpdateForm,
+                                                ErrorCodeKey.telefones.name),
+                                        onChanged:
+                                            _tecnicoUpdateForm.setTelefoneFixo,
                                       ),
                                       CustomTextFormField(
                                         hint: "Telefone Celular...",
@@ -346,9 +394,14 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                                         rightPadding: 4,
                                         hide: true,
                                         masks: InputMasks.telefoneCelular,
-                                        valueNotifier: _tecnicoUpdateForm.telefoneCelular,
-                                        validator: _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, ErrorCodeKey.telefones.name),
-                                        onChanged: _tecnicoUpdateForm.setTelefoneCelular,
+                                        valueNotifier:
+                                            _tecnicoUpdateForm.telefoneCelular,
+                                        validator:
+                                            _tecnicoUpdateValidator.byField(
+                                                _tecnicoUpdateForm,
+                                                ErrorCodeKey.telefones.name),
+                                        onChanged: _tecnicoUpdateForm
+                                            .setTelefoneCelular,
                                       ),
                                     ],
                                   );
@@ -364,9 +417,14 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                                           rightPadding: 4,
                                           hide: true,
                                           masks: InputMasks.telefoneFixo,
-                                          valueNotifier: _tecnicoUpdateForm.telefoneFixo,
-                                          validator: _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, ErrorCodeKey.telefones.name),
-                                          onChanged: _tecnicoUpdateForm.setTelefoneFixo,
+                                          valueNotifier:
+                                              _tecnicoUpdateForm.telefoneFixo,
+                                          validator:
+                                              _tecnicoUpdateValidator.byField(
+                                                  _tecnicoUpdateForm,
+                                                  ErrorCodeKey.telefones.name),
+                                          onChanged: _tecnicoUpdateForm
+                                              .setTelefoneFixo,
                                         ),
                                       ),
                                       Expanded(
@@ -378,9 +436,14 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                                           leftPadding: 4,
                                           hide: true,
                                           masks: InputMasks.telefoneCelular,
-                                          valueNotifier: _tecnicoUpdateForm.telefoneCelular,
-                                          validator: _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, ErrorCodeKey.telefones.name),
-                                          onChanged: _tecnicoUpdateForm.setTelefoneCelular,
+                                          valueNotifier: _tecnicoUpdateForm
+                                              .telefoneCelular,
+                                          validator:
+                                              _tecnicoUpdateValidator.byField(
+                                                  _tecnicoUpdateForm,
+                                                  ErrorCodeKey.telefones.name),
+                                          onChanged: _tecnicoUpdateForm
+                                              .setTelefoneCelular,
                                         ),
                                       ),
                                     ],
@@ -405,7 +468,9 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                                 gridCheckersMap(),
                               ],
                             ),
-                            const Padding(padding: EdgeInsets.only(top: 8, left: 16), child: BuildFieldLabels()),
+                            const Padding(
+                                padding: EdgeInsets.only(top: 8, left: 16),
+                                child: BuildFieldLabels()),
                             const SizedBox(height: 28),
                             Center(
                               child: ElevatedFormButton(

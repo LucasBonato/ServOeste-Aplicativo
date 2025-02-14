@@ -84,27 +84,30 @@ class ServicoForm extends ChangeNotifier {
   }
 
   void setGarantia(String? garantia) {
-    this.garantia.value = garantia?? "";
+    this.garantia.value = garantia ?? "";
     notifyListeners();
   }
 
   void setGarantiaBool(bool? garantia) {
     if (garantia != null) {
-      this.garantia.value = (garantia) ? Constants.garantias.first : Constants.garantias.last;
+      this.garantia.value =
+          (garantia) ? Constants.garantias.first : Constants.garantias.last;
       notifyListeners();
     }
   }
 
   void setSituacao(String? situacao) {
     if (situacao != null) {
-      this.situacao.value = Formatters.mapStringStatusToEnumStatus(situacao).getSituacao();
+      this.situacao.value =
+          Formatters.mapStringStatusToEnumStatus(situacao).getSituacao();
       notifyListeners();
     }
   }
 
   void setDataAtendimentoPrevistoDate(DateTime? dataAtendimentoPrevisto) {
     if (dataAtendimentoPrevisto != null) {
-      this.dataAtendimentoPrevisto.value = Formatters.applyDateMask(dataAtendimentoPrevisto);
+      this.dataAtendimentoPrevisto.value =
+          Formatters.applyDateMask(dataAtendimentoPrevisto);
       notifyListeners();
     }
   }
@@ -116,7 +119,8 @@ class ServicoForm extends ChangeNotifier {
 
   void setDataAtendimentoEfetivoDate(DateTime? dataAtendimentoEfetivo) {
     if (dataAtendimentoEfetivo != null) {
-      this.dataAtendimentoEfetivo.value = Formatters.applyDateMask(dataAtendimentoEfetivo);
+      this.dataAtendimentoEfetivo.value =
+          Formatters.applyDateMask(dataAtendimentoEfetivo);
       notifyListeners();
     }
   }
@@ -128,7 +132,8 @@ class ServicoForm extends ChangeNotifier {
 
   void setDataAtendimentoAberturaDate(DateTime? dataAtendimentoAbertura) {
     if (dataAtendimentoAbertura != null) {
-      this.dataAtendimentoAbertura.value = Formatters.applyDateMask(dataAtendimentoAbertura);
+      this.dataAtendimentoAbertura.value =
+          Formatters.applyDateMask(dataAtendimentoAbertura);
       notifyListeners();
     }
   }
@@ -152,7 +157,8 @@ class ServicoForm extends ChangeNotifier {
 
   void setDataPagamentoComissaoDate(DateTime? dataPagamentoComissao) {
     if (dataPagamentoComissao != null) {
-      this.dataPagamentoComissao.value = Formatters.applyDateMask(dataPagamentoComissao);
+      this.dataPagamentoComissao.value =
+          Formatters.applyDateMask(dataPagamentoComissao);
       notifyListeners();
     }
   }
@@ -163,7 +169,7 @@ class ServicoForm extends ChangeNotifier {
   }
 
   void setFormaPagamento(String? formaPagamento) {
-    this.formaPagamento.value = formaPagamento?? "";
+    this.formaPagamento.value = formaPagamento ?? "";
     notifyListeners();
   }
 
@@ -172,7 +178,7 @@ class ServicoForm extends ChangeNotifier {
       valor = null;
     }
     if (valor != null) {
-      double valueConverted = double.tryParse(valor)?? 0;
+      double valueConverted = double.tryParse(valor) ?? 0;
 
       if (valueConverted > 0) {
         this.valor.value = valueConverted.toString();
@@ -187,7 +193,7 @@ class ServicoForm extends ChangeNotifier {
       valorPecas = null;
     }
     if (valorPecas != null) {
-      double valueConverted = double.tryParse(valorPecas)?? 0;
+      double valueConverted = double.tryParse(valorPecas) ?? 0;
 
       if (valueConverted >= 0) {
         this.valorPecas.value = valueConverted.toString();
@@ -199,8 +205,8 @@ class ServicoForm extends ChangeNotifier {
 
   void _calculateCommission() {
     if (valor.value.isNotEmpty && valor.value.isNotEmpty) {
-      double pieceValue = double.tryParse(valorPecas.value)?? 0;
-      double value = double.tryParse(valor.value)?? 0;
+      double pieceValue = double.tryParse(valorPecas.value) ?? 0;
+      double value = double.tryParse(valor.value) ?? 0;
 
       double commission = (value - pieceValue) / 2;
       setValorComissao(commission.toString());
@@ -212,7 +218,7 @@ class ServicoForm extends ChangeNotifier {
       valorComissao = "";
     }
     if (valorComissao != null) {
-      double valueConverted = double.tryParse(valorComissao)?? 0;
+      double valueConverted = double.tryParse(valorComissao) ?? 0;
 
       if (valueConverted >= 0) {
         this.valorComissao.value = valueConverted.toString();

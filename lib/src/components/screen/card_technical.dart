@@ -111,7 +111,7 @@ class CardTechnician extends StatelessWidget {
                                 child: Text(
                                   "Telefone: ${Formatters.applyTelefoneMask(telefone!)}",
                                   style: TextStyle(
-                                    fontSize: constraints.maxWidth * 0.045,
+                                    fontSize: constraints.maxWidth * 0.04,
                                   ),
                                 ),
                               ),
@@ -121,7 +121,7 @@ class CardTechnician extends StatelessWidget {
                                 child: Text(
                                   "Celular: ${Formatters.applyCelularMask(celular!)}",
                                   style: TextStyle(
-                                    fontSize: constraints.maxWidth * 0.045,
+                                    fontSize: constraints.maxWidth * 0.04,
                                   ),
                                 ),
                               ),

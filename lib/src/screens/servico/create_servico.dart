@@ -22,7 +22,7 @@ import 'package:serv_oeste/src/models/servico/servico_form.dart';
 import 'package:serv_oeste/src/models/servico/servico_request.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
-import 'package:serv_oeste/src/screens/servico/table_tecnico.dart';
+import 'package:serv_oeste/src/components/screen/table_technical.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/shared/input_masks.dart';
 
@@ -97,18 +97,41 @@ class _CreateServicoState extends State<CreateServico> {
     _clienteBloc.add(ClienteSearchEvent(nome: nome));
   }
 
-  void _getClienteId(String nome) {
-    _clienteForm.setNome(nome);
+  // void _getClienteId(String nome) {
+  //   _clienteForm.setNome(nome);
 
-    for (Cliente cliente in _clientes) {
-      if (cliente.nome! == _clienteForm.nome.value) {
-        _nomeClienteController.text = cliente.nome ?? '';
-        _enderecoController.text = cliente.endereco ?? '';
-        _servicoForm.setIdCliente(cliente.id);
-        setState(() {
-          isClientAndService = false;
-        });
-      }
+  //   for (Cliente cliente in _clientes) {
+  //     if (cliente.nome! == _clienteForm.nome.value) {
+  //       _nomeClienteController.text = cliente.nome ?? '';
+  //       _enderecoController.text = cliente.endereco ?? '';
+  //       _servicoForm.setIdCliente(cliente.id);
+  //       setState(() {
+  //         isClientAndService = false;
+  //       });
+  //     }
+  //   }
+  // }
+
+  void _getClienteById(String id) {
+    final clienteSelecionado = _clientes.firstWhere(
+      (cliente) => cliente.id.toString() == id,
+      orElse: () => Cliente(),
+    );
+
+    if (clienteSelecionado.id != null) {
+      _nomeClienteController.text = clienteSelecionado.nome ?? '';
+      _enderecoController.text = clienteSelecionado.endereco ?? '';
+      _servicoForm.setIdCliente(clienteSelecionado.id);
+
+      setState(() {
+        isClientAndService = false;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Cliente não encontrado.'),
+        ),
+      );
     }
   }
 
@@ -146,7 +169,7 @@ class _CreateServicoState extends State<CreateServico> {
   void _getTecnicoId(String nome) {
     _servicoForm.setNomeTecnico(nome);
     for (Tecnico tecnico in _tecnicos) {
-      if ("${tecnico.nome!} ${tecnico.sobrenome!}" ==
+      if ("${tecnico.nome} ${tecnico.sobrenome}" ==
           _servicoForm.nomeTecnico.value) {
         _servicoForm.setIdTecnico(tecnico.id);
       }
@@ -301,10 +324,14 @@ class _CreateServicoState extends State<CreateServico> {
                           ? Column(
                               children: [
                                 _buildCard(_buildClientForm(), 'Cliente'),
+                                if (!isClientAndService)
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 12),
+                                    child: _buildCard(
+                                        _buildFilteredClientsTable(),
+                                        'Selecione um Cliente'),
+                                  ),
                                 const SizedBox(height: 12),
-                                _buildCard(_buildFilteredClientsTable(),
-                                    'Selecione um Cliente'),
-                                const SizedBox(height: 16),
                                 _buildCard(_buildServiceForm(), 'Serviço'),
                                 const SizedBox(height: 8),
                                 isClientAndService
@@ -467,7 +494,7 @@ class _CreateServicoState extends State<CreateServico> {
 
         return FilteredClientsTable(
           clientesFiltrados: _clientesFiltrados,
-          onClientSelected: _getClienteId,
+          onClientSelected: _getClienteById,
         );
       },
     );
@@ -520,6 +547,22 @@ class _CreateServicoState extends State<CreateServico> {
                     validator: _clienteValidator.byField(
                         _clienteForm, ErrorCodeKey.nomeESobrenome.name),
                     onChanged: _onNomeClienteChanged,
+                  ),
+                if (isClientAndService)
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.6,
+                    child: Transform.translate(
+                      offset: Offset(0, -18),
+                      child: Text(
+                        "Obs. os nomes que aparecerem já estão cadastrados",
+                        style: TextStyle(
+                          fontSize: (MediaQuery.of(context).size.width * 0.04)
+                              .clamp(9.0, 13.0),
+                          color: Colors.grey,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
                   ),
                 if (!widget.isClientAndService) ...[
                   buildSearchField(
@@ -868,7 +911,7 @@ class _CreateServicoState extends State<CreateServico> {
                 _tecnicos = state.tecnicos;
                 List<String> nomes = state.tecnicos
                     .take(5)
-                    .map((tecnico) => "${tecnico.nome!} ${tecnico.sobrenome}")
+                    .map((tecnico) => "${tecnico.nome} ${tecnico.sobrenome}")
                     .toList();
                 if (_dropdownNomeTecnicos != nomes) {
                   setState(() {
