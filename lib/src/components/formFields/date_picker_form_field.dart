@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 
-// ignore: must_be_immutable
 class CustomDatePickerFormField extends StatefulWidget {
   final String? restorationId;
   final String hint;
@@ -14,13 +13,13 @@ class CustomDatePickerFormField extends StatefulWidget {
   final bool? enabled;
   final double? rightPadding;
   final double? leftPadding;
-  late bool? validation;
+  final bool? validation;
   final Function(String?)? onChanged;
   final String? Function([String?])? validator;
   final ValueNotifier<String> valueNotifier;
   final bool hide;
 
-  CustomDatePickerFormField({
+  const CustomDatePickerFormField({
     super.key,
     this.hide = false,
     this.enabled,
@@ -39,10 +38,12 @@ class CustomDatePickerFormField extends StatefulWidget {
   });
 
   @override
-  State<CustomDatePickerFormField> createState() => _CustomDatePickerFormFieldState();
+  State<CustomDatePickerFormField> createState() =>
+      _CustomDatePickerFormFieldState();
 }
 
-class _CustomDatePickerFormFieldState extends State<CustomDatePickerFormField> with RestorationMixin {
+class _CustomDatePickerFormFieldState extends State<CustomDatePickerFormField>
+    with RestorationMixin {
   @override
   String? get restorationId => widget.restorationId;
 
@@ -50,9 +51,12 @@ class _CustomDatePickerFormFieldState extends State<CustomDatePickerFormField> w
 
   final RestorableDateTime _selectedDate = RestorableDateTime(DateTime.now());
 
-  late final RestorableRouteFuture<DateTime?> _restorableDatePickerRouteFuture = RestorableRouteFuture<DateTime?>(
+  late final RestorableRouteFuture<DateTime?> _restorableDatePickerRouteFuture =
+      RestorableRouteFuture<DateTime?>(
     onComplete: _selectDate,
-    onPresent: (NavigatorState navigator, Object? arguments) => navigator.restorablePush(_datePickerRoute, arguments: _selectedDate.value.millisecondsSinceEpoch),
+    onPresent: (NavigatorState navigator, Object? arguments) =>
+        navigator.restorablePush(_datePickerRoute,
+            arguments: _selectedDate.value.millisecondsSinceEpoch),
   );
 
   final TextEditingController _controller = TextEditingController();
@@ -85,7 +89,8 @@ class _CustomDatePickerFormFieldState extends State<CustomDatePickerFormField> w
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
     registerForRestoration(_selectedDate, 'selected_date');
-    registerForRestoration(_restorableDatePickerRouteFuture, 'date_picker_route_future');
+    registerForRestoration(
+        _restorableDatePickerRouteFuture, 'date_picker_route_future');
   }
 
   void _selectDate(DateTime? newSelectedDate) {
@@ -119,17 +124,11 @@ class _CustomDatePickerFormFieldState extends State<CustomDatePickerFormField> w
       controller: _controller,
       onTap: () {
         _restorableDatePickerRouteFuture.present();
-        setState(() {
-          widget.validation = false;
-        });
       },
       suffixIcon: IconButton(
         icon: const Icon(Icons.calendar_today),
         onPressed: () {
           _restorableDatePickerRouteFuture.present();
-          setState(() {
-            widget.validation = false;
-          });
         },
       ),
     );

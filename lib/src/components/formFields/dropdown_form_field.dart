@@ -40,19 +40,27 @@ class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
   void initState() {
     super.initState();
 
-    _internalController = SingleSelectController(
-      widget.dropdownValues.contains(widget.valueNotifier.value)
-          ? widget.valueNotifier.value
-          : null,
-    );
+    final initialValue =
+        widget.dropdownValues.contains(widget.valueNotifier.value)
+            ? widget.valueNotifier.value
+            : null;
 
+    _internalController = SingleSelectController(initialValue);
     _effectiveController = widget.controller ?? _internalController;
 
-    widget.valueNotifier.addListener(() {
-      if (_effectiveController.value != widget.valueNotifier.value) {
-        _effectiveController.value = widget.valueNotifier.value;
-      }
-    });
+    widget.valueNotifier.addListener(_updateController);
+  }
+
+  void _updateController() {
+    if (widget.dropdownValues.contains(widget.valueNotifier.value)) {
+      _effectiveController.value = widget.valueNotifier.value;
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.valueNotifier.removeListener(_updateController);
+    super.dispose();
   }
 
   @override

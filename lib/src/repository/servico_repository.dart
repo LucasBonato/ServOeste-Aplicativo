@@ -24,8 +24,8 @@ class ServicoRepository extends DioService {
           'clienteNome': servicoFilter.clienteNome,
           'tecnicoNome': servicoFilter.tecnicoNome,
           'equipamento': servicoFilter.equipamento,
-          // 'situacao': servicoFilter.situacao,
-          // 'garantia': servicoFilter.garantia,
+          'situacao': servicoFilter.situacao,
+          'garantia': servicoFilter.garantia,
           'filial': servicoFilter.filial,
           'periodo': servicoFilter.periodo,
           'dataAtendimentoPrevistoAntes':
@@ -126,7 +126,7 @@ class ServicoRepository extends DioService {
         "idCliente": servico.idCliente,
         "equipamento": servico.equipamento,
         "marca": servico.marca,
-        "filial": servico.marca,
+        "filial": servico.filial,
         "descricao": servico.descricao,
         "situacao": Formatters.mapSituationToEnumSituation(servico.situacao),
         "formaPagamento":
@@ -144,12 +144,18 @@ class ServicoRepository extends DioService {
       });
 
       if (response.data != null && response.data is Map) {
+        print('Resposta do backend: ${response.data}');
         return Servico.fromJson(response.data as Map<String, dynamic>);
       }
+      throw Exception('Resposta do backend inválida: ${response.data}');
     } on DioException catch (e) {
+      print('Erro: ${e}');
+      print('Erro na requisição: ${e.message}');
+      print('Status code: ${e.response?.statusCode}');
+      print('Resposta do erro: ${e.response?.data}');
+
       throw Exception(onRequestError(e));
     }
-    return null;
   }
 
   Future<void> disableListOfServico(List<int> selectedItems) async {

@@ -44,32 +44,50 @@ class CustomSearchDropDownFormField extends StatefulWidget {
 class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
   late final TextEditingController _customSearchController;
   late Color labelColor;
+  bool _isDisposed = false;
 
   @override
   void initState() {
     _customSearchController = widget.controller ?? TextEditingController();
-    labelColor = Color(0xFF948F8F);
+    labelColor = const Color(0xFF948F8F);
 
     if (widget.valueNotifier?.value != null) {
       _customSearchController.text = widget.valueNotifier!.value!;
     }
 
-    _customSearchController.addListener(() {
-      setState(() {
-        labelColor = _customSearchController.text.isNotEmpty
-            ? Color(0xFF948F8F)
-            : Color(0xFF000000);
-      });
-    });
-
+    _customSearchController.addListener(_onTextChanged);
     super.initState();
+  }
+
+  void _onTextChanged() {
+    if (_isDisposed || !mounted) return;
+
+    setState(() {
+      labelColor = _customSearchController.text.isNotEmpty
+          ? const Color(0xFF948F8F)
+          : const Color(0xFF000000);
+    });
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    _customSearchController.removeListener(_onTextChanged);
+    if (widget.controller == null) {
+      _customSearchController.dispose();
+    }
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(widget.leftPadding ?? 16, 4,
-          widget.rightPadding ?? 16, widget.hide ? 16 : 0),
+      padding: EdgeInsetsDirectional.fromSTEB(
+        widget.leftPadding ?? 16,
+        4,
+        widget.rightPadding ?? 16,
+        widget.hide ? 16 : 0,
+      ),
       child: DropDownSearchFormField(
         onSaved: widget.onSaved,
         validator: widget.validator,
@@ -80,7 +98,6 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
           controller: _customSearchController,
           onChanged: (value) {
             widget.onChanged(value);
-
             widget.valueNotifier?.value = value;
           },
           decoration: InputDecoration(
@@ -132,11 +149,10 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
               .toList();
         },
         onSuggestionSelected: (String? suggestion) {
-          if (suggestion != null && suggestion.isNotEmpty) {
+          if (suggestion != null && suggestion.isNotEmpty && !_isDisposed) {
             setState(() {
               _customSearchController.text = suggestion;
               widget.onChanged(suggestion);
-
               widget.valueNotifier?.value = suggestion;
               widget.onSelected?.call(suggestion);
             });

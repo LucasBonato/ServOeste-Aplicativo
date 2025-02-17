@@ -69,7 +69,7 @@ class SidebarNavigation extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(12.0),
             child: Text(
-              '© 2024 Serv-Oeste',
+              '© 2025 Serv-Oeste',
               style: TextStyle(
                 color: Colors.grey[600],
                 fontSize: 12,

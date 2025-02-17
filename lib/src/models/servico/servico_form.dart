@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:diacritic/diacritic.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/shared/formatters.dart';
 
@@ -67,8 +68,16 @@ class ServicoForm extends ChangeNotifier {
   }
 
   void setHorario(String? horario) {
+    print(horario);
     if (horario != null) {
-      this.horario.value = (horario == "manha") ? "Manhã" : "Tarde";
+      final normalized = removeDiacritics(horario).toLowerCase();
+
+      if (normalized == "manha") {
+        this.horario.value = "Manha";
+      } else {
+        this.horario.value = "Tarde";
+      }
+      print(this.horario.value);
       notifyListeners();
     }
   }

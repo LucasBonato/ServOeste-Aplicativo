@@ -1031,8 +1031,8 @@ class _CreateServicoState extends State<CreateServico> {
             },
           ),
           CustomTextFormField(
-            hint: "Descrição...",
-            label: "Descrição*",
+            hint: "Descrição/Observação...",
+            label: "Descrição/Observação*",
             type: TextInputType.multiline,
             maxLength: 255,
             maxLines: 3,

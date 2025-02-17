@@ -137,8 +137,8 @@ class _UpdateServicoState extends State<UpdateServico> {
       return;
     }
 
-    _servicoBloc
-        .add(ServicoUpdateEvent(servico: Servico.fromForm(_servicoUpdateForm)));
+    Servico servico = Servico.fromForm(_servicoUpdateForm);
+    _servicoBloc.add(ServicoUpdateEvent(servico: servico));
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Serviço atualizado com sucesso!')),
@@ -194,8 +194,8 @@ class _UpdateServicoState extends State<UpdateServico> {
     });
   }
 
-  void _populateFormWithState(ServicoSearchOneSuccessState stateServico,
-      ClienteSearchOneSuccessState stateCliente) {
+  void _populateServicoFormWithState(
+      ServicoSearchOneSuccessState stateServico) {
     _servicoUpdateForm.setIdCliente(stateServico.servico.idCliente);
     _servicoUpdateForm.setNomeCliente(stateServico.servico.nomeCliente);
     _servicoUpdateForm.setEquipamento(stateServico.servico.equipamento);
@@ -223,23 +223,6 @@ class _UpdateServicoState extends State<UpdateServico> {
     _servicoUpdateForm.setDataPagamentoComissaoDate(
         stateServico.servico.dataPagamentoComissao);
     _servicoUpdateForm.setHistorico(stateServico.servico.descricao);
-
-    _clienteUpdateForm.setNome(stateCliente.cliente.nome ?? "");
-    _clienteUpdateForm.setMunicipio(stateCliente.cliente.municipio ?? "");
-    _clienteUpdateForm.setBairro(stateCliente.cliente.bairro ?? "");
-    _clienteUpdateForm
-        .setRua(stateCliente.cliente.endereco?.split(',')[0].trim() ?? "");
-    _clienteUpdateForm
-        .setNumero(stateCliente.cliente.endereco?.split(',')[1].trim() ?? "");
-    _clienteUpdateForm.setComplemento(
-        stateCliente.cliente.endereco!.split(',').length > 2
-            ? stateCliente.cliente.endereco
-                    ?.split(',')
-                    .sublist(2)
-                    .join(',')
-                    .trim() ??
-                ""
-            : "");
   }
 
   Widget _buildClientForm() {
@@ -1023,8 +1006,8 @@ class _UpdateServicoState extends State<UpdateServico> {
             },
           ),
           CustomTextFormField(
-            hint: "Descrição...",
-            label: "Descrição*",
+            hint: "Descrição/Observação...",
+            label: "Descrição/Observação*",
             type: TextInputType.multiline,
             maxLength: 255,
             maxLines: 3,
@@ -1087,12 +1070,12 @@ class _UpdateServicoState extends State<UpdateServico> {
           if (servicoState is ServicoSearchOneSuccessState) {
             _clienteBloc
                 .add(ClienteSearchOneEvent(id: servicoState.servico.idCliente));
+            _populateServicoFormWithState(servicoState);
 
             return BlocBuilder<ClienteBloc, ClienteState>(
               builder: (context, clienteState) {
                 if (clienteState is ClienteSearchOneSuccessState) {
                   _setClientFieldsValues(clienteState.cliente);
-                  _populateFormWithState(servicoState, clienteState);
                   return Center(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 1400),

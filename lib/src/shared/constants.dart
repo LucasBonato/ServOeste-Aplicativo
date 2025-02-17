@@ -1,10 +1,5 @@
 class Constants {
   static const bool isDev = true;
-  // static const List<Map<String, dynamic>> situationTecnicoList = [
-  //   {'label': 'Ativo', 'value': 'Ativo'},
-  //   {'label': 'Licença', 'value': 'Licenca'},
-  //   {'label': 'Desativado', 'value': 'Desativado'}
-  // ];
   static const List<String> situationTecnicoList = [
     "Ativo",
     "Licença",
@@ -59,7 +54,7 @@ class Constants {
     'Fora do período de garantia'
   ];
   static const List<String> filiais = ["Osasco", "Carapicuíba"];
-  static const List<String> dataAtendimento = ["Manhã", "Tarde"];
+  static const List<String> dataAtendimento = ["Manha", "Tarde"];
   static const List<String> formasPagamento = [
     "Pix",
     "Crédito",
