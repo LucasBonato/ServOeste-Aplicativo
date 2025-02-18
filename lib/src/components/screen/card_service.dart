@@ -12,7 +12,8 @@ class CardService extends StatelessWidget {
   final String status;
   final DateTime? dataPrevista;
   final DateTime? dataEfetiva;
-  final DateTime? dataAbertura;
+  final DateTime? dataFechamento;
+  final DateTime? dataFinalGarantia;
   final String horario;
   final bool isSelected;
   final void Function()? onLongPress;
@@ -29,7 +30,8 @@ class CardService extends StatelessWidget {
     required this.filial,
     required this.dataPrevista,
     this.dataEfetiva,
-    this.dataAbertura,
+    this.dataFechamento,
+    this.dataFinalGarantia,
     required this.horario,
     required this.status,
     this.isSelected = false,
@@ -241,6 +243,7 @@ class CardService extends StatelessWidget {
                           if (dataEfetiva != null)
                             Padding(
                               padding: EdgeInsets.only(
+                                top: 5,
                                 left: constraints.maxWidth * 0.15,
                               ),
                               child: Text(
@@ -251,13 +254,28 @@ class CardService extends StatelessWidget {
                                 ),
                               ),
                             ),
-                          if (dataAbertura != null)
+                          if (dataFechamento != null)
                             Padding(
                               padding: EdgeInsets.only(
+                                top: 5,
                                 left: constraints.maxWidth * 0.15,
                               ),
                               child: Text(
-                                "Data Abertura: ${dataAbertura!.day}/${dataAbertura!.month}/${dataAbertura!.year} - ${formatHorario(horario)}",
+                                "Data Fechamento: ${dataFechamento!.day}/${dataFechamento!.month}/${dataFechamento!.year}",
+                                style: TextStyle(
+                                  fontSize: constraints.maxWidth * 0.045,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          if (dataFinalGarantia != null)
+                            Padding(
+                              padding: EdgeInsets.only(
+                                top: 5,
+                                left: constraints.maxWidth * 0.15,
+                              ),
+                              child: Text(
+                                "Data Final da Garantia: ${dataFinalGarantia!.day}/${dataFinalGarantia!.month}/${dataFinalGarantia!.year}",
                                 style: TextStyle(
                                   fontSize: constraints.maxWidth * 0.045,
                                   color: Colors.black,

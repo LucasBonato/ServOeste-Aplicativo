@@ -143,17 +143,15 @@ class ServicoRepository extends DioService {
         "dataPagamentoComissao": servico.dataPagamentoComissaoString
       });
 
+      print(servico.garantia);
+      print(servico.dataInicioGarantiaString);
+      print(servico.dataFimGarantiaString);
+      print(response.data);
       if (response.data != null && response.data is Map) {
-        print('Resposta do backend: ${response.data}');
         return Servico.fromJson(response.data as Map<String, dynamic>);
       }
       throw Exception('Resposta do backend inválida: ${response.data}');
     } on DioException catch (e) {
-      print('Erro: ${e}');
-      print('Erro na requisição: ${e.message}');
-      print('Status code: ${e.response?.statusCode}');
-      print('Resposta do erro: ${e.response?.data}');
-
       throw Exception(onRequestError(e));
     }
   }

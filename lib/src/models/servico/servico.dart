@@ -97,8 +97,13 @@ class Servico {
             (servicoForm.dataPagamentoComissao.value.isEmpty)
                 ? null
                 : servicoForm.dataPagamentoComissao.value,
-        dataInicioGarantiaString = null,
-        dataFimGarantiaString = null,
+        dataInicioGarantiaString =
+            (servicoForm.dataInicioGarantia.value.isEmpty)
+                ? null
+                : servicoForm.dataInicioGarantia.value,
+        dataFimGarantiaString = (servicoForm.dataFinalGarantia.value.isEmpty)
+            ? null
+            : servicoForm.dataFinalGarantia.value,
         nomeCliente = servicoForm.nomeCliente.value,
         nomeTecnico = servicoForm.nomeTecnico.value;
 
@@ -134,8 +139,8 @@ class Servico {
         dataFechamento: json["dataFechamento"] != null
             ? DateTime.parse(json["dataFechamento"])
             : null,
-        dataAtendimentoEfetivo: json["dataAtendimentoEfetiva"] != null
-            ? DateTime.parse(json["dataAtendimentoEfetiva"])
+        dataAtendimentoEfetivo: json["dataAtendimentoEfetivo"] != null
+            ? DateTime.parse(json["dataAtendimentoEfetivo"])
             : null,
         dataAtendimentoAbertura: json["dataAtendimentoAbertura"] != null
             ? DateTime.parse(json["dataAtendimentoAbertura"])

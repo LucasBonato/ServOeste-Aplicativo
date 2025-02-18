@@ -203,7 +203,6 @@ class _UpdateServicoState extends State<UpdateServico> {
     _servicoUpdateForm.setNomeTecnico(stateServico.servico.nomeTecnico);
     _servicoUpdateForm.setIdTecnico(stateServico.servico.idTecnico);
     _servicoUpdateForm.setFilial(stateServico.servico.filial);
-    _servicoUpdateForm.setGarantiaBool(stateServico.servico.garantia);
     _servicoUpdateForm.setSituacao(stateServico.servico.situacao);
     _servicoUpdateForm.setHorario(stateServico.servico.horarioPrevisto);
     _servicoUpdateForm.setDataAtendimentoPrevistoDate(
@@ -222,6 +221,11 @@ class _UpdateServicoState extends State<UpdateServico> {
         .setValorComissao(stateServico.servico.valorComissao.toString());
     _servicoUpdateForm.setDataPagamentoComissaoDate(
         stateServico.servico.dataPagamentoComissao);
+    _servicoUpdateForm.setGarantiaBool(stateServico.servico.garantia);
+    _servicoUpdateForm
+        .setDataInicioGarantiaDate(stateServico.servico.dataInicioGarantia);
+    _servicoUpdateForm
+        .setDataFinalGarantiaDate(stateServico.servico.dataFimGarantia);
     _servicoUpdateForm.setHistorico(stateServico.servico.descricao);
   }
 
@@ -387,7 +391,7 @@ class _UpdateServicoState extends State<UpdateServico> {
             hint: "Complemento...",
             type: TextInputType.text,
             maxLength: 255,
-            hide: false,
+            hide: true,
             rightPadding: 4,
             leftPadding: 4,
             valueNotifier: _clienteUpdateForm.complemento,
@@ -499,27 +503,6 @@ class _UpdateServicoState extends State<UpdateServico> {
                     ), // Filial
 
                     CustomDropdownFormField(
-                      label: 'Garantia',
-                      dropdownValues: Constants.garantias,
-                      leftPadding: 4,
-                      rightPadding: 4,
-                      valueNotifier: _servicoUpdateForm.garantia,
-                      onChanged: _servicoUpdateForm.setGarantia,
-                    ), // Garantia
-                    CustomDropdownFormField(
-                      label: 'Situação*',
-                      dropdownValues: Constants.situationServiceList,
-                      leftPadding: 4,
-                      rightPadding: 4,
-                      valueNotifier: _servicoUpdateForm.situacao,
-                      onChanged: _servicoUpdateForm.setSituacao,
-                      validator: _servicoUpdateValidator.byField(
-                        _servicoUpdateForm,
-                        ErrorCodeKey.situacao.name,
-                      ),
-                    ), // Situação
-
-                    CustomDropdownFormField(
                       label: 'Horário*',
                       dropdownValues: Constants.dataAtendimento,
                       leftPadding: 4,
@@ -531,6 +514,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                         ErrorCodeKey.horario.name,
                       ),
                     ), // Horário
+
                     CustomDatePickerFormField(
                       hint: 'dd/mm/yyyy',
                       label: 'Data Atendimento Previsto*',
@@ -564,23 +548,19 @@ class _UpdateServicoState extends State<UpdateServico> {
                         "ErrorCodeKey.data.name",
                       ),
                     ), // Data Atendimento Efetivo
-                    CustomDatePickerFormField(
-                      hint: 'dd/mm/yyyy',
-                      label: 'Data de Abertura',
-                      mask: InputMasks.data,
-                      maxLength: 10,
-                      hide: true,
-                      enabled: false,
+
+                    CustomDropdownFormField(
+                      label: 'Situação*',
+                      dropdownValues: Constants.situationServiceList,
                       leftPadding: 4,
                       rightPadding: 4,
-                      type: TextInputType.datetime,
-                      valueNotifier: _servicoUpdateForm.dataAtendimentoAbertura,
-                      onChanged: _servicoUpdateForm.setDataAtendimentoAbertura,
+                      valueNotifier: _servicoUpdateForm.situacao,
+                      onChanged: _servicoUpdateForm.setSituacao,
                       validator: _servicoUpdateValidator.byField(
                         _servicoUpdateForm,
-                        'dataAtendimentoAbertura',
+                        ErrorCodeKey.situacao.name,
                       ),
-                    ), // Data Abertura -- Tirar
+                    ), // Situação
 
                     CustomTextFormField(
                       label: 'Valor Serviço',
@@ -598,6 +578,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       ),
                       inputFormatters: InputMasks.alphanumericLetters,
                     ), // Valor
+
                     CustomTextFormField(
                       label: 'Valor Peças',
                       hint: 'Valor Peças...',
@@ -640,9 +621,9 @@ class _UpdateServicoState extends State<UpdateServico> {
                       onChanged: _servicoUpdateForm.setDataFechamento,
                       validator: _servicoUpdateValidator.byField(
                         _servicoUpdateForm,
-                        'trocar',
+                        ErrorCodeKey.data.name,
                       ),
-                    ), // Data Encerramento
+                    ), // Data Fechamento
 
                     CustomTextFormField(
                       label: 'Valor Comissão',
@@ -661,6 +642,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       enabled: false,
                       inputFormatters: InputMasks.alphanumericLetters,
                     ), // Valor Comissão
+
                     CustomDatePickerFormField(
                       hint: 'dd/mm/yyyy',
                       label: 'Data Pgto. comissão',
@@ -674,9 +656,43 @@ class _UpdateServicoState extends State<UpdateServico> {
                       onChanged: _servicoUpdateForm.setDataPagamentoComissao,
                       validator: _servicoUpdateValidator.byField(
                         _servicoUpdateForm,
-                        'ErrorCodeKey.data',
+                        ErrorCodeKey.data.name,
                       ),
                     ), // Data Pagamento Comissão
+
+                    CustomDatePickerFormField(
+                      hint: 'dd/mm/yyyy',
+                      label: 'Data Início da Garantia',
+                      mask: InputMasks.data,
+                      maxLength: 10,
+                      hide: true,
+                      leftPadding: 4,
+                      rightPadding: 4,
+                      type: TextInputType.datetime,
+                      valueNotifier: _servicoUpdateForm.dataInicioGarantia,
+                      onChanged: _servicoUpdateForm.setDataInicioGarantia,
+                      validator: _servicoUpdateValidator.byField(
+                        _servicoUpdateForm,
+                        ErrorCodeKey.data.name,
+                      ),
+                    ), // Data Início Garantia
+
+                    CustomDatePickerFormField(
+                      hint: 'dd/mm/yyyy',
+                      label: 'Data Final da Garantia',
+                      mask: InputMasks.data,
+                      maxLength: 10,
+                      hide: true,
+                      leftPadding: 4,
+                      rightPadding: 4,
+                      type: TextInputType.datetime,
+                      valueNotifier: _servicoUpdateForm.dataFinalGarantia,
+                      onChanged: _servicoUpdateForm.setDataFinalGarantia,
+                      validator: _servicoUpdateValidator.byField(
+                        _servicoUpdateForm,
+                        ErrorCodeKey.data.name,
+                      ),
+                    ), // Data Final Garantia
                   ],
                 );
               }
@@ -760,46 +776,6 @@ class _UpdateServicoState extends State<UpdateServico> {
                       },
                     ),
                   ), // Nome Técnico
-                  CustomDropdownFormField(
-                    label: 'Filial*',
-                    dropdownValues: Constants.filiais,
-                    leftPadding: 4,
-                    rightPadding: 4,
-                    valueNotifier: _servicoUpdateForm.filial,
-                    onChanged: _servicoUpdateForm.setFilial,
-                    validator: _servicoUpdateValidator.byField(
-                      _servicoUpdateForm,
-                      ErrorCodeKey.filial.name,
-                    ),
-                  ), // Filial
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomDropdownFormField(
-                          label: 'Garantia',
-                          dropdownValues: Constants.garantias,
-                          leftPadding: 4,
-                          rightPadding: 4,
-                          valueNotifier: _servicoUpdateForm.garantia,
-                          onChanged: _servicoUpdateForm.setGarantia,
-                        ),
-                      ), // Garantia
-                      Expanded(
-                        child: CustomDropdownFormField(
-                          label: 'Situação*',
-                          dropdownValues: Constants.situationServiceList,
-                          leftPadding: 4,
-                          rightPadding: 4,
-                          valueNotifier: _servicoUpdateForm.situacao,
-                          onChanged: _servicoUpdateForm.setSituacao,
-                          validator: _servicoUpdateValidator.byField(
-                            _servicoUpdateForm,
-                            ErrorCodeKey.situacao.name,
-                          ),
-                        ),
-                      ), // Situação
-                    ],
-                  ),
                   Row(
                     children: [
                       Expanded(
@@ -817,25 +793,19 @@ class _UpdateServicoState extends State<UpdateServico> {
                         ),
                       ), // Horário
                       Expanded(
-                        child: CustomDatePickerFormField(
-                          hint: 'dd/mm/yyyy',
-                          label: 'Data Atendimento Previsto*',
-                          mask: InputMasks.data,
-                          maxLength: 10,
-                          hide: true,
+                        child: CustomDropdownFormField(
+                          label: 'Filial*',
+                          dropdownValues: Constants.filiais,
                           leftPadding: 4,
                           rightPadding: 4,
-                          type: TextInputType.datetime,
-                          valueNotifier:
-                              _servicoUpdateForm.dataAtendimentoPrevisto,
-                          onChanged:
-                              _servicoUpdateForm.setDataAtendimentoPrevisto,
+                          valueNotifier: _servicoUpdateForm.filial,
+                          onChanged: _servicoUpdateForm.setFilial,
                           validator: _servicoUpdateValidator.byField(
                             _servicoUpdateForm,
-                            ErrorCodeKey.data.name,
+                            ErrorCodeKey.filial.name,
                           ),
-                        ),
-                      ), // Data Atendimento Previsto
+                        ), // Filial
+                      ),
                     ],
                   ),
                   Row(
@@ -856,14 +826,14 @@ class _UpdateServicoState extends State<UpdateServico> {
                               _servicoUpdateForm.setDataAtendimentoEfetivo,
                           validator: _servicoUpdateValidator.byField(
                             _servicoUpdateForm,
-                            "ErrorCodeKey.data.name",
+                            ErrorCodeKey.data.name,
                           ),
                         ),
                       ), // Data Atendimento Efetivo
                       Expanded(
                         child: CustomDatePickerFormField(
                           hint: 'dd/mm/yyyy',
-                          label: 'Data de Abertura',
+                          label: 'Data Atendimento Previsto*',
                           mask: InputMasks.data,
                           maxLength: 10,
                           hide: true,
@@ -871,17 +841,29 @@ class _UpdateServicoState extends State<UpdateServico> {
                           rightPadding: 4,
                           type: TextInputType.datetime,
                           valueNotifier:
-                              _servicoUpdateForm.dataAtendimentoAbertura,
+                              _servicoUpdateForm.dataAtendimentoPrevisto,
                           onChanged:
-                              _servicoUpdateForm.setDataAtendimentoAbertura,
+                              _servicoUpdateForm.setDataAtendimentoPrevisto,
                           validator: _servicoUpdateValidator.byField(
                             _servicoUpdateForm,
-                            'dataAtendimentoAbertura',
+                            ErrorCodeKey.data.name,
                           ),
-                        ),
-                      ), // Data Abertura -- Tirar
+                        ), // Data Atendimento Previsto
+                      ),
                     ],
                   ),
+                  CustomDropdownFormField(
+                    label: 'Situação*',
+                    dropdownValues: Constants.situationServiceList,
+                    leftPadding: 4,
+                    rightPadding: 4,
+                    valueNotifier: _servicoUpdateForm.situacao,
+                    onChanged: _servicoUpdateForm.setSituacao,
+                    validator: _servicoUpdateValidator.byField(
+                      _servicoUpdateForm,
+                      ErrorCodeKey.situacao.name,
+                    ),
+                  ), // Situação
                   Row(
                     children: [
                       Expanded(
@@ -964,7 +946,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       Expanded(
                         child: CustomDatePickerFormField(
                           hint: 'dd/mm/yyyy',
-                          label: 'Data Encerramento',
+                          label: 'Data Fechamento',
                           mask: InputMasks.data,
                           maxLength: 10,
                           hide: true,
@@ -975,10 +957,10 @@ class _UpdateServicoState extends State<UpdateServico> {
                           onChanged: _servicoUpdateForm.setDataFechamento,
                           validator: _servicoUpdateValidator.byField(
                             _servicoUpdateForm,
-                            'trocar',
+                            ErrorCodeKey.data.name,
                           ),
                         ),
-                      ), // Data Encerramento
+                      ), // Data Fechamento
                       Expanded(
                         child: CustomDatePickerFormField(
                           hint: 'dd/mm/yyyy',
@@ -995,10 +977,50 @@ class _UpdateServicoState extends State<UpdateServico> {
                               _servicoUpdateForm.setDataPagamentoComissao,
                           validator: _servicoUpdateValidator.byField(
                             _servicoUpdateForm,
-                            'ErrorCodeKey.data',
+                            ErrorCodeKey.data.name,
                           ),
                         ),
                       ), // Data Pagamento Comissão
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomDatePickerFormField(
+                          hint: 'dd/mm/yyyy',
+                          label: 'Data Início da Garantia',
+                          mask: InputMasks.data,
+                          maxLength: 10,
+                          hide: true,
+                          leftPadding: 4,
+                          rightPadding: 4,
+                          type: TextInputType.datetime,
+                          valueNotifier: _servicoUpdateForm.dataInicioGarantia,
+                          onChanged: _servicoUpdateForm.setDataInicioGarantia,
+                          validator: _servicoUpdateValidator.byField(
+                            _servicoUpdateForm,
+                            ErrorCodeKey.data.name,
+                          ),
+                        ),
+                      ), // Data Início Garantia
+                      Expanded(
+                        child: CustomDatePickerFormField(
+                          hint: 'dd/mm/yyyy',
+                          label: 'Data Final da Garantia',
+                          mask: InputMasks.data,
+                          maxLength: 10,
+                          hide: true,
+                          leftPadding: 4,
+                          rightPadding: 4,
+                          type: TextInputType.datetime,
+                          valueNotifier: _servicoUpdateForm.dataFinalGarantia,
+                          onChanged: _servicoUpdateForm.setDataFinalGarantia,
+                          validator: _servicoUpdateValidator.byField(
+                            _servicoUpdateForm,
+                            ErrorCodeKey.data.name,
+                          ),
+                        ),
+                      ), // Data Final Garantia
                     ],
                   ),
                 ],
@@ -1091,7 +1113,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 48.0),
                                   child: const Text(
-                                    "Atualizar Serviço",
+                                    "Consultar/Atualizar Serviço",
                                     style: TextStyle(
                                       fontSize: 24,
                                       fontWeight: FontWeight.bold,

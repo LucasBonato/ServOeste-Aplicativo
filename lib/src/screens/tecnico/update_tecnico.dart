@@ -257,7 +257,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             const Text(
-                              "Atualizar Técnico",
+                              "Consultar/Atualizar Técnico",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 24,

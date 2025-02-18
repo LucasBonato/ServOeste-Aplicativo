@@ -4,6 +4,7 @@ import 'package:serv_oeste/src/components/screen/grid_view.dart';
 import 'package:serv_oeste/src/components/screen/card_service.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
+import 'package:serv_oeste/src/screens/servico/update_servico.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -13,6 +14,14 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  void _onNavigateToUpdateScreen(int id) {
+    Navigator.of(context, rootNavigator: true).push(
+      MaterialPageRoute(
+        builder: (context) => UpdateServico(id: id),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -104,6 +113,7 @@ class _HomeState extends State<Home> {
                   aspectRatio: .9,
                   dataList: stateServico.servicos,
                   buildCard: (dynamic servico) => CardService(
+                    onDoubleTap: () => _onNavigateToUpdateScreen(servico.id),
                     cliente: (servico as Servico).nomeCliente,
                     codigo: servico.id,
                     tecnico: servico.nomeTecnico,
@@ -113,7 +123,8 @@ class _HomeState extends State<Home> {
                     horario: servico.horarioPrevisto,
                     dataPrevista: servico.dataAtendimentoPrevisto,
                     dataEfetiva: servico.dataAtendimentoEfetivo,
-                    dataAbertura: servico.dataAtendimentoAbertura,
+                    dataFechamento: servico.dataFechamento,
+                    dataFinalGarantia: servico.dataFimGarantia,
                     status: servico.situacao,
                   ),
                 );

@@ -15,8 +15,10 @@ class ServicoForm extends ChangeNotifier {
   ValueNotifier<String> horario = ValueNotifier<String>("");
   ValueNotifier<String> descricao = ValueNotifier<String>("");
   ValueNotifier<String> historico = ValueNotifier<String>("");
-  ValueNotifier<String> garantia = ValueNotifier<String>("");
   ValueNotifier<String> situacao = ValueNotifier<String>("");
+  ValueNotifier<String> garantia = ValueNotifier<String>("");
+  ValueNotifier<String> dataInicioGarantia = ValueNotifier<String>("");
+  ValueNotifier<String> dataFinalGarantia = ValueNotifier<String>("");
   ValueNotifier<String> dataAtendimentoPrevisto = ValueNotifier<String>("");
   ValueNotifier<String> dataAtendimentoEfetivo = ValueNotifier<String>("");
   ValueNotifier<String> dataAtendimentoAbertura = ValueNotifier<String>("");
@@ -68,7 +70,6 @@ class ServicoForm extends ChangeNotifier {
   }
 
   void setHorario(String? horario) {
-    print(horario);
     if (horario != null) {
       final normalized = removeDiacritics(horario).toLowerCase();
 
@@ -77,7 +78,6 @@ class ServicoForm extends ChangeNotifier {
       } else {
         this.horario.value = "Tarde";
       }
-      print(this.horario.value);
       notifyListeners();
     }
   }
@@ -90,6 +90,14 @@ class ServicoForm extends ChangeNotifier {
   void setHistorico(String? historico) {
     this.historico.value = historico ?? "";
     notifyListeners();
+  }
+
+  void setSituacao(String? situacao) {
+    if (situacao != null) {
+      this.situacao.value =
+          Formatters.mapStringStatusToEnumStatus(situacao).getSituacao();
+      notifyListeners();
+    }
   }
 
   void setGarantia(String? garantia) {
@@ -105,10 +113,36 @@ class ServicoForm extends ChangeNotifier {
     }
   }
 
-  void setSituacao(String? situacao) {
-    if (situacao != null) {
-      this.situacao.value =
-          Formatters.mapStringStatusToEnumStatus(situacao).getSituacao();
+  void setDataInicioGarantia(String? dataInicioGarantia) {
+    print(this.dataInicioGarantia.value);
+    this.dataInicioGarantia.value = dataInicioGarantia ?? "";
+    print(dataInicioGarantia);
+    notifyListeners();
+  }
+
+  void setDataFinalGarantia(String? dataFinalGarantia) {
+    print(this.dataFinalGarantia.value);
+    this.dataFinalGarantia.value = dataFinalGarantia ?? "";
+    print(dataFinalGarantia);
+    notifyListeners();
+  }
+
+  void setDataInicioGarantiaDate(DateTime? dataInicioGarantia) {
+    print(this.dataInicioGarantia.value);
+    if (dataInicioGarantia != null) {
+      this.dataInicioGarantia.value =
+          Formatters.applyDateMask(dataInicioGarantia);
+      print(dataInicioGarantia);
+      notifyListeners();
+    }
+  }
+
+  void setDataFinalGarantiaDate(DateTime? dataFinalGarantia) {
+    print(this.dataFinalGarantia.value);
+    if (dataFinalGarantia != null) {
+      this.dataFinalGarantia.value =
+          Formatters.applyDateMask(dataFinalGarantia);
+      print(dataFinalGarantia);
       notifyListeners();
     }
   }
