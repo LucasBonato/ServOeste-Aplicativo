@@ -22,7 +22,7 @@ final class TecnicoSearchAvailabilitySuccessState extends TecnicoState {
 }
 
 final class TecnicoSearchSuccessState extends TecnicoState {
-  final List<Tecnico> tecnicos;
+  final List<TecnicoResponse> tecnicos;
 
   TecnicoSearchSuccessState({required this.tecnicos});
 }

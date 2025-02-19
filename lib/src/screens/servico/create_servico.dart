@@ -1,14 +1,16 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/components/formFields/custom_search_form_field.dart';
+import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/date_picker_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/field_labels.dart';
-import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/screen/filtered_clients_table.dart';
+import 'package:serv_oeste/src/components/screen/table_technical.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
@@ -20,9 +22,8 @@ import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/servico/servico_form.dart';
 import 'package:serv_oeste/src/models/servico/servico_request.dart';
-import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
+import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
-import 'package:serv_oeste/src/components/screen/table_technical.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/shared/input_masks.dart';
 
@@ -39,7 +40,7 @@ class _CreateServicoState extends State<CreateServico> {
   Timer? _debounce;
   bool _isDataLoaded = true;
   late bool isClientAndService;
-  late List<Tecnico> _tecnicos;
+  late List<TecnicoResponse> _tecnicos;
   late List<Cliente> _clientes;
   late List<Map<String, String>> _clientesFiltrados;
   late List<String> _dropdownNomeClientes;
@@ -168,7 +169,7 @@ class _CreateServicoState extends State<CreateServico> {
 
   void _getTecnicoId(String nome) {
     _servicoForm.setNomeTecnico(nome);
-    for (Tecnico tecnico in _tecnicos) {
+    for (TecnicoResponse tecnico in _tecnicos) {
       if ("${tecnico.nome} ${tecnico.sobrenome}" ==
           _servicoForm.nomeTecnico.value) {
         _servicoForm.setIdTecnico(tecnico.id);

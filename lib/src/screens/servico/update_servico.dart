@@ -22,7 +22,7 @@ import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/models/servico/servico_form.dart';
-import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
+import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/shared/input_masks.dart';
@@ -44,7 +44,7 @@ class _UpdateServicoState extends State<UpdateServico> {
   late final ClienteBloc _clienteBloc;
 
   late List<String> _dropdownNomeTecnicos;
-  late List<Tecnico> _tecnicos;
+  late List<TecnicoResponse> _tecnicos;
   late TextEditingController _nomeTecnicoController;
   late TextEditingController _nomeClienteController;
   late TextEditingController _enderecoController;
@@ -99,7 +99,7 @@ class _UpdateServicoState extends State<UpdateServico> {
 
   void _getTechnicalId(String nome) {
     _servicoUpdateForm.setNomeTecnico(nome);
-    for (Tecnico tecnico in _tecnicos) {
+    for (TecnicoResponse tecnico in _tecnicos) {
       if ("${tecnico.nome} ${tecnico.sobrenome}" ==
           _servicoUpdateForm.nomeTecnico.value) {
         _servicoUpdateForm.setIdTecnico(tecnico.id);
