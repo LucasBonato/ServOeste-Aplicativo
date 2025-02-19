@@ -94,7 +94,9 @@ class _UpdateServicoState extends State<UpdateServico> {
     if (nome == "") return;
     if (nome.split(" ").length > 1 && _dropdownNomeTecnicos.isEmpty) return;
     _tecnicoBloc.add(TecnicoSearchEvent(
-        nome: nome, equipamento: _servicoUpdateForm.equipamento.value));
+        nome: nome,
+        equipamento: _servicoUpdateForm.equipamento.value,
+        situacao: 'ATIVO'));
   }
 
   void _getTechnicalId(String nome) {
@@ -207,35 +209,31 @@ class _UpdateServicoState extends State<UpdateServico> {
   }
 
   void _updateFieldStates(String situation) {
+    print(situation);
     switch (situation) {
       case 'Aguardando agendamento':
-        _servicoUpdateForm.setHorario(null);
-        _servicoUpdateForm.setDataAtendimentoEfetivo(null);
-        _servicoUpdateForm.setDataFechamento(null);
-        _servicoUpdateForm.setDataInicioGarantia(null);
-        _servicoUpdateForm.setDataFinalGarantia(null);
+        _servicoUpdateForm.horario.value = '';
+        _servicoUpdateForm.dataAtendimentoEfetivo.value = '';
+        _servicoUpdateForm.dataFechamento.value = '';
+        _servicoUpdateForm.dataInicioGarantia.value = '';
+        _servicoUpdateForm.dataFinalGarantia.value = '';
         break;
       case 'Aguardando atendimento':
-        _servicoUpdateForm.setDataAtendimentoEfetivo(null);
-        _servicoUpdateForm.setDataFechamento(null);
-        _servicoUpdateForm.setDataInicioGarantia(null);
-        _servicoUpdateForm.setDataFinalGarantia(null);
+        _servicoUpdateForm.dataAtendimentoEfetivo.value = '';
+        _servicoUpdateForm.dataFechamento.value = '';
+        _servicoUpdateForm.dataInicioGarantia.value = '';
+        _servicoUpdateForm.dataFinalGarantia.value = '';
         break;
       case 'Aguardando aprovação do cliente':
-        _servicoUpdateForm.setHorario(null);
-        _servicoUpdateForm.setDataFechamento(null);
-        _servicoUpdateForm.setDataInicioGarantia(null);
-        _servicoUpdateForm.setDataFinalGarantia(null);
+        _servicoUpdateForm.dataFechamento.value = '';
+        _servicoUpdateForm.dataInicioGarantia.value = '';
+        _servicoUpdateForm.dataFinalGarantia.value = '';
         break;
       case 'Cancelado':
       case 'Não aprovado pelo cliente':
-        _servicoUpdateForm.setHorario(null);
-        _servicoUpdateForm.setDataAtendimentoEfetivo(null);
-        _servicoUpdateForm.setDataInicioGarantia(null);
-        _servicoUpdateForm.setDataFinalGarantia(null);
-        break;
-      case 'Resolvido':
-        _servicoUpdateForm.setHorario(null);
+        _servicoUpdateForm.dataAtendimentoEfetivo.value = '';
+        _servicoUpdateForm.dataInicioGarantia.value = '';
+        _servicoUpdateForm.dataFinalGarantia.value = '';
         break;
     }
   }
@@ -249,7 +247,9 @@ class _UpdateServicoState extends State<UpdateServico> {
     _servicoBloc.add(ServicoUpdateEvent(servico: servico));
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Serviço atualizado com sucesso!')),
+      const SnackBar(
+          content: Text(
+              'Serviço atualizado com sucesso! (Caso ele não esteja atualizado, recarregue a página)')),
     );
   }
 
@@ -277,6 +277,78 @@ class _UpdateServicoState extends State<UpdateServico> {
         3,
       _ => -1,
     };
+  }
+
+  void _handleSituationChange(String value) {
+    final String previousValue = _currentSituation;
+    final int currentLevel = _getServiceLevel(previousValue);
+    final int newLevel = _getServiceLevel(value);
+
+    if (currentLevel > newLevel) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            title: Row(
+              children: [
+                Icon(Icons.warning_amber_rounded,
+                    color: Colors.orange, size: 28),
+                SizedBox(width: 8),
+                Text("Aviso!", style: TextStyle(fontWeight: FontWeight.bold)),
+              ],
+            ),
+            content: Text(
+              "Você está retrocedendo o andamento do Serviço.\nAs datas específicas à situação anterior serão apagadas, porém mantidas no histórico.\nConfirma a atualização?",
+              textAlign: TextAlign.justify,
+              style: TextStyle(fontSize: 16),
+            ),
+            actionsAlignment: MainAxisAlignment.spaceBetween,
+            actions: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  _servicoUpdateForm.situacao.value = previousValue;
+                  _servicoUpdateForm.setSituacao(previousValue);
+                },
+                child: Text("Cancelar",
+                    style: TextStyle(color: Colors.grey[700], fontSize: 16)),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  _updateServiceSituation(value);
+                },
+                child: Text("Confirmar",
+                    style: TextStyle(color: Colors.white, fontSize: 14)),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      _updateServiceSituation(value);
+    }
+  }
+
+  void _updateServiceSituation(String value) {
+    _servicoUpdateForm.situacao.value = value;
+    _servicoUpdateForm.setSituacao(value);
+    _updateFieldStates(value);
+    _updateEnabledFields();
   }
 
   bool _isValidForm() {
@@ -676,47 +748,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       leftPadding: 4,
                       rightPadding: 4,
                       valueNotifier: _servicoUpdateForm.situacao,
-                      onChanged: (value) {
-                        final int currentLevel =
-                            _getServiceLevel(_currentSituation);
-                        final int newLevel = _getServiceLevel(value);
-
-                        if (currentLevel > newLevel) {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: Text("Aviso!"),
-                                content: Text(
-                                    "Você está retrocedendo o andamento do Serviço, as datas específicas à situação anterior serão apagadas, porém mantidas no histórico. Confirma a atualização?"),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      _servicoUpdateForm
-                                          .setSituacao(_currentSituation);
-                                    },
-                                    child: Text("Cancelar"),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      _servicoUpdateForm.setSituacao(value);
-                                      _updateFieldStates(value);
-                                      _updateEnabledFields();
-                                    },
-                                    child: Text("Confirmar"),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        } else {
-                          _servicoUpdateForm.setSituacao(value);
-                          _updateFieldStates(value);
-                          _updateEnabledFields();
-                        }
-                      },
+                      onChanged: _handleSituationChange,
                       validator: _servicoUpdateValidator.byField(
                         _servicoUpdateForm,
                         ErrorCodeKey.situacao.name,
@@ -1056,47 +1088,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                     leftPadding: 4,
                     rightPadding: 4,
                     valueNotifier: _servicoUpdateForm.situacao,
-                    onChanged: (value) {
-                      final int currentLevel =
-                          _getServiceLevel(_currentSituation);
-                      final int newLevel = _getServiceLevel(value);
-
-                      if (currentLevel > newLevel) {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: Text("Aviso!"),
-                              content: Text(
-                                  "Você está retrocedendo o andamento do Serviço, as datas específicas à situação anterior serão apagadas, porém mantidas no histórico. Confirma a atualização?"),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    _servicoUpdateForm
-                                        .setSituacao(_currentSituation);
-                                  },
-                                  child: Text("Cancelar"),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    _servicoUpdateForm.setSituacao(value);
-                                    _updateFieldStates(value);
-                                    _updateEnabledFields();
-                                  },
-                                  child: Text("Confirmar"),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      } else {
-                        _servicoUpdateForm.setSituacao(value);
-                        _updateFieldStates(value);
-                        _updateEnabledFields();
-                      }
-                    },
+                    onChanged: _handleSituationChange,
                     validator: _servicoUpdateValidator.byField(
                       _servicoUpdateForm,
                       ErrorCodeKey.situacao.name,

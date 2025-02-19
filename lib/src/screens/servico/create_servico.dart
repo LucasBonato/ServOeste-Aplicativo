@@ -67,6 +67,7 @@ class _CreateServicoState extends State<CreateServico> {
 
   @override
   void initState() {
+    super.initState();
     isClientAndService = widget.isClientAndService;
     _tecnicos = [];
     _clientes = [];
@@ -81,7 +82,6 @@ class _CreateServicoState extends State<CreateServico> {
     _clienteBloc = context.read<ClienteBloc>();
     _tecnicoBloc = context.read<TecnicoBloc>();
     _enderecoBloc = EnderecoBloc();
-    super.initState();
   }
 
   void _onNomeClienteChanged(String nome) {
@@ -164,7 +164,9 @@ class _CreateServicoState extends State<CreateServico> {
     if (nome == "") return;
     if (nome.split(" ").length > 1 && _dropdownNomeTecnicos.isEmpty) return;
     _tecnicoBloc.add(TecnicoSearchEvent(
-        nome: nome, equipamento: _servicoForm.equipamento.value));
+        nome: nome,
+        equipamento: _servicoForm.equipamento.value,
+        situacao: 'ATIVO'));
   }
 
   void _getTecnicoId(String nome) {

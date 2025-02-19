@@ -575,7 +575,7 @@ class _UpdateClienteState extends State<UpdateCliente> {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(SnackBar(
                                                       content: Text(
-                                                          'Cliente atualizado com sucesso!')));
+                                                          'Cliente atualizado com sucesso! (Caso ele não esteja atualizado, recarregue a página)')));
                                             } else if (state
                                                 is ClienteErrorState) {
                                               ErrorEntity error = state.error;
