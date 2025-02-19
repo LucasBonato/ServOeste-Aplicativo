@@ -114,35 +114,27 @@ class ServicoForm extends ChangeNotifier {
   }
 
   void setDataInicioGarantia(String? dataInicioGarantia) {
-    print(this.dataInicioGarantia.value);
     this.dataInicioGarantia.value = dataInicioGarantia ?? "";
-    print(dataInicioGarantia);
     notifyListeners();
   }
 
   void setDataFinalGarantia(String? dataFinalGarantia) {
-    print(this.dataFinalGarantia.value);
     this.dataFinalGarantia.value = dataFinalGarantia ?? "";
-    print(dataFinalGarantia);
     notifyListeners();
   }
 
   void setDataInicioGarantiaDate(DateTime? dataInicioGarantia) {
-    print(this.dataInicioGarantia.value);
     if (dataInicioGarantia != null) {
       this.dataInicioGarantia.value =
           Formatters.applyDateMask(dataInicioGarantia);
-      print(dataInicioGarantia);
       notifyListeners();
     }
   }
 
   void setDataFinalGarantiaDate(DateTime? dataFinalGarantia) {
-    print(this.dataFinalGarantia.value);
     if (dataFinalGarantia != null) {
       this.dataFinalGarantia.value =
           Formatters.applyDateMask(dataFinalGarantia);
-      print(dataFinalGarantia);
       notifyListeners();
     }
   }

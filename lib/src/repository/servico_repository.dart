@@ -143,10 +143,6 @@ class ServicoRepository extends DioService {
         "dataPagamentoComissao": servico.dataPagamentoComissaoString
       });
 
-      print(servico.garantia);
-      print(servico.dataInicioGarantiaString);
-      print(servico.dataFimGarantiaString);
-      print(response.data);
       if (response.data != null && response.data is Map) {
         return Servico.fromJson(response.data as Map<String, dynamic>);
       }

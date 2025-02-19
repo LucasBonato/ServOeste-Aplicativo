@@ -32,55 +32,55 @@ class Formatters {
   static ServiceStatus mapStringStatusToEnumStatus(String status) {
     return switch (status) {
       "AGUARDANDO_AGENDAMENTO" ||
-      "Aguardando Agendamento" =>
+      "Aguardando agendamento" =>
         ServiceStatus.aguardandoAgendamento,
       "AGUARDANDO_ATENDIMENTO" ||
-      "Aguardando Atendimento" =>
+      "Aguardando atendimento" =>
         ServiceStatus.aguardandoAtendimento,
       "AGUARDANDO_APROVACAO" ||
-      "Aguardando Aprovação do Cliente" =>
+      "Aguardando aprovação do cliente" =>
         ServiceStatus.aguardandoAprovacaoCliente,
       "AGUARDANDO_CLIENTE_RETIRAR" ||
-      "Aguardando Cliente Retirar" =>
+      "Aguardando cliente retirar" =>
         ServiceStatus.aguardandoClienteRetirar,
       "AGUARDANDO_ORCAMENTO" ||
-      "Aguardando Orçamento" =>
+      "Aguardando orçamento" =>
         ServiceStatus.aguardandoOrcamento,
       "CANCELADO" || "Cancelado" => ServiceStatus.cancelado,
       "COMPRA" || "Compra" => ServiceStatus.compra,
       "CORTESIA" || "Cortesia" => ServiceStatus.cortesia,
       "GARANTIA" || "Garantia" => ServiceStatus.garantia,
       "NAO_APROVADO" ||
-      "Não Aprovado pelo Cliente" =>
+      "Não aprovado pelo cliente" =>
         ServiceStatus.naoAprovadoPeloCliente,
       "NAO_RETIRA_3_MESES" ||
-      "Não Retira há 3 Meses" =>
+      "Não Retira há 3 meses" =>
         ServiceStatus.naoRetira3Meses,
       "ORCAMENTO_APROVADO" ||
-      "Orçamento Aprovado" =>
+      "Orçamento aprovado" =>
         ServiceStatus.orcamentoAprovado,
       "RESOLVIDO" || "Resolvido" => ServiceStatus.resolvido,
-      "SEM_DEFEITO" || "Sem Defeito" => ServiceStatus.semDefeito,
+      "SEM_DEFEITO" || "Sem defeito" => ServiceStatus.semDefeito,
       _ => ServiceStatus.aguardandoAgendamento
     };
   }
 
   static String mapSituationToEnumSituation(String situation) {
     return switch (situation) {
-      "Aguardando Agendamento" => "AGUARDANDO_AGENDAMENTO",
-      "Aguardando Atendimento" => "AGUARDANDO_ATENDIMENTO",
-      "Aguardando Aprovação do Cliente" => "AGUARDANDO_APROVACAO",
-      "Aguardando Cliente Retirar" => "AGUARDANDO_CLIENTE_RETIRAR",
-      "Aguardando Orçamento" => "AGUARDANDO_ORCAMENTO",
+      "Aguardando agendamento" => "AGUARDANDO_AGENDAMENTO",
+      "Aguardando atendimento" => "AGUARDANDO_ATENDIMENTO",
+      "Aguardando aprovação do cliente" => "AGUARDANDO_APROVACAO",
+      "Aguardando cliente retirar" => "AGUARDANDO_CLIENTE_RETIRAR",
+      "Aguardando orçamento" => "AGUARDANDO_ORCAMENTO",
       "Cancelado" => "CANCELADO",
       "Compra" => "COMPRA",
       "Cortesia" => "CORTESIA",
       "Garantia" => "GARANTIA",
-      "Não Aprovado pelo Cliente" => "NAO_APROVADO",
-      "Não Retira há 3 Meses" => "NAO_RETIRA_3_MESES",
-      "Orçamento Aprovado" => "ORCAMENTO_APROVADO",
+      "Não aprovado pelo cliente" => "NAO_APROVADO",
+      "Não retira há 3 meses" => "NAO_RETIRA_3_MESES",
+      "Orçamento aprovado" => "ORCAMENTO_APROVADO",
       "Resolvido" => "RESOLVIDO",
-      "Sem Defeito" => "SEM_DEFEITO",
+      "Sem defeito" => "SEM_DEFEITO",
       _ => "AGUARDANDO_AGENDAMENTO"
     };
   }

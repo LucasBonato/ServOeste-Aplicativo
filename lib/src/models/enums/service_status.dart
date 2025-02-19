@@ -1,18 +1,18 @@
 enum ServiceStatus {
-  aguardandoAgendamento("Aguardando Agendamento"),
-  aguardandoAtendimento("Aguardando Atendimento"),
-  aguardandoAprovacaoCliente("Aguardando Aprovação do Cliente"),
-  aguardandoClienteRetirar("Aguardando Cliente Retirar"),
-  aguardandoOrcamento("Aguardando Orçamento"),
+  aguardandoAgendamento("Aguardando agendamento"),
+  aguardandoAtendimento("Aguardando atendimento"),
+  aguardandoAprovacaoCliente("Aguardando aprovação do cliente"),
+  aguardandoClienteRetirar("Aguardando cliente retirar"),
+  aguardandoOrcamento("Aguardando orçamento"),
   cancelado("Cancelado"),
   compra("Compra"),
   cortesia("Cortesia"),
   garantia("Garantia"),
-  naoAprovadoPeloCliente("Não Aprovado Pelo Cliente"),
-  naoRetira3Meses("Não Retira há 3 Meses"),
-  orcamentoAprovado("Orçamento Aprovado"),
+  naoAprovadoPeloCliente("Não aprovado Pelo cliente"),
+  naoRetira3Meses("Não retira há 3 meses"),
+  orcamentoAprovado("Orçamento aprovado"),
   resolvido("Resolvido"),
-  semDefeito("Sem Defeito");
+  semDefeito("Sem defeito");
 
   final String situacao;
 

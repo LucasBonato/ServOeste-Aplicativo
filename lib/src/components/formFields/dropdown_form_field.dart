@@ -9,7 +9,7 @@ class CustomDropdownFormField extends StatefulWidget {
   final List<String> dropdownValues;
   final ValueNotifier<String> valueNotifier;
   final String? Function([String?])? validator;
-  final void Function(String?) onChanged;
+  final void Function(String) onChanged;
   final SingleSelectController<String>? controller;
 
   const CustomDropdownFormField({
@@ -135,7 +135,9 @@ class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
               ),
               excludeSelected: false,
               validator: widget.validator,
-              onChanged: widget.onChanged,
+              onChanged: (String? value) {
+                if (value != null) widget.onChanged(value);
+              },
             ),
           ),
         ),

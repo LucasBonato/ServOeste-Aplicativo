@@ -6,20 +6,20 @@ class Constants {
     "Desativado"
   ];
   static const List<String> situationServiceList = [
-    'Aguardando Agendamento',
-    'Aguardando Aprovação do Cliente',
-    'Aguardando Atendimento',
-    'Aguardando Cliente Retirar',
-    'Aguardando Orçamento',
+    'Aguardando agendamento',
+    'Aguardando aprovação do cliente',
+    'Aguardando atendimento',
+    'Aguardando cliente retirar',
+    'Aguardando orçamento',
     'Cancelado',
     'Compra',
     'Cortesia',
     'Garantia',
-    'Não Aprovado pelo Cliente',
-    'Não Retira há 3 Meses',
-    'Orçamento Aprovado',
+    'Não aprovado pelo cliente',
+    'Não retira há 3 meses',
+    'Orçamento aprovado',
     'Resolvido',
-    'Sem Defeito'
+    'Sem defeito'
   ];
   static const List<String> municipios = [
     'Osasco',

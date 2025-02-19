@@ -89,7 +89,7 @@ class FilterService extends StatelessWidget {
                       leftPadding: 4,
                       rightPadding: 4,
                       onChanged: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value.isEmpty) {
                           provider.updateFilter(situacao: null);
                         } else {
                           provider.updateFilter(situacao: value);
@@ -104,7 +104,7 @@ class FilterService extends StatelessWidget {
                       leftPadding: 4,
                       rightPadding: 4,
                       onChanged: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value.isEmpty) {
                           provider.updateFilter(garantia: null);
                         } else {
                           provider.updateFilter(garantia: value);
@@ -143,7 +143,7 @@ class FilterService extends StatelessWidget {
                                 leftPadding: 4,
                                 rightPadding: 4,
                                 onChanged: (value) {
-                                  if (value == null || value.isEmpty) {
+                                  if (value.isEmpty) {
                                     provider.updateFilter(filial: null);
                                   } else {
                                     provider.updateFilter(filial: value);
@@ -184,7 +184,7 @@ class FilterService extends StatelessWidget {
                                   leftPadding: 4,
                                   rightPadding: 4,
                                   onChanged: (value) {
-                                    if (value == null || value.isEmpty) {
+                                    if (value.isEmpty) {
                                       provider.updateFilter(filial: null);
                                     } else {
                                       provider.updateFilter(filial: value);
@@ -370,7 +370,7 @@ class FilterService extends StatelessWidget {
                                 rightPadding: 4,
                                 leftPadding: 4,
                                 onChanged: (value) {
-                                  if (value == null || value.isEmpty) {
+                                  if (value.isEmpty) {
                                     provider.updateFilter(periodo: null);
                                   } else {
                                     provider.updateFilter(periodo: value);
@@ -419,7 +419,7 @@ class FilterService extends StatelessWidget {
                                   rightPadding: 4,
                                   leftPadding: 4,
                                   onChanged: (value) {
-                                    if (value == null || value.isEmpty) {
+                                    if (value.isEmpty) {
                                       provider.updateFilter(periodo: null);
                                     } else {
                                       provider.updateFilter(periodo: value);

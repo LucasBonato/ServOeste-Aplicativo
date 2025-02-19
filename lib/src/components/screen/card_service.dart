@@ -76,7 +76,21 @@ class CardService extends StatelessWidget {
   }
 
   String _convertEnumStatusToString(String status) {
-    return "${status[0]}${status.substring(1).replaceAll("_", " ").toLowerCase()}";
+    final specialCases = {
+      'NAO_RETIRA_3_MESES': 'Não retira há 3 meses',
+      'AGUARDANDO_APROVACAO': 'Aguardando aprovação do cliente',
+      'AGUARDANDO_ORCAMENTO': 'Aguardando orçamento',
+      'ORCAMENTO_APROVADO': 'Orçamento aprovado',
+      'NAO_APROVADO': 'Não aprovado pelo cliente',
+    };
+
+    if (specialCases.containsKey(status)) {
+      return specialCases[status]!;
+    }
+
+    String convertedStatus =
+        "${status[0]}${status.substring(1).replaceAll("_", " ").toLowerCase()}";
+    return convertedStatus;
   }
 
   String formatHorario(String horario) {
