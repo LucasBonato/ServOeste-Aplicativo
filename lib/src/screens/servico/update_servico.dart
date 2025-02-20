@@ -89,14 +89,7 @@ class _UpdateServicoState extends State<UpdateServico> {
     _servicoUpdateForm.setNomeTecnico(nome);
     if (nome == "") return;
     if (nome.split(" ").length > 1 && _dropdownNomeTecnicos.isEmpty) return;
-<<<<<<< HEAD
     _tecnicoBloc.add(TecnicoSearchEvent(nome: nome, equipamento: _servicoUpdateForm.equipamento.value));
-=======
-    _tecnicoBloc.add(TecnicoSearchEvent(
-        nome: nome,
-        equipamento: _servicoUpdateForm.equipamento.value,
-        situacao: 'ATIVO'));
->>>>>>> main
   }
 
   void _getTechnicalId(String nome) {
@@ -183,7 +176,7 @@ class _UpdateServicoState extends State<UpdateServico> {
   }
 
   void _updateFieldStates(String situation) {
-    print(situation);
+    //print(situation);
     switch (situation) {
       case 'Aguardando agendamento':
         _servicoUpdateForm.horario.value = '';
@@ -696,49 +689,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       leftPadding: 4,
                       rightPadding: 4,
                       valueNotifier: _servicoUpdateForm.situacao,
-<<<<<<< HEAD
-                      onChanged: (value) {
-                        final int currentLevel = _getServiceLevel(_currentSituation);
-                        final int newLevel = _getServiceLevel(value);
-
-                        if (currentLevel > newLevel) {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: Text("Aviso!"),
-                                content: Text(
-                                    "Você está retrocedendo o andamento do Serviço, as datas específicas à situação anterior serão apagadas, porém mantidas no histórico. Confirma a atualização?"),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      _servicoUpdateForm.setSituacao(_currentSituation);
-                                    },
-                                    child: Text("Cancelar"),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      _servicoUpdateForm.setSituacao(value);
-                                      _updateFieldStates(value);
-                                      _updateEnabledFields();
-                                    },
-                                    child: Text("Confirmar"),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        } else {
-                          _servicoUpdateForm.setSituacao(value);
-                          _updateFieldStates(value);
-                          _updateEnabledFields();
-                        }
-                      },
-=======
                       onChanged: _handleSituationChange,
->>>>>>> main
                       validator: _servicoUpdateValidator.byField(
                         _servicoUpdateForm,
                         ErrorCodeKey.situacao.name,
@@ -1066,49 +1017,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                     leftPadding: 4,
                     rightPadding: 4,
                     valueNotifier: _servicoUpdateForm.situacao,
-<<<<<<< HEAD
-                    onChanged: (value) {
-                      final int currentLevel = _getServiceLevel(_currentSituation);
-                      final int newLevel = _getServiceLevel(value);
-
-                      if (currentLevel > newLevel) {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: Text("Aviso!"),
-                              content: Text(
-                                  "Você está retrocedendo o andamento do Serviço, as datas específicas à situação anterior serão apagadas, porém mantidas no histórico. Confirma a atualização?"),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    _servicoUpdateForm.setSituacao(_currentSituation);
-                                  },
-                                  child: Text("Cancelar"),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    _servicoUpdateForm.setSituacao(value);
-                                    _updateFieldStates(value);
-                                    _updateEnabledFields();
-                                  },
-                                  child: Text("Confirmar"),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      } else {
-                        _servicoUpdateForm.setSituacao(value);
-                        _updateFieldStates(value);
-                        _updateEnabledFields();
-                      }
-                    },
-=======
                     onChanged: _handleSituationChange,
->>>>>>> main
                     validator: _servicoUpdateValidator.byField(
                       _servicoUpdateForm,
                       ErrorCodeKey.situacao.name,
