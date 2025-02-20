@@ -182,7 +182,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
             _handleBackNavigation();
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(
-                "Técnico atualizado com sucesso!",
+                "Técnico atualizado com sucesso! (Caso ele não esteja atualizado, recarregue a página)",
               ),
             ));
           } else if (state is TecnicoErrorState) {

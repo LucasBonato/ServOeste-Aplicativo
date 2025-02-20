@@ -49,28 +49,29 @@ class BaseLayoutState extends State<BaseLayout> {
   }
 
   Widget _getScreen(int index) {
-    _screens[index] ??= switch (index) {
-      0 => BlocProvider.value(value: _servicoBloc, child: Home()),
+    _screens[index] = switch (index) {
+      0 =>
+        BlocProvider.value(value: _servicoBloc, child: Home(key: UniqueKey())),
       1 => MultiBlocProvider(
           providers: [
             BlocProvider.value(value: _tecnicoBloc),
             BlocProvider(create: (_) => ListaBloc()..add(ListaInitialEvent()))
           ],
-          child: TecnicoScreen(),
+          child: TecnicoScreen(key: UniqueKey()),
         ),
       2 => MultiBlocProvider(
           providers: [
             BlocProvider.value(value: _clienteBloc),
             BlocProvider(create: (_) => ListaBloc()..add(ListaInitialEvent()))
           ],
-          child: ClienteScreen(),
+          child: ClienteScreen(key: UniqueKey()),
         ),
       3 => MultiBlocProvider(
           providers: [
             BlocProvider.value(value: _servicoBloc),
             BlocProvider(create: (_) => ListaBloc()..add(ListaInitialEvent())),
           ],
-          child: ServicoScreen(),
+          child: ServicoScreen(key: UniqueKey()),
         ),
       _ => Container()
     };
