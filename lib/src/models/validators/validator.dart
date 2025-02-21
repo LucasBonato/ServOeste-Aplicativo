@@ -107,21 +107,14 @@ class ServicoValidator extends LucidValidator<ServicoForm>
         .customValidExternalErrors(externalErrors, ErrorCodeKey.marca.name);
 
     ruleFor((servico) => servico.filial.value, key: ErrorCodeKey.filial.name)
-        .must((filial) => filial != "", "Selecione uma filial!",
-            ErrorCodeKey.filial.name)
+        .must((filial) => filial != "" || filial != "Selecione uma filial*",
+            "Selecione uma filial!", ErrorCodeKey.filial.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.filial.name);
 
     ruleFor((servico) => servico.dataAtendimentoPrevisto.value,
             key: ErrorCodeKey.data.name)
-        .must((dataPrevista) => dataPrevista != "", "Selecione uma data!",
-            ErrorCodeKey.data.name)
         .customValidNotSunday(code: ErrorCodeKey.data.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.data.name);
-
-    ruleFor((servico) => servico.horario.value, key: ErrorCodeKey.horario.name)
-        .must((horarioPrevisto) => horarioPrevisto != "",
-            "Selecione um período válido!", ErrorCodeKey.horario.name)
-        .customValidExternalErrors(externalErrors, ErrorCodeKey.horario.name);
 
     ruleFor((servico) => servico.descricao.value,
             key: ErrorCodeKey.descricao.name)
@@ -282,8 +275,12 @@ extension CustomValidDateValidator on SimpleValidationBuilder<String> {
       String code = 'invalid_sunday_date'}) {
     return must(
       (date) {
+        if (date.trim().isEmpty) return true;
+
         try {
           final parts = date.split('/');
+          if (parts.length < 3) return false;
+
           final day = int.parse(parts[0]);
           final month = int.parse(parts[1]);
           final year = int.parse(parts[2]);

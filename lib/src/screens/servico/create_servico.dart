@@ -98,21 +98,6 @@ class _CreateServicoState extends State<CreateServico> {
     _clienteBloc.add(ClienteSearchEvent(nome: nome));
   }
 
-  // void _getClienteId(String nome) {
-  //   _clienteForm.setNome(nome);
-
-  //   for (Cliente cliente in _clientes) {
-  //     if (cliente.nome! == _clienteForm.nome.value) {
-  //       _nomeClienteController.text = cliente.nome ?? '';
-  //       _enderecoController.text = cliente.endereco ?? '';
-  //       _servicoForm.setIdCliente(cliente.id);
-  //       setState(() {
-  //         isClientAndService = false;
-  //       });
-  //     }
-  //   }
-  // }
-
   void _getClienteById(String id) {
     final clienteSelecionado = _clientes.firstWhere(
       (cliente) => cliente.id.toString() == id,
@@ -175,6 +160,7 @@ class _CreateServicoState extends State<CreateServico> {
       if ("${tecnico.nome} ${tecnico.sobrenome}" ==
           _servicoForm.nomeTecnico.value) {
         _servicoForm.setIdTecnico(tecnico.id);
+        break;
       }
     }
   }
@@ -257,20 +243,6 @@ class _CreateServicoState extends State<CreateServico> {
     _servicoBloc.add(
       ServicoRegisterEvent(
         servico: ServicoRequest.fromServicoForm(servico: _servicoForm),
-      ),
-    );
-
-    if (isClientAndService) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Cliente e Serviço adicionados com sucesso!'),
-        ),
-      );
-      return;
-    }
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Serviço adicionado com sucesso!'),
       ),
     );
   }
@@ -392,31 +364,50 @@ class _CreateServicoState extends State<CreateServico> {
                         bloc: _servicoBloc,
                         listener: (context, state) {
                           if (state is ServicoRegisterSuccessState) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: Colors.grey[850],
+                                content: Text(
+                                  isClientAndService
+                                      ? 'Cliente e Serviço adicionados com sucesso!'
+                                      : 'Serviço adicionado com sucesso!',
+                                ),
+                              ),
+                            );
+
                             Navigator.pop(context);
                           } else if (state is ServicoErrorState) {
                             ErrorEntity error = state.error;
                             if (isClientAndService) {
                               _clienteValidator.applyBackendError(error);
                               _clienteFormKey.currentState?.validate();
-                              _clienteValidator.cleanExternalErrors();
                             }
+
                             _servicoValidator.applyBackendError(error);
                             _servicoFormKey.currentState?.validate();
+
+                            if (isClientAndService) {
+                              _clienteValidator.cleanExternalErrors();
+                            }
                             _servicoValidator.cleanExternalErrors();
+
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
+                                backgroundColor: Colors.red,
                                 content: Text(
-                                    "[ERROR] Informação(ões) inválida(s) ao registrar o Serviço: ${error.errorMessage}"),
+                                  "[ERRO] Informação(ões) inválida(s) ao registrar o Serviço: ${error.errorMessage}",
+                                ),
                               ),
                             );
                           }
                         },
                         child: _buildButton(
-                            isClientAndService
-                                ? 'Adicionar Cliente/Serviço'
-                                : 'Adicionar Serviço',
-                            Colors.blue,
-                            _onAddService),
+                          isClientAndService
+                              ? 'Adicionar Cliente/Serviço'
+                              : 'Adicionar Serviço',
+                          Colors.blue,
+                          _onAddService,
+                        ),
                       ),
                     ],
                   ),
@@ -924,39 +915,44 @@ class _CreateServicoState extends State<CreateServico> {
               }
             },
             child: ValueListenableBuilder(
-                valueListenable: _servicoForm.equipamento,
-                builder: (context, value, child) {
-                  bool isFieldEnabled = (value.isNotEmpty &&
-                      (isClientAndService ||
+              valueListenable: _servicoForm.equipamento,
+              builder: (context, value, child) {
+                bool isFieldEnabled = (value.isNotEmpty &&
+                    (isClientAndService ||
+                        _servicoForm.idCliente.value != null));
+                if (isClientAndService) {
+                  isFieldEnabled = (value.isNotEmpty ||
+                      (!isClientAndService ||
                           _servicoForm.idCliente.value != null));
-                  if (isClientAndService) {
-                    isFieldEnabled = (value.isNotEmpty ||
-                        (!isClientAndService ||
-                            _servicoForm.idCliente.value != null));
-                  }
+                }
 
-                  return Tooltip(
-                    message: (isFieldEnabled)
-                        ? ""
-                        : "Selecione um equipamento para continuar",
-                    textAlign: TextAlign.center,
-                    child: CustomSearchDropDownFormField(
-                      label: "Nome do Técnico*",
-                      dropdownValues: _dropdownNomeTecnicos,
-                      maxLength: 50,
-                      hide: false,
-                      leftPadding: 4,
-                      rightPadding: 4,
-                      controller: _nomeTecnicoController,
-                      valueNotifier: _servicoForm.nomeTecnico,
-                      validator: _servicoValidator.byField(
-                          _servicoForm, ErrorCodeKey.tecnico.name),
-                      onChanged: _onNomeTecnicoChanged,
-                      onSelected: _getTecnicoId,
-                      enabled: isFieldEnabled,
-                    ),
-                  );
-                }),
+                return Tooltip(
+                  message: (isFieldEnabled)
+                      ? ""
+                      : "Selecione um equipamento para continuar",
+                  textAlign: TextAlign.center,
+                  child: CustomSearchDropDownFormField(
+                    label: "Nome do Técnico*",
+                    dropdownValues: _dropdownNomeTecnicos,
+                    maxLength: 50,
+                    hide: false,
+                    leftPadding: 4,
+                    rightPadding: 4,
+                    controller: _nomeTecnicoController,
+                    valueNotifier: _servicoForm.nomeTecnico,
+                    validator: ([value]) {
+                      if (_servicoForm.idTecnico.value == null) {
+                        return "Selecione um técnico";
+                      }
+                      return null;
+                    },
+                    onChanged: _onNomeTecnicoChanged,
+                    onSelected: _getTecnicoId,
+                    enabled: isFieldEnabled,
+                  ),
+                );
+              },
+            ),
           ),
           LayoutBuilder(
             builder: (context, constraints) {
@@ -965,7 +961,7 @@ class _CreateServicoState extends State<CreateServico> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CustomDatePickerFormField(
-                      label: "Data Prevista*",
+                      label: "Data Prevista",
                       hint: 'dd/mm/aaaa',
                       leftPadding: 4,
                       rightPadding: 4,
@@ -981,7 +977,7 @@ class _CreateServicoState extends State<CreateServico> {
                     ),
                     CustomDropdownFormField(
                       dropdownValues: Constants.dataAtendimento,
-                      label: "Horário*",
+                      label: "Horário",
                       leftPadding: 4,
                       rightPadding: 4,
                       valueNotifier: _servicoForm.horario,
@@ -999,7 +995,7 @@ class _CreateServicoState extends State<CreateServico> {
                     Expanded(
                       flex: 1,
                       child: CustomDatePickerFormField(
-                        label: "Data Prevista*",
+                        label: "Data Prevista",
                         hint: 'dd/mm/aaaa',
                         leftPadding: 4,
                         rightPadding: 4,
@@ -1018,7 +1014,7 @@ class _CreateServicoState extends State<CreateServico> {
                       flex: 1,
                       child: CustomDropdownFormField(
                         dropdownValues: Constants.dataAtendimento,
-                        label: "Horário*",
+                        label: "Horário",
                         leftPadding: 4,
                         rightPadding: 4,
                         valueNotifier: _servicoForm.horario,

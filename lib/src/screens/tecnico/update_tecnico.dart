@@ -32,7 +32,8 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
   final GlobalKey<FormState> _tecnicoFormKey = GlobalKey<FormState>();
   late final TextEditingController _nomeController,
       _telefoneCelularController,
-      _telefoneFixoController;
+      _telefoneFixoController,
+      _outrosController;
   late ValueNotifier<String> _dropDownSituacaoValue;
 
   final Map<String, String> situationMap = {
@@ -56,12 +57,15 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
     "Outros": false
   };
 
+  bool _outrosSelected = false;
+
   @override
   void initState() {
     super.initState();
     _nomeController = TextEditingController();
     _telefoneCelularController = TextEditingController();
     _telefoneFixoController = TextEditingController();
+    _outrosController = TextEditingController();
     _tecnicoUpdateForm.setId(widget.id);
     String defaultSituacao = Constants.situationTecnicoList.first;
     _dropDownSituacaoValue = ValueNotifier<String>(defaultSituacao);
@@ -102,6 +106,9 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                           if (value == null) return;
                           setState(() {
                             checkersMap[label] = value;
+                            if (label == "Outros") {
+                              _outrosSelected = value;
+                            }
                           });
                           field.reset();
                         },
@@ -118,6 +125,30 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
               }).toList(),
             ),
           ),
+          if (_outrosSelected)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextField(
+                    controller: _outrosController,
+                    decoration: InputDecoration(
+                      labelText: 'Digite os itens separados por vírgula',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Exemplo: Ar condicionado, Ventilador, Freezer',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           if (field.errorText != null)
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
@@ -145,6 +176,17 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
         _tecnicoUpdateForm.removeConhecimentos(idConhecimento);
       }
     });
+
+    if (_outrosSelected && _outrosController.text.isNotEmpty) {
+      List<String> outrosItens = _outrosController.text.split(",");
+      for (var item in outrosItens) {
+        item = item.trim();
+        if (item.isNotEmpty) {
+          _tecnicoUpdateForm.addConhecimentos(checkersMap.length + 1);
+        }
+      }
+    }
+
     _tecnicoUpdateValidator
         .setConhecimentos(_tecnicoUpdateForm.conhecimentos.value);
 
@@ -235,6 +277,15 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                     continue;
                   }
                   checkersMap[especialidade.conhecimento] = true;
+                }
+
+                List<String> outrosItens = currentState.tecnico.especialidades!
+                    .where((e) => e.conhecimento == "Outros")
+                    .map((e) => e.conhecimento)
+                    .toList();
+                if (outrosItens.isNotEmpty) {
+                  _outrosController.text = outrosItens.join(", ");
+                  _outrosSelected = true;
                 }
               }
               return true;

@@ -191,49 +191,111 @@ class _UpdateServicoState extends State<UpdateServico> {
   }
 
   void _updateEnabledFields() {
+    bool isFieldDisabled(List<String> disabledSituations) {
+      return disabledSituations.contains(_servicoUpdateForm.situacao.value);
+    }
+
+    final List<String> situacoesHorarioDisabled = [
+      'Aguardando agendamento',
+      'Aguardando aprovação do cliente',
+      'Não aprovado pelo cliente',
+      'Cancelado',
+      'Resolvido',
+    ];
+
+    final List<String> situacoesDataAtendimentoPrevistoDisabled = [
+      'Aguardando agendamento',
+      'Aguardando aprovação do cliente',
+      'Não aprovado pelo cliente',
+      'Cancelado',
+      'Resolvido',
+    ];
+
+    final List<String> situacoesDataAtendimentoEfetivoDisabled = [
+      'Aguardando agendamento',
+      'Aguardando atendimento',
+      'Não aprovado pelo cliente',
+      'Cancelado',
+    ];
+
+    final List<String> situacoesDataFechamentoDisabled = [
+      'Aguardando agendamento',
+      'Aguardando atendimento',
+      'Aguardando aprovação do cliente',
+    ];
+
+    final List<String> situacoesDataInicioGarantiaDisabled = [
+      'Aguardando agendamento',
+      'Aguardando atendimento',
+      'Aguardando aprovação do cliente',
+      'Cancelado',
+      'Não aprovado pelo cliente',
+    ];
+
+    final List<String> situacoesDataFinalGarantiaDisabled = [
+      'Aguardando agendamento',
+      'Aguardando atendimento',
+      'Aguardando aprovação do cliente',
+      'Cancelado',
+      'Não aprovado pelo cliente',
+    ];
+
+    isHorarioEnabled.value = !isFieldDisabled(situacoesHorarioDisabled);
+
     isDataAtendimentoPrevistoEnabled.value =
-        _servicoUpdateForm.situacao.value == 'Aguardando atendimento';
-    isHorarioEnabled.value =
-        _servicoUpdateForm.situacao.value == 'Aguardando atendimento';
-    isDataAtendimentoEfetivoEnabled.value = _servicoUpdateForm.situacao.value ==
-            'Aguardando aprovação do cliente' ||
-        _servicoUpdateForm.situacao.value == 'Resolvido';
+        !isFieldDisabled(situacoesDataAtendimentoPrevistoDisabled);
+
+    isDataAtendimentoEfetivoEnabled.value =
+        !isFieldDisabled(situacoesDataAtendimentoEfetivoDisabled);
+
     isDataFechamentoEnabled.value =
-        _servicoUpdateForm.situacao.value == 'Cancelado' ||
-            _servicoUpdateForm.situacao.value == 'Não aprovado pelo cliente' ||
-            _servicoUpdateForm.situacao.value == 'Resolvido';
+        !isFieldDisabled(situacoesDataFechamentoDisabled);
+
     isDataInicioGarantiaEnabled.value =
-        _servicoUpdateForm.situacao.value == 'Resolvido';
+        !isFieldDisabled(situacoesDataInicioGarantiaDisabled);
+
     isDataFinalGarantiaEnabled.value =
-        _servicoUpdateForm.situacao.value == 'Resolvido';
+        !isFieldDisabled(situacoesDataFinalGarantiaDisabled);
   }
 
   void _updateFieldStates(String situation) {
-    print(situation);
     switch (situation) {
       case 'Aguardando agendamento':
-        _servicoUpdateForm.horario.value = '';
-        _servicoUpdateForm.dataAtendimentoEfetivo.value = '';
-        _servicoUpdateForm.dataFechamento.value = '';
-        _servicoUpdateForm.dataInicioGarantia.value = '';
-        _servicoUpdateForm.dataFinalGarantia.value = '';
+        _servicoUpdateForm.setHorario(null);
+        _servicoUpdateForm.setDataAtendimentoPrevisto(null);
+        _servicoUpdateForm.setDataAtendimentoEfetivo(null);
+        _servicoUpdateForm.setDataFechamento(null);
+        _servicoUpdateForm.setDataInicioGarantia(null);
+        _servicoUpdateForm.setDataFinalGarantia(null);
         break;
+
       case 'Aguardando atendimento':
-        _servicoUpdateForm.dataAtendimentoEfetivo.value = '';
-        _servicoUpdateForm.dataFechamento.value = '';
-        _servicoUpdateForm.dataInicioGarantia.value = '';
-        _servicoUpdateForm.dataFinalGarantia.value = '';
+        _servicoUpdateForm.setDataAtendimentoEfetivo(null);
+        _servicoUpdateForm.setDataFechamento(null);
+        _servicoUpdateForm.setDataInicioGarantia(null);
+        _servicoUpdateForm.setDataFinalGarantia(null);
         break;
+
       case 'Aguardando aprovação do cliente':
-        _servicoUpdateForm.dataFechamento.value = '';
-        _servicoUpdateForm.dataInicioGarantia.value = '';
-        _servicoUpdateForm.dataFinalGarantia.value = '';
+        _servicoUpdateForm.setHorario(null);
+        _servicoUpdateForm.setDataAtendimentoPrevisto(null);
+        _servicoUpdateForm.setDataFechamento(null);
+        _servicoUpdateForm.setDataInicioGarantia(null);
+        _servicoUpdateForm.setDataFinalGarantia(null);
         break;
+
       case 'Cancelado':
       case 'Não aprovado pelo cliente':
-        _servicoUpdateForm.dataAtendimentoEfetivo.value = '';
-        _servicoUpdateForm.dataInicioGarantia.value = '';
-        _servicoUpdateForm.dataFinalGarantia.value = '';
+        _servicoUpdateForm.setHorario(null);
+        _servicoUpdateForm.setDataAtendimentoPrevisto(null);
+        _servicoUpdateForm.setDataAtendimentoEfetivo(null);
+        _servicoUpdateForm.setDataInicioGarantia(null);
+        _servicoUpdateForm.setDataFinalGarantia(null);
+        break;
+
+      case 'Resolvido':
+        _servicoUpdateForm.setHorario(null);
+        _servicoUpdateForm.setDataAtendimentoPrevisto(null);
         break;
     }
   }
@@ -331,6 +393,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                 onPressed: () {
                   Navigator.pop(context);
                   _updateServiceSituation(value);
+                  _updateFieldStates(value);
                 },
                 child: Text("Confirmar",
                     style: TextStyle(color: Colors.white, fontSize: 14)),
@@ -347,7 +410,6 @@ class _UpdateServicoState extends State<UpdateServico> {
   void _updateServiceSituation(String value) {
     _servicoUpdateForm.situacao.value = value;
     _servicoUpdateForm.setSituacao(value);
-    _updateFieldStates(value);
     _updateEnabledFields();
   }
 
@@ -677,12 +739,17 @@ class _UpdateServicoState extends State<UpdateServico> {
                       valueListenable: isHorarioEnabled,
                       builder: (context, isEnabled, child) {
                         return CustomDropdownFormField(
-                          label: 'Horário*',
+                          label: 'Horário',
                           dropdownValues: Constants.dataAtendimento,
                           leftPadding: 4,
                           rightPadding: 4,
                           valueNotifier: _servicoUpdateForm.horario,
-                          onChanged: _servicoUpdateForm.setHorario,
+                          onChanged: (String? novoValor) {
+                            _servicoUpdateForm.setHorario(
+                                novoValor == "Selecione um horário"
+                                    ? null
+                                    : novoValor);
+                          },
                           validator: _servicoUpdateValidator.byField(
                             _servicoUpdateForm,
                             ErrorCodeKey.horario.name,
@@ -697,7 +764,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       builder: (context, isEnabled, child) {
                         return CustomDatePickerFormField(
                           hint: 'dd/mm/yyyy',
-                          label: 'Data Atendimento Previsto*',
+                          label: 'Data Atendimento Previsto',
                           mask: InputMasks.data,
                           maxLength: 10,
                           hide: true,
@@ -995,12 +1062,17 @@ class _UpdateServicoState extends State<UpdateServico> {
                           valueListenable: isHorarioEnabled,
                           builder: (context, isEnabled, child) {
                             return CustomDropdownFormField(
-                              label: 'Horário*',
+                              label: 'Horário',
                               dropdownValues: Constants.dataAtendimento,
                               leftPadding: 4,
                               rightPadding: 4,
                               valueNotifier: _servicoUpdateForm.horario,
-                              onChanged: _servicoUpdateForm.setHorario,
+                              onChanged: (String? novoValor) {
+                                _servicoUpdateForm.setHorario(
+                                    novoValor == "Selecione um horário"
+                                        ? null
+                                        : novoValor);
+                              },
                               validator: _servicoUpdateValidator.byField(
                                 _servicoUpdateForm,
                                 ErrorCodeKey.horario.name,
@@ -1034,7 +1106,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                           builder: (context, isEnabled, child) {
                             return CustomDatePickerFormField(
                               hint: 'dd/mm/yyyy',
-                              label: 'Data Atendimento Previsto*',
+                              label: 'Data Atendimento Previsto',
                               mask: InputMasks.data,
                               maxLength: 10,
                               hide: true,
