@@ -1,5 +1,6 @@
 import 'package:serv_oeste/src/models/servico/servico_form.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:serv_oeste/src/shared/formatters.dart';
 
 class Servico {
   int id;
@@ -77,9 +78,9 @@ class Servico {
         formaPagamento = servicoForm.formaPagamento.value.isEmpty
             ? null
             : servicoForm.formaPagamento.value,
-        valor = double.tryParse(servicoForm.valor.value),
+        valor = Formatters.parseDouble(servicoForm.valor.value),
         valorComissao = double.tryParse(servicoForm.valorComissao.value),
-        valorPecas = double.tryParse(servicoForm.valorPecas.value),
+        valorPecas = Formatters.parseDouble(servicoForm.valorPecas.value),
         dataAtendimentoPrevistoString =
             servicoForm.dataAtendimentoPrevisto.value,
         dataAtendimentoEfetivoString =

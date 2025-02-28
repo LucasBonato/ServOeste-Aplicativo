@@ -55,8 +55,16 @@ class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
 
   void _updateController() {
     if (widget.dropdownValues.contains(widget.valueNotifier.value)) {
-      _effectiveController.value = widget.valueNotifier.value;
+      if (_effectiveController.value != widget.valueNotifier.value) {
+        _effectiveController.value = widget.valueNotifier.value;
+      }
     }
+  }
+
+  @override
+  void dispose() {
+    widget.valueNotifier.removeListener(_updateController);
+    super.dispose();
   }
 
   @override
@@ -66,17 +74,27 @@ class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
           widget.leftPadding ?? 16, 4, widget.rightPadding ?? 16, 16),
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
-        onEnter: (_) => setState(() {
-          _isHovered = true;
-        }),
-        onExit: (_) => setState(() {
-          _isHovered = false;
-        }),
+        onEnter: (_) {
+          if (mounted) {
+            setState(() {
+              _isHovered = true;
+            });
+          }
+        },
+        onExit: (_) {
+          if (mounted) {
+            setState(() {
+              _isHovered = false;
+            });
+          }
+        },
         child: Focus(
           onFocusChange: (hasFocus) {
-            setState(() {
-              _hasFocus = hasFocus;
-            });
+            if (mounted) {
+              setState(() {
+                _hasFocus = hasFocus;
+              });
+            }
           },
           child: ValueListenableBuilder<String>(
             valueListenable: widget.valueNotifier,
@@ -88,7 +106,7 @@ class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
               }
 
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (mounted && widget.dropdownValues.contains(value)) {
+                if (_effectiveController.value != value && mounted) {
                   _effectiveController.value = value;
                 }
               });

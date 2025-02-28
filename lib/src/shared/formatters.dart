@@ -29,6 +29,46 @@ class Formatters {
     return DateFormat('dd/MM/yyyy').parseStrict(dateString);
   }
 
+  static String formatToCurrency(double value) {
+    final NumberFormat formatter =
+        NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
+    return formatter.format(value);
+  }
+
+  static double parseCurrencyToDouble(String formattedValue) {
+    String cleanedValue = formattedValue
+        .replaceAll("R\$", "")
+        .replaceAll(".", "")
+        .replaceAll(",", ".")
+        .trim();
+
+    return double.tryParse(cleanedValue) ?? 0.0;
+  }
+
+  static double? parseDouble(String? value) {
+    if (value == null || value.isEmpty) {
+      return null;
+    }
+
+    String cleanedValue =
+        value.replaceAll(RegExp(r'[^\d,]'), '').replaceAll(',', '.');
+
+    double? parsedValue = double.tryParse(cleanedValue);
+    return parsedValue;
+  }
+
+  static double parseToDouble(String value) {
+    if (value.isEmpty) return 0.0;
+
+    // Remove "R$" e outros caracteres que não sejam números ou vírgulas
+    String sanitizedValue = value.replaceAll(RegExp(r'[^\d,]'), '');
+
+    // Troca ',' por '.' para conversão correta
+    sanitizedValue = sanitizedValue.replaceAll(',', '.');
+
+    return double.tryParse(sanitizedValue) ?? 0.0;
+  }
+
   static ServiceStatus mapStringStatusToEnumStatus(String status) {
     return switch (status) {
       "AGUARDANDO_AGENDAMENTO" ||
@@ -54,7 +94,7 @@ class Formatters {
       "Não aprovado pelo cliente" =>
         ServiceStatus.naoAprovadoPeloCliente,
       "NAO_RETIRA_3_MESES" ||
-      "Não Retira há 3 meses" =>
+      "Não retira há 3 meses" =>
         ServiceStatus.naoRetira3Meses,
       "ORCAMENTO_APROVADO" ||
       "Orçamento aprovado" =>

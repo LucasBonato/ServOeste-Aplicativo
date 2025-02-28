@@ -25,6 +25,8 @@ import 'package:serv_oeste/src/models/servico/servico_form.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:serv_oeste/src/shared/currency_input_formatter.dart';
+import 'package:serv_oeste/src/shared/formatters.dart';
 import 'package:serv_oeste/src/shared/input_masks.dart';
 
 class UpdateServico extends StatefulWidget {
@@ -56,12 +58,18 @@ class _UpdateServicoState extends State<UpdateServico> {
   final GlobalKey<FormState> _servicoFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _clienteFormKey = GlobalKey<FormState>();
 
+  final ValueNotifier<bool> isNomeTecnicoEnabled = ValueNotifier(false);
+  final ValueNotifier<bool> isHorarioEnabled = ValueNotifier(false);
   final ValueNotifier<bool> isDataAtendimentoPrevistoEnabled =
       ValueNotifier(false);
-  final ValueNotifier<bool> isHorarioEnabled = ValueNotifier(false);
   final ValueNotifier<bool> isDataAtendimentoEfetivoEnabled =
       ValueNotifier(false);
+  final ValueNotifier<bool> isValorServicoEnabled = ValueNotifier(false);
+  final ValueNotifier<bool> isValorPecasEnabled = ValueNotifier(false);
+  final ValueNotifier<bool> isFormaPagamentoEnabled = ValueNotifier(false);
   final ValueNotifier<bool> isDataFechamentoEnabled = ValueNotifier(false);
+  final ValueNotifier<bool> isDataPagamentoComissaoEnabled =
+      ValueNotifier(false);
   final ValueNotifier<bool> isDataInicioGarantiaEnabled = ValueNotifier(false);
   final ValueNotifier<bool> isDataFinalGarantiaEnabled = ValueNotifier(false);
 
@@ -90,6 +98,8 @@ class _UpdateServicoState extends State<UpdateServico> {
   }
 
   void _fetchTechnicalNames(String nome) {
+    if (!mounted) return;
+
     _servicoUpdateForm.setNomeTecnico(nome);
     if (nome == "") return;
     if (nome.split(" ").length > 1 && _dropdownNomeTecnicos.isEmpty) return;
@@ -145,6 +155,18 @@ class _UpdateServicoState extends State<UpdateServico> {
   }
 
   String _convertEnumStatusToString(String status) {
+    final specialCases = {
+      'NAO_RETIRA_3_MESES': 'Não retira há 3 meses',
+      'AGUARDANDO_APROVACAO': 'Aguardando aprovação do cliente',
+      'AGUARDANDO_ORCAMENTO': 'Aguardando orçamento',
+      'ORCAMENTO_APROVADO': 'Orçamento aprovado',
+      'NAO_APROVADO': 'Não aprovado pelo cliente',
+    };
+
+    if (specialCases.containsKey(status)) {
+      return specialCases[status]!;
+    }
+
     String convertedStatus =
         "${status[0]}${status.substring(1).replaceAll("_", " ").toLowerCase()}";
     return convertedStatus;
@@ -154,6 +176,9 @@ class _UpdateServicoState extends State<UpdateServico> {
       ServicoSearchOneSuccessState stateServico) {
     _currentSituation =
         _convertEnumStatusToString(stateServico.servico.situacao);
+
+    print(
+        Formatters.formatToCurrency(stateServico.servico.valorComissao ?? 0.0));
 
     _servicoUpdateForm.setIdCliente(stateServico.servico.idCliente);
     _servicoUpdateForm.setNomeCliente(stateServico.servico.nomeCliente);
@@ -170,14 +195,15 @@ class _UpdateServicoState extends State<UpdateServico> {
         stateServico.servico.dataAtendimentoEfetivo);
     _servicoUpdateForm.setDataAtendimentoAberturaDate(
         stateServico.servico.dataAtendimentoAbertura);
-    _servicoUpdateForm.setValor(stateServico.servico.valor.toString());
-    _servicoUpdateForm
-        .setValorPecas(stateServico.servico.valorPecas.toString());
+    _servicoUpdateForm.setValorServico(
+        Formatters.formatToCurrency(stateServico.servico.valor ?? 0.0));
+    _servicoUpdateForm.setValorPecas(
+        Formatters.formatToCurrency(stateServico.servico.valorPecas ?? 0.0));
+    _servicoUpdateForm.setValorComissao(
+        Formatters.formatToCurrency(stateServico.servico.valorComissao ?? 0.0));
     _servicoUpdateForm.setFormaPagamento(stateServico.servico.formaPagamento);
     _servicoUpdateForm
         .setDataFechamentoDate(stateServico.servico.dataFechamento);
-    _servicoUpdateForm
-        .setValorComissao(stateServico.servico.valorComissao.toString());
     _servicoUpdateForm.setDataPagamentoComissaoDate(
         stateServico.servico.dataPagamentoComissao);
     _servicoUpdateForm.setGarantiaBool(stateServico.servico.garantia);
@@ -195,50 +221,102 @@ class _UpdateServicoState extends State<UpdateServico> {
       return disabledSituations.contains(_servicoUpdateForm.situacao.value);
     }
 
+    final List<String> situacoesNomeTecnicoDisabled = [
+      'Aguardando agendamento',
+    ];
+
     final List<String> situacoesHorarioDisabled = [
       'Aguardando agendamento',
-      'Aguardando aprovação do cliente',
-      'Não aprovado pelo cliente',
-      'Cancelado',
-      'Resolvido',
     ];
 
     final List<String> situacoesDataAtendimentoPrevistoDisabled = [
       'Aguardando agendamento',
-      'Aguardando aprovação do cliente',
-      'Não aprovado pelo cliente',
-      'Cancelado',
-      'Resolvido',
     ];
 
     final List<String> situacoesDataAtendimentoEfetivoDisabled = [
       'Aguardando agendamento',
       'Aguardando atendimento',
-      'Não aprovado pelo cliente',
       'Cancelado',
+    ];
+
+    final List<String> situacoesValorServicoDisabled = [
+      'Aguardando agendamento',
+      'Aguardando atendimento',
+      'Cancelado',
+      'Sem defeito',
+      'Aguardando orçamento',
+    ];
+
+    final List<String> situacoesValorPecasDisabled = [
+      'Aguardando agendamento',
+      'Aguardando atendimento',
+      'Cancelado',
+      'Sem defeito',
+      'Aguardando orçamento',
+    ];
+
+    final List<String> situacoesFormaPagamentoDisabled = [
+      'Aguardando agendamento',
+      'Aguardando atendimento',
+      'Cancelado',
+      'Sem defeito',
+      'Aguardando orçamento',
+      'Aguardando aprovação do cliente',
+      'Não aprovado pelo cliente',
+      'Compra',
     ];
 
     final List<String> situacoesDataFechamentoDisabled = [
       'Aguardando agendamento',
       'Aguardando atendimento',
+      'Aguardando orçamento',
       'Aguardando aprovação do cliente',
+      'Orçamento aprovado',
+      'Aguardando cliente retirar',
+      'Cortesia',
+      'Garantia',
+    ];
+
+    final List<String> situacoesDataPagamentoComissaoDisabled = [
+      'Aguardando agendamento',
+      'Aguardando atendimento',
+      'Cancelado',
+      'Sem defeito',
+      'Aguardando orçamento',
+      'Aguardando aprovação do cliente',
+      'Não aprovado pelo cliente',
+      'Compra',
     ];
 
     final List<String> situacoesDataInicioGarantiaDisabled = [
       'Aguardando agendamento',
       'Aguardando atendimento',
-      'Aguardando aprovação do cliente',
       'Cancelado',
+      'Sem defeito',
+      'Aguardando orçamento',
+      'Aguardando aprovação do cliente',
       'Não aprovado pelo cliente',
+      'Compra',
+      'Orçamento aprovado',
+      'Aguardando cliente retirar',
+      'Não retira há 3 meses',
     ];
 
     final List<String> situacoesDataFinalGarantiaDisabled = [
       'Aguardando agendamento',
       'Aguardando atendimento',
-      'Aguardando aprovação do cliente',
       'Cancelado',
+      'Sem defeito',
+      'Aguardando orçamento',
+      'Aguardando aprovação do cliente',
       'Não aprovado pelo cliente',
+      'Compra',
+      'Orçamento aprovado',
+      'Aguardando cliente retirar',
+      'Não retira há 3 meses',
     ];
+
+    isNomeTecnicoEnabled.value = !isFieldDisabled(situacoesNomeTecnicoDisabled);
 
     isHorarioEnabled.value = !isFieldDisabled(situacoesHorarioDisabled);
 
@@ -248,8 +326,19 @@ class _UpdateServicoState extends State<UpdateServico> {
     isDataAtendimentoEfetivoEnabled.value =
         !isFieldDisabled(situacoesDataAtendimentoEfetivoDisabled);
 
+    isValorServicoEnabled.value =
+        !isFieldDisabled(situacoesValorServicoDisabled);
+
+    isValorPecasEnabled.value = !isFieldDisabled(situacoesValorPecasDisabled);
+
+    isFormaPagamentoEnabled.value =
+        !isFieldDisabled(situacoesFormaPagamentoDisabled);
+
     isDataFechamentoEnabled.value =
         !isFieldDisabled(situacoesDataFechamentoDisabled);
+
+    isDataPagamentoComissaoEnabled.value =
+        !isFieldDisabled(situacoesDataPagamentoComissaoDisabled);
 
     isDataInicioGarantiaEnabled.value =
         !isFieldDisabled(situacoesDataInicioGarantiaDisabled);
@@ -258,54 +347,16 @@ class _UpdateServicoState extends State<UpdateServico> {
         !isFieldDisabled(situacoesDataFinalGarantiaDisabled);
   }
 
-  void _updateFieldStates(String situation) {
-    switch (situation) {
-      case 'Aguardando agendamento':
-        _servicoUpdateForm.setHorario(null);
-        _servicoUpdateForm.setDataAtendimentoPrevisto(null);
-        _servicoUpdateForm.setDataAtendimentoEfetivo(null);
-        _servicoUpdateForm.setDataFechamento(null);
-        _servicoUpdateForm.setDataInicioGarantia(null);
-        _servicoUpdateForm.setDataFinalGarantia(null);
-        break;
-
-      case 'Aguardando atendimento':
-        _servicoUpdateForm.setDataAtendimentoEfetivo(null);
-        _servicoUpdateForm.setDataFechamento(null);
-        _servicoUpdateForm.setDataInicioGarantia(null);
-        _servicoUpdateForm.setDataFinalGarantia(null);
-        break;
-
-      case 'Aguardando aprovação do cliente':
-        _servicoUpdateForm.setHorario(null);
-        _servicoUpdateForm.setDataAtendimentoPrevisto(null);
-        _servicoUpdateForm.setDataFechamento(null);
-        _servicoUpdateForm.setDataInicioGarantia(null);
-        _servicoUpdateForm.setDataFinalGarantia(null);
-        break;
-
-      case 'Cancelado':
-      case 'Não aprovado pelo cliente':
-        _servicoUpdateForm.setHorario(null);
-        _servicoUpdateForm.setDataAtendimentoPrevisto(null);
-        _servicoUpdateForm.setDataAtendimentoEfetivo(null);
-        _servicoUpdateForm.setDataInicioGarantia(null);
-        _servicoUpdateForm.setDataFinalGarantia(null);
-        break;
-
-      case 'Resolvido':
-        _servicoUpdateForm.setHorario(null);
-        _servicoUpdateForm.setDataAtendimentoPrevisto(null);
-        break;
-    }
-  }
-
   void _updateServico() {
     if (!_isValidForm()) {
       return;
     }
 
     Servico servico = Servico.fromForm(_servicoUpdateForm);
+    print(servico.toJson());
+    print("Valor convertido para Servico: ${servico.valor}");
+    print("Valor Comissão convertido para Servico: ${servico.valorComissao}");
+    print("Valor Peças convertido para Servico: ${servico.valorPecas}");
     _servicoBloc.add(ServicoUpdateEvent(servico: servico));
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -319,87 +370,90 @@ class _UpdateServicoState extends State<UpdateServico> {
     return switch (situacao) {
       'Aguardando agendamento' => 0,
       'Aguardando atendimento' => 1,
-      'Aguardando aprovacao do cliente' ||
-      'Aguardando aprovação do cliente' ||
-      'Aguardando orcamento' ||
-      'Aguardando orçamento' ||
-      'Orcamento aprovado' ||
-      'Orçamento aprovado' =>
-        2,
-      'Cancelado' ||
-      'Nao aprovado pelo cliente' ||
-      'Não aprovado pelo cliente' ||
-      'Resolvido' ||
-      'Compra' ||
-      'Cortesia' ||
-      'Garantia' ||
-      'Nao retira 3 meses' ||
-      'Não retira há 3 meses' ||
-      'Sem defeito' =>
-        3,
+      'Cancelado' || 'Sem defeito' || 'Aguardando orçamento' => 2,
+      'Aguardando aprovação do cliente' => 3,
+      'Compra' || 'Não aprovado pelo cliente' || 'Orçamento aprovado' => 4,
+      'Aguardando cliente retirar' => 5,
+      'Não retira há 3 meses' => 6,
+      'Resolvido' || 'Cortesia' || 'Garantia' => 7,
       _ => -1,
     };
   }
 
   void _handleSituationChange(String value) {
+    if (!mounted) return;
+
     final String previousValue = _currentSituation;
     final int currentLevel = _getServiceLevel(previousValue);
     final int newLevel = _getServiceLevel(value);
 
+    print(
+        "Mudando de $previousValue (Nível: $currentLevel) para $value (Nível: $newLevel)");
+
     if (currentLevel > newLevel) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            title: Row(
-              children: [
-                Icon(Icons.warning_amber_rounded,
-                    color: Colors.orange, size: 28),
-                SizedBox(width: 8),
-                Text("Aviso!", style: TextStyle(fontWeight: FontWeight.bold)),
-              ],
-            ),
-            content: Text(
-              "Você está retrocedendo o andamento do Serviço.\nAs datas específicas à situação anterior serão apagadas, porém mantidas no histórico.\nConfirma a atualização?",
-              textAlign: TextAlign.justify,
-              style: TextStyle(fontSize: 16),
-            ),
-            actionsAlignment: MainAxisAlignment.spaceBetween,
-            actions: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) async {
+          if (!mounted) return;
+
+          bool? confirm = await showDialog<bool>(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                onPressed: () {
-                  Navigator.pop(context);
-                  _servicoUpdateForm.situacao.value = previousValue;
-                  _servicoUpdateForm.setSituacao(previousValue);
-                },
-                child: Text("Cancelar",
-                    style: TextStyle(color: Colors.grey[700], fontSize: 16)),
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                title: Row(
+                  children: [
+                    Icon(Icons.warning_amber_rounded,
+                        color: Colors.orange, size: 28),
+                    SizedBox(width: 8),
+                    Text("Aviso!",
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                  ],
                 ),
-                onPressed: () {
-                  Navigator.pop(context);
-                  _updateServiceSituation(value);
-                  _updateFieldStates(value);
-                },
-                child: Text("Confirmar",
-                    style: TextStyle(color: Colors.white, fontSize: 14)),
-              ),
-            ],
+                content: Text(
+                  "Esta alteração irá retroceder a situação do serviço.\nDeseja realizar realmente a alteração?",
+                  textAlign: TextAlign.justify,
+                  style: TextStyle(fontSize: 16),
+                ),
+                actionsAlignment: MainAxisAlignment.spaceBetween,
+                actions: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _servicoUpdateForm.situacao.value = previousValue;
+                      _servicoUpdateForm.setSituacao(previousValue);
+                    },
+                    child: Text("Cancelar",
+                        style:
+                            TextStyle(color: Colors.grey[700], fontSize: 16)),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _updateServiceSituation(value);
+                    },
+                    child: Text("Confirmar",
+                        style: TextStyle(color: Colors.white, fontSize: 14)),
+                  ),
+                ],
+              );
+            },
           );
+          if (confirm == true && mounted) {
+            _updateServiceSituation(value);
+          }
         },
       );
     } else {
@@ -408,6 +462,10 @@ class _UpdateServicoState extends State<UpdateServico> {
   }
 
   void _updateServiceSituation(String value) {
+    print(
+        "Atualizando situação para: $value (Nível: ${_getServiceLevel(value)})");
+    if (_servicoUpdateForm.situacao.value == value) return;
+
     _servicoUpdateForm.situacao.value = value;
     _servicoUpdateForm.setSituacao(value);
     _updateEnabledFields();
@@ -685,38 +743,51 @@ class _UpdateServicoState extends State<UpdateServico> {
                                   "${tecnico.nome} ${tecnico.sobrenome}")
                               .toList();
                           if (_dropdownNomeTecnicos != nomes) {
-                            setState(() {
-                              _dropdownNomeTecnicos = nomes;
-                            });
+                            if (mounted) {
+                              setState(() {
+                                _dropdownNomeTecnicos = nomes;
+                              });
+                            }
                           }
                         }
                       },
-                      child: ValueListenableBuilder(
-                        valueListenable: _servicoUpdateForm.equipamento,
-                        builder: (context, value, child) {
-                          bool isFieldEnabled = (value.isNotEmpty ||
-                              _servicoUpdateForm.idCliente.value != null);
-                          return Tooltip(
-                            message: (isFieldEnabled)
-                                ? ""
-                                : "Selecione um equipamento para continuar",
-                            textAlign: TextAlign.center,
-                            child: CustomSearchDropDownFormField(
-                              label: "Nome do Técnico*",
-                              dropdownValues: _dropdownNomeTecnicos,
-                              maxLength: 50,
-                              hide: true,
-                              leftPadding: 4,
-                              rightPadding: 4,
-                              controller: _nomeTecnicoController,
-                              valueNotifier: _servicoUpdateForm.nomeTecnico,
-                              validator: _servicoUpdateValidator.byField(
-                                  _servicoUpdateForm,
-                                  ErrorCodeKey.tecnico.name),
-                              onChanged: _onNameTechnicalChanged,
-                              onSelected: _getTechnicalId,
-                              enabled: isFieldEnabled,
-                            ),
+                      child: ValueListenableBuilder<bool>(
+                        valueListenable: isNomeTecnicoEnabled,
+                        builder: (context, isEnabled, child) {
+                          return ValueListenableBuilder(
+                            valueListenable: _servicoUpdateForm.equipamento,
+                            builder: (context, value, child) {
+                              bool isFieldEnabled = isEnabled &&
+                                  (value.isNotEmpty ||
+                                      _servicoUpdateForm.idCliente.value !=
+                                          null);
+                              return Tooltip(
+                                message: (isFieldEnabled)
+                                    ? ""
+                                    : "Selecione um equipamento para continuar",
+                                textAlign: TextAlign.center,
+                                child: CustomSearchDropDownFormField(
+                                  label: "Nome do Técnico*",
+                                  dropdownValues: _dropdownNomeTecnicos,
+                                  maxLength: 50,
+                                  hide: true,
+                                  leftPadding: 4,
+                                  rightPadding: 4,
+                                  controller: _nomeTecnicoController,
+                                  valueNotifier: _servicoUpdateForm.nomeTecnico,
+                                  validator: ([value]) {
+                                    if (isFieldEnabled &&
+                                        (value == null || value.isEmpty)) {
+                                      return "Nome do técnico é obrigatório";
+                                    }
+                                    return null;
+                                  },
+                                  onChanged: _onNameTechnicalChanged,
+                                  onSelected: _getTechnicalId,
+                                  enabled: isFieldEnabled,
+                                ),
+                              );
+                            },
                           );
                         },
                       ),
@@ -733,13 +804,14 @@ class _UpdateServicoState extends State<UpdateServico> {
                         _servicoUpdateForm,
                         ErrorCodeKey.filial.name,
                       ),
+                      enabled: false,
                     ), // Filial
 
                     ValueListenableBuilder<bool>(
                       valueListenable: isHorarioEnabled,
                       builder: (context, isEnabled, child) {
                         return CustomDropdownFormField(
-                          label: 'Horário',
+                          label: 'Horário*',
                           dropdownValues: Constants.dataAtendimento,
                           leftPadding: 4,
                           rightPadding: 4,
@@ -750,10 +822,16 @@ class _UpdateServicoState extends State<UpdateServico> {
                                     ? null
                                     : novoValor);
                           },
-                          validator: _servicoUpdateValidator.byField(
-                            _servicoUpdateForm,
-                            ErrorCodeKey.horario.name,
-                          ),
+                          validator: ([value]) {
+                            if (_servicoUpdateForm.situacao.value ==
+                                "Cancelado") {
+                              return null;
+                            }
+                            if (isEnabled && (value == null || value.isEmpty)) {
+                              return "Horário é obrigatório";
+                            }
+                            return null;
+                          },
                           enabled: isEnabled,
                         );
                       },
@@ -764,7 +842,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       builder: (context, isEnabled, child) {
                         return CustomDatePickerFormField(
                           hint: 'dd/mm/yyyy',
-                          label: 'Data Atendimento Previsto',
+                          label: 'Data Atendimento Previsto*',
                           mask: InputMasks.data,
                           maxLength: 10,
                           hide: true,
@@ -775,10 +853,16 @@ class _UpdateServicoState extends State<UpdateServico> {
                               _servicoUpdateForm.dataAtendimentoPrevisto,
                           onChanged:
                               _servicoUpdateForm.setDataAtendimentoPrevisto,
-                          validator: _servicoUpdateValidator.byField(
-                            _servicoUpdateForm,
-                            ErrorCodeKey.data.name,
-                          ),
+                          validator: ([value]) {
+                            if (_servicoUpdateForm.situacao.value ==
+                                "Cancelado") {
+                              return null;
+                            }
+                            if (isEnabled && (value == null || value.isEmpty)) {
+                              return "Data de atendimento previsto é obrigatória";
+                            }
+                            return null;
+                          },
                           enabled: isEnabled,
                         );
                       },
@@ -789,7 +873,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       builder: (context, isEnabled, child) {
                         return CustomDatePickerFormField(
                           hint: 'dd/mm/yyyy',
-                          label: 'Data Efetiva',
+                          label: 'Data Efetiva*',
                           mask: InputMasks.data,
                           maxLength: 10,
                           hide: true,
@@ -800,10 +884,12 @@ class _UpdateServicoState extends State<UpdateServico> {
                               _servicoUpdateForm.dataAtendimentoEfetivo,
                           onChanged:
                               _servicoUpdateForm.setDataAtendimentoEfetivo,
-                          validator: _servicoUpdateValidator.byField(
-                            _servicoUpdateForm,
-                            'ErrorCodeKey.data.name',
-                          ),
+                          validator: ([value]) {
+                            if (isEnabled && (value == null || value.isEmpty)) {
+                              return "Data efetiva é obrigatória";
+                            }
+                            return null;
+                          },
                           enabled: isEnabled,
                         );
                       },
@@ -815,58 +901,102 @@ class _UpdateServicoState extends State<UpdateServico> {
                       leftPadding: 4,
                       rightPadding: 4,
                       valueNotifier: _servicoUpdateForm.situacao,
-                      onChanged: _handleSituationChange,
+                      onChanged: (String? newValue) {
+                        if (newValue != null &&
+                            newValue != _servicoUpdateForm.situacao.value) {
+                          print("Dropdown: Situação selecionada: $newValue");
+                          _handleSituationChange(newValue);
+                        }
+                      },
                       validator: _servicoUpdateValidator.byField(
                         _servicoUpdateForm,
                         ErrorCodeKey.situacao.name,
                       ),
                     ), // Situação
 
-                    CustomTextFormField(
-                      label: 'Valor Serviço',
-                      hint: 'Valor Serviço...',
-                      leftPadding: 4,
-                      rightPadding: 4,
-                      maxLength: 8,
-                      hide: true,
-                      type: TextInputType.numberWithOptions(decimal: true),
-                      valueNotifier: _servicoUpdateForm.valor,
-                      onChanged: _servicoUpdateForm.setValor,
-                      validator: _servicoUpdateValidator.byField(
-                        _servicoUpdateForm,
-                        ErrorCodeKey.valor.name,
-                      ),
-                      inputFormatters: InputMasks.alphanumericLetters,
-                    ), // Valor
+                    ValueListenableBuilder<bool>(
+                      valueListenable: isValorServicoEnabled,
+                      builder: (context, isEnabled, child) {
+                        return CustomTextFormField(
+                          label: 'Valor Serviço*',
+                          hint: '9.999,99',
+                          leftPadding: 4,
+                          rightPadding: 4,
+                          maxLength: 13,
+                          hide: true,
+                          type: TextInputType.numberWithOptions(decimal: true),
+                          valueNotifier: _servicoUpdateForm.valor,
+                          onChanged: _servicoUpdateForm.setValorServico,
+                          validator: ([value]) {
+                            if (isEnabled && (value == null || value.isEmpty)) {
+                              return "Valor do serviço é obrigatório";
+                            }
+                            return null;
+                          },
+                          inputFormatters: [
+                            CurrencyInputFormatter(),
+                          ],
+                          enabled: isEnabled,
+                        );
+                      },
+                    ), // Valor Serviço
 
-                    CustomTextFormField(
-                      label: 'Valor Peças',
-                      hint: 'Valor Peças...',
-                      leftPadding: 4,
-                      rightPadding: 4,
-                      maxLength: 8,
-                      hide: true,
-                      type: TextInputType.numberWithOptions(decimal: true),
-                      valueNotifier: _servicoUpdateForm.valorPecas,
-                      onChanged: _servicoUpdateForm.setValorPecas,
-                      validator: _servicoUpdateValidator.byField(
-                        _servicoUpdateForm,
-                        ErrorCodeKey.valorPecas.name,
-                      ),
-                      inputFormatters: InputMasks.alphanumericLetters,
+                    ValueListenableBuilder<bool>(
+                      valueListenable: isValorPecasEnabled,
+                      builder: (context, isEnabled, child) {
+                        return CustomTextFormField(
+                          label: 'Valor Peças*',
+                          hint: '9.999,99',
+                          leftPadding: 4,
+                          rightPadding: 4,
+                          maxLength: 13,
+                          hide: true,
+                          type: TextInputType.numberWithOptions(decimal: true),
+                          valueNotifier: _servicoUpdateForm.valorPecas,
+                          onChanged: _servicoUpdateForm.setValorPecas,
+                          validator: ([value]) {
+                            if (isEnabled && (value == null || value.isEmpty)) {
+                              return "Valor das peças é obrigatório";
+                            }
+                            return null;
+                          },
+                          inputFormatters: [
+                            CurrencyInputFormatter(),
+                          ],
+                          enabled: isEnabled,
+                        );
+                      },
                     ), // Valor Peças
 
-                    CustomDropdownFormField(
-                      label: 'Forma de Pagamento',
-                      dropdownValues: Constants.formasPagamento,
-                      leftPadding: 4,
-                      rightPadding: 4,
-                      valueNotifier: _servicoUpdateForm.formaPagamento,
-                      onChanged: _servicoUpdateForm.setFormaPagamento,
-                      validator: _servicoUpdateValidator.byField(
-                        _servicoUpdateForm,
-                        'ErrorCodeKey.formaPagamento.name',
-                      ),
+                    ValueListenableBuilder<bool>(
+                      valueListenable: isFormaPagamentoEnabled,
+                      builder: (context, isEnabled, child) {
+                        return CustomDropdownFormField(
+                          label: 'Forma de Pagamento*',
+                          dropdownValues: Constants.formasPagamento,
+                          leftPadding: 4,
+                          rightPadding: 4,
+                          valueNotifier: _servicoUpdateForm.formaPagamento,
+                          onChanged: _servicoUpdateForm.setFormaPagamento,
+                          validator: ([value]) {
+                            final situacoesOpcionais = [
+                              "Orçamento aprovado",
+                              "Aguardando cliente retirar",
+                              "Não retira há 3 meses",
+                            ];
+
+                            if (situacoesOpcionais
+                                .contains(_servicoUpdateForm.situacao.value)) {
+                              return null;
+                            }
+                            if (isEnabled && (value == null || value.isEmpty)) {
+                              return "Forma de pagamento é obrigatória";
+                            }
+                            return null;
+                          },
+                          enabled: isEnabled,
+                        );
+                      },
                     ), // Forma de Pagamento
 
                     ValueListenableBuilder<bool>(
@@ -874,7 +1004,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       builder: (context, isEnabled, child) {
                         return CustomDatePickerFormField(
                           hint: 'dd/mm/yyyy',
-                          label: 'Data Encerramento',
+                          label: 'Data Encerramento*',
                           mask: InputMasks.data,
                           maxLength: 10,
                           hide: true,
@@ -883,21 +1013,22 @@ class _UpdateServicoState extends State<UpdateServico> {
                           type: TextInputType.datetime,
                           valueNotifier: _servicoUpdateForm.dataFechamento,
                           onChanged: _servicoUpdateForm.setDataFechamento,
-                          validator: _servicoUpdateValidator.byField(
-                            _servicoUpdateForm,
-                            'ErrorCodeKey.data.name',
-                          ),
+                          validator: ([value]) {
+                            if (isEnabled && (value == null || value.isEmpty)) {
+                              return "Data de encerramento é obrigatória";
+                            }
+                            return null;
+                          },
                           enabled: isEnabled,
                         );
                       },
-                    ), // Data Fechamento
+                    ), // Data Encerramento
 
                     CustomTextFormField(
                       label: 'Valor Comissão',
-                      hint: 'Valor Comissão...',
                       leftPadding: 4,
                       rightPadding: 4,
-                      maxLength: 8,
+                      maxLength: 13,
                       hide: true,
                       type: TextInputType.numberWithOptions(decimal: true),
                       valueNotifier: _servicoUpdateForm.valorComissao,
@@ -906,25 +1037,35 @@ class _UpdateServicoState extends State<UpdateServico> {
                         _servicoUpdateForm,
                         ErrorCodeKey.valorComissao.name,
                       ),
+                      inputFormatters: [
+                        CurrencyInputFormatter(),
+                      ],
                       enabled: false,
-                      inputFormatters: InputMasks.alphanumericLetters,
                     ), // Valor Comissão
 
-                    CustomDatePickerFormField(
-                      hint: 'dd/mm/yyyy',
-                      label: 'Data Pgto. comissão',
-                      mask: InputMasks.data,
-                      maxLength: 10,
-                      hide: true,
-                      leftPadding: 4,
-                      rightPadding: 4,
-                      type: TextInputType.datetime,
-                      valueNotifier: _servicoUpdateForm.dataPagamentoComissao,
-                      onChanged: _servicoUpdateForm.setDataPagamentoComissao,
-                      validator: _servicoUpdateValidator.byField(
-                        _servicoUpdateForm,
-                        'ErrorCodeKey.data.name',
-                      ),
+                    ValueListenableBuilder<bool>(
+                      valueListenable: isDataPagamentoComissaoEnabled,
+                      builder: (context, isEnabled, child) {
+                        return CustomDatePickerFormField(
+                          hint: 'dd/mm/yyyy',
+                          label: 'Data Pgto. comissão*',
+                          mask: InputMasks.data,
+                          maxLength: 10,
+                          hide: true,
+                          leftPadding: 4,
+                          rightPadding: 4,
+                          type: TextInputType.datetime,
+                          valueNotifier:
+                              _servicoUpdateForm.dataPagamentoComissao,
+                          onChanged:
+                              _servicoUpdateForm.setDataPagamentoComissao,
+                          validator: _servicoUpdateValidator.byField(
+                            _servicoUpdateForm,
+                            'ErrorCodeKey.data.name',
+                          ),
+                          enabled: isEnabled,
+                        );
+                      },
                     ), // Data Pagamento Comissão
 
                     ValueListenableBuilder<bool>(
@@ -932,7 +1073,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       builder: (context, isEnabled, child) {
                         return CustomDatePickerFormField(
                           hint: 'dd/mm/yyyy',
-                          label: 'Data Início da Garantia',
+                          label: 'Data Início da Garantia*',
                           mask: InputMasks.data,
                           maxLength: 10,
                           hide: true,
@@ -955,7 +1096,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       builder: (context, isEnabled, child) {
                         return CustomDatePickerFormField(
                           hint: 'dd/mm/yyyy',
-                          label: 'Data Final da Garantia',
+                          label: 'Data Final da Garantia*',
                           mask: InputMasks.data,
                           maxLength: 10,
                           hide: true,
@@ -1020,41 +1161,54 @@ class _UpdateServicoState extends State<UpdateServico> {
                                 "${tecnico.nome} ${tecnico.sobrenome}")
                             .toList();
                         if (_dropdownNomeTecnicos != nomes) {
-                          setState(() {
-                            _dropdownNomeTecnicos = nomes;
-                          });
+                          if (mounted) {
+                            setState(() {
+                              _dropdownNomeTecnicos = nomes;
+                            });
+                          }
                         }
                       }
                     },
-                    child: ValueListenableBuilder(
-                      valueListenable: _servicoUpdateForm.equipamento,
-                      builder: (context, value, child) {
-                        bool isFieldEnabled = (value.isNotEmpty ||
-                            _servicoUpdateForm.idCliente.value != null);
-                        return Tooltip(
-                          message: (isFieldEnabled)
-                              ? ""
-                              : "Selecione um equipamento para continuar",
-                          textAlign: TextAlign.center,
-                          child: CustomSearchDropDownFormField(
-                            label: "Nome do Técnico*",
-                            dropdownValues: _dropdownNomeTecnicos,
-                            maxLength: 50,
-                            hide: true,
-                            leftPadding: 4,
-                            rightPadding: 4,
-                            controller: _nomeTecnicoController,
-                            valueNotifier: _servicoUpdateForm.nomeTecnico,
-                            validator: _servicoUpdateValidator.byField(
-                                _servicoUpdateForm, ErrorCodeKey.tecnico.name),
-                            onChanged: _onNameTechnicalChanged,
-                            onSelected: _getTechnicalId,
-                            enabled: isFieldEnabled,
-                          ),
+                    child: ValueListenableBuilder<bool>(
+                      valueListenable: isNomeTecnicoEnabled,
+                      builder: (context, isEnabled, child) {
+                        return ValueListenableBuilder(
+                          valueListenable: _servicoUpdateForm.equipamento,
+                          builder: (context, value, child) {
+                            bool isFieldEnabled = isEnabled &&
+                                (value.isNotEmpty ||
+                                    _servicoUpdateForm.idCliente.value != null);
+                            return Tooltip(
+                              message: (isFieldEnabled)
+                                  ? ""
+                                  : "Selecione um equipamento para continuar",
+                              textAlign: TextAlign.center,
+                              child: CustomSearchDropDownFormField(
+                                label: "Nome do Técnico*",
+                                dropdownValues: _dropdownNomeTecnicos,
+                                maxLength: 50,
+                                hide: true,
+                                leftPadding: 4,
+                                rightPadding: 4,
+                                controller: _nomeTecnicoController,
+                                valueNotifier: _servicoUpdateForm.nomeTecnico,
+                                validator: ([value]) {
+                                  if (isFieldEnabled &&
+                                      (value == null || value.isEmpty)) {
+                                    return "Nome do técnico é obrigatório";
+                                  }
+                                  return null;
+                                },
+                                onChanged: _onNameTechnicalChanged,
+                                onSelected: _getTechnicalId,
+                                enabled: isFieldEnabled,
+                              ),
+                            );
+                          },
                         );
                       },
-                    ),
-                  ), // Nome Técnico
+                    ), // Nome Técnico
+                  ),
                   Row(
                     children: [
                       Expanded(
@@ -1062,7 +1216,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                           valueListenable: isHorarioEnabled,
                           builder: (context, isEnabled, child) {
                             return CustomDropdownFormField(
-                              label: 'Horário',
+                              label: 'Horário*',
                               dropdownValues: Constants.dataAtendimento,
                               leftPadding: 4,
                               rightPadding: 4,
@@ -1073,10 +1227,17 @@ class _UpdateServicoState extends State<UpdateServico> {
                                         ? null
                                         : novoValor);
                               },
-                              validator: _servicoUpdateValidator.byField(
-                                _servicoUpdateForm,
-                                ErrorCodeKey.horario.name,
-                              ),
+                              validator: ([value]) {
+                                if (_servicoUpdateForm.situacao.value ==
+                                    "Cancelado") {
+                                  return null;
+                                }
+                                if (isEnabled &&
+                                    (value == null || value.isEmpty)) {
+                                  return "Horário é obrigatório";
+                                }
+                                return null;
+                              },
                               enabled: isEnabled,
                             );
                           },
@@ -1094,6 +1255,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                             _servicoUpdateForm,
                             ErrorCodeKey.filial.name,
                           ),
+                          enabled: false,
                         ), // Filial
                       ),
                     ],
@@ -1106,7 +1268,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                           builder: (context, isEnabled, child) {
                             return CustomDatePickerFormField(
                               hint: 'dd/mm/yyyy',
-                              label: 'Data Atendimento Previsto',
+                              label: 'Data Atendimento Previsto*',
                               mask: InputMasks.data,
                               maxLength: 10,
                               hide: true,
@@ -1117,10 +1279,17 @@ class _UpdateServicoState extends State<UpdateServico> {
                                   _servicoUpdateForm.dataAtendimentoPrevisto,
                               onChanged:
                                   _servicoUpdateForm.setDataAtendimentoPrevisto,
-                              validator: _servicoUpdateValidator.byField(
-                                _servicoUpdateForm,
-                                ErrorCodeKey.data.name,
-                              ),
+                              validator: ([value]) {
+                                if (_servicoUpdateForm.situacao.value ==
+                                    "Cancelado") {
+                                  return null;
+                                }
+                                if (isEnabled &&
+                                    (value == null || value.isEmpty)) {
+                                  return "Data de atendimento previsto é obrigatória";
+                                }
+                                return null;
+                              },
                               enabled: isEnabled,
                             );
                           },
@@ -1132,7 +1301,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                           builder: (context, isEnabled, child) {
                             return CustomDatePickerFormField(
                               hint: 'dd/mm/yyyy',
-                              label: 'Data Efetiva',
+                              label: 'Data Efetiva*',
                               mask: InputMasks.data,
                               maxLength: 10,
                               hide: true,
@@ -1143,10 +1312,13 @@ class _UpdateServicoState extends State<UpdateServico> {
                                   _servicoUpdateForm.dataAtendimentoEfetivo,
                               onChanged:
                                   _servicoUpdateForm.setDataAtendimentoEfetivo,
-                              validator: _servicoUpdateValidator.byField(
-                                _servicoUpdateForm,
-                                'ErrorCodeKey.data.name',
-                              ),
+                              validator: ([value]) {
+                                if (isEnabled &&
+                                    (value == null || value.isEmpty)) {
+                                  return "Data efetiva é obrigatória";
+                                }
+                                return null;
+                              },
                               enabled: isEnabled,
                             );
                           },
@@ -1160,7 +1332,13 @@ class _UpdateServicoState extends State<UpdateServico> {
                     leftPadding: 4,
                     rightPadding: 4,
                     valueNotifier: _servicoUpdateForm.situacao,
-                    onChanged: _handleSituationChange,
+                    onChanged: (String? newValue) {
+                      if (newValue != null &&
+                          newValue != _servicoUpdateForm.situacao.value) {
+                        print("Dropdown: Situação selecionada: $newValue");
+                        _handleSituationChange(newValue);
+                      }
+                    },
                     validator: _servicoUpdateValidator.byField(
                       _servicoUpdateForm,
                       ErrorCodeKey.situacao.name,
@@ -1169,39 +1347,75 @@ class _UpdateServicoState extends State<UpdateServico> {
                   Row(
                     children: [
                       Expanded(
-                        child: CustomTextFormField(
-                          label: 'Valor Serviço',
-                          hint: 'Valor Serviço...',
-                          leftPadding: 4,
-                          rightPadding: 4,
-                          maxLength: 8,
-                          hide: true,
-                          type: TextInputType.numberWithOptions(decimal: true),
-                          valueNotifier: _servicoUpdateForm.valor,
-                          onChanged: _servicoUpdateForm.setValor,
-                          validator: _servicoUpdateValidator.byField(
-                            _servicoUpdateForm,
-                            ErrorCodeKey.valor.name,
-                          ),
-                          inputFormatters: InputMasks.alphanumericLetters,
+                        child: ValueListenableBuilder<bool>(
+                          valueListenable: isValorServicoEnabled,
+                          builder: (context, isEnabled, child) {
+                            return CustomTextFormField(
+                              label: 'Valor Serviço*',
+                              hint: '9.999,99',
+                              leftPadding: 4,
+                              rightPadding: 4,
+                              maxLength: 13,
+                              hide: true,
+                              type: TextInputType.numberWithOptions(
+                                  decimal: true),
+                              valueNotifier: _servicoUpdateForm.valor,
+                              onChanged: (newValue) {
+                                String sanitizedValue = newValue?.replaceAll(
+                                        RegExp(r'[^\d.]'), '') ??
+                                    '0';
+
+                                double valor =
+                                    double.tryParse(sanitizedValue) ?? 0.0;
+
+                                _servicoUpdateForm
+                                    .setValorServico(valor.toString());
+                              },
+                              validator: ([value]) {
+                                if (isEnabled &&
+                                    (value == null || value.isEmpty)) {
+                                  return "Valor do serviço é obrigatório";
+                                }
+                                return null;
+                              },
+                              inputFormatters: [
+                                CurrencyInputFormatter(),
+                              ],
+                              enabled: isEnabled,
+                              initialValue:
+                                  _servicoUpdateForm.valor.value.toString(),
+                            );
+                          },
                         ),
-                      ), // Valor
+                      ), // Valor Serviço
                       Expanded(
-                        child: CustomTextFormField(
-                          label: 'Valor Peças',
-                          hint: 'Valor Peças...',
-                          leftPadding: 4,
-                          rightPadding: 4,
-                          maxLength: 8,
-                          hide: true,
-                          type: TextInputType.numberWithOptions(decimal: true),
-                          valueNotifier: _servicoUpdateForm.valorPecas,
-                          onChanged: _servicoUpdateForm.setValorPecas,
-                          validator: _servicoUpdateValidator.byField(
-                            _servicoUpdateForm,
-                            ErrorCodeKey.valorPecas.name,
-                          ),
-                          inputFormatters: InputMasks.alphanumericLetters,
+                        child: ValueListenableBuilder<bool>(
+                          valueListenable: isValorPecasEnabled,
+                          builder: (context, isEnabled, child) {
+                            return CustomTextFormField(
+                              label: 'Valor Peças*',
+                              hint: '9.999,99',
+                              leftPadding: 4,
+                              rightPadding: 4,
+                              maxLength: 13,
+                              hide: true,
+                              type: TextInputType.numberWithOptions(
+                                  decimal: true),
+                              valueNotifier: _servicoUpdateForm.valorPecas,
+                              onChanged: _servicoUpdateForm.setValorPecas,
+                              validator: ([value]) {
+                                if (isEnabled &&
+                                    (value == null || value.isEmpty)) {
+                                  return "Valor das peças é obrigatório";
+                                }
+                                return null;
+                              },
+                              inputFormatters: [
+                                CurrencyInputFormatter(),
+                              ],
+                              enabled: isEnabled,
+                            );
+                          },
                         ),
                       ), // Valor Peças
                     ],
@@ -1211,10 +1425,9 @@ class _UpdateServicoState extends State<UpdateServico> {
                       Expanded(
                         child: CustomTextFormField(
                           label: 'Valor Comissão',
-                          hint: 'Valor Comissão...',
                           leftPadding: 4,
                           rightPadding: 4,
-                          maxLength: 8,
+                          maxLength: 13,
                           hide: true,
                           type: TextInputType.numberWithOptions(decimal: true),
                           valueNotifier: _servicoUpdateForm.valorComissao,
@@ -1224,21 +1437,42 @@ class _UpdateServicoState extends State<UpdateServico> {
                             ErrorCodeKey.valorComissao.name,
                           ),
                           enabled: false,
-                          inputFormatters: InputMasks.alphanumericLetters,
+                          inputFormatters: [
+                            CurrencyInputFormatter(),
+                          ],
                         ),
                       ), // Valor Comissão
                       Expanded(
-                        child: CustomDropdownFormField(
-                          label: 'Forma de Pagamento',
-                          dropdownValues: Constants.formasPagamento,
-                          leftPadding: 4,
-                          rightPadding: 4,
-                          valueNotifier: _servicoUpdateForm.formaPagamento,
-                          onChanged: _servicoUpdateForm.setFormaPagamento,
-                          validator: _servicoUpdateValidator.byField(
-                            _servicoUpdateForm,
-                            'formaPagamento',
-                          ),
+                        child: ValueListenableBuilder<bool>(
+                          valueListenable: isFormaPagamentoEnabled,
+                          builder: (context, isEnabled, child) {
+                            return CustomDropdownFormField(
+                              label: 'Forma de Pagamento*',
+                              dropdownValues: Constants.formasPagamento,
+                              leftPadding: 4,
+                              rightPadding: 4,
+                              valueNotifier: _servicoUpdateForm.formaPagamento,
+                              onChanged: _servicoUpdateForm.setFormaPagamento,
+                              validator: ([value]) {
+                                final situacoesOpcionais = [
+                                  "Orçamento aprovado",
+                                  "Aguardando cliente retirar",
+                                  "Não retira há 3 meses",
+                                ];
+
+                                if (situacoesOpcionais.contains(
+                                    _servicoUpdateForm.situacao.value)) {
+                                  return null;
+                                }
+                                if (isEnabled &&
+                                    (value == null || value.isEmpty)) {
+                                  return "Forma de pagamento é obrigatória";
+                                }
+                                return null;
+                              },
+                              enabled: isEnabled,
+                            );
+                          },
                         ),
                       ), // Forma de Pagamento
                     ],
@@ -1251,7 +1485,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                           builder: (context, isEnabled, child) {
                             return CustomDatePickerFormField(
                               hint: 'dd/mm/yyyy',
-                              label: 'Data Fechamento',
+                              label: 'Data Encerramento*',
                               mask: InputMasks.data,
                               maxLength: 10,
                               hide: true,
@@ -1260,6 +1494,35 @@ class _UpdateServicoState extends State<UpdateServico> {
                               type: TextInputType.datetime,
                               valueNotifier: _servicoUpdateForm.dataFechamento,
                               onChanged: _servicoUpdateForm.setDataFechamento,
+                              validator: ([value]) {
+                                if (isEnabled &&
+                                    (value == null || value.isEmpty)) {
+                                  return "Data de encerramento é obrigatória";
+                                }
+                                return null;
+                              },
+                              enabled: isEnabled,
+                            );
+                          },
+                        ), // Data Encerramento
+                      ),
+                      Expanded(
+                        child: ValueListenableBuilder<bool>(
+                          valueListenable: isDataPagamentoComissaoEnabled,
+                          builder: (context, isEnabled, child) {
+                            return CustomDatePickerFormField(
+                              hint: 'dd/mm/yyyy',
+                              label: 'Data Pgto. comissão*',
+                              mask: InputMasks.data,
+                              maxLength: 10,
+                              hide: true,
+                              leftPadding: 4,
+                              rightPadding: 4,
+                              type: TextInputType.datetime,
+                              valueNotifier:
+                                  _servicoUpdateForm.dataPagamentoComissao,
+                              onChanged:
+                                  _servicoUpdateForm.setDataPagamentoComissao,
                               validator: _servicoUpdateValidator.byField(
                                 _servicoUpdateForm,
                                 'ErrorCodeKey.data.name',
@@ -1267,26 +1530,6 @@ class _UpdateServicoState extends State<UpdateServico> {
                               enabled: isEnabled,
                             );
                           },
-                        ), // Data Fechamento
-                      ),
-                      Expanded(
-                        child: CustomDatePickerFormField(
-                          hint: 'dd/mm/yyyy',
-                          label: 'Data Pgto. comissão',
-                          mask: InputMasks.data,
-                          maxLength: 10,
-                          hide: true,
-                          leftPadding: 4,
-                          rightPadding: 4,
-                          type: TextInputType.datetime,
-                          valueNotifier:
-                              _servicoUpdateForm.dataPagamentoComissao,
-                          onChanged:
-                              _servicoUpdateForm.setDataPagamentoComissao,
-                          validator: _servicoUpdateValidator.byField(
-                            _servicoUpdateForm,
-                            'ErrorCodeKey.data.name',
-                          ),
                         ), // Data Pagamento Comissão
                       ),
                     ],
@@ -1299,7 +1542,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                           builder: (context, isEnabled, child) {
                             return CustomDatePickerFormField(
                               hint: 'dd/mm/yyyy',
-                              label: 'Data Início da Garantia',
+                              label: 'Data Início da Garantia*',
                               mask: InputMasks.data,
                               maxLength: 10,
                               hide: true,
@@ -1325,7 +1568,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                           builder: (context, isEnabled, child) {
                             return CustomDatePickerFormField(
                               hint: 'dd/mm/yyyy',
-                              label: 'Data Final da Garantia',
+                              label: 'Data Final da Garantia*',
                               mask: InputMasks.data,
                               maxLength: 10,
                               hide: true,
@@ -1523,42 +1766,97 @@ class _UpdateServicoState extends State<UpdateServico> {
                                         ElevatedFormButton(
                                           text: "Ver Histórico de Atendimento",
                                           onPressed: () {
-                                            showAdaptiveDialog(
+                                            showDialog(
                                               context: context,
-                                              builder: (context) => AlertDialog(
-                                                title: Text(
-                                                  "Histórico do serviço",
-                                                  textAlign: TextAlign.center,
+                                              builder: (context) => Dialog(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
                                                 ),
-                                                backgroundColor:
-                                                    const Color(0xFFF9F9FF),
-                                                content: Container(
-                                                    padding:
-                                                        const EdgeInsets.all(4),
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.transparent,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              12),
-                                                      border: Border.all(
-                                                        color: const Color(
-                                                            0xFFEAE6E5),
-                                                        width: 1,
-                                                      ),
-                                                    ),
-                                                    child: Text(
-                                                      _servicoUpdateForm
-                                                          .historico.value,
+                                                child: ConstrainedBox(
+                                                  constraints: BoxConstraints(
+                                                    maxWidth:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.6,
+                                                    maxHeight:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.5,
+                                                  ),
+                                                  child: AlertDialog(
+                                                    title: const Text(
+                                                      "Histórico do serviço",
                                                       textAlign:
                                                           TextAlign.center,
-                                                    )),
-                                                actions: [
-                                                  ElevatedFormButton(
-                                                    text: "Ok",
-                                                    onPressed: () =>
-                                                        Navigator.pop(context),
-                                                  )
-                                                ],
+                                                    ),
+                                                    backgroundColor:
+                                                        const Color(0xFFF9F9FF),
+                                                    content: SizedBox(
+                                                      width: double.maxFinite,
+                                                      child:
+                                                          SingleChildScrollView(
+                                                        child: Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(4),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors
+                                                                .transparent,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        12),
+                                                            border: Border.all(
+                                                              color: const Color(
+                                                                  0xFFEAE6E5),
+                                                              width: 1,
+                                                            ),
+                                                          ),
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children:
+                                                                _servicoUpdateForm
+                                                                    .historico
+                                                                    .value
+                                                                    .split('\n')
+                                                                    .expand(
+                                                                        (texto) =>
+                                                                            [
+                                                                              Text(
+                                                                                texto,
+                                                                                textAlign: TextAlign.left,
+                                                                              ),
+                                                                              const Divider(
+                                                                                color: Colors.black,
+                                                                                thickness: 1,
+                                                                                height: 10,
+                                                                              ),
+                                                                            ])
+                                                                    .toList()
+                                                                  ..removeLast(),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    actions: [
+                                                      ElevatedFormButton(
+                                                        text: "Ok",
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                context),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
                                               ),
                                             );
                                           },

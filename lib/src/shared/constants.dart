@@ -9,27 +9,27 @@ class Constants {
 
   static const List<String> situationServiceList = [
     'Aguardando agendamento',
-    'Aguardando aprovação do cliente',
     'Aguardando atendimento',
-    'Aguardando cliente retirar',
-    'Aguardando orçamento',
     'Cancelado',
+    'Sem defeito',
+    'Aguardando orçamento',
+    'Aguardando aprovação do cliente',
     'Compra',
-    'Cortesia',
-    'Garantia',
     'Não aprovado pelo cliente',
-    'Não retira há 3 meses',
     'Orçamento aprovado',
+    'Aguardando cliente retirar',
+    'Não retira há 3 meses',
     'Resolvido',
-    'Sem defeito'
+    'Garantia',
+    'Cortesia',
   ];
 
   static const List<String> municipios = [
     'Osasco',
     'Carapicuíba',
+    'São Paulo',
     'Barueri',
     'Cotia',
-    'São Paulo',
     'Itapevi',
   ];
 
@@ -56,7 +56,7 @@ class Constants {
 
   static const List<String> garantias = [
     'Dentro do período de garantia',
-    'Fora do período de garantia'
+    'Fora do período de garantia',
   ];
 
   static const List<String> filiais = [
@@ -72,7 +72,7 @@ class Constants {
   ];
 
   static const List<String> formasPagamento = [
-    "Selecione uma forma de pagamento",
+    "Selecione uma forma de pagamento*",
     "Pix",
     "Crédito",
     "Débito",
@@ -80,7 +80,7 @@ class Constants {
   ];
 
   static String? getFormaDePagamento(String? valor) {
-    return valor == "Selecione uma forma de pagamento" ? null : valor;
+    return valor == "Selecione uma forma de pagamento*" ? null : valor;
   }
 
   static String? getFilialValida(String? valor) {

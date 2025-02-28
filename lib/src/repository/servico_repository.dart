@@ -12,7 +12,8 @@ import 'package:dio/dio.dart';
 import 'package:serv_oeste/src/shared/formatters.dart';
 
 class ServicoRepository extends DioService {
-  Future<List<Servico>?> getServicosByFilter(ServicoFilterRequest servicoFilter) async {
+  Future<List<Servico>?> getServicosByFilter(
+      ServicoFilterRequest servicoFilter) async {
     try {
       final response = await dio.post(
         ServerEndpoints.servicoFilterEndpoint,
@@ -27,12 +28,18 @@ class ServicoRepository extends DioService {
           'garantia': servicoFilter.garantia,
           'filial': servicoFilter.filial,
           'periodo': servicoFilter.periodo,
-          'dataAtendimentoPrevistoAntes': servicoFilter.dataAtendimentoPrevistoAntes?.toIso8601String(),
-          'dataAtendimentoPrevistoDepois': servicoFilter.dataAtendimentoPrevistoDepois?.toIso8601String(),
-          'dataAtendimentoEfetivoAntes': servicoFilter.dataAtendimentoEfetivoAntes?.toIso8601String(),
-          'dataAtendimentoEfetivoDepois': servicoFilter.dataAtendimentoEfetivoDepois?.toIso8601String(),
-          'dataAberturaAntes': servicoFilter.dataAberturaAntes?.toIso8601String(),
-          'dataAberturaDepois': servicoFilter.dataAberturaDepois?.toIso8601String(),
+          'dataAtendimentoPrevistoAntes':
+              servicoFilter.dataAtendimentoPrevistoAntes?.toIso8601String(),
+          'dataAtendimentoPrevistoDepois':
+              servicoFilter.dataAtendimentoPrevistoDepois?.toIso8601String(),
+          'dataAtendimentoEfetivoAntes':
+              servicoFilter.dataAtendimentoEfetivoAntes?.toIso8601String(),
+          'dataAtendimentoEfetivoDepois':
+              servicoFilter.dataAtendimentoEfetivoDepois?.toIso8601String(),
+          'dataAberturaAntes':
+              servicoFilter.dataAberturaAntes?.toIso8601String(),
+          'dataAberturaDepois':
+              servicoFilter.dataAberturaDepois?.toIso8601String(),
         },
       );
 
@@ -43,7 +50,8 @@ class ServicoRepository extends DioService {
               try {
                 return Servico.fromJson(json);
               } catch (e) {
-                Logger().e('Erro ao converter item para Servico: $e\nDados do item: $json');
+                Logger().e(
+                    'Erro ao converter item para Servico: $e\nDados do item: $json');
                 return null;
               }
             })
@@ -59,7 +67,8 @@ class ServicoRepository extends DioService {
     return null;
   }
 
-  Future<ErrorEntity?> createServicoComClienteNaoExistente(ServicoRequest servico, ClienteRequest cliente) async {
+  Future<ErrorEntity?> createServicoComClienteNaoExistente(
+      ServicoRequest servico, ClienteRequest cliente) async {
     try {
       await dio.post(ServerEndpoints.servicoMaisClienteEndpoint, data: {
         "clienteRequest": {
@@ -69,7 +78,8 @@ class ServicoRepository extends DioService {
           "telefoneCelular": cliente.telefoneCelular,
           "endereco": cliente.endereco,
           "bairro": cliente.bairro,
-          "municipio": cliente.municipio.replaceAll("í", "i").replaceAll("ã", "a")
+          "municipio":
+              cliente.municipio.replaceAll("í", "i").replaceAll("ã", "a")
         },
         "servicoRequest": {
           "idTecnico": servico.idTecnico,
@@ -87,7 +97,8 @@ class ServicoRepository extends DioService {
     return null;
   }
 
-  Future<ErrorEntity?> createServicoComClienteExistente(ServicoRequest servico) async {
+  Future<ErrorEntity?> createServicoComClienteExistente(
+      ServicoRequest servico) async {
     try {
       await dio.post(ServerEndpoints.servicoEndpoint, data: {
         "idCliente": servico.idCliente,
@@ -107,7 +118,8 @@ class ServicoRepository extends DioService {
 
   Future<Servico?> putServico(Servico servico) async {
     try {
-      final response = await dio.put(ServerEndpoints.servicoEndpoint, queryParameters: {
+      final response =
+          await dio.put(ServerEndpoints.servicoEndpoint, queryParameters: {
         "id": servico.id
       }, data: {
         "idTecnico": servico.idTecnico,
@@ -117,7 +129,8 @@ class ServicoRepository extends DioService {
         "filial": servico.filial,
         "descricao": servico.descricao,
         "situacao": Formatters.mapSituationToEnumSituation(servico.situacao),
-        "formaPagamento": servico.formaPagamento?.replaceAll("é", "e").toUpperCase(),
+        "formaPagamento":
+            servico.formaPagamento?.replaceAll("é", "e").toUpperCase(),
         "horarioPrevisto": servico.horarioPrevisto,
         "valor": servico.valor,
         "valorComissao": servico.valorComissao,
@@ -141,7 +154,8 @@ class ServicoRepository extends DioService {
 
   Future<void> disableListOfServico(List<int> selectedItems) async {
     try {
-      await dio.delete(ServerEndpoints.servicoEndpoint, data: jsonEncode(selectedItems));
+      await dio.delete(ServerEndpoints.servicoEndpoint,
+          data: jsonEncode(selectedItems));
     } on DioException catch (e) {
       throw Exception(onRequestError(e));
     }
