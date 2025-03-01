@@ -353,10 +353,6 @@ class _UpdateServicoState extends State<UpdateServico> {
     }
 
     Servico servico = Servico.fromForm(_servicoUpdateForm);
-    print(servico.toJson());
-    print("Valor convertido para Servico: ${servico.valor}");
-    print("Valor Comissão convertido para Servico: ${servico.valorComissao}");
-    print("Valor Peças convertido para Servico: ${servico.valorPecas}");
     _servicoBloc.add(ServicoUpdateEvent(servico: servico));
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -1048,7 +1044,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       builder: (context, isEnabled, child) {
                         return CustomDatePickerFormField(
                           hint: 'dd/mm/yyyy',
-                          label: 'Data Pgto. comissão*',
+                          label: 'Data Pgto. comissão',
                           mask: InputMasks.data,
                           maxLength: 10,
                           hide: true,
@@ -1082,10 +1078,12 @@ class _UpdateServicoState extends State<UpdateServico> {
                           type: TextInputType.datetime,
                           valueNotifier: _servicoUpdateForm.dataInicioGarantia,
                           onChanged: _servicoUpdateForm.setDataInicioGarantia,
-                          validator: _servicoUpdateValidator.byField(
-                            _servicoUpdateForm,
-                            'ErrorCodeKey.data.name',
-                          ),
+                          validator: ([value]) {
+                            if (isEnabled && (value == null || value.isEmpty)) {
+                              return "Data início da garantia é obrigatória";
+                            }
+                            return null;
+                          },
                           enabled: isEnabled,
                         );
                       },
@@ -1105,10 +1103,12 @@ class _UpdateServicoState extends State<UpdateServico> {
                           type: TextInputType.datetime,
                           valueNotifier: _servicoUpdateForm.dataFinalGarantia,
                           onChanged: _servicoUpdateForm.setDataFinalGarantia,
-                          validator: _servicoUpdateValidator.byField(
-                            _servicoUpdateForm,
-                            'ErrorCodeKey.data.name',
-                          ),
+                          validator: ([value]) {
+                            if (isEnabled && (value == null || value.isEmpty)) {
+                              return "Data final da garantia é obrigatório";
+                            }
+                            return null;
+                          },
                           enabled: isEnabled,
                         );
                       },
@@ -1512,7 +1512,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                           builder: (context, isEnabled, child) {
                             return CustomDatePickerFormField(
                               hint: 'dd/mm/yyyy',
-                              label: 'Data Pgto. comissão*',
+                              label: 'Data Pgto. comissão',
                               mask: InputMasks.data,
                               maxLength: 10,
                               hide: true,
@@ -1553,10 +1553,13 @@ class _UpdateServicoState extends State<UpdateServico> {
                                   _servicoUpdateForm.dataInicioGarantia,
                               onChanged:
                                   _servicoUpdateForm.setDataInicioGarantia,
-                              validator: _servicoUpdateValidator.byField(
-                                _servicoUpdateForm,
-                                'ErrorCodeKey.data.name',
-                              ),
+                              validator: ([value]) {
+                                if (isEnabled &&
+                                    (value == null || value.isEmpty)) {
+                                  return "Data início da garantia é obrigatória";
+                                }
+                                return null;
+                              },
                               enabled: isEnabled,
                             );
                           },
@@ -1579,10 +1582,13 @@ class _UpdateServicoState extends State<UpdateServico> {
                                   _servicoUpdateForm.dataFinalGarantia,
                               onChanged:
                                   _servicoUpdateForm.setDataFinalGarantia,
-                              validator: _servicoUpdateValidator.byField(
-                                _servicoUpdateForm,
-                                'ErrorCodeKey.data.name',
-                              ),
+                              validator: ([value]) {
+                                if (isEnabled &&
+                                    (value == null || value.isEmpty)) {
+                                  return "Data final da garantia é obrigatória";
+                                }
+                                return null;
+                              },
                               enabled: isEnabled,
                             );
                           },

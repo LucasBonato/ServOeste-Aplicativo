@@ -940,12 +940,12 @@ class _CreateServicoState extends State<CreateServico> {
                     rightPadding: 4,
                     controller: _nomeTecnicoController,
                     valueNotifier: _servicoForm.nomeTecnico,
-                    validator: ([value]) {
-                      if (_servicoForm.idTecnico.value == null) {
-                        return "Selecione um técnico";
-                      }
-                      return null;
-                    },
+                    // validator: ([value]) {
+                    //   if (_servicoForm.idTecnico.value == null) {
+                    //     return "Selecione um técnico";
+                    //   }
+                    //   return null;
+                    // },
                     onChanged: _onNomeTecnicoChanged,
                     onSelected: _getTecnicoId,
                     enabled: isFieldEnabled,
