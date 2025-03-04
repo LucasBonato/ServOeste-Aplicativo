@@ -27,7 +27,6 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
   late TextEditingController _idController, _nomeController;
   late SingleSelectController<String> _situacaoController;
   late ValueNotifier<String> _situacaoNotifier;
-  bool isTheFirstSelection = true;
   Timer? _debounce;
 
   @override
@@ -93,17 +92,11 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
   }
 
   bool _isTecnicoSelected(int id, ListaState stateLista) {
-    if (stateLista is ListaSelectState) {
-      return stateLista.selectedIds.contains(id);
-    }
-    return false;
+    return (stateLista is ListaSelectState) ? stateLista.selectedIds.contains(id) : false;
   }
 
   bool _isSelectionMode(ListaState stateLista) {
-    if (stateLista is ListaSelectState) {
-      return stateLista.selectedIds.isNotEmpty;
-    }
-    return false;
+    return (stateLista is ListaSelectState) ? stateLista.selectedIds.isNotEmpty : false;
   }
 
   Widget _buildSearchInputs() {
@@ -119,6 +112,12 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
           controller: controller,
           keyboardType: keyboardType,
           onChangedAction: (value) => _onSearchFieldChanged(),
+          onSuffixAction: (value) {
+            setState(() {
+              controller?.clear();
+            });
+            _onSearchFieldChanged();
+          },
         );
 
     Widget buildDropdownField(

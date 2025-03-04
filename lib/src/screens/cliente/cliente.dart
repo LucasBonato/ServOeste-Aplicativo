@@ -23,7 +23,6 @@ class _ClienteScreenState extends State<ClienteScreen> {
   late final ListaBloc _listaBloc;
   late final ClienteBloc _clienteBloc;
   late final TextEditingController _nomeController, _telefoneController, _enderecoController;
-  bool isSelected = false;
   Timer? _debounce;
 
   @override
@@ -73,17 +72,11 @@ class _ClienteScreenState extends State<ClienteScreen> {
   }
 
   bool _isClienteSelected(int id, ListaState stateLista) {
-    if (stateLista is ListaSelectState) {
-      return stateLista.selectedIds.contains(id);
-    }
-    return false;
+    return (stateLista is ListaSelectState) ? stateLista.selectedIds.contains(id) : false;
   }
 
   bool _isSelectionMode(ListaState stateLista) {
-    if (stateLista is ListaSelectState) {
-      return stateLista.selectedIds.isNotEmpty;
-    }
-    return false;
+    return (stateLista is ListaSelectState) ? stateLista.selectedIds.isNotEmpty : false;
   }
 
   Widget _buildSearchInputs() {
@@ -99,6 +92,12 @@ class _ClienteScreenState extends State<ClienteScreen> {
           controller: controller,
           keyboardType: keyboardType,
           onChangedAction: (value) => _onSearchFieldChanged(),
+          onSuffixAction: (value) {
+            setState(() {
+              controller?.clear();
+            });
+            _onSearchFieldChanged();
+          },
         );
 
     Widget buildLargeScreenLayout() => Row(
@@ -203,7 +202,11 @@ class _ClienteScreenState extends State<ClienteScreen> {
           final bool hasSelection = state is ListaSelectState && state.selectedIds.isNotEmpty;
           
           return (!hasSelection) 
-              ? FloatingActionButtonAdd(route: Routes.clienteCreate, event: () => _clienteBloc.add(ClienteSearchMenuEvent()), tooltip: "Adicionar um Cliente")
+              ? FloatingActionButtonAdd(
+                  route: Routes.clienteCreate,
+                  event: () => _clienteBloc.add(ClienteSearchMenuEvent()),
+                  tooltip: "Adicionar um Cliente"
+                )
               : FloatingActionButtonRemove(
                   removeMethod: () {
                     _disableClientes(context, state.selectedIds);
@@ -238,7 +241,9 @@ class _ClienteScreenState extends State<ClienteScreen> {
                     );
                   }
                   if (stateCliente is ClienteSearchSuccessState || stateCliente is ClienteErrorState) {
-                    final List<Cliente>? clientes = stateCliente is ClienteSearchSuccessState ? stateCliente.clientes : (stateCliente as ClienteErrorState).clientes;
+                    final List<Cliente>? clientes = (stateCliente is ClienteSearchSuccessState)
+                        ? stateCliente.clientes
+                        : (stateCliente as ClienteErrorState).clientes;
 
                     if (stateCliente is ClienteErrorState) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -282,7 +287,8 @@ class _ClienteScreenState extends State<ClienteScreen> {
                           ),
                         ),
                       );
-                    } else {
+                    }
+                    else {
                       return const Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,

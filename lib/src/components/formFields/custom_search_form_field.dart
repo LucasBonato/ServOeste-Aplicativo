@@ -5,6 +5,7 @@ class CustomSearchTextFormField extends StatefulWidget {
   final TextInputType? keyboardType;
   final TextEditingController? controller;
   final Function(String)? onChangedAction;
+  final Function(String)? onSuffixAction;
   final double? leftPadding;
   final double? rightPadding;
 
@@ -12,6 +13,7 @@ class CustomSearchTextFormField extends StatefulWidget {
     super.key,
     required this.hint,
     this.onChangedAction,
+    this.onSuffixAction,
     this.controller,
     this.keyboardType,
     this.leftPadding,
@@ -67,10 +69,12 @@ class _CustomSearchTextFormFieldState extends State<CustomSearchTextFormField> {
                         color: Color(0xFF948F8F),
                       ),
                       onPressed: () {
-                        _internalController.clear();
-                        if (widget.onChangedAction != null) {
-                          widget.onChangedAction!("");
-                        }
+                        setState(() {
+                          _internalController.clear();
+                          widget.controller?.clear();
+
+                        });
+                        widget.onSuffixAction?.call("");
                       },
                     )
                   : null,

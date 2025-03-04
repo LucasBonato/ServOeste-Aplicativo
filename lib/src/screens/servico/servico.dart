@@ -45,7 +45,7 @@ class ServicoScreenState extends State<ServicoScreen> {
     }
   }
 
-  void _onNomeChanged() {
+  void _onSearchFieldChanged() {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
     _debounce = Timer(const Duration(milliseconds: 150), () {
@@ -107,11 +107,17 @@ class ServicoScreenState extends State<ServicoScreen> {
           leftPadding: 4,
           rightPadding: 4,
           controller: controller,
-          onChangedAction: (value) => _onNomeChanged(),
+          onChangedAction: (value) => _onSearchFieldChanged(),
+          onSuffixAction: (value) {
+            setState(() {
+              controller?.clear();
+            });
+            _onSearchFieldChanged();
+          },
         );
 
     Widget buildFilterIcon() => InkWell(
-          onTap: () => Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(builder: (context) => FilterService())).then((_) => _onNomeChanged()),
+          onTap: () => Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(builder: (context) => FilterService())).then((_) => _onSearchFieldChanged()),
           hoverColor: const Color(0xFFF5EEED),
           borderRadius: BorderRadius.circular(10),
           child: Ink(
@@ -211,7 +217,7 @@ class ServicoScreenState extends State<ServicoScreen> {
                     size: 36,
                     color: Colors.white,
                   ),
-                  updateList: _onNomeChanged,
+                  updateList: _onSearchFieldChanged,
                 )
               : FloatingActionButtonRemove(
                   removeMethod: () {

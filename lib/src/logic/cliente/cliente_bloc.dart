@@ -65,9 +65,9 @@ class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
   }
 
   Future<void> _searchMenuClients(ClienteSearchMenuEvent event, Emitter<ClienteState> emit) async {
-    nomeMenu = (event.nome?.isNotEmpty == true) ? event.nome : nomeMenu;
-    telefoneMenu = (event.telefone?.isNotEmpty == true) ? event.telefone : telefoneMenu;
-    enderecoMenu = (event.endereco?.isNotEmpty == true) ? event.endereco : enderecoMenu;
+    nomeMenu = event.nome?? nomeMenu;
+    telefoneMenu = event.telefone?? telefoneMenu;
+    enderecoMenu = event.endereco?? enderecoMenu;
     add(ClienteLoadingEvent(nome: nomeMenu, telefone: telefoneMenu, endereco: enderecoMenu));
   }
 

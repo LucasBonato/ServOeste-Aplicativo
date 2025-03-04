@@ -1,6 +1,5 @@
 import 'package:serv_oeste/src/repository/dio/server_endpoints.dart';
 import 'package:serv_oeste/src/repository/dio/dio_service.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:dio/dio.dart';
 import 'dart:convert';
