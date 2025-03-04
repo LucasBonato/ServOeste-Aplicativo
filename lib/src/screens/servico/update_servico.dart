@@ -177,9 +177,6 @@ class _UpdateServicoState extends State<UpdateServico> {
     _currentSituation =
         _convertEnumStatusToString(stateServico.servico.situacao);
 
-    print(
-        Formatters.formatToCurrency(stateServico.servico.valorComissao ?? 0.0));
-
     _servicoUpdateForm.setIdCliente(stateServico.servico.idCliente);
     _servicoUpdateForm.setNomeCliente(stateServico.servico.nomeCliente);
     _servicoUpdateForm.setEquipamento(stateServico.servico.equipamento);
@@ -900,7 +897,6 @@ class _UpdateServicoState extends State<UpdateServico> {
                       onChanged: (String? newValue) {
                         if (newValue != null &&
                             newValue != _servicoUpdateForm.situacao.value) {
-                          print("Dropdown: Situação selecionada: $newValue");
                           _handleSituationChange(newValue);
                         }
                       },
@@ -1335,7 +1331,6 @@ class _UpdateServicoState extends State<UpdateServico> {
                     onChanged: (String? newValue) {
                       if (newValue != null &&
                           newValue != _servicoUpdateForm.situacao.value) {
-                        print("Dropdown: Situação selecionada: $newValue");
                         _handleSituationChange(newValue);
                       }
                     },

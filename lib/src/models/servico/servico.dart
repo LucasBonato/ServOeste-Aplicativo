@@ -5,13 +5,13 @@ import 'package:serv_oeste/src/shared/formatters.dart';
 class Servico {
   int id;
   int idCliente;
-  int idTecnico;
   String nomeCliente;
-  String nomeTecnico;
   String equipamento;
   String filial;
   String marca;
   String situacao;
+  int? idTecnico;
+  String? nomeTecnico;
   String? horarioPrevisto;
   String? descricao;
   String? formaPagamento;
@@ -37,13 +37,13 @@ class Servico {
   Servico({
     required this.id,
     required this.idCliente,
-    required this.idTecnico,
     required this.nomeCliente,
-    required this.nomeTecnico,
     required this.equipamento,
     required this.filial,
     required this.marca,
     required this.situacao,
+    this.idTecnico,
+    this.nomeTecnico,
     this.horarioPrevisto,
     this.dataAtendimentoPrevisto,
     this.descricao,

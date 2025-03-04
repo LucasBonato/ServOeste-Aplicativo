@@ -255,9 +255,9 @@ class ServicoScreenState extends State<ServicoScreen> {
                                   _onSelectItemList(servico.id);
                                 }
                               },
+                              codigo: servico.id,
                               cliente: (servico as Servico).nomeCliente,
                               tecnico: servico.nomeTecnico,
-                              codigo: servico.id,
                               equipamento: servico.equipamento,
                               marca: servico.marca,
                               filial: servico.filial,

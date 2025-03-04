@@ -27,13 +27,9 @@ class ServicoForm extends ChangeNotifier {
   ValueNotifier<String> valor = ValueNotifier("");
   ValueNotifier<String> valorPecas = ValueNotifier("");
   ValueNotifier<String> valorComissao = ValueNotifier("");
-  double _valorNumerico = 0.0;
-  double _valorPecasNumerico = 0.0;
-  double _valorComissaoNumerico = 0.0;
-
-  double get valorNumerico => _valorNumerico;
-  double get valorPecasNumerico => _valorPecasNumerico;
-  double get valorComissaoNumerico => _valorComissaoNumerico;
+  double valorNumerico = 0.0;
+  double valorPecasNumerico = 0.0;
+  double valorComissaoNumerico = 0.0;
 
   void setId(int? id) {
     this.id.value = id;
@@ -209,10 +205,6 @@ class ServicoForm extends ChangeNotifier {
     notifyListeners();
   }
 
-  set valorNumerico(double value) {
-    _valorNumerico = value;
-  }
-
   void setValorServico(String? valorFormatado) {
     if (valorFormatado == "null") {
       valorFormatado = null;
@@ -240,7 +232,7 @@ class ServicoForm extends ChangeNotifier {
     }
     if (valorPecasFormatado != null) {
       valorPecas.value = valorPecasFormatado;
-      _valorPecasNumerico =
+      valorPecasNumerico =
           Formatters.parseCurrencyToDouble(valorPecasFormatado);
 
       notifyListeners();
@@ -252,7 +244,7 @@ class ServicoForm extends ChangeNotifier {
     String valorPecasFormatado =
         Formatters.formatToCurrency(valorPecasNumerico);
 
-    _valorPecasNumerico = valorPecasNumerico;
+    valorPecasNumerico = valorPecasNumerico;
     valorPecas.value = valorPecasFormatado;
 
     notifyListeners();
@@ -276,7 +268,7 @@ class ServicoForm extends ChangeNotifier {
     }
     if (valorComissaoFormatado != null) {
       valorComissao.value = valorComissaoFormatado;
-      _valorComissaoNumerico =
+      valorComissaoNumerico =
           Formatters.parseCurrencyToDouble(valorComissaoFormatado);
       notifyListeners();
     }
@@ -286,7 +278,7 @@ class ServicoForm extends ChangeNotifier {
     String valorComissaoFormatado =
         Formatters.formatToCurrency(valorComissaoNumerico);
 
-    _valorComissaoNumerico = valorComissaoNumerico;
+    valorComissaoNumerico = valorComissaoNumerico;
     valorComissao.value = valorComissaoFormatado;
     notifyListeners();
   }

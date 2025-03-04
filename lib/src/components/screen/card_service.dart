@@ -7,9 +7,9 @@ class CardService extends StatelessWidget {
   final String cliente;
   final String equipamento;
   final String marca;
-  final String tecnico;
   final String filial;
   final String status;
+  final String? tecnico;
   final String? horario;
   final DateTime? dataPrevista;
   final DateTime? dataEfetiva;
@@ -26,9 +26,9 @@ class CardService extends StatelessWidget {
     required this.cliente,
     required this.equipamento,
     required this.marca,
-    required this.tecnico,
     required this.filial,
     required this.status,
+    this.tecnico,
     this.horario,
     this.dataPrevista,
     this.dataEfetiva,
@@ -202,19 +202,34 @@ class CardService extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 5),
-                          Padding(
-                            padding: EdgeInsets.only(
-                                left: constraints.maxWidth * 0.1,
-                                top: constraints.maxWidth * 0.035),
-                            child: Text(
-                              "Técnico - $tecnico",
-                              style: TextStyle(
-                                fontSize: constraints.maxWidth * 0.05,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
+                          if (tecnico != null)
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: constraints.maxWidth * 0.1,
+                                  top: constraints.maxWidth * 0.035),
+                              child: Text(
+                                "Técnico - $tecnico",
+                                style: TextStyle(
+                                  fontSize: constraints.maxWidth * 0.05,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
                               ),
                             ),
-                          ),
+                          if (tecnico == null)
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: constraints.maxWidth * 0.1,
+                                  top: constraints.maxWidth * 0.035),
+                              child: Text(
+                                "Técnico - Não declarado",
+                                style: TextStyle(
+                                  fontSize: constraints.maxWidth * 0.05,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
                           const SizedBox(height: 5),
                           Padding(
                             padding: EdgeInsets.only(
