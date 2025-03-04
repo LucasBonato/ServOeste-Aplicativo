@@ -12,6 +12,7 @@ import 'package:serv_oeste/src/screens/servico/filter_servico.dart';
 import 'package:serv_oeste/src/components/screen/expandable_fab_items.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/screens/servico/update_servico.dart';
+import 'package:serv_oeste/src/shared/routes.dart';
 
 class ServicoScreen extends StatefulWidget {
   const ServicoScreen({super.key});
@@ -195,8 +196,8 @@ class ServicoScreenState extends State<ServicoScreen> {
               ? ExpandableFabItems(
                   firstHeroTag: 'add_service',
                   secondHeroTag: 'add_service_cliente',
-                  firstRouterName: '/createServico',
-                  secondRouterName: '/createServico',
+                  firstRouterName: Routes.servicoCreate,
+                  secondRouterName: Routes.servicoCreate,
                   firstTooltip: 'Adicionar Serviço',
                   secondTooltip: 'Adicionar Serviço e Cliente',
                   firstChild: Image.asset(

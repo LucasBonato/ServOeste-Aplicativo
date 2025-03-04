@@ -26,8 +26,7 @@ class CustomDropdownFormField extends StatefulWidget {
   });
 
   @override
-  State<CustomDropdownFormField> createState() =>
-      _CustomDropdownFormFieldState();
+  State<CustomDropdownFormField> createState() => _CustomDropdownFormFieldState();
 }
 
 class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
@@ -40,12 +39,11 @@ class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
   void initState() {
     super.initState();
 
-    final initialValue =
-        widget.dropdownValues.contains(widget.valueNotifier.value)
-            ? widget.valueNotifier.value
-            : widget.dropdownValues.isNotEmpty
-                ? widget.dropdownValues.first
-                : null;
+    final initialValue = widget.dropdownValues.contains(widget.valueNotifier.value)
+        ? widget.valueNotifier.value
+        : widget.dropdownValues.isNotEmpty
+            ? widget.dropdownValues.first
+            : null;
 
     _internalController = SingleSelectController(initialValue);
     _effectiveController = widget.controller ?? _internalController;
@@ -70,8 +68,7 @@ class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(
-          widget.leftPadding ?? 16, 4, widget.rightPadding ?? 16, 16),
+      padding: EdgeInsets.fromLTRB(widget.leftPadding ?? 16, 4, widget.rightPadding ?? 16, 16),
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         onEnter: (_) {
@@ -100,9 +97,7 @@ class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
             valueListenable: widget.valueNotifier,
             builder: (BuildContext context, String value, Widget? child) {
               if (!widget.dropdownValues.contains(value)) {
-                value = widget.dropdownValues.isNotEmpty
-                    ? widget.dropdownValues.first
-                    : "";
+                value = widget.dropdownValues.isNotEmpty ? widget.dropdownValues.first : "";
               }
 
               WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -116,8 +111,7 @@ class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
                 disabledDecoration: CustomDropdownDisabledDecoration(
                   fillColor: const Color(0xFFFFF8F7),
                   border: Border.all(color: Colors.black38),
-                  suffixIcon: Icon(Icons.arrow_drop_down,
-                      color: Colors.black38, size: 20),
+                  suffixIcon: Icon(Icons.arrow_drop_down, color: Colors.black38, size: 20),
                 ),
                 items: widget.dropdownValues,
                 controller: _effectiveController,
@@ -131,10 +125,8 @@ class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
                   ),
                 ),
                 decoration: CustomDropdownDecoration(
-                  errorStyle:
-                      TextStyle(fontSize: 12, decoration: TextDecoration.none),
-                  closedSuffixIcon: Icon(Icons.arrow_drop_down,
-                      color: Colors.black38, size: 20),
+                  errorStyle: TextStyle(fontSize: 12, decoration: TextDecoration.none),
+                  closedSuffixIcon: Icon(Icons.arrow_drop_down, color: Colors.black38, size: 20),
                   closedFillColor: _isHovered
                       ? const Color(0xFFF5EEED)
                       : (widget.enabled ?? true)

@@ -9,7 +9,7 @@ class FloatingActionButtonAdd extends StatelessWidget {
     super.key,
     required this.route,
     required this.event,
-    this.tooltip = ''
+    this.tooltip = '',
   });
 
   @override
