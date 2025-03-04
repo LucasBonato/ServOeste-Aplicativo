@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/layout/bottom_nav_bar.dart';
-import 'package:serv_oeste/src/components/layout/sidebar_navigation.dart';
 import 'package:serv_oeste/src/components/layout/header.dart';
+import 'package:serv_oeste/src/components/layout/sidebar_navigation.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
@@ -12,7 +12,6 @@ import 'package:serv_oeste/src/screens/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/home.dart';
 import 'package:serv_oeste/src/screens/servico/servico.dart';
 import 'package:serv_oeste/src/screens/tecnico/tecnico.dart';
-import 'package:serv_oeste/src/shared/constants.dart';
 
 class BaseLayout extends StatefulWidget {
   final int? initialIndex;
@@ -50,20 +49,13 @@ class BaseLayoutState extends State<BaseLayout> {
 
   Widget _getScreen(int index) {
     _screens[index] = switch (index) {
-      0 =>
-        BlocProvider.value(value: _servicoBloc, child: Home(key: UniqueKey())),
+      0 => BlocProvider.value(value: _servicoBloc, child: Home(key: UniqueKey())),
       1 => MultiBlocProvider(
-          providers: [
-            BlocProvider.value(value: _tecnicoBloc),
-            BlocProvider(create: (_) => ListaBloc()..add(ListaInitialEvent()))
-          ],
+          providers: [BlocProvider.value(value: _tecnicoBloc), BlocProvider(create: (_) => ListaBloc()..add(ListaInitialEvent()))],
           child: TecnicoScreen(key: UniqueKey()),
         ),
       2 => MultiBlocProvider(
-          providers: [
-            BlocProvider.value(value: _clienteBloc),
-            BlocProvider(create: (_) => ListaBloc()..add(ListaInitialEvent()))
-          ],
+          providers: [BlocProvider.value(value: _clienteBloc), BlocProvider(create: (_) => ListaBloc()..add(ListaInitialEvent()))],
           child: ClienteScreen(key: UniqueKey()),
         ),
       3 => MultiBlocProvider(
@@ -81,19 +73,15 @@ class BaseLayoutState extends State<BaseLayout> {
   void _selectTab(int index) {
     if (_currentIndex == index) {
       _navigatorKeys[index].currentState?.popUntil((route) => route.isFirst);
-    } else {
+    }
+    else {
       setState(() => _currentIndex = index);
       _loadTab(index);
     }
   }
 
   void _loadTab(int index) {
-    final Map<int, VoidCallback> tabLoadAction = {
-      0: _loadHome,
-      1: _loadTecnico,
-      2: _loadCliente,
-      3: _loadServico
-    };
+    final Map<int, VoidCallback> tabLoadAction = {0: _loadHome, 1: _loadTecnico, 2: _loadCliente, 3: _loadServico};
     tabLoadAction[index]?.call();
   }
 
@@ -114,18 +102,15 @@ class BaseLayoutState extends State<BaseLayout> {
   }
 
   void _loadTecnico() {
-    _tecnicoBloc.add(
-        TecnicoLoadingEvent(situacao: Constants.situationTecnicoList.first));
+    _tecnicoBloc.add(TecnicoSearchMenuEvent());
   }
 
   void _loadCliente() {
-    _clienteBloc.add(ClienteLoadingEvent());
+    _clienteBloc.add(ClienteSearchMenuEvent());
   }
 
   void _loadServico() {
-    _servicoBloc.add(ServicoInitialLoadingEvent(
-      filterRequest: ServicoFilterRequest(),
-    ));
+    _servicoBloc.add(ServicoSearchMenuEvent());
   }
 
   @override

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/shared/formatters.dart';
 
@@ -87,12 +88,13 @@ class ServicoForm extends ChangeNotifier {
   }
 
   void setSituacao(String? situacao) {
-    print('Situação: $situacao');
+    Logger().w('Situação: $situacao');
     if (situacao != null) {
       this.situacao.value =
           Formatters.mapStringStatusToEnumStatus(situacao).getSituacao();
-      print(Formatters.mapStringStatusToEnumStatus(situacao).getSituacao());
-      print(this.situacao.value);
+      Logger()
+          .w(Formatters.mapStringStatusToEnumStatus(situacao).getSituacao());
+      Logger().w(this.situacao.value);
       notifyListeners();
     }
   }

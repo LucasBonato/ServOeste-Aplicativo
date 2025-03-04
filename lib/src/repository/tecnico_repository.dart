@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/servico/tecnico_disponivel.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
 import 'package:serv_oeste/src/repository/dio/dio_service.dart';
@@ -10,7 +9,7 @@ import 'package:serv_oeste/src/repository/dio/server_endpoints.dart';
 import '../models/tecnico/tecnico.dart';
 
 class TecnicoRepository extends DioService {
-  Future<List<TecnicoResponse>?> getTecnicosByFind({int? id, String? nome, String? telefoneFixo, String? telefoneCelular, String? situacao, String? equipamento}) async {
+  Future<List<TecnicoResponse>> fetchListByFilter({int? id, String? nome, String? telefoneFixo, String? telefoneCelular, String? situacao, String? equipamento}) async {
     try {
       final response = await dio.post(
         ServerEndpoints.tecnicoFindEndpoint,
@@ -19,7 +18,7 @@ class TecnicoRepository extends DioService {
           "nome": nome,
           "telefoneFixo": telefoneFixo,
           "telefoneCelular": telefoneCelular,
-          "situacao": situacao,
+          "situacao": situacao?? "ATIVO",
           "equipamento": equipamento
         }
       );
@@ -30,10 +29,23 @@ class TecnicoRepository extends DioService {
     } on DioException catch (e) {
       throw Exception(onRequestError(e));
     }
-    return null;
+    return [];
   }
 
-  Future<Tecnico?> getTecnicoById(int id) async {
+  Future<List<TecnicoDisponivel>> fetchListAvailabilityBySpecialityId(int especialidadeId) async {
+    try {
+      final response = await dio.post(ServerEndpoints.tecnicoDisponibilidadeEndpoint, data: {"especialidadeId": especialidadeId});
+
+      if (response.data is List) {
+        return (response.data as List).map((json) => TecnicoDisponivel.fromJson(json)).toList();
+      }
+    } on DioException catch (e) {
+      throw Exception(onRequestError(e));
+    }
+    return [];
+  }
+
+  Future<Tecnico?> fetchOneById(int id) async {
     try {
       final response = await dio.get("${ServerEndpoints.tecnicoEndpoint}/$id");
 
@@ -46,52 +58,42 @@ class TecnicoRepository extends DioService {
     return null;
   }
 
-  Future<ErrorEntity?> postTecnico(Tecnico tecnico) async {
+  Future<void> create(Tecnico tecnico) async {
     try {
-      await dio.post(ServerEndpoints.tecnicoEndpoint, data: {
-        "nome": tecnico.nome,
-        "sobrenome": tecnico.sobrenome,
-        "telefoneFixo": tecnico.telefoneFixo,
-        "telefoneCelular": tecnico.telefoneCelular,
-        "especialidades_Ids": tecnico.especialidadesIds
-      });
-    } on DioException catch (e) {
-      return onRequestError(e);
-    }
-    return null;
-  }
-
-  Future<List<TecnicoDisponivel>?> getTecnicosDisponiveis(int especialidadeId) async {
-    try {
-      final response = await dio.post(ServerEndpoints.tecnicoDisponibilidadeEndpoint, data: {"especialidadeId": especialidadeId});
-
-      if (response.data is List) {
-        return (response.data as List).map((json) => TecnicoDisponivel.fromJson(json)).toList();
-      }
+      await dio.post(
+        ServerEndpoints.tecnicoEndpoint,
+        data: {
+          "nome": tecnico.nome,
+          "sobrenome": tecnico.sobrenome,
+          "telefoneFixo": tecnico.telefoneFixo,
+          "telefoneCelular": tecnico.telefoneCelular,
+          "especialidades_Ids": tecnico.especialidadesIds
+        }
+      );
     } on DioException catch (e) {
       throw Exception(onRequestError(e));
     }
-    return null;
   }
 
-  Future<ErrorEntity?> putTecnico(Tecnico tecnico) async {
-    tecnico.situacao ??= 'ativo';
+  Future<void> update(Tecnico tecnico) async {
     try {
-      await dio.put("${ServerEndpoints.tecnicoEndpoint}/${tecnico.id}", data: {
-        "nome": tecnico.nome,
-        "sobrenome": tecnico.sobrenome,
-        "telefoneFixo": tecnico.telefoneFixo,
-        "telefoneCelular": tecnico.telefoneCelular,
-        "situacao": tecnico.situacao,
-        "especialidades_Ids": tecnico.especialidadesIds,
-      });
+      await dio.put(
+        "${ServerEndpoints.tecnicoEndpoint}/${tecnico.id}",
+        data: {
+          "nome": tecnico.nome,
+          "sobrenome": tecnico.sobrenome,
+          "telefoneFixo": tecnico.telefoneFixo,
+          "telefoneCelular": tecnico.telefoneCelular,
+          "situacao": tecnico.situacao?? "ativo",
+          "especialidades_Ids": tecnico.especialidadesIds,
+        }
+      );
     } on DioException catch (e) {
-      return onRequestError(e);
+      throw Exception(onRequestError(e));
     }
-    return null;
   }
 
-  Future<void> disableListOfTecnicos(List<int> selectedItems) async {
+  Future<void> disableListByIds(List<int> selectedItems) async {
     try {
       await dio.delete(ServerEndpoints.tecnicoEndpoint, data: jsonEncode(selectedItems));
     } on DioException catch (e) {

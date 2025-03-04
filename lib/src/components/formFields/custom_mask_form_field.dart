@@ -72,8 +72,7 @@ class _CustomMaskFormFieldState extends State<CustomMaskFormField> {
           labelText: widget.label,
           isDense: true,
           fillColor: const Color(0xFFF1F4F8),
-          border: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blueAccent, width: 2)),
+          border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.blueAccent, width: 2)),
           enabledBorder: const OutlineInputBorder(
             borderSide: BorderSide(
               color: Colors.blue,

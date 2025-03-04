@@ -25,6 +25,14 @@ final class ClienteSearchEvent extends ClienteEvent {
   ClienteSearchEvent({this.nome, this.telefone, this.endereco});
 }
 
+final class ClienteSearchMenuEvent extends ClienteEvent {
+  final String? nome;
+  final String? telefone;
+  final String? endereco;
+
+  ClienteSearchMenuEvent({this.nome, this.telefone, this.endereco});
+}
+
 final class RestoreClienteStateEvent extends ClienteEvent {
   final ClienteState state;
 
@@ -45,8 +53,8 @@ final class ClienteUpdateEvent extends ClienteEvent {
   ClienteUpdateEvent({required this.cliente, required this.sobrenome});
 }
 
-final class ClienteDisableListEvent extends ClienteEvent {
+final class ClienteDeleteListEvent extends ClienteEvent {
   final List<int> selectedList;
 
-  ClienteDisableListEvent({required this.selectedList});
+  ClienteDeleteListEvent({required this.selectedList});
 }

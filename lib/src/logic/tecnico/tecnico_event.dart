@@ -43,6 +43,15 @@ final class TecnicoSearchEvent extends TecnicoEvent {
   TecnicoSearchEvent({this.id, this.nome, this.situacao, this.equipamento});
 }
 
+final class TecnicoSearchMenuEvent extends TecnicoEvent {
+  final int? id;
+  final String? nome;
+  final String? situacao;
+  final String? equipamento;
+
+  TecnicoSearchMenuEvent({this.id, this.nome, this.situacao, this.equipamento});
+}
+
 final class TecnicoRegisterEvent extends TecnicoEvent {
   final Tecnico tecnico;
   final String sobrenome;

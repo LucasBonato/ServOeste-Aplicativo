@@ -9,16 +9,18 @@ import 'package:serv_oeste/src/models/servico/servico_request.dart';
 import 'package:serv_oeste/src/repository/servico_repository.dart';
 
 part 'servico_event.dart';
+
 part 'servico_state.dart';
 
 class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
   final ServicoRepository _servicoRepository = ServicoRepository();
-  late ServicoFilterRequest _filterRequest = ServicoFilterRequest();
+  ServicoFilterRequest? filterRequest;
   bool isFirstRequest = true;
 
   ServicoBloc() : super(ServicoInitialState()) {
     on<ServicoLoadingEvent>(_fetchAllServicesWithFilter);
     on<ServicoInitialLoadingEvent>(_fetchAllServicesInitial);
+    on<ServicoSearchMenuEvent>(_fetchServiceSearchMenu);
     on<ServicoSearchOneEvent>(_fetchOneService);
     on<ServicoRegisterEvent>(_registerService);
     on<ServicoRegisterPlusClientEvent>(_registerServicePlusClient);
@@ -26,75 +28,77 @@ class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
     on<ServicoDisableListEvent>(_deleteService);
   }
 
-  Future<void> _fetchAllServicesWithFilter(
-      ServicoLoadingEvent event, Emitter<ServicoState> emit) async {
-    _filterRequest = _combineFilters(_filterRequest, event.filterRequest);
+  Future<void> _fetchAllServicesWithFilter(ServicoLoadingEvent event, Emitter<ServicoState> emit) async {
+    filterRequest = _combineFilters(filterRequest?? ServicoFilterRequest(), event.filterRequest);
 
     emit(ServicoLoadingState());
     try {
-      List<Servico>? response =
-          await _servicoRepository.getServicosByFilter(_filterRequest);
+      List<Servico>? response = await _servicoRepository.getServicosByFilter(filterRequest!);
       emit(ServicoSearchSuccessState(servicos: response ?? []));
     } on DioException catch (e) {
       emit(ServicoErrorState(
-        error:
-            ErrorEntity(id: 0, errorMessage: e.message ?? 'Erro desconhecido'),
+        error: ErrorEntity(id: 0, errorMessage: e.message ?? 'Erro desconhecido'),
       ));
     }
   }
 
-  Future<void> _fetchAllServicesInitial(
-      ServicoInitialLoadingEvent event, Emitter<ServicoState> emit) async {
-    _filterRequest = event.filterRequest;
-
+  Future<void> _fetchAllServicesInitial(ServicoInitialLoadingEvent event, Emitter<ServicoState> emit) async {
     emit(ServicoLoadingState());
     try {
-      List<Servico>? response =
-          await _servicoRepository.getServicosByFilter(_filterRequest);
+      List<Servico>? response = await _servicoRepository.getServicosByFilter(event.filterRequest);
       emit(ServicoSearchSuccessState(servicos: response ?? []));
-    } on DioException catch (e) {
+    }
+    on DioException catch (e) {
       emit(ServicoErrorState(
-        error:
-            ErrorEntity(id: 0, errorMessage: e.message ?? 'Erro desconhecido'),
+        error: ErrorEntity(id: 0, errorMessage: e.message ?? 'Erro desconhecido'),
       ));
     }
   }
 
-  Future<void> _fetchOneService(
-      ServicoSearchOneEvent event, Emitter emit) async {
+  Future<void> _fetchServiceSearchMenu(ServicoSearchMenuEvent event, Emitter<ServicoState> emit) async {
+    filterRequest = event.filterRequest?? filterRequest;
+    filterRequest = filterRequest?? ServicoFilterRequest();
+
+    if (filterRequest != null && event.filterRequest != null) {
+      filterRequest = _combineFilters(filterRequest!, event.filterRequest!);
+    }
+
     emit(ServicoLoadingState());
     try {
-      final List<Servico>? servicos = await _servicoRepository
-          .getServicosByFilter(ServicoFilterRequest(id: event.id));
+      List<Servico>? response = await _servicoRepository.getServicosByFilter(filterRequest!);
+      emit(ServicoSearchSuccessState(servicos: response ?? []));
+    }
+    on DioException catch (e) {
+      emit(ServicoErrorState(
+        error: ErrorEntity(id: 0, errorMessage: e.message ?? 'Erro desconhecido'),
+      ));
+    }
+  }
+
+  Future<void> _fetchOneService(ServicoSearchOneEvent event, Emitter emit) async {
+    emit(ServicoLoadingState());
+    try {
+      final List<Servico>? servicos = await _servicoRepository.getServicosByFilter(ServicoFilterRequest(id: event.id));
       if (servicos != null) {
         emit(ServicoSearchOneSuccessState(servico: servicos[0]));
         return;
       }
       emit(ServicoErrorState(error: ErrorEntity(id: 0, errorMessage: "")));
     } on DioException catch (e) {
-      emit(ServicoErrorState(
-          error: ErrorEntity(id: 0, errorMessage: e.toString())));
+      emit(ServicoErrorState(error: ErrorEntity(id: 0, errorMessage: e.toString())));
     }
   }
 
-  Future<void> _registerService(
-      ServicoRegisterEvent event, Emitter emit) async {
+  Future<void> _registerService(ServicoRegisterEvent event, Emitter emit) async {
     emit(ServicoLoadingState());
-    ErrorEntity? error = await _servicoRepository
-        .createServicoComClienteExistente(event.servico);
-    emit((error == null)
-        ? ServicoRegisterSuccessState()
-        : ServicoErrorState(error: error));
+    ErrorEntity? error = await _servicoRepository.createServicoComClienteExistente(event.servico);
+    emit((error == null) ? ServicoRegisterSuccessState() : ServicoErrorState(error: error));
   }
 
-  Future<void> _registerServicePlusClient(
-      ServicoRegisterPlusClientEvent event, Emitter emit) async {
+  Future<void> _registerServicePlusClient(ServicoRegisterPlusClientEvent event, Emitter emit) async {
     emit(ServicoLoadingState());
-    ErrorEntity? error = await _servicoRepository
-        .createServicoComClienteNaoExistente(event.servico, event.cliente);
-    emit((error == null)
-        ? ServicoRegisterSuccessState()
-        : ServicoErrorState(error: error));
+    ErrorEntity? error = await _servicoRepository.createServicoComClienteNaoExistente(event.servico, event.cliente);
+    emit((error == null) ? ServicoRegisterSuccessState() : ServicoErrorState(error: error));
   }
 
   Future<void> _updateService(ServicoUpdateEvent event, Emitter emit) async {
@@ -109,13 +113,11 @@ class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
     }
   }
 
-  Future<void> _deleteService(
-      ServicoDisableListEvent event, Emitter<ServicoState> emit) async {
+  Future<void> _deleteService(ServicoDisableListEvent event, Emitter<ServicoState> emit) async {
     emit(ServicoLoadingState());
     try {
       await _servicoRepository.disableListOfServico(event.selectedList);
-      await _fetchAllServicesInitial(
-          ServicoInitialLoadingEvent(filterRequest: _filterRequest), emit);
+      await _fetchServiceSearchMenu(ServicoSearchMenuEvent(), emit);
     } catch (e) {
       emit(ServicoErrorState(
         error: ErrorEntity(id: 0, errorMessage: "Erro ao deletar serviço"),
@@ -123,8 +125,7 @@ class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
     }
   }
 
-  ServicoFilterRequest _combineFilters(
-      ServicoFilterRequest oldFilter, ServicoFilterRequest newFilter) {
+  ServicoFilterRequest _combineFilters(ServicoFilterRequest oldFilter, ServicoFilterRequest newFilter) {
     int? id;
     String? periodo;
     String? equipamento;
@@ -155,14 +156,10 @@ class ServicoBloc extends Bloc<ServicoEvent, ServicoState> {
       situacao = newFilter.situacao ?? oldFilter.situacao;
       garantia = newFilter.garantia ?? oldFilter.garantia;
       filial = newFilter.filial ?? oldFilter.filial;
-      dataAtendimentoPrevistoAntes = newFilter.dataAtendimentoPrevistoAntes ??
-          oldFilter.dataAtendimentoPrevistoAntes;
-      dataAtendimentoPrevistoDepois = newFilter.dataAtendimentoPrevistoDepois ??
-          oldFilter.dataAtendimentoPrevistoDepois;
-      dataAtendimentoEfetivoAntes = newFilter.dataAtendimentoEfetivoAntes ??
-          oldFilter.dataAtendimentoEfetivoAntes;
-      dataAberturaAntes =
-          newFilter.dataAberturaAntes ?? oldFilter.dataAberturaAntes;
+      dataAtendimentoPrevistoAntes = newFilter.dataAtendimentoPrevistoAntes ?? oldFilter.dataAtendimentoPrevistoAntes;
+      dataAtendimentoPrevistoDepois = newFilter.dataAtendimentoPrevistoDepois ?? oldFilter.dataAtendimentoPrevistoDepois;
+      dataAtendimentoEfetivoAntes = newFilter.dataAtendimentoEfetivoAntes ?? oldFilter.dataAtendimentoEfetivoAntes;
+      dataAberturaAntes = newFilter.dataAberturaAntes ?? oldFilter.dataAberturaAntes;
       isFirstRequest = true;
     }
 

@@ -2,13 +2,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/screen/card_client.dart';
+import 'package:serv_oeste/src/components/screen/fab_add.dart';
+import 'package:serv_oeste/src/components/screen/fab_remove.dart';
 import 'package:serv_oeste/src/components/screen/grid_view.dart';
 import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
-import 'package:serv_oeste/src/util/build_widgets.dart';
 import 'package:serv_oeste/src/components/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
+import 'package:serv_oeste/src/shared/routes.dart';
 
 class ClienteScreen extends StatefulWidget {
   const ClienteScreen({super.key});
@@ -33,6 +35,13 @@ class _ClienteScreenState extends State<ClienteScreen> {
     _telefoneController = TextEditingController();
     _enderecoController = TextEditingController();
     _listaBloc.add(ListaInitialEvent());
+    _setFilterValues();
+  }
+
+  void _setFilterValues() {
+    _nomeController.text = _clienteBloc.nomeMenu ?? "";
+    _telefoneController.text = _clienteBloc.telefoneMenu ?? "";
+    _enderecoController.text = _clienteBloc.enderecoMenu ?? "";
   }
 
   void _onSearchFieldChanged() {
@@ -41,7 +50,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
     _debounce = Timer(
       Duration(milliseconds: 150),
       () => _clienteBloc.add(
-        ClienteSearchEvent(
+        ClienteSearchMenuEvent(
           nome: _nomeController.text,
           telefone: _telefoneController.text,
           endereco: _enderecoController.text,
@@ -181,7 +190,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
   }
 
   void _disableClientes(BuildContext context, List<int> selectedIds) {
-    _clienteBloc.add(ClienteDisableListEvent(selectedList: selectedIds));
+    _clienteBloc.add(ClienteDeleteListEvent(selectedList: selectedIds));
     _listaBloc.add(ListaClearSelectionEvent());
   }
 
@@ -192,24 +201,15 @@ class _ClienteScreenState extends State<ClienteScreen> {
       floatingActionButton: BlocBuilder<ListaBloc, ListaState>(
         builder: (context, state) {
           final bool hasSelection = state is ListaSelectState && state.selectedIds.isNotEmpty;
-
-          return !hasSelection
-              ? BuildWidgets.buildFabAdd(
-                  context,
-                  "/createCliente",
-                  () {
-                    _clienteBloc.add(ClienteSearchEvent());
-                  },
-                  tooltip: 'Adicionar um cliente',
-                )
-              : BuildWidgets.buildFabRemove(
-                  context,
-                  () {
+          
+          return (!hasSelection) 
+              ? FloatingActionButtonAdd(route: Routes.clienteCreate, event: () => _clienteBloc.add(ClienteSearchMenuEvent()), tooltip: "Adicionar um Cliente")
+              : FloatingActionButtonRemove(
+                  removeMethod: () {
                     _disableClientes(context, state.selectedIds);
-
                     context.read<ListaBloc>().add(ListaClearSelectionEvent());
                   },
-                  tooltip: 'Excluir clientes selecionados',
+                  tooltip: "Excluir clientes Selecionados",
                 );
         },
       ),
@@ -295,8 +295,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
                             SizedBox(height: 10),
                             Text(
                               "Nenhum cliente encontrado.",
-                              style:
-                              TextStyle(fontSize: 18.0, color: Colors.grey),
+                              style: TextStyle(fontSize: 18.0, color: Colors.grey),
                             ),
                           ],
                         ),

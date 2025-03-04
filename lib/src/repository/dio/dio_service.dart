@@ -26,10 +26,15 @@ class DioService {
 
   Dio get dio => _dio;
 
-  ErrorEntity? onRequestError(DioException? e) {
+  ErrorEntity onRequestError(DioException? e) {
     if (e == null) {
-      return null;
+      return ErrorEntity(id: 0, errorMessage: "Erro desconhecido");
     }
+
+    if (e.response?.data is Map<String, dynamic>) {
+      return ErrorEntity.fromJson(e.response!.data as Map<String, dynamic>);
+    }
+
     if (e.error is JsonUnsupportedObjectError) {
       try {
         final unsupportedObject = (e.error as JsonUnsupportedObjectError).unsupportedObject;
@@ -37,10 +42,19 @@ class DioService {
         if (unsupportedObject is Response && unsupportedObject.data is Map<String, dynamic>) {
           return ErrorEntity.fromJson(unsupportedObject.data as Map<String, dynamic>);
         }
-      } catch (decodeError) {
+      }
+      catch (decodeError) {
         Logger().e("Erro ao decodificar e.error como JSON: $decodeError");
       }
     }
-    return null;
+
+    return switch (e.type) {
+      DioExceptionType.connectionTimeout => ErrorEntity(id: 0, errorMessage: "Tempo de conexão esgotado"),
+      DioExceptionType.sendTimeout => ErrorEntity(id: 0, errorMessage: "Tempo de envio esgotado"),
+      DioExceptionType.receiveTimeout => ErrorEntity(id: 0, errorMessage: "Tempo de resposta esgotado"),
+      DioExceptionType.badResponse => ErrorEntity(id: 0, errorMessage: "Erro no servidor => ${e.response?.statusCode}"),
+      DioExceptionType.cancel => ErrorEntity(id: 0, errorMessage: "Requisição cancelada"),
+      DioExceptionType.unknown || _ => ErrorEntity(id: 0, errorMessage: "Erro inesperado: ${e.message}"),
+    };
   }
 }

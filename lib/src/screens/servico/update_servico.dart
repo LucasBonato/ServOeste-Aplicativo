@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/date_picker_form_field.dart';
@@ -20,7 +21,6 @@ import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
-import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/models/servico/servico_form.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
@@ -104,9 +104,7 @@ class _UpdateServicoState extends State<UpdateServico> {
     if (nome == "") return;
     if (nome.split(" ").length > 1 && _dropdownNomeTecnicos.isEmpty) return;
     _tecnicoBloc.add(TecnicoSearchEvent(
-        nome: nome,
-        equipamento: _servicoUpdateForm.equipamento.value,
-        situacao: 'ATIVO'));
+        nome: nome, equipamento: _servicoUpdateForm.equipamento.value));
   }
 
   void _getTechnicalId(String nome) {
@@ -176,6 +174,9 @@ class _UpdateServicoState extends State<UpdateServico> {
       ServicoSearchOneSuccessState stateServico) {
     _currentSituation =
         _convertEnumStatusToString(stateServico.servico.situacao);
+
+    Logger().w(
+        Formatters.formatToCurrency(stateServico.servico.valorComissao ?? 0.0));
 
     _servicoUpdateForm.setIdCliente(stateServico.servico.idCliente);
     _servicoUpdateForm.setNomeCliente(stateServico.servico.nomeCliente);
@@ -380,7 +381,7 @@ class _UpdateServicoState extends State<UpdateServico> {
     final int currentLevel = _getServiceLevel(previousValue);
     final int newLevel = _getServiceLevel(value);
 
-    print(
+    Logger().w(
         "Mudando de $previousValue (Nível: $currentLevel) para $value (Nível: $newLevel)");
 
     if (currentLevel > newLevel) {
@@ -455,7 +456,7 @@ class _UpdateServicoState extends State<UpdateServico> {
   }
 
   void _updateServiceSituation(String value) {
-    print(
+    Logger().w(
         "Atualizando situação para: $value (Nível: ${_getServiceLevel(value)})");
     if (_servicoUpdateForm.situacao.value == value) return;
 
@@ -473,8 +474,7 @@ class _UpdateServicoState extends State<UpdateServico> {
   }
 
   void _handleBackNavigation() {
-    _servicoBloc
-        .add(ServicoLoadingEvent(filterRequest: ServicoFilterRequest()));
+    _servicoBloc.add(ServicoSearchMenuEvent());
     Navigator.pop(context, "Back");
   }
 

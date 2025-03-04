@@ -17,8 +17,7 @@ class BuildFieldLabels extends StatelessWidget {
           Text(
             "* - Campos obrigatórios",
             style: TextStyle(
-              fontSize:
-                  (MediaQuery.of(context).size.width * 0.01).clamp(12.0, 14.0),
+              fontSize: (MediaQuery.of(context).size.width * 0.01).clamp(12.0, 14.0),
               color: Colors.black,
             ),
           ),
@@ -27,8 +26,7 @@ class BuildFieldLabels extends StatelessWidget {
             Text(
               "** - Preencha ao menos um destes campos",
               style: TextStyle(
-                fontSize: (MediaQuery.of(context).size.width * 0.01)
-                    .clamp(12.0, 14.0),
+                fontSize: (MediaQuery.of(context).size.width * 0.01).clamp(12.0, 14.0),
                 color: Colors.black,
               ),
             ),

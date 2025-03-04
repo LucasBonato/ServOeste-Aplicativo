@@ -38,12 +38,10 @@ class CustomDatePickerFormField extends StatefulWidget {
   });
 
   @override
-  State<CustomDatePickerFormField> createState() =>
-      _CustomDatePickerFormFieldState();
+  State<CustomDatePickerFormField> createState() => _CustomDatePickerFormFieldState();
 }
 
-class _CustomDatePickerFormFieldState extends State<CustomDatePickerFormField>
-    with RestorationMixin {
+class _CustomDatePickerFormFieldState extends State<CustomDatePickerFormField> with RestorationMixin {
   @override
   String? get restorationId => widget.restorationId;
 
@@ -51,12 +49,9 @@ class _CustomDatePickerFormFieldState extends State<CustomDatePickerFormField>
 
   final RestorableDateTime _selectedDate = RestorableDateTime(DateTime.now());
 
-  late final RestorableRouteFuture<DateTime?> _restorableDatePickerRouteFuture =
-      RestorableRouteFuture<DateTime?>(
+  late final RestorableRouteFuture<DateTime?> _restorableDatePickerRouteFuture = RestorableRouteFuture<DateTime?>(
     onComplete: _selectDate,
-    onPresent: (NavigatorState navigator, Object? arguments) =>
-        navigator.restorablePush(_datePickerRoute,
-            arguments: _selectedDate.value.millisecondsSinceEpoch),
+    onPresent: (NavigatorState navigator, Object? arguments) => navigator.restorablePush(_datePickerRoute, arguments: _selectedDate.value.millisecondsSinceEpoch),
   );
 
   final TextEditingController _controller = TextEditingController();
@@ -89,8 +84,7 @@ class _CustomDatePickerFormFieldState extends State<CustomDatePickerFormField>
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
     registerForRestoration(_selectedDate, 'selected_date');
-    registerForRestoration(
-        _restorableDatePickerRouteFuture, 'date_picker_route_future');
+    registerForRestoration(_restorableDatePickerRouteFuture, 'date_picker_route_future');
   }
 
   void _selectDate(DateTime? newSelectedDate) {

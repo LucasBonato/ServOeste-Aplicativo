@@ -7,13 +7,9 @@ import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 
 class TableTecnicosModal extends StatefulWidget {
   final int especialidadeId;
-  final void Function(String nome, String data, String periodo, int id)
-      setValuesAvailabilityTechnicianTable;
+  final void Function(String nome, String data, String periodo, int id) setValuesAvailabilityTechnicianTable;
 
-  const TableTecnicosModal(
-      {super.key,
-      required this.especialidadeId,
-      required this.setValuesAvailabilityTechnicianTable});
+  const TableTecnicosModal({super.key, required this.especialidadeId, required this.setValuesAvailabilityTechnicianTable});
 
   @override
   TableTecnicosModalState createState() => TableTecnicosModalState();
@@ -31,8 +27,7 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
     super.initState();
     _tecnicoBloc = context.read<TecnicoBloc>();
 
-    _tecnicoBloc.add(TecnicoAvailabilitySearchEvent(
-        idEspecialidade: widget.especialidadeId));
+    _tecnicoBloc.add(TecnicoAvailabilitySearchEvent(idEspecialidade: widget.especialidadeId));
 
     dateFields = _getNextValidDates().map((date) {
       final day = date.day.toString().padLeft(2, '0');
@@ -127,8 +122,7 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
       bloc: _tecnicoBloc,
       builder: (context, state) {
         if (state is TecnicoSearchAvailabilitySuccessState) {
-          if (state.tecnicosDisponiveis == null ||
-              state.tecnicosDisponiveis!.isEmpty) {
+          if (state.tecnicosDisponiveis == null || state.tecnicosDisponiveis!.isEmpty) {
             return Dialog(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -148,11 +142,7 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
             );
           }
 
-          state.tecnicosDisponiveis?.sort((tecnico1, tecnico2) =>
-              (tecnico1.quantidadeTotalServicos! >
-                      tecnico2.quantidadeTotalServicos!)
-                  ? 0
-                  : 1);
+          state.tecnicosDisponiveis?.sort((tecnico1, tecnico2) => (tecnico1.quantidadeTotalServicos! > tecnico2.quantidadeTotalServicos!) ? 0 : 1);
 
           Logger().e(state.tecnicosDisponiveis);
 
@@ -168,13 +158,10 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
 
             if (tecnico.disponibilidades != null) {
               for (var disponibilidade in tecnico.disponibilidades!) {
-                final String formattedDate =
-                    formatter.format(disponibilidade.data!);
-                final String key =
-                    '$formattedDate-${disponibilidade.periodo == "manha" ? "M" : "T"}';
+                final String formattedDate = formatter.format(disponibilidade.data!);
+                final String key = '$formattedDate-${disponibilidade.periodo == "manha" ? "M" : "T"}';
                 if (dateFieldsMap.containsKey(key)) {
-                  dateFieldsMap[key] = PlutoCell(
-                      value: disponibilidade.quantidadeServicos.toString());
+                  dateFieldsMap[key] = PlutoCell(value: disponibilidade.quantidadeServicos.toString());
                 }
               }
             }
@@ -201,8 +188,7 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
                   Expanded(
                     child: Text(
                       'Disponibilidade dos Técnicos',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -251,8 +237,7 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
     final String cellField = event.cell.column.field;
 
     if (cellField == 'tecnico') {
-      Logger().w(
-          'Aviso: A coluna "Técnicos" foi selecionada. Nenhuma ação necessária.');
+      Logger().w('Aviso: A coluna "Técnicos" foi selecionada. Nenhuma ação necessária.');
       return;
     }
 
@@ -266,8 +251,7 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
     final horarioSelecionado = match.group(2);
     final periodo = horarioSelecionado == 'M' ? 'Manhã' : 'Tarde';
 
-    widget.setValuesAvailabilityTechnicianTable(
-        tecnicoNome!, dataSelecionada!, periodo, tecnicoId!);
+    widget.setValuesAvailabilityTechnicianTable(tecnicoNome!, dataSelecionada!, periodo, tecnicoId!);
 
     Navigator.pop(context);
   }

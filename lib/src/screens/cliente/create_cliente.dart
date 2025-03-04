@@ -81,7 +81,7 @@ class _CreateClienteState extends State<CreateCliente> {
   }
 
   void _handleBackNavigation() {
-    _clienteBloc.add(ClienteSearchEvent());
+    _clienteBloc.add(ClienteSearchMenuEvent());
     Navigator.pop(context, "Back");
   }
 

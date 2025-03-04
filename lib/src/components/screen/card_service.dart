@@ -230,6 +230,19 @@ class CardService extends StatelessWidget {
                                 ),
                               ),
                             ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: constraints.maxWidth * 0.1,
+                                top: constraints.maxWidth * 0.035),
+                            child: Text(
+                              "Técnico - $tecnico",
+                              style: TextStyle(
+                                fontSize: constraints.maxWidth * 0.05,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
                           const SizedBox(height: 5),
                           Padding(
                             padding: EdgeInsets.only(

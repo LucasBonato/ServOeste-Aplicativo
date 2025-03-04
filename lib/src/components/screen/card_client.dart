@@ -40,14 +40,10 @@ class CardClient extends StatelessWidget {
             builder: (context, constraints) {
               return Container(
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? const Color(0xFFE9E7E7)
-                      : const Color(0xFCFDFDFF),
+                  color: isSelected ? const Color(0xFFE9E7E7) : const Color(0xFCFDFDFF),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isSelected
-                        ? Colors.black
-                        : (hovered ? Colors.black38 : const Color(0xFFEAE6E5)),
+                    color: isSelected ? Colors.black : (hovered ? Colors.black38 : const Color(0xFFEAE6E5)),
                     width: 1.5,
                   ),
                   boxShadow: [
