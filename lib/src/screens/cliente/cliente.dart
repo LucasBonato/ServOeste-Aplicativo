@@ -39,9 +39,9 @@ class _ClienteScreenState extends State<ClienteScreen> {
   }
 
   void _setFilterValues() {
-    _nomeController.text = _clienteBloc.nome ?? "";
-    _telefoneController.text = _clienteBloc.telefone ?? "";
-    _enderecoController.text = _clienteBloc.endereco ?? "";
+    _nomeController.text = _clienteBloc.nomeMenu ?? "";
+    _telefoneController.text = _clienteBloc.telefoneMenu ?? "";
+    _enderecoController.text = _clienteBloc.enderecoMenu ?? "";
   }
 
   void _onSearchFieldChanged() {
@@ -50,7 +50,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
     _debounce = Timer(
       Duration(milliseconds: 150),
       () => _clienteBloc.add(
-        ClienteSearchEvent(
+        ClienteSearchMenuEvent(
           nome: _nomeController.text,
           telefone: _telefoneController.text,
           endereco: _enderecoController.text,
@@ -203,7 +203,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
           final bool hasSelection = state is ListaSelectState && state.selectedIds.isNotEmpty;
           
           return (!hasSelection) 
-              ? FloatingActionButtonAdd(route: Routes.clienteCreate, event: () => _clienteBloc.add(ClienteSearchEvent()), tooltip: "Adicionar um Cliente")
+              ? FloatingActionButtonAdd(route: Routes.clienteCreate, event: () => _clienteBloc.add(ClienteSearchMenuEvent()), tooltip: "Adicionar um Cliente")
               : FloatingActionButtonRemove(
                   removeMethod: () {
                     _disableClientes(context, state.selectedIds);

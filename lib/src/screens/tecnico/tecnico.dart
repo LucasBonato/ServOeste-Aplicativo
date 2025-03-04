@@ -44,12 +44,14 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
   }
 
   void _setFilterValues() {
-    _idController.text = (_tecnicoBloc.id == null) ? "" : _tecnicoBloc.id.toString();
-    _nomeController.text = _tecnicoBloc.nome?? "";
-    String situacao = (_tecnicoBloc.situacao != null) ? _tecnicoBloc.situacao![0].toUpperCase() + _tecnicoBloc.situacao!.substring(1) : "";
+    _idController.text = (_tecnicoBloc.idMenu == null) ? "" : _tecnicoBloc.idMenu.toString();
+    _nomeController.text = _tecnicoBloc.nomeMenu ?? "";
+    String situacao = (_tecnicoBloc.situacaoMenu != null) ? _tecnicoBloc.situacaoMenu![0].toUpperCase() + _tecnicoBloc.situacaoMenu!.substring(1) : "";
     if (situacao != "" && Constants.situationTecnicoList.contains(situacao)) {
-      _situacaoNotifier.value = situacao;
-      _situacaoController = SingleSelectController<String>(situacao);
+      setState(() {
+        _situacaoNotifier.value = situacao;
+        _situacaoController = SingleSelectController<String>(situacao);
+      });
     }
   }
 
@@ -72,7 +74,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     _debounce = Timer(
       Duration(milliseconds: 150),
       () => _tecnicoBloc.add(
-        TecnicoSearchEvent(
+        TecnicoSearchMenuEvent(
           nome: _nomeController.text,
           id: int.tryParse(_idController.text),
           situacao: _situacaoNotifier.value,
@@ -128,13 +130,16 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
           valueNotifier: valueNotifier,
           leftPadding: 4,
           rightPadding: 4,
-          onChanged: (situacao) => _tecnicoBloc.add(
-            TecnicoSearchEvent(
-              id: int.tryParse(_idController.text),
-              nome: _nomeController.text,
-              situacao: situacao,
-            ),
-          ),
+          onChanged: (situacao) {
+            valueNotifier.value = situacao;
+            _tecnicoBloc.add(
+              TecnicoSearchMenuEvent(
+                id: int.tryParse(_idController.text),
+                nome: _nomeController.text,
+                situacao: situacao,
+              ),
+            );
+          },
         );
 
     Widget buildLargeScreenLayout() => Row(
@@ -244,7 +249,11 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
           final bool hasSelection = state is ListaSelectState && state.selectedIds.isNotEmpty;
 
           return (!hasSelection)
-              ? FloatingActionButtonAdd(route: Routes.tecnicoCreate, event: () => _tecnicoBloc.add(TecnicoSearchEvent()), tooltip: "Adicionar um Técnico")
+              ? FloatingActionButtonAdd(
+                  route: Routes.tecnicoCreate,
+                  event: () => _tecnicoBloc.add(TecnicoSearchMenuEvent()),
+                  tooltip: "Adicionar um Técnico"
+                )
               : FloatingActionButtonRemove(
                   removeMethod: () {
                     _disableTecnicos(context, state.selectedIds);

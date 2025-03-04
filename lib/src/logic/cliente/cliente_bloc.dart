@@ -11,7 +11,8 @@ part 'cliente_state.dart';
 
 class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
   final ClienteRepository _clienteRepository = ClienteRepository();
-  String? nome, telefone, endereco;
+  String? _nome, _telefone, _endereco,
+      nomeMenu, telefoneMenu, enderecoMenu;
 
   @override
   ClienteState loadingState() => ClienteLoadingState();
@@ -46,9 +47,9 @@ class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
     await handleRequest<List<Cliente>>(
       emit: emit,
       request: () => _clienteRepository.fetchListByFilter(
-        nome: event.nome?? nome,
-        telefone: event.telefone?? telefone,
-        endereco: event.endereco?? endereco,
+        nome: event.nome,
+        telefone: event.telefone,
+        endereco: event.endereco,
       ),
       onSuccess: (List<Cliente> clientes) {
         emit(ClienteSearchSuccessState(clientes: clientes));
@@ -57,17 +58,17 @@ class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
   }
 
   Future<void> _searchClients(ClienteSearchEvent event, Emitter<ClienteState> emit) async {
-    nome = (event.nome?.isNotEmpty == true) ? event.nome : null;
-    telefone = (event.telefone?.isNotEmpty == true) ? event.telefone : null;
-    endereco = (event.endereco?.isNotEmpty == true) ? event.endereco : null;
-    add(ClienteLoadingEvent(nome: nome, telefone: telefone, endereco: endereco));
+    _nome = (event.nome?.isNotEmpty == true) ? event.nome : null;
+    _telefone = (event.telefone?.isNotEmpty == true) ? event.telefone : null;
+    _endereco = (event.endereco?.isNotEmpty == true) ? event.endereco : null;
+    add(ClienteLoadingEvent(nome: _nome, telefone: _telefone, endereco: _endereco));
   }
 
   Future<void> _searchMenuClients(ClienteSearchMenuEvent event, Emitter<ClienteState> emit) async {
-    nome = (event.nome?.isNotEmpty == true) ? event.nome : nome;
-    telefone = (event.telefone?.isNotEmpty == true) ? event.telefone : telefone;
-    endereco = (event.endereco?.isNotEmpty == true) ? event.endereco : endereco;
-    add(ClienteLoadingEvent(nome: nome, telefone: telefone, endereco: endereco));
+    nomeMenu = (event.nome?.isNotEmpty == true) ? event.nome : nomeMenu;
+    telefoneMenu = (event.telefone?.isNotEmpty == true) ? event.telefone : telefoneMenu;
+    enderecoMenu = (event.endereco?.isNotEmpty == true) ? event.endereco : enderecoMenu;
+    add(ClienteLoadingEvent(nome: nomeMenu, telefone: telefoneMenu, endereco: enderecoMenu));
   }
 
   Future<void> _registerClient(ClienteRegisterEvent event, Emitter<ClienteState> emit) async {
@@ -101,7 +102,7 @@ class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
     await handleRequest(
       emit: emit, 
       request: () => _clienteRepository.deleteListByIds(event.selectedList), 
-      onSuccess: (_) => add(ClienteLoadingEvent(nome: nome, endereco: endereco, telefone: telefone)),
+      onSuccess: (_) => add(ClienteLoadingEvent(nome: _nome, endereco: _endereco, telefone: _telefone)),
       onError: (error) => emit(ClienteErrorState(error: error, clientes: existingClientes))
     );
   }
