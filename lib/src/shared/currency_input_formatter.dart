@@ -5,10 +5,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
   final NumberFormat _formatter = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
 
   @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
     String digits = newValue.text.replaceAll(RegExp(r'\D'), '');
 
     if (digits.isEmpty) {

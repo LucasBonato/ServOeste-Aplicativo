@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/date_picker_form_field.dart';
@@ -20,7 +21,6 @@ import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
-import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/models/servico/servico_form.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
@@ -161,7 +161,7 @@ class _UpdateServicoState extends State<UpdateServico> {
   void _populateServicoFormWithState(ServicoSearchOneSuccessState stateServico) {
     _currentSituation = _convertEnumStatusToString(stateServico.servico.situacao);
 
-    print(Formatters.formatToCurrency(stateServico.servico.valorComissao ?? 0.0));
+    Logger().w(Formatters.formatToCurrency(stateServico.servico.valorComissao ?? 0.0));
 
     _servicoUpdateForm.setIdCliente(stateServico.servico.idCliente);
     _servicoUpdateForm.setNomeCliente(stateServico.servico.nomeCliente);
@@ -346,7 +346,7 @@ class _UpdateServicoState extends State<UpdateServico> {
     final int currentLevel = _getServiceLevel(previousValue);
     final int newLevel = _getServiceLevel(value);
 
-    print("Mudando de $previousValue (Nível: $currentLevel) para $value (Nível: $newLevel)");
+    Logger().w("Mudando de $previousValue (Nível: $currentLevel) para $value (Nível: $newLevel)");
 
     if (currentLevel > newLevel) {
       WidgetsBinding.instance.addPostFrameCallback(
@@ -415,7 +415,7 @@ class _UpdateServicoState extends State<UpdateServico> {
   }
 
   void _updateServiceSituation(String value) {
-    print("Atualizando situação para: $value (Nível: ${_getServiceLevel(value)})");
+    Logger().w("Atualizando situação para: $value (Nível: ${_getServiceLevel(value)})");
     if (_servicoUpdateForm.situacao.value == value) return;
 
     _servicoUpdateForm.situacao.value = value;
@@ -825,7 +825,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       valueNotifier: _servicoUpdateForm.situacao,
                       onChanged: (String? newValue) {
                         if (newValue != null && newValue != _servicoUpdateForm.situacao.value) {
-                          print("Dropdown: Situação selecionada: $newValue");
+                          Logger().w("Dropdown: Situação selecionada: $newValue");
                           _handleSituationChange(newValue);
                         }
                       },
@@ -1235,7 +1235,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                     valueNotifier: _servicoUpdateForm.situacao,
                     onChanged: (String? newValue) {
                       if (newValue != null && newValue != _servicoUpdateForm.situacao.value) {
-                        print("Dropdown: Situação selecionada: $newValue");
+                        Logger().w("Dropdown: Situação selecionada: $newValue");
                         _handleSituationChange(newValue);
                       }
                     },
