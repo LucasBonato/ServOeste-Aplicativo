@@ -78,16 +78,4 @@ class Constants {
     "Débito",
     "Dinheiro",
   ];
-
-  static String? getFormaDePagamento(String? valor) {
-    return valor == "Selecione uma forma de pagamento*" ? null : valor;
-  }
-
-  static String? getFilialValida(String? valor) {
-    return valor == "Selecione uma filial*" ? null : valor;
-  }
-
-  static String? getHorarioValido(String? valor) {
-    return valor == "Selecione um horário" ? null : valor;
-  }
 }

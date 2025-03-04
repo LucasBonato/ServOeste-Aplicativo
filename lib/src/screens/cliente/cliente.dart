@@ -10,6 +10,7 @@ import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
 import 'package:serv_oeste/src/components/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
+import 'package:serv_oeste/src/shared/routes.dart';
 
 class ClienteScreen extends StatefulWidget {
   const ClienteScreen({super.key});
@@ -202,7 +203,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
           final bool hasSelection = state is ListaSelectState && state.selectedIds.isNotEmpty;
           
           return (!hasSelection) 
-              ? FloatingActionButtonAdd(route: "/createCliente", event: () => _clienteBloc.add(ClienteSearchEvent()), tooltip: "Adicionar um Cliente")
+              ? FloatingActionButtonAdd(route: Routes.clienteCreate, event: () => _clienteBloc.add(ClienteSearchEvent()), tooltip: "Adicionar um Cliente")
               : FloatingActionButtonRemove(
                   removeMethod: () {
                     _disableClientes(context, state.selectedIds);

@@ -12,6 +12,7 @@ import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:serv_oeste/src/shared/routes.dart';
 
 class TecnicoScreen extends StatefulWidget {
   const TecnicoScreen({super.key});
@@ -243,7 +244,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
           final bool hasSelection = state is ListaSelectState && state.selectedIds.isNotEmpty;
 
           return (!hasSelection)
-              ? FloatingActionButtonAdd(route: "/createTecnico", event: () => _tecnicoBloc.add(TecnicoSearchEvent()), tooltip: "Adicionar um Técnico")
+              ? FloatingActionButtonAdd(route: Routes.tecnicoCreate, event: () => _tecnicoBloc.add(TecnicoSearchEvent()), tooltip: "Adicionar um Técnico")
               : FloatingActionButtonRemove(
                   removeMethod: () {
                     _disableTecnicos(context, state.selectedIds);
