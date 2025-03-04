@@ -15,8 +15,7 @@ import '../screens/servico/servico.dart';
 import '../screens/servico/filter_servico.dart';
 
 class CustomRouter {
-  static Route<dynamic>? onGenerateRoute(
-      RouteSettings settings, BuildContext context) {
+  static Route<dynamic>? onGenerateRoute(RouteSettings settings, BuildContext context) {
     final TecnicoBloc tecnicoBloc = context.read<TecnicoBloc>();
     final ClienteBloc clienteBloc = context.read<ClienteBloc>();
     final ServicoBloc servicoBloc = context.read<ServicoBloc>();

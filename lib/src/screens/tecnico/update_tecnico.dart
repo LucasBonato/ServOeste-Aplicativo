@@ -204,8 +204,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
   }
 
   void _handleBackNavigation() {
-    _tecnicoBloc.add(
-        TecnicoSearchEvent(situacao: Constants.situationTecnicoList.first));
+    _tecnicoBloc.add(TecnicoSearchMenuEvent());
     Navigator.pop(context, "Back");
   }
 

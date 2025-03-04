@@ -34,6 +34,14 @@ class ServicoScreenState extends State<ServicoScreen> {
     _listaBloc = context.read<ListaBloc>();
     _nomeClienteController = TextEditingController();
     _nomeTecnicoController = TextEditingController();
+    _setFilterValues();
+  }
+
+  void _setFilterValues() {
+    if (_servicoBloc.filterRequest != null) {
+      _nomeClienteController.text = _servicoBloc.filterRequest!.clienteNome?? "";
+      _nomeTecnicoController.text = _servicoBloc.filterRequest!.tecnicoNome?? "";
+    }
   }
 
   void _onNomeChanged() {
@@ -93,9 +101,7 @@ class ServicoScreenState extends State<ServicoScreen> {
     final isLargeScreen = screenWidth >= 1000;
     final maxContainerWidth = 1200.0;
 
-    Widget buildSearchField(
-            {required String hint, TextEditingController? controller}) =>
-        CustomSearchTextFormField(
+    Widget buildSearchField({required String hint, TextEditingController? controller}) => CustomSearchTextFormField(
           hint: hint,
           leftPadding: 4,
           rightPadding: 4,
@@ -104,9 +110,7 @@ class ServicoScreenState extends State<ServicoScreen> {
         );
 
     Widget buildFilterIcon() => InkWell(
-          onTap: () => Navigator.of(context, rootNavigator: true)
-              .push(MaterialPageRoute(builder: (context) => FilterService()))
-              .then((_) => _onNomeChanged()),
+          onTap: () => Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(builder: (context) => FilterService())).then((_) => _onNomeChanged()),
           hoverColor: const Color(0xFFF5EEED),
           borderRadius: BorderRadius.circular(10),
           child: Ink(
@@ -176,8 +180,7 @@ class ServicoScreenState extends State<ServicoScreen> {
     return Container(
       width: isLargeScreen ? maxContainerWidth : double.infinity,
       padding: const EdgeInsets.all(5),
-      child:
-          isLargeScreen ? buildLargeScreenLayout() : buildSmallScreenLayout(),
+      child: isLargeScreen ? buildLargeScreenLayout() : buildSmallScreenLayout(),
     );
   }
 
@@ -186,8 +189,7 @@ class ServicoScreenState extends State<ServicoScreen> {
     return Scaffold(
       floatingActionButton: BlocBuilder<ListaBloc, ListaState>(
         builder: (context, state) {
-          final bool hasSelection =
-              state is ListaSelectState && state.selectedIds.isNotEmpty;
+          final bool hasSelection = state is ListaSelectState && state.selectedIds.isNotEmpty;
 
           return !hasSelection
               ? ExpandableFabItems(
@@ -226,8 +228,7 @@ class ServicoScreenState extends State<ServicoScreen> {
           Expanded(
             child: BlocBuilder<ServicoBloc, ServicoState>(
               builder: (context, stateServico) {
-                if (stateServico is ServicoInitialState ||
-                    stateServico is ServicoLoadingState) {
+                if (stateServico is ServicoInitialState || stateServico is ServicoLoadingState) {
                   return const Center(
                     child: CircularProgressIndicator.adaptive(),
                   );
@@ -237,18 +238,14 @@ class ServicoScreenState extends State<ServicoScreen> {
                       child: GridListView(
                         aspectRatio: .9,
                         dataList: stateServico.servicos,
-                        buildCard: (servico) =>
-                            BlocBuilder<ListaBloc, ListaState>(
+                        buildCard: (servico) => BlocBuilder<ListaBloc, ListaState>(
                           bloc: _listaBloc,
                           builder: (context, stateLista) {
-                            final bool isSelected =
-                                _isServicoSelected(servico.id, stateLista);
-                            final bool isSelectionMode =
-                                _isSelectionMode(stateLista);
+                            final bool isSelected = _isServicoSelected(servico.id, stateLista);
+                            final bool isSelectionMode = _isSelectionMode(stateLista);
 
                             return CardService(
-                              onDoubleTap: () =>
-                                  _onNavigateToUpdateScreen(servico.id),
+                              onDoubleTap: () => _onNavigateToUpdateScreen(servico.id),
                               onLongPress: () => _onSelectItemList(servico.id),
                               onTap: () {
                                 if (isSelectionMode) {

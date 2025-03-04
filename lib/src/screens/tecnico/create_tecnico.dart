@@ -3,20 +3,19 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
-import 'package:serv_oeste/src/components/formFields/field_labels.dart';
-import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
+import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/components/formFields/custom_grid_checkers_form_field.dart';
+import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
+import 'package:serv_oeste/src/components/formFields/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/layout/app_bar_form.dart';
 import 'package:serv_oeste/src/components/screen/elevated_form_button.dart';
-import 'package:serv_oeste/src/models/enums/error_code_key.dart';
-import 'package:serv_oeste/src/models/validators/validator.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
+import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
-import 'package:lucid_validation/lucid_validation.dart';
-import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:serv_oeste/src/models/validators/validator.dart';
 import 'package:serv_oeste/src/shared/input_masks.dart';
 
 class CreateTecnico extends StatefulWidget {
@@ -79,8 +78,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
 
   void _onNomeChanged(String nome) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce =
-        Timer(Duration(milliseconds: 150), () => _fetchTecnicoNames(nome));
+    _debounce = Timer(Duration(milliseconds: 150), () => _fetchTecnicoNames(nome));
   }
 
   void _fetchTecnicoNames(String nome) async {
@@ -127,8 +125,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
   }
 
   void _handleBackNavigation() {
-    _tecnicoBloc.add(
-        TecnicoSearchEvent(situacao: Constants.situationTecnicoList.first));
+    _tecnicoBloc.add(TecnicoSearchMenuEvent());
     Navigator.pop(context, "Back");
   }
 

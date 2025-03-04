@@ -33,7 +33,7 @@ class DioInterceptor extends Interceptor {
       logMessage += "RuntimeTypeBody: ${response.data.runtimeType}\n";
     }
 
-    _logger.i(logMessage);
+    // _logger.i(logMessage);
     super.onResponse(response, handler);
   }
 

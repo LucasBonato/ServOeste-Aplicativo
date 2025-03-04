@@ -15,6 +15,12 @@ final class ServicoInitialLoadingEvent extends ServicoEvent {
   ServicoInitialLoadingEvent({required this.filterRequest});
 }
 
+final class ServicoSearchMenuEvent extends ServicoEvent {
+  final ServicoFilterRequest? filterRequest;
+
+  ServicoSearchMenuEvent({this.filterRequest});
+}
+
 final class ServicoSearchOneEvent extends ServicoEvent {
   final int id;
 

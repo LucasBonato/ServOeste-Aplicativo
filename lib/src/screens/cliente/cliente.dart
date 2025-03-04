@@ -33,6 +33,13 @@ class _ClienteScreenState extends State<ClienteScreen> {
     _telefoneController = TextEditingController();
     _enderecoController = TextEditingController();
     _listaBloc.add(ListaInitialEvent());
+    _setFilterValues();
+  }
+
+  void _setFilterValues() {
+    _nomeController.text = _clienteBloc.nome ?? "";
+    _telefoneController.text = _clienteBloc.telefone ?? "";
+    _enderecoController.text = _clienteBloc.endereco ?? "";
   }
 
   void _onSearchFieldChanged() {
@@ -295,8 +302,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
                             SizedBox(height: 10),
                             Text(
                               "Nenhum cliente encontrado.",
-                              style:
-                              TextStyle(fontSize: 18.0, color: Colors.grey),
+                              style: TextStyle(fontSize: 18.0, color: Colors.grey),
                             ),
                           ],
                         ),

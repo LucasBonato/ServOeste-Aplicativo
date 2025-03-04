@@ -431,7 +431,7 @@ class _UpdateServicoState extends State<UpdateServico> {
   }
 
   void _handleBackNavigation() {
-    _servicoBloc.add(ServicoLoadingEvent(filterRequest: ServicoFilterRequest()));
+    _servicoBloc.add(ServicoSearchMenuEvent());
     Navigator.pop(context, "Back");
   }
 

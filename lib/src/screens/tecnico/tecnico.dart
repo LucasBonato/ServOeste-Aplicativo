@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/screen/grid_view.dart';
 import 'package:serv_oeste/src/components/screen/card_technical.dart';
@@ -35,11 +36,20 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     _listaBloc = context.read<ListaBloc>();
     _idController = TextEditingController();
     _nomeController = TextEditingController();
-    _situacaoController =
-        SingleSelectController<String>(Constants.situationTecnicoList.first);
-    _situacaoNotifier =
-        ValueNotifier<String>(Constants.situationTecnicoList.first);
+    _situacaoController = SingleSelectController<String>(Constants.situationTecnicoList.first);
+    _situacaoNotifier = ValueNotifier<String>(Constants.situationTecnicoList.first);
     _listaBloc.add(ListaInitialEvent());
+    _setFilterValues();
+  }
+
+  void _setFilterValues() {
+    _idController.text = (_tecnicoBloc.id == null) ? "" : _tecnicoBloc.id.toString();
+    _nomeController.text = _tecnicoBloc.nome?? "";
+    String situacao = (_tecnicoBloc.situacao != null) ? _tecnicoBloc.situacao![0].toUpperCase() + _tecnicoBloc.situacao!.substring(1) : "";
+    if (situacao != "" && Constants.situationTecnicoList.contains(situacao)) {
+      _situacaoNotifier.value = situacao;
+      _situacaoController = SingleSelectController<String>(situacao);
+    }
   }
 
   void _onNavigateToUpdateScreen(int id) {
@@ -99,11 +109,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
     final isMediumScreen = screenWidth >= 500 && screenWidth < 1000;
     final maxContainerWidth = 1200.0;
 
-    Widget buildSearchField(
-            {required String hint,
-            TextEditingController? controller,
-            TextInputType? keyboardType}) =>
-        CustomSearchTextFormField(
+    Widget buildSearchField({required String hint, TextEditingController? controller, TextInputType? keyboardType}) => CustomSearchTextFormField(
           hint: hint,
           leftPadding: 4,
           rightPadding: 4,
@@ -113,10 +119,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
         );
 
     Widget buildDropdownField(
-            {required String label,
-            required SingleSelectController<String> controller,
-            required ValueNotifier<String> valueNotifier,
-            required List<String> dropdownValues}) =>
+            {required String label, required SingleSelectController<String> controller, required ValueNotifier<String> valueNotifier, required List<String> dropdownValues}) =>
         CustomDropdownFormField(
           label: label,
           dropdownValues: dropdownValues,
@@ -237,8 +240,7 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
       resizeToAvoidBottomInset: true,
       floatingActionButton: BlocBuilder<ListaBloc, ListaState>(
         builder: (context, state) {
-          final bool hasSelection =
-              state is ListaSelectState && state.selectedIds.isNotEmpty;
+          final bool hasSelection = state is ListaSelectState && state.selectedIds.isNotEmpty;
 
           return !hasSelection
               ? BuildWidgets.buildFabAdd(
@@ -265,27 +267,21 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
           Expanded(
             child: BlocBuilder<TecnicoBloc, TecnicoState>(
               builder: (context, stateTecnico) {
-                if (stateTecnico is TecnicoInitialState ||
-                    stateTecnico is TecnicoLoadingState) {
-                  return const Center(
-                      child: CircularProgressIndicator.adaptive());
+                if (stateTecnico is TecnicoInitialState || stateTecnico is TecnicoLoadingState) {
+                  return const Center(child: CircularProgressIndicator.adaptive());
                 } else if (stateTecnico is TecnicoSearchSuccessState) {
                   if (stateTecnico.tecnicos.isNotEmpty) {
                     return SingleChildScrollView(
                       child: GridListView(
                         aspectRatio: 2.5,
                         dataList: stateTecnico.tecnicos,
-                        buildCard: (tecnico) =>
-                            BlocBuilder<ListaBloc, ListaState>(
+                        buildCard: (tecnico) => BlocBuilder<ListaBloc, ListaState>(
                           builder: (context, stateLista) {
-                            final bool isSelected =
-                                _isTecnicoSelected(tecnico.id, stateLista);
-                            final bool isSelectionMode =
-                                _isSelectionMode(stateLista);
+                            final bool isSelected = _isTecnicoSelected(tecnico.id, stateLista);
+                            final bool isSelectionMode = _isSelectionMode(stateLista);
 
                             return CardTechnician(
-                              onDoubleTap: () =>
-                                  _onNavigateToUpdateScreen(tecnico.id!),
+                              onDoubleTap: () => _onNavigateToUpdateScreen(tecnico.id!),
                               onLongPress: () => _onSelectItemList(tecnico.id),
                               onTap: () {
                                 if (isSelectionMode) {

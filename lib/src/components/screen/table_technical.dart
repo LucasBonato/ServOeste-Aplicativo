@@ -251,8 +251,7 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
     final String cellField = event.cell.column.field;
 
     if (cellField == 'tecnico') {
-      Logger().w(
-          'Aviso: A coluna "Técnicos" foi selecionada. Nenhuma ação necessária.');
+      Logger().w('Aviso: A coluna "Técnicos" foi selecionada. Nenhuma ação necessária.');
       return;
     }
 

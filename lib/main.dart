@@ -39,8 +39,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const BaseLayout(),
-      onGenerateRoute: (settings) =>
-          CustomRouter.onGenerateRoute(settings, context),
+      onGenerateRoute: (settings) => CustomRouter.onGenerateRoute(settings, context),
     );
   }
 }
