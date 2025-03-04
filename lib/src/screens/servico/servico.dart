@@ -48,13 +48,17 @@ class ServicoScreenState extends State<ServicoScreen> {
   void _onSearchFieldChanged() {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
-    _debounce = Timer(const Duration(milliseconds: 150), () {
-      final filterRequest = ServicoFilterRequest(
-        clienteNome: _nomeClienteController.text,
-        tecnicoNome: _nomeTecnicoController.text,
-      );
-      _servicoBloc.add(ServicoLoadingEvent(filterRequest: filterRequest));
-    });
+    _debounce = Timer(
+      const Duration(milliseconds: 150),
+      () => _servicoBloc.add(
+        ServicoLoadingEvent(
+          filterRequest: ServicoFilterRequest(
+            clienteNome: _nomeClienteController.text,
+            tecnicoNome: _nomeTecnicoController.text,
+          )
+        )
+      )
+    );
   }
 
   void _onNavigateToUpdateScreen(int id) {
@@ -71,17 +75,11 @@ class ServicoScreenState extends State<ServicoScreen> {
   }
 
   bool _isServicoSelected(int id, ListaState stateLista) {
-    if (stateLista is ListaSelectState) {
-      return stateLista.selectedIds.contains(id);
-    }
-    return false;
+    return (stateLista is ListaSelectState) ? stateLista.selectedIds.contains(id) : false;
   }
 
   bool _isSelectionMode(ListaState stateLista) {
-    if (stateLista is ListaSelectState) {
-      return stateLista.selectedIds.isNotEmpty;
-    }
-    return false;
+    return (stateLista is ListaSelectState) ? stateLista.selectedIds.isNotEmpty : false;
   }
 
   void _disableServicos(BuildContext context, List<int> selectedIds) {
@@ -198,7 +196,7 @@ class ServicoScreenState extends State<ServicoScreen> {
         builder: (context, state) {
           final bool hasSelection = state is ListaSelectState && state.selectedIds.isNotEmpty;
 
-          return !hasSelection
+          return (!hasSelection)
               ? ExpandableFabItems(
                   firstHeroTag: 'add_service',
                   secondHeroTag: 'add_service_cliente',
@@ -235,10 +233,9 @@ class ServicoScreenState extends State<ServicoScreen> {
             child: BlocBuilder<ServicoBloc, ServicoState>(
               builder: (context, stateServico) {
                 if (stateServico is ServicoInitialState || stateServico is ServicoLoadingState) {
-                  return const Center(
-                    child: CircularProgressIndicator.adaptive(),
-                  );
-                } else if (stateServico is ServicoSearchSuccessState) {
+                  return const Center(child: CircularProgressIndicator.adaptive());
+                }
+                else if (stateServico is ServicoSearchSuccessState) {
                   if (stateServico.servicos.isNotEmpty) {
                     return SingleChildScrollView(
                       child: GridListView(
