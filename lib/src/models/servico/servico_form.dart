@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:diacritic/diacritic.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/shared/formatters.dart';
 
@@ -28,6 +27,13 @@ class ServicoForm extends ChangeNotifier {
   ValueNotifier<String> valor = ValueNotifier("");
   ValueNotifier<String> valorPecas = ValueNotifier("");
   ValueNotifier<String> valorComissao = ValueNotifier("");
+  double _valorNumerico = 0.0;
+  double _valorPecasNumerico = 0.0;
+  double _valorComissaoNumerico = 0.0;
+
+  double get valorNumerico => _valorNumerico;
+  double get valorPecasNumerico => _valorPecasNumerico;
+  double get valorComissaoNumerico => _valorComissaoNumerico;
 
   void setId(int? id) {
     this.id.value = id;
@@ -70,16 +76,8 @@ class ServicoForm extends ChangeNotifier {
   }
 
   void setHorario(String? horario) {
-    if (horario != null) {
-      final normalized = removeDiacritics(horario).toLowerCase();
-
-      if (normalized == "manha") {
-        this.horario.value = "Manha";
-      } else {
-        this.horario.value = "Tarde";
-      }
-      notifyListeners();
-    }
+    this.horario.value = horario ?? "";
+    notifyListeners();
   }
 
   void setDescricao(String? descricao) {
@@ -93,9 +91,12 @@ class ServicoForm extends ChangeNotifier {
   }
 
   void setSituacao(String? situacao) {
+    print('Situação: $situacao');
     if (situacao != null) {
       this.situacao.value =
           Formatters.mapStringStatusToEnumStatus(situacao).getSituacao();
+      print(Formatters.mapStringStatusToEnumStatus(situacao).getSituacao());
+      print(this.situacao.value);
       notifyListeners();
     }
   }
@@ -208,58 +209,86 @@ class ServicoForm extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setValor(String? valor) {
-    if (valor == "null") {
-      valor = null;
-    }
-    if (valor != null) {
-      double valueConverted = double.tryParse(valor) ?? 0;
+  set valorNumerico(double value) {
+    _valorNumerico = value;
+  }
 
-      if (valueConverted > 0) {
-        this.valor.value = valueConverted.toString();
-        _calculateCommission();
-        notifyListeners();
-      }
+  void setValorServico(String? valorFormatado) {
+    if (valorFormatado == "null") {
+      valorFormatado = null;
+    }
+    if (valorFormatado != null) {
+      valor.value = valorFormatado;
+      valorNumerico = Formatters.parseCurrencyToDouble(valorFormatado);
+      notifyListeners();
+      Future.delayed(Duration.zero, _calculateCommission);
     }
   }
 
-  void setValorPecas(String? valorPecas) {
-    if (valorPecas == "null") {
-      valorPecas = null;
-    }
-    if (valorPecas != null) {
-      double valueConverted = double.tryParse(valorPecas) ?? 0;
+  void setValorNumerico(double valor) {
+    String valorFormatado = Formatters.formatToCurrency(valor);
+    this.valor.value = valorFormatado;
+    valorNumerico = valor;
 
-      if (valueConverted >= 0) {
-        this.valorPecas.value = valueConverted.toString();
-        _calculateCommission();
-        notifyListeners();
-      }
+    notifyListeners();
+    Future.delayed(Duration.zero, _calculateCommission);
+  }
+
+  void setValorPecas(String? valorPecasFormatado) {
+    if (valorPecasFormatado == "null") {
+      valorPecasFormatado = null;
     }
+    if (valorPecasFormatado != null) {
+      valorPecas.value = valorPecasFormatado;
+      _valorPecasNumerico =
+          Formatters.parseCurrencyToDouble(valorPecasFormatado);
+
+      notifyListeners();
+      Future.delayed(Duration.zero, _calculateCommission);
+    }
+  }
+
+  void setValorPecasNumerico(double valorPecasNumerico) {
+    String valorPecasFormatado =
+        Formatters.formatToCurrency(valorPecasNumerico);
+
+    _valorPecasNumerico = valorPecasNumerico;
+    valorPecas.value = valorPecasFormatado;
+
+    notifyListeners();
+    Future.delayed(Duration.zero, _calculateCommission);
   }
 
   void _calculateCommission() {
-    if (valor.value.isNotEmpty && valor.value.isNotEmpty) {
-      double pieceValue = double.tryParse(valorPecas.value) ?? 0;
-      double value = double.tryParse(valor.value) ?? 0;
+    if (valor.value.isNotEmpty && valorPecas.value.isNotEmpty) {
+      double pieceValue = Formatters.parseCurrencyToDouble(valorPecas.value);
+      double value = Formatters.parseCurrencyToDouble(valor.value);
 
       double commission = (value - pieceValue) / 2;
-      setValorComissao(commission.toString());
+      String formattedCommission = commission.toStringAsFixed(2);
+      setValorComissao(formattedCommission);
     }
   }
 
-  void setValorComissao(String? valorComissao) {
-    if (valorComissao == "null") {
-      valorComissao = "";
+  void setValorComissao(String? valorComissaoFormatado) {
+    if (valorComissaoFormatado == "null") {
+      valorComissaoFormatado = null;
     }
-    if (valorComissao != null) {
-      double valueConverted = double.tryParse(valorComissao) ?? 0;
+    if (valorComissaoFormatado != null) {
+      valorComissao.value = valorComissaoFormatado;
+      _valorComissaoNumerico =
+          Formatters.parseCurrencyToDouble(valorComissaoFormatado);
+      notifyListeners();
+    }
+  }
 
-      if (valueConverted >= 0) {
-        this.valorComissao.value = valueConverted.toString();
-        notifyListeners();
-      }
-    }
+  void setValorComissaoNumerico(double valorComissaoNumerico) {
+    String valorComissaoFormatado =
+        Formatters.formatToCurrency(valorComissaoNumerico);
+
+    _valorComissaoNumerico = valorComissaoNumerico;
+    valorComissao.value = valorComissaoFormatado;
+    notifyListeners();
   }
 
   int? getId() {

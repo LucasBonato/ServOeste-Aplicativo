@@ -1,5 +1,6 @@
 import 'package:serv_oeste/src/models/servico/servico_form.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:serv_oeste/src/shared/formatters.dart';
 
 class Servico {
   int id;
@@ -9,9 +10,9 @@ class Servico {
   String nomeTecnico;
   String equipamento;
   String filial;
-  String horarioPrevisto;
   String marca;
   String situacao;
+  String? horarioPrevisto;
   String? descricao;
   String? formaPagamento;
   bool? garantia;
@@ -41,10 +42,10 @@ class Servico {
     required this.nomeTecnico,
     required this.equipamento,
     required this.filial,
-    required this.horarioPrevisto,
     required this.marca,
     required this.situacao,
-    required this.dataAtendimentoPrevisto,
+    this.horarioPrevisto,
+    this.dataAtendimentoPrevisto,
     this.descricao,
     this.dataFechamento,
     this.garantia,
@@ -77,9 +78,9 @@ class Servico {
         formaPagamento = servicoForm.formaPagamento.value.isEmpty
             ? null
             : servicoForm.formaPagamento.value,
-        valor = double.tryParse(servicoForm.valor.value),
+        valor = Formatters.parseDouble(servicoForm.valor.value),
         valorComissao = double.tryParse(servicoForm.valorComissao.value),
-        valorPecas = double.tryParse(servicoForm.valorPecas.value),
+        valorPecas = Formatters.parseDouble(servicoForm.valorPecas.value),
         dataAtendimentoPrevistoString =
             servicoForm.dataAtendimentoPrevisto.value,
         dataAtendimentoEfetivoString =
@@ -139,8 +140,8 @@ class Servico {
         dataFechamento: json["dataFechamento"] != null
             ? DateTime.parse(json["dataFechamento"])
             : null,
-        dataAtendimentoEfetivo: json["dataAtendimentoEfetivo"] != null
-            ? DateTime.parse(json["dataAtendimentoEfetivo"])
+        dataAtendimentoEfetivo: json["dataAtendimentoEfetiva"] != null
+            ? DateTime.parse(json["dataAtendimentoEfetiva"])
             : null,
         dataAtendimentoAbertura: json["dataAtendimentoAbertura"] != null
             ? DateTime.parse(json["dataAtendimentoAbertura"])

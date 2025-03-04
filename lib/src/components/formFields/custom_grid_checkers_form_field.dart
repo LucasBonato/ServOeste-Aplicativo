@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 class CustomGridCheckersFormField extends StatelessWidget {
   final String? Function([String?])? validator;
   final Map<String, bool> checkersMap;
+  final Function(bool)? onOutrosSelected;
 
-  const CustomGridCheckersFormField(
-      {super.key, required this.validator, required this.checkersMap});
+  const CustomGridCheckersFormField({
+    super.key,
+    required this.validator,
+    required this.checkersMap,
+    this.onOutrosSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +40,9 @@ class CustomGridCheckersFormField extends StatelessWidget {
                       activeColor: Colors.blue,
                       onChanged: (value) {
                         checkersMap[label] = value ?? false;
+                        if (label == "Outros" && onOutrosSelected != null) {
+                          onOutrosSelected!(value ?? false);
+                        }
                         field.reset();
                       },
                     ),

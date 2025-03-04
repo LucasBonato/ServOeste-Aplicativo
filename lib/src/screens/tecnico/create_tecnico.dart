@@ -35,9 +35,10 @@ class _CreateTecnicoState extends State<CreateTecnico> {
   Timer? _debounce;
   late TextEditingController _nomeController,
       _telefoneCelularController,
-      _telefoneFixoController;
+      _telefoneFixoController,
+      _outrosController;
 
-  bool validationCheckBoxes = false;
+  bool _outrosSelected = false;
 
   final Map<String, bool> checkersMap = {
     "Adega": false,
@@ -61,6 +62,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     _nomeController = TextEditingController();
     _telefoneCelularController = TextEditingController();
     _telefoneFixoController = TextEditingController();
+    _outrosController = TextEditingController();
   }
 
   bool _isValidForm() {
@@ -97,6 +99,17 @@ class _CreateTecnicoState extends State<CreateTecnico> {
         _tecnicoCreateForm.removeConhecimentos(idConhecimento);
       }
     });
+
+    if (_outrosSelected && _outrosController.text.isNotEmpty) {
+      List<String> outrosItens = _outrosController.text.split(",");
+      for (var item in outrosItens) {
+        item = item.trim();
+        if (item.isNotEmpty) {
+          _tecnicoCreateForm.addConhecimentos(checkersMap.length + 1);
+        }
+      }
+    }
+
     _tecnicoCreateValidator
         .setConhecimentos(_tecnicoCreateForm.conhecimentos.value);
 
@@ -286,7 +299,38 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                                 _tecnicoCreateForm,
                                 ErrorCodeKey.conhecimento.name),
                             checkersMap: checkersMap,
+                            onOutrosSelected: (selected) {
+                              setState(() {
+                                _outrosSelected = selected;
+                              });
+                            },
                           ),
+                          if (_outrosSelected)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  TextField(
+                                    controller: _outrosController,
+                                    decoration: InputDecoration(
+                                      labelText:
+                                          'Digite os outros conhecimentos do técnico separados por vírgula',
+                                      border: OutlineInputBorder(),
+                                    ),
+                                  ),
+                                  SizedBox(height: 8),
+                                  Text(
+                                    'Exemplo: Ar condicionado, Ventilador, Freezer',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                         ],
                       ),
                       const Padding(
@@ -346,6 +390,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
     _nomeController.dispose();
     _telefoneCelularController.dispose();
     _telefoneFixoController.dispose();
+    _outrosController.dispose();
     _tecnicoCreateForm.dispose();
     super.dispose();
   }
