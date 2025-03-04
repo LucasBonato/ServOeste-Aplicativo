@@ -18,7 +18,8 @@ class EnderecoRepository extends DioService {
         Endereco endereco = Endereco.fromJson(json);
         return endereco;
       }
-    } on DioException catch(e) {
+    }
+    on DioException catch(e) {
       throw Exception(onRequestError(e));
     }
     return null;
