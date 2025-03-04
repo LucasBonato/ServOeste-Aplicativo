@@ -2,11 +2,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/screen/card_client.dart';
+import 'package:serv_oeste/src/components/screen/fab_add.dart';
+import 'package:serv_oeste/src/components/screen/fab_remove.dart';
 import 'package:serv_oeste/src/components/screen/grid_view.dart';
 import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
-import 'package:serv_oeste/src/util/build_widgets.dart';
 import 'package:serv_oeste/src/components/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 
@@ -199,24 +200,15 @@ class _ClienteScreenState extends State<ClienteScreen> {
       floatingActionButton: BlocBuilder<ListaBloc, ListaState>(
         builder: (context, state) {
           final bool hasSelection = state is ListaSelectState && state.selectedIds.isNotEmpty;
-
-          return !hasSelection
-              ? BuildWidgets.buildFabAdd(
-                  context,
-                  "/createCliente",
-                  () {
-                    _clienteBloc.add(ClienteSearchEvent());
-                  },
-                  tooltip: 'Adicionar um cliente',
-                )
-              : BuildWidgets.buildFabRemove(
-                  context,
-                  () {
+          
+          return (!hasSelection) 
+              ? FloatingActionButtonAdd(route: "/createCliente", event: () => _clienteBloc.add(ClienteSearchEvent()), tooltip: "Adicionar um Cliente")
+              : FloatingActionButtonRemove(
+                  removeMethod: () {
                     _disableClientes(context, state.selectedIds);
-
                     context.read<ListaBloc>().add(ListaClearSelectionEvent());
                   },
-                  tooltip: 'Excluir clientes selecionados',
+                  tooltip: "Excluir clientes Selecionados",
                 );
         },
       ),

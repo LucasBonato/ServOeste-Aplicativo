@@ -1,22 +1,31 @@
 import 'package:flutter/material.dart';
 
-class DialogUtils {
-  static Future<void> showConfirmationDialog(
-    BuildContext context,
-    String title,
-    String content,
-    String confirmText,
-    String cancelText,
-    dynamic onConfirm,
-  ) async {
-    return showDialog(
+class FloatingActionButtonRemove extends StatelessWidget {
+  final dynamic removeMethod;
+  final String tooltip;
+
+  const FloatingActionButtonRemove({
+    super.key,
+    required this.removeMethod,
+    required this.tooltip,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      heroTag: "Remove_$tooltip",
+      backgroundColor: Colors.red,
+      shape: const CircleBorder(eccentricity: 0),
+      elevation: 8,
+      tooltip: tooltip,
+      onPressed: () => showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
-            title: Text(title, textAlign: TextAlign.center),
+            title: Text("Deletar itens selecionados?", textAlign: TextAlign.center),
             actionsAlignment: MainAxisAlignment.spaceAround,
             actions: [
               TextButton(
@@ -26,9 +35,9 @@ class DialogUtils {
                     foregroundColor: WidgetStatePropertyAll(Colors.white)),
                 onPressed: () {
                   Navigator.pop(context);
-                  onConfirm();
+                  removeMethod();
                 },
-                child: Text(confirmText, style: const TextStyle(fontSize: 25)),
+                child: Text("Sim", style: const TextStyle(fontSize: 25)),
               ),
               TextButton(
                 style: const ButtonStyle(
@@ -39,10 +48,13 @@ class DialogUtils {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text(cancelText, style: const TextStyle(fontSize: 25)),
+                child: Text("Não", style: const TextStyle(fontSize: 25)),
               )
             ],
           );
-        });
+        },
+      ),
+      child: const Icon(Icons.delete, color: Colors.white, size: 36),
+    );
   }
 }

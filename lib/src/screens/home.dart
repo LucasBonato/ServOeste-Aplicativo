@@ -83,11 +83,10 @@ class _HomeState extends State<Home> {
           const SizedBox(height: 10),
           BlocBuilder<ServicoBloc, ServicoState>(
             builder: (context, stateServico) {
-              if (stateServico is ServicoInitialState ||
-                  stateServico is ServicoLoadingState) {
-                return const Center(
-                    child: CircularProgressIndicator.adaptive());
-              } else if (stateServico is ServicoSearchSuccessState) {
+              if (stateServico is ServicoInitialState || stateServico is ServicoLoadingState) {
+                return const Center(child: CircularProgressIndicator.adaptive());
+              }
+              else if (stateServico is ServicoSearchSuccessState) {
                 if (stateServico.servicos.isEmpty) {
                   return Center(
                     child: Column(

@@ -2,8 +2,9 @@ import 'dart:async';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
 import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
+import 'package:serv_oeste/src/components/screen/fab_add.dart';
+import 'package:serv_oeste/src/components/screen/fab_remove.dart';
 import 'package:serv_oeste/src/components/screen/grid_view.dart';
 import 'package:serv_oeste/src/components/screen/card_technical.dart';
 import 'package:serv_oeste/src/components/formFields/custom_search_form_field.dart';
@@ -11,7 +12,6 @@ import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
-import 'package:serv_oeste/src/util/build_widgets.dart';
 
 class TecnicoScreen extends StatefulWidget {
   const TecnicoScreen({super.key});
@@ -242,22 +242,14 @@ class _TecnicoScreenState extends State<TecnicoScreen> {
         builder: (context, state) {
           final bool hasSelection = state is ListaSelectState && state.selectedIds.isNotEmpty;
 
-          return !hasSelection
-              ? BuildWidgets.buildFabAdd(
-                  context,
-                  "/createTecnico",
-                  () {
-                    _tecnicoBloc.add(TecnicoSearchEvent());
-                  },
-                  tooltip: 'Adicionar um técnico',
-                )
-              : BuildWidgets.buildFabRemove(
-                  context,
-                  () {
+          return (!hasSelection)
+              ? FloatingActionButtonAdd(route: "/createTecnico", event: () => _tecnicoBloc.add(TecnicoSearchEvent()), tooltip: "Adicionar um Técnico")
+              : FloatingActionButtonRemove(
+                  removeMethod: () {
                     _disableTecnicos(context, state.selectedIds);
                     context.read<ListaBloc>().add(ListaClearSelectionEvent());
                   },
-                  tooltip: 'Excluir técnicos selecionados',
+                  tooltip: "Excluir técnicos selecionados",
                 );
         },
       ),
