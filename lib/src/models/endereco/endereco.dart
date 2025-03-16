@@ -1,7 +1,17 @@
 class Endereco {
-  String? endereco;
+  String? logradouro;
+  String? bairro;
+  String? municipio;
 
-  Endereco({required this.endereco});
+  Endereco({
+    required this.logradouro,
+    required this.bairro,
+    required this.municipio,
+  });
 
-  factory Endereco.fromJson(Map<String, dynamic> json) => Endereco(endereco: json["endereco"]);
+  factory Endereco.fromJson(Map<String, dynamic> json) => Endereco(
+    logradouro: json["logradouro"],
+    bairro: json["bairro"],
+    municipio: json["municipio"],
+  );
 }
