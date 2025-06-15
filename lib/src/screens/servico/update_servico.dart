@@ -10,7 +10,7 @@ import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/layout/app_bar_form.dart';
-import 'package:serv_oeste/src/components/screen/card_builder_form.dart';
+import 'package:serv_oeste/src/components/screen/cards/card_builder_form.dart';
 import 'package:serv_oeste/src/components/screen/client_selection_modal.dart';
 import 'package:serv_oeste/src/components/screen/elevated_form_button.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
@@ -24,6 +24,8 @@ import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/models/servico/servico_form.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
+import 'package:serv_oeste/src/pdfs/orcamento_pdf.dart';
+import 'package:serv_oeste/src/pdfs/recibo_pdf.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/shared/currency_input_formatter.dart';
 import 'package:serv_oeste/src/shared/formatters.dart';
@@ -1627,14 +1629,6 @@ class _UpdateServicoState extends State<UpdateServico> {
             padding: const EdgeInsets.only(right: 16),
             child: PopupMenuButton<String>(
               icon: const Icon(Icons.more_vert, color: Colors.black),
-              onSelected: (String value) {
-                // final actionsMap = {
-                //   'relatorioVisitas': '',
-                //   'gerarOrcamento': '',
-                //   'gerarRecibo': '',
-                // };
-                // actionsMap[value]?.call();
-              },
               itemBuilder: (BuildContext context) => [
                 PopupMenuItem<String>(
                   value: 'relatorioVisitas',
@@ -1649,6 +1643,28 @@ class _UpdateServicoState extends State<UpdateServico> {
                   child: Text('Gerar Recibo'),
                 ),
               ],
+              onSelected: (String value) async {
+                final servicoState = context.read<ServicoBloc>().state;
+                final clienteState = context.read<ClienteBloc>().state;
+
+                if (value == 'gerarOrcamento' &&
+                    servicoState is ServicoSearchOneSuccessState &&
+                    clienteState is ClienteSearchOneSuccessState) {
+                  await generateOrcamentoPDF(
+                    servico: servicoState.servico,
+                    cliente: clienteState.cliente,
+                    context: context,
+                  );
+                } else if (value == 'gerarRecibo' &&
+                    servicoState is ServicoSearchOneSuccessState &&
+                    clienteState is ClienteSearchOneSuccessState) {
+                  await generateReciboPDF(
+                    servico: servicoState.servico,
+                    cliente: clienteState.cliente,
+                    context: context,
+                  );
+                }
+              },
             ),
           ),
         ],
