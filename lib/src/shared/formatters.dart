@@ -2,6 +2,15 @@ import 'package:intl/intl.dart';
 import 'package:serv_oeste/src/models/enums/service_status.dart';
 
 class Formatters {
+  static String formatPhonePdf(String? phone, {required bool isCell}) {
+    if (phone == null || phone.isEmpty) {
+      return isCell ? '(  )    -    ' : '(  )    -    ';
+    }
+    return isCell
+        ? Formatters.applyCelularMask(phone)
+        : Formatters.applyTelefoneMask(phone);
+  }
+
   static String applyTelefoneMask(String telefone) {
     if (telefone.length < 10) return telefone;
     return "(${telefone.substring(0, 2)}) ${telefone.substring(2, 6)}-${telefone.substring(6)}";
@@ -21,6 +30,13 @@ class Formatters {
         .replaceAll("-", "");
   }
 
+  static String formatDatePdf(DateTime? date) {
+    if (date == null) {
+      return '   /   /   ';
+    }
+    return Formatters.applyDateMask(date);
+  }
+
   static String applyDateMask(DateTime date) {
     return DateFormat('dd/MM/yyyy').format(date);
   }
@@ -38,6 +54,11 @@ class Formatters {
       default:
         return horario[0].toUpperCase() + horario.substring(1);
     }
+  }
+
+  static String formatValuePdf(double? value) {
+    if (value == null || value == 0) return 'Não informado';
+    return Formatters.formatToCurrency(value);
   }
 
   static String formatToCurrency(double value) {

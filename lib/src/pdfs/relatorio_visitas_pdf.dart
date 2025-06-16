@@ -6,14 +6,15 @@ import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/shared/formatters.dart';
 
-Future<void> generateReciboPDF({
+Future<void> generateChamadoTecnicoPDF({
   required Servico servico,
   required Cliente cliente,
+  required List<Servico> historicoEquipamento,
   required BuildContext context,
 }) async {
   final pdf = pw.Document();
   final logo = await imageFromAssetBundle('assets/servOeste.png');
-  final outputFileName = 'recibo_${servico.id}.pdf';
+  final outputFileName = 'relatorioVisitas_${servico.id}.pdf';
 
   pdf.addPage(
     pw.Page(
@@ -27,7 +28,7 @@ Future<void> generateReciboPDF({
             pw.SizedBox(height: 20),
             pw.Center(
               child: pw.Text(
-                'RECIBO - Nº ${servico.id}',
+                'CHAMADO ATUAL - Nº ${servico.id}',
                 style: pw.TextStyle(
                   fontSize: 16,
                   fontWeight: pw.FontWeight.bold,
@@ -35,9 +36,22 @@ Future<void> generateReciboPDF({
               ),
             ),
             pw.SizedBox(height: 10),
-            _buildAtendimentoInfo(servico, cliente),
-            _buildGarantiaFields(servico),
-            _buildPagamentoField(servico),
+            _buildServiceInfoTable(servico, cliente),
+            pw.SizedBox(height: 10),
+            if (historicoEquipamento.length <= 1)
+              pw.Padding(
+                padding: const pw.EdgeInsets.only(top: 10),
+                child: pw.Text(
+                  '*ESTE É O PRIMEIRO SERVIÇO DO CLIENTE PARA ESTE EQUIPAMENTO.',
+                  textAlign: pw.TextAlign.center,
+                  style: pw.TextStyle(
+                    fontSize: 10,
+                    fontStyle: pw.FontStyle.italic,
+                  ),
+                ),
+              ),
+            if (historicoEquipamento.length > 1)
+              _buildHistoricoEquipamento(historicoEquipamento),
           ],
         );
       },
@@ -97,30 +111,31 @@ pw.Widget _buildHeader(pw.ImageProvider logo) {
   );
 }
 
-pw.Widget _buildAtendimentoInfo(Servico servico, Cliente cliente) {
+pw.Widget _buildServiceInfoTable(Servico servico, Cliente cliente) {
   return pw.Column(
     children: [
       pw.Table(
-        border: pw.TableBorder.all(),
+        border: pw.TableBorder.all(color: PdfColors.black, width: 0.5),
         columnWidths: {
           0: const pw.FlexColumnWidth(1),
           1: const pw.FlexColumnWidth(1),
         },
+        defaultVerticalAlignment: pw.TableCellVerticalAlignment.middle,
         children: [
           pw.TableRow(
             children: [
               pw.Padding(
                 padding: const pw.EdgeInsets.all(8),
                 child: pw.Text(
-                  'Data Atendimento: ${Formatters.formatDatePdf(servico.dataAtendimentoEfetivo)}',
-                  style: pw.TextStyle(fontSize: 10),
+                  'Data Atendimento: ${Formatters.applyDateMask(servico.dataAtendimentoEfetivo!)}',
+                  style: const pw.TextStyle(fontSize: 10),
                 ),
               ),
               pw.Padding(
                 padding: const pw.EdgeInsets.all(8),
                 child: pw.Text(
                   'Período: ${Formatters.formatHorario(servico.horarioPrevisto!)}',
-                  style: pw.TextStyle(fontSize: 10),
+                  style: const pw.TextStyle(fontSize: 10),
                 ),
               ),
             ],
@@ -131,14 +146,14 @@ pw.Widget _buildAtendimentoInfo(Servico servico, Cliente cliente) {
                 padding: const pw.EdgeInsets.all(8),
                 child: pw.Text(
                   'Cliente: ${cliente.nome ?? ''}',
-                  style: pw.TextStyle(fontSize: 10),
+                  style: const pw.TextStyle(fontSize: 10),
                 ),
               ),
               pw.Padding(
                 padding: const pw.EdgeInsets.all(8),
                 child: pw.Text(
                   'Técnico: ${servico.nomeTecnico ?? ''}',
-                  style: pw.TextStyle(fontSize: 10),
+                  style: const pw.TextStyle(fontSize: 10),
                 ),
               ),
             ],
@@ -149,14 +164,14 @@ pw.Widget _buildAtendimentoInfo(Servico servico, Cliente cliente) {
                 padding: const pw.EdgeInsets.all(8),
                 child: pw.Text(
                   'Tel. Fixo: ${Formatters.formatPhonePdf(cliente.telefoneFixo, isCell: false)}',
-                  style: pw.TextStyle(fontSize: 10),
+                  style: const pw.TextStyle(fontSize: 10),
                 ),
               ),
               pw.Padding(
                 padding: const pw.EdgeInsets.all(8),
                 child: pw.Text(
                   'Celular: ${Formatters.formatPhonePdf(cliente.telefoneCelular, isCell: true)}',
-                  style: pw.TextStyle(fontSize: 10),
+                  style: const pw.TextStyle(fontSize: 10),
                 ),
               ),
             ],
@@ -167,14 +182,14 @@ pw.Widget _buildAtendimentoInfo(Servico servico, Cliente cliente) {
                 padding: const pw.EdgeInsets.all(8),
                 child: pw.Text(
                   'Bairro: ${cliente.bairro ?? ''}',
-                  style: pw.TextStyle(fontSize: 10),
+                  style: const pw.TextStyle(fontSize: 10),
                 ),
               ),
               pw.Padding(
                 padding: const pw.EdgeInsets.all(8),
                 child: pw.Text(
                   'Município: ${cliente.municipio ?? ''}',
-                  style: pw.TextStyle(fontSize: 10),
+                  style: const pw.TextStyle(fontSize: 10),
                 ),
               ),
             ],
@@ -185,14 +200,14 @@ pw.Widget _buildAtendimentoInfo(Servico servico, Cliente cliente) {
                 padding: const pw.EdgeInsets.all(8),
                 child: pw.Text(
                   'Endereço: ${cliente.endereco ?? ''}',
-                  style: pw.TextStyle(fontSize: 10),
+                  style: const pw.TextStyle(fontSize: 10),
                 ),
               ),
               pw.Padding(
                 padding: const pw.EdgeInsets.all(8),
                 child: pw.Text(
                   'Valor: ${Formatters.formatValuePdf(servico.valor)}',
-                  style: pw.TextStyle(fontSize: 10),
+                  style: const pw.TextStyle(fontSize: 10),
                 ),
               ),
             ],
@@ -203,14 +218,14 @@ pw.Widget _buildAtendimentoInfo(Servico servico, Cliente cliente) {
                 padding: const pw.EdgeInsets.all(8),
                 child: pw.Text(
                   'Equipamento: ${servico.equipamento}',
-                  style: pw.TextStyle(fontSize: 10),
+                  style: const pw.TextStyle(fontSize: 10),
                 ),
               ),
               pw.Padding(
                 padding: const pw.EdgeInsets.all(8),
                 child: pw.Text(
                   'Marca: ${servico.marca}',
-                  style: pw.TextStyle(fontSize: 10),
+                  style: const pw.TextStyle(fontSize: 10),
                 ),
               ),
             ],
@@ -221,6 +236,7 @@ pw.Widget _buildAtendimentoInfo(Servico servico, Cliente cliente) {
         border: const pw.TableBorder(
           left: pw.BorderSide(),
           right: pw.BorderSide(),
+          bottom: pw.BorderSide(),
         ),
         columnWidths: {
           0: const pw.FlexColumnWidth(2),
@@ -232,7 +248,6 @@ pw.Widget _buildAtendimentoInfo(Servico servico, Cliente cliente) {
                 padding: const pw.EdgeInsets.all(8),
                 child: pw.Text(
                   servico.descricao ?? 'Sem descrição',
-                  style: pw.TextStyle(fontSize: 10),
                 ),
               ),
             ],
@@ -243,54 +258,90 @@ pw.Widget _buildAtendimentoInfo(Servico servico, Cliente cliente) {
   );
 }
 
-pw.Widget _buildGarantiaFields(Servico servico) {
-  return pw.Table(
-    border: pw.TableBorder.all(),
-    columnWidths: {
-      0: const pw.FlexColumnWidth(1),
-      1: const pw.FlexColumnWidth(1),
-    },
+pw.Widget _buildHistoricoEquipamento(List<Servico> historico) {
+  return pw.Column(
+    crossAxisAlignment: pw.CrossAxisAlignment.start,
     children: [
-      pw.TableRow(
+      pw.SizedBox(height: 15),
+      pw.Text(
+        'HISTÓRICO DESTE EQUIPAMENTO',
+        style: pw.TextStyle(
+          fontSize: 12,
+          fontWeight: pw.FontWeight.bold,
+        ),
+      ),
+      pw.SizedBox(height: 10),
+      pw.Table(
+        border: pw.TableBorder.all(color: PdfColors.black, width: 0.5),
+        columnWidths: {
+          0: const pw.FlexColumnWidth(1),
+          1: const pw.FlexColumnWidth(1),
+        },
         children: [
-          pw.Padding(
-            padding: const pw.EdgeInsets.all(8),
-            child: pw.Text(
-              'Início garantia: ${Formatters.formatDatePdf(servico.dataInicioGarantia)}',
-            ),
-          ),
-          pw.Padding(
-            padding: const pw.EdgeInsets.all(8),
-            child: pw.Text(
-              'Fim garantia: ${Formatters.formatDatePdf(servico.dataFimGarantia)}',
-            ),
-          ),
+          for (var servico in historico) ..._buildHistoricoRow(servico),
         ],
       ),
     ],
   );
 }
 
-pw.Widget _buildPagamentoField(Servico servico) {
-  return pw.Table(
-    border: const pw.TableBorder(
-      left: pw.BorderSide(),
-      right: pw.BorderSide(),
-      bottom: pw.BorderSide(),
-    ),
-    columnWidths: {
-      0: const pw.FlexColumnWidth(2),
-    },
-    children: [
-      pw.TableRow(
-        children: [
-          pw.Padding(
-            padding: const pw.EdgeInsets.all(8),
-            child:
-                pw.Text('Forma de pagamento: ${servico.formaPagamento ?? ''}'),
+List<pw.TableRow> _buildHistoricoRow(Servico servico) {
+  return [
+    pw.TableRow(
+      children: [
+        pw.Padding(
+          padding: const pw.EdgeInsets.all(5),
+          child: pw.Text(
+            'Data Abertura: ${Formatters.applyDateMask(servico.dataAtendimentoEfetivo!)}',
+            style: const pw.TextStyle(fontSize: 10),
           ),
-        ],
-      ),
-    ],
-  );
+        ),
+        pw.Padding(
+          padding: const pw.EdgeInsets.all(5),
+          child: pw.Text(
+            servico.dataFechamento != null
+                ? 'Fechado em: ${Formatters.applyDateMask(servico.dataFechamento!)}'
+                : 'Não foi fechado.',
+            style: const pw.TextStyle(fontSize: 10),
+          ),
+        ),
+      ],
+    ),
+    pw.TableRow(
+      children: [
+        pw.Padding(
+          padding: const pw.EdgeInsets.all(5),
+          child: pw.Text(
+            'Técnico: ${servico.nomeTecnico ?? ''}',
+            style: const pw.TextStyle(fontSize: 10),
+          ),
+        ),
+        pw.Padding(
+          padding: const pw.EdgeInsets.all(5),
+          child: pw.Text(
+            'Valor: ${Formatters.formatToCurrency(servico.valor ?? 0)}',
+            style: const pw.TextStyle(fontSize: 10),
+          ),
+        ),
+      ],
+    ),
+    pw.TableRow(
+      children: [
+        pw.Padding(
+          padding: const pw.EdgeInsets.all(5),
+          child: pw.Text(
+            servico.descricao ?? 'Sem descrição',
+            style: const pw.TextStyle(fontSize: 10),
+          ),
+        ),
+        pw.Container(),
+      ],
+    ),
+    pw.TableRow(
+      children: [
+        pw.SizedBox(height: 8),
+        pw.SizedBox(height: 8),
+      ],
+    ),
+  ];
 }

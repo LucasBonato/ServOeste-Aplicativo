@@ -5,6 +5,7 @@ class ServicoFilterRequest {
   final String? clienteNome;
   final String? tecnicoNome;
   final String? equipamento;
+  final String? marca;
   final String? situacao;
   final String? garantia;
   final String? filial;
@@ -23,6 +24,7 @@ class ServicoFilterRequest {
     this.clienteNome,
     this.tecnicoNome,
     this.equipamento,
+    this.marca,
     this.situacao,
     this.garantia,
     this.filial,
@@ -42,6 +44,7 @@ class ServicoFilterRequest {
     String? clienteNome,
     String? tecnicoNome,
     String? equipamento,
+    String? marca,
     String? situacao,
     String? garantia,
     String? filial,
@@ -60,14 +63,19 @@ class ServicoFilterRequest {
       clienteNome: clienteNome ?? this.clienteNome,
       tecnicoNome: tecnicoNome ?? this.tecnicoNome,
       equipamento: equipamento ?? this.equipamento,
+      marca: marca ?? this.marca,
       situacao: situacao ?? this.situacao,
       garantia: garantia ?? this.garantia,
       filial: filial ?? this.filial,
       periodo: periodo ?? this.periodo,
-      dataAtendimentoPrevistoAntes: dataAtendimentoPrevistoAntes ?? this.dataAtendimentoPrevistoAntes,
-      dataAtendimentoPrevistoDepois: dataAtendimentoPrevistoDepois ?? this.dataAtendimentoPrevistoDepois,
-      dataAtendimentoEfetivoAntes: dataAtendimentoEfetivoAntes ?? this.dataAtendimentoEfetivoAntes,
-      dataAtendimentoEfetivoDepois: dataAtendimentoEfetivoDepois ?? this.dataAtendimentoEfetivoDepois,
+      dataAtendimentoPrevistoAntes:
+          dataAtendimentoPrevistoAntes ?? this.dataAtendimentoPrevistoAntes,
+      dataAtendimentoPrevistoDepois:
+          dataAtendimentoPrevistoDepois ?? this.dataAtendimentoPrevistoDepois,
+      dataAtendimentoEfetivoAntes:
+          dataAtendimentoEfetivoAntes ?? this.dataAtendimentoEfetivoAntes,
+      dataAtendimentoEfetivoDepois:
+          dataAtendimentoEfetivoDepois ?? this.dataAtendimentoEfetivoDepois,
       dataAberturaAntes: dataAberturaAntes ?? this.dataAberturaAntes,
       dataAberturaDepois: dataAberturaDepois ?? this.dataAberturaDepois,
     );
@@ -81,14 +89,19 @@ class ServicoFilterRequest {
       'clienteNome': clienteNome,
       'tecnicoNome': tecnicoNome,
       'equipamento': equipamento,
+      'marca': marca,
       'situacao': situacao,
       'garantia': garantia,
       'filial': filial,
       'periodo': periodo,
-      'dataAtendimentoPrevistoAntes': dataAtendimentoPrevistoAntes?.toIso8601String(),
-      'dataAtendimentoPrevistoDepois': dataAtendimentoPrevistoDepois?.toIso8601String(),
-      'dataAtendimentoEfetivoAntes': dataAtendimentoEfetivoAntes?.toIso8601String(),
-      'dataAtendimentoEfetivoDepois': dataAtendimentoEfetivoDepois?.toIso8601String(),
+      'dataAtendimentoPrevistoAntes':
+          dataAtendimentoPrevistoAntes?.toIso8601String(),
+      'dataAtendimentoPrevistoDepois':
+          dataAtendimentoPrevistoDepois?.toIso8601String(),
+      'dataAtendimentoEfetivoAntes':
+          dataAtendimentoEfetivoAntes?.toIso8601String(),
+      'dataAtendimentoEfetivoDepois':
+          dataAtendimentoEfetivoDepois?.toIso8601String(),
       'dataAberturaAntes': dataAberturaAntes?.toIso8601String(),
       'dataAberturaDepois': dataAberturaDepois?.toIso8601String(),
     };
