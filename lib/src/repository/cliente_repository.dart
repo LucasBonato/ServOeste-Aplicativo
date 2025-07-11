@@ -7,11 +7,14 @@ import 'dart:convert';
 class ClienteRepository extends DioService {
   Future<List<Cliente>> fetchListByFilter({String? nome, String? telefone, String? endereco}) async {
     try {
-      final Response<dynamic> response = await dio.post(ServerEndpoints.clienteFindEndpoint, data: {
-        'nome': nome,
-        'telefone': telefone,
-        'endereco': endereco,
-      });
+      final Response<dynamic> response = await dio.post(
+        ServerEndpoints.clienteFindEndpoint,
+        data: {
+          'nome': nome,
+          'telefone': telefone,
+          'endereco': endereco,
+        }
+      );
 
       if (response.data is List) {
         return (response.data as List).map((json) => Cliente.fromJson(json)).toList();
