@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -10,7 +12,7 @@ import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/layout/app_bar_form.dart';
-import 'package:serv_oeste/src/components/screen/card_builder_form.dart';
+import 'package:serv_oeste/src/components/screen/cards/card_builder_form.dart';
 import 'package:serv_oeste/src/components/screen/client_selection_modal.dart';
 import 'package:serv_oeste/src/components/screen/elevated_form_button.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
@@ -24,10 +26,15 @@ import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/models/servico/servico_form.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
+import 'package:serv_oeste/src/pdfs/orcamento_pdf.dart';
+import 'package:serv_oeste/src/pdfs/recibo_pdf.dart';
+import 'package:serv_oeste/src/pdfs/relatorio_visitas_pdf.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/shared/currency_input_formatter.dart';
 import 'package:serv_oeste/src/shared/formatters.dart';
 import 'package:serv_oeste/src/shared/input_masks.dart';
+
+import '../../models/servico/servico_filter_request.dart';
 
 class UpdateServico extends StatefulWidget {
   final int id;
@@ -455,6 +462,74 @@ class _UpdateServicoState extends State<UpdateServico> {
     }
   }
 
+  Future<List<Servico>> _fetchHistoricoEquipamento(
+      Servico servicoAtual, Cliente cliente) async {
+    try {
+      final filterRequest = ServicoFilterRequest(
+        equipamento: servicoAtual.equipamento,
+        marca: servicoAtual.equipamento,
+        clienteId: servicoAtual.idCliente,
+      );
+
+      _servicoBloc.add(ServicoSearchMenuEvent(filterRequest: filterRequest));
+
+      await _servicoBloc.stream.firstWhere((state) =>
+          state is ServicoSearchSuccessState || state is ServicoErrorState);
+
+      if (_servicoBloc.state is ServicoSearchSuccessState) {
+        final response =
+            (_servicoBloc.state as ServicoSearchSuccessState).servicos;
+
+        return response.where((servico) {
+          final marcaAtual =
+              servicoAtual.marca.toLowerCase().replaceAll(' ', '');
+          final marcaServico = servico.marca.toLowerCase().replaceAll(' ', '');
+          return marcaAtual == marcaServico && servico.id != servicoAtual.id;
+        }).toList();
+      }
+
+      return [];
+    } catch (e) {
+      Logger().e("Erro ao buscar histórico: $e");
+      return [];
+    }
+  }
+
+  Future<void> _handleMenuSelection({
+    required String value,
+    required Servico servico,
+    required Cliente cliente,
+    required List<Servico> historicoEquipamento,
+    required BuildContext context,
+  }) async {
+    switch (value) {
+      case 'gerarOrcamento':
+        await generateOrcamentoPDF(
+          servico: servico,
+          cliente: cliente,
+          context: context,
+        );
+        break;
+
+      case 'gerarRecibo':
+        await generateReciboPDF(
+          servico: servico,
+          cliente: cliente,
+          context: context,
+        );
+        break;
+
+      case 'relatorioVisitas':
+        await generateChamadoTecnicoPDF(
+          servico: servico,
+          cliente: cliente,
+          historicoEquipamento: historicoEquipamento,
+          context: context,
+        );
+        break;
+    }
+  }
+
   void _updateServiceSituation(String value) {
     Logger().w(
         "Atualizando situação para: $value (Nível: ${_getServiceLevel(value)})");
@@ -474,7 +549,12 @@ class _UpdateServicoState extends State<UpdateServico> {
   }
 
   void _handleBackNavigation() {
-    _servicoBloc.add(ServicoSearchMenuEvent());
+    _servicoBloc.add(ServicoSearchMenuEvent(
+        filterRequest: ServicoFilterRequest(
+      equipamento: null,
+      marca: null,
+      clienteId: null,
+    )));
     Navigator.pop(context, "Back");
   }
 
@@ -1627,28 +1707,42 @@ class _UpdateServicoState extends State<UpdateServico> {
             padding: const EdgeInsets.only(right: 16),
             child: PopupMenuButton<String>(
               icon: const Icon(Icons.more_vert, color: Colors.black),
-              onSelected: (String value) {
-                // final actionsMap = {
-                //   'relatorioVisitas': '',
-                //   'gerarOrcamento': '',
-                //   'gerarRecibo': '',
-                // };
-                // actionsMap[value]?.call();
-              },
               itemBuilder: (BuildContext context) => [
-                PopupMenuItem<String>(
-                  value: 'relatorioVisitas',
-                  child: Text('Imprimir Relatório de Visitas'),
-                ),
-                PopupMenuItem<String>(
+                const PopupMenuItem<String>(
                   value: 'gerarOrcamento',
                   child: Text('Gerar Orçamento'),
                 ),
-                PopupMenuItem<String>(
+                const PopupMenuItem<String>(
                   value: 'gerarRecibo',
                   child: Text('Gerar Recibo'),
                 ),
+                const PopupMenuItem<String>(
+                  value: 'relatorioVisitas',
+                  child: Text('Gerar Relatório de Visitas'),
+                ),
               ],
+              onSelected: (String value) async {
+                final servicoState = context.read<ServicoBloc>().state;
+                final clienteState = context.read<ClienteBloc>().state;
+
+                if (servicoState is! ServicoSearchOneSuccessState ||
+                    clienteState is! ClienteSearchOneSuccessState) {
+                  return;
+                }
+
+                final historico = await _fetchHistoricoEquipamento(
+                    servicoState.servico, clienteState.cliente);
+
+                if (!mounted) return;
+
+                await _handleMenuSelection(
+                  value: value,
+                  servico: servicoState.servico,
+                  cliente: clienteState.cliente,
+                  historicoEquipamento: historico,
+                  context: context,
+                );
+              },
             ),
           ),
         ],

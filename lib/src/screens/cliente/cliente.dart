@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:serv_oeste/src/components/screen/card_client.dart';
-import 'package:serv_oeste/src/components/screen/fab_add.dart';
-import 'package:serv_oeste/src/components/screen/fab_remove.dart';
+import 'package:serv_oeste/src/components/screen/cards/card_client.dart';
+import 'package:serv_oeste/src/components/layout/fab_add.dart';
+import 'package:serv_oeste/src/components/layout/fab_remove.dart';
 import 'package:serv_oeste/src/components/screen/grid_view.dart';
 import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
@@ -22,7 +22,9 @@ class ClienteScreen extends StatefulWidget {
 class _ClienteScreenState extends State<ClienteScreen> {
   late final ListaBloc _listaBloc;
   late final ClienteBloc _clienteBloc;
-  late final TextEditingController _nomeController, _telefoneController, _enderecoController;
+  late final TextEditingController _nomeController,
+      _telefoneController,
+      _enderecoController;
   Timer? _debounce;
 
   @override
@@ -72,11 +74,15 @@ class _ClienteScreenState extends State<ClienteScreen> {
   }
 
   bool _isClienteSelected(int id, ListaState stateLista) {
-    return (stateLista is ListaSelectState) ? stateLista.selectedIds.contains(id) : false;
+    return (stateLista is ListaSelectState)
+        ? stateLista.selectedIds.contains(id)
+        : false;
   }
 
   bool _isSelectionMode(ListaState stateLista) {
-    return (stateLista is ListaSelectState) ? stateLista.selectedIds.isNotEmpty : false;
+    return (stateLista is ListaSelectState)
+        ? stateLista.selectedIds.isNotEmpty
+        : false;
   }
 
   Widget _buildSearchInputs() {
@@ -85,7 +91,11 @@ class _ClienteScreenState extends State<ClienteScreen> {
     final isMediumScreen = screenWidth >= 500 && screenWidth < 1000;
     final maxContainerWidth = 1200.0;
 
-    Widget buildSearchField({required String hint, TextEditingController? controller, TextInputType? keyboardType}) => CustomSearchTextFormField(
+    Widget buildSearchField(
+            {required String hint,
+            TextEditingController? controller,
+            TextInputType? keyboardType}) =>
+        CustomSearchTextFormField(
           hint: hint,
           leftPadding: 4,
           rightPadding: 4,
@@ -199,14 +209,14 @@ class _ClienteScreenState extends State<ClienteScreen> {
       resizeToAvoidBottomInset: true,
       floatingActionButton: BlocBuilder<ListaBloc, ListaState>(
         builder: (context, state) {
-          final bool hasSelection = state is ListaSelectState && state.selectedIds.isNotEmpty;
-          
-          return (!hasSelection) 
+          final bool hasSelection =
+              state is ListaSelectState && state.selectedIds.isNotEmpty;
+
+          return (!hasSelection)
               ? FloatingActionButtonAdd(
                   route: Routes.clienteCreate,
                   event: () => _clienteBloc.add(ClienteSearchMenuEvent()),
-                  tooltip: "Adicionar um Cliente"
-                )
+                  tooltip: "Adicionar um Cliente")
               : FloatingActionButtonRemove(
                   removeMethod: () {
                     _disableClientes(context, state.selectedIds);
@@ -240,10 +250,12 @@ class _ClienteScreenState extends State<ClienteScreen> {
                       child: CircularProgressIndicator.adaptive(),
                     );
                   }
-                  if (stateCliente is ClienteSearchSuccessState || stateCliente is ClienteErrorState) {
-                    final List<Cliente>? clientes = (stateCliente is ClienteSearchSuccessState)
-                        ? stateCliente.clientes
-                        : (stateCliente as ClienteErrorState).clientes;
+                  if (stateCliente is ClienteSearchSuccessState ||
+                      stateCliente is ClienteErrorState) {
+                    final List<Cliente>? clientes =
+                        (stateCliente is ClienteSearchSuccessState)
+                            ? stateCliente.clientes
+                            : (stateCliente as ClienteErrorState).clientes;
 
                     if (stateCliente is ClienteErrorState) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -262,15 +274,20 @@ class _ClienteScreenState extends State<ClienteScreen> {
                         child: GridListView(
                           aspectRatio: 1.65,
                           dataList: clientes,
-                          buildCard: (cliente) => BlocBuilder<ListaBloc, ListaState>(
+                          buildCard: (cliente) =>
+                              BlocBuilder<ListaBloc, ListaState>(
                             bloc: _listaBloc,
                             builder: (context, stateLista) {
-                              final bool isSelected = _isClienteSelected(cliente.id, stateLista);
-                              final bool isSelectionMode = _isSelectionMode(stateLista);
+                              final bool isSelected =
+                                  _isClienteSelected(cliente.id, stateLista);
+                              final bool isSelectionMode =
+                                  _isSelectionMode(stateLista);
 
                               return CardClient(
-                                onDoubleTap: () => _onNavigateToUpdateScreen(cliente.id!),
-                                onLongPress: () => _onSelectItemList(cliente.id!),
+                                onDoubleTap: () =>
+                                    _onNavigateToUpdateScreen(cliente.id!),
+                                onLongPress: () =>
+                                    _onSelectItemList(cliente.id!),
                                 onTap: () {
                                   if (isSelectionMode) {
                                     _onSelectItemList(cliente.id!);
@@ -287,8 +304,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
                           ),
                         ),
                       );
-                    }
-                    else {
+                    } else {
                       return const Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -301,7 +317,8 @@ class _ClienteScreenState extends State<ClienteScreen> {
                             SizedBox(height: 10),
                             Text(
                               "Nenhum cliente encontrado.",
-                              style: TextStyle(fontSize: 18.0, color: Colors.grey),
+                              style:
+                                  TextStyle(fontSize: 18.0, color: Colors.grey),
                             ),
                           ],
                         ),

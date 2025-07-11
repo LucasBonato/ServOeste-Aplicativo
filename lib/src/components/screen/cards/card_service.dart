@@ -90,17 +90,6 @@ class CardService extends StatelessWidget {
     return convertedStatus;
   }
 
-  String formatHorario(String horario) {
-    switch (horario.toLowerCase()) {
-      case "manha":
-        return "Manhã";
-      case "tarde":
-        return "Tarde";
-      default:
-        return horario[0].toUpperCase() + horario.substring(1);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final ValueNotifier<bool> isHovered = ValueNotifier(false);
@@ -217,7 +206,7 @@ class CardService extends StatelessWidget {
                                 left: constraints.maxWidth * 0.15,
                               ),
                               child: Text(
-                                "Data Prevista: ${dataPrevista?.day}/${dataPrevista?.month}/${dataPrevista?.year} - ${formatHorario(horario!)}",
+                                "Data Prevista: ${Formatters.applyDateMask(dataPrevista!)} - ${Formatters.formatHorario(horario!)}",
                                 style: TextStyle(
                                   fontSize: constraints.maxWidth * 0.045,
                                   color: Colors.black,
@@ -230,7 +219,7 @@ class CardService extends StatelessWidget {
                                 left: constraints.maxWidth * 0.15,
                               ),
                               child: Text(
-                                "Data Efetiva: ${dataEfetiva!.day}/${dataEfetiva!.month}/${dataEfetiva!.year} - ${formatHorario(horario!)}",
+                                "Data Efetiva: ${Formatters.applyDateMask(dataEfetiva!)} - ${Formatters.formatHorario(horario!)}",
                                 style: TextStyle(
                                   fontSize: constraints.maxWidth * 0.045,
                                   color: Colors.black,
@@ -244,7 +233,7 @@ class CardService extends StatelessWidget {
                                 left: constraints.maxWidth * 0.15,
                               ),
                               child: Text(
-                                "Data Fechamento: ${dataFechamento!.day}/${dataFechamento!.month}/${dataFechamento!.year}",
+                                "Data Fechamento: ${Formatters.applyDateMask(dataFechamento!)}",
                                 style: TextStyle(
                                   fontSize: constraints.maxWidth * 0.045,
                                   color: Colors.black,
@@ -258,7 +247,7 @@ class CardService extends StatelessWidget {
                                 left: constraints.maxWidth * 0.15,
                               ),
                               child: Text(
-                                "Data Final da Garantia: ${dataFinalGarantia!.day}/${dataFinalGarantia!.month}/${dataFinalGarantia!.year}",
+                                "Data Final da Garantia: ${Formatters.applyDateMask(dataFinalGarantia!)}",
                                 style: TextStyle(
                                   fontSize: constraints.maxWidth * 0.045,
                                   color: Colors.black,

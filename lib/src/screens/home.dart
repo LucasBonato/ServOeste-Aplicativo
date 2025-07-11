@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/screen/grid_view.dart';
-import 'package:serv_oeste/src/components/screen/card_service.dart';
+import 'package:serv_oeste/src/components/screen/cards/card_service.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/screens/servico/update_servico.dart';
@@ -83,10 +83,11 @@ class _HomeState extends State<Home> {
           const SizedBox(height: 10),
           BlocBuilder<ServicoBloc, ServicoState>(
             builder: (context, stateServico) {
-              if (stateServico is ServicoInitialState || stateServico is ServicoLoadingState) {
-                return const Center(child: CircularProgressIndicator.adaptive());
-              }
-              else if (stateServico is ServicoSearchSuccessState) {
+              if (stateServico is ServicoInitialState ||
+                  stateServico is ServicoLoadingState) {
+                return const Center(
+                    child: CircularProgressIndicator.adaptive());
+              } else if (stateServico is ServicoSearchSuccessState) {
                 if (stateServico.servicos.isEmpty) {
                   return Center(
                     child: Column(
