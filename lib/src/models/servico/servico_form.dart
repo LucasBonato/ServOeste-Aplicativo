@@ -90,10 +90,8 @@ class ServicoForm extends ChangeNotifier {
   void setSituacao(String? situacao) {
     Logger().w('Situação: $situacao');
     if (situacao != null) {
-      this.situacao.value =
-          Formatters.mapStringStatusToEnumStatus(situacao).getSituacao();
-      Logger()
-          .w(Formatters.mapStringStatusToEnumStatus(situacao).getSituacao());
+      this.situacao.value = Formatters.mapStringStatusToEnumStatus(situacao).getSituacao();
+      Logger().w(Formatters.mapStringStatusToEnumStatus(situacao).getSituacao());
       Logger().w(this.situacao.value);
       notifyListeners();
     }
@@ -106,8 +104,7 @@ class ServicoForm extends ChangeNotifier {
 
   void setGarantiaBool(bool? garantia) {
     if (garantia != null) {
-      this.garantia.value =
-          (garantia) ? Constants.garantias.first : Constants.garantias.last;
+      this.garantia.value = (garantia) ? Constants.garantias.first : Constants.garantias.last;
       notifyListeners();
     }
   }
@@ -124,24 +121,21 @@ class ServicoForm extends ChangeNotifier {
 
   void setDataInicioGarantiaDate(DateTime? dataInicioGarantia) {
     if (dataInicioGarantia != null) {
-      this.dataInicioGarantia.value =
-          Formatters.applyDateMask(dataInicioGarantia);
+      this.dataInicioGarantia.value = Formatters.applyDateMask(dataInicioGarantia);
       notifyListeners();
     }
   }
 
   void setDataFinalGarantiaDate(DateTime? dataFinalGarantia) {
     if (dataFinalGarantia != null) {
-      this.dataFinalGarantia.value =
-          Formatters.applyDateMask(dataFinalGarantia);
+      this.dataFinalGarantia.value = Formatters.applyDateMask(dataFinalGarantia);
       notifyListeners();
     }
   }
 
   void setDataAtendimentoPrevistoDate(DateTime? dataAtendimentoPrevisto) {
     if (dataAtendimentoPrevisto != null) {
-      this.dataAtendimentoPrevisto.value =
-          Formatters.applyDateMask(dataAtendimentoPrevisto);
+      this.dataAtendimentoPrevisto.value = Formatters.applyDateMask(dataAtendimentoPrevisto);
       notifyListeners();
     }
   }
@@ -153,8 +147,7 @@ class ServicoForm extends ChangeNotifier {
 
   void setDataAtendimentoEfetivoDate(DateTime? dataAtendimentoEfetivo) {
     if (dataAtendimentoEfetivo != null) {
-      this.dataAtendimentoEfetivo.value =
-          Formatters.applyDateMask(dataAtendimentoEfetivo);
+      this.dataAtendimentoEfetivo.value = Formatters.applyDateMask(dataAtendimentoEfetivo);
       notifyListeners();
     }
   }
@@ -166,8 +159,7 @@ class ServicoForm extends ChangeNotifier {
 
   void setDataAtendimentoAberturaDate(DateTime? dataAtendimentoAbertura) {
     if (dataAtendimentoAbertura != null) {
-      this.dataAtendimentoAbertura.value =
-          Formatters.applyDateMask(dataAtendimentoAbertura);
+      this.dataAtendimentoAbertura.value = Formatters.applyDateMask(dataAtendimentoAbertura);
       notifyListeners();
     }
   }
@@ -191,8 +183,7 @@ class ServicoForm extends ChangeNotifier {
 
   void setDataPagamentoComissaoDate(DateTime? dataPagamentoComissao) {
     if (dataPagamentoComissao != null) {
-      this.dataPagamentoComissao.value =
-          Formatters.applyDateMask(dataPagamentoComissao);
+      this.dataPagamentoComissao.value = Formatters.applyDateMask(dataPagamentoComissao);
       notifyListeners();
     }
   }
@@ -234,8 +225,7 @@ class ServicoForm extends ChangeNotifier {
     }
     if (valorPecasFormatado != null) {
       valorPecas.value = valorPecasFormatado;
-      valorPecasNumerico =
-          Formatters.parseCurrencyToDouble(valorPecasFormatado);
+      valorPecasNumerico = Formatters.parseCurrencyToDouble(valorPecasFormatado);
 
       notifyListeners();
       Future.delayed(Duration.zero, _calculateCommission);
@@ -243,8 +233,7 @@ class ServicoForm extends ChangeNotifier {
   }
 
   void setValorPecasNumerico(double valorPecasNumerico) {
-    String valorPecasFormatado =
-        Formatters.formatToCurrency(valorPecasNumerico);
+    String valorPecasFormatado = Formatters.formatToCurrency(valorPecasNumerico);
 
     valorPecasNumerico = valorPecasNumerico;
     valorPecas.value = valorPecasFormatado;
@@ -259,6 +248,11 @@ class ServicoForm extends ChangeNotifier {
       double value = Formatters.parseCurrencyToDouble(valor.value);
 
       double commission = (value - pieceValue) / 2;
+
+      if (commission < 0) {
+        commission = 0;
+      }
+
       String formattedCommission = commission.toStringAsFixed(2);
       setValorComissao(formattedCommission);
     }
@@ -270,15 +264,13 @@ class ServicoForm extends ChangeNotifier {
     }
     if (valorComissaoFormatado != null) {
       valorComissao.value = valorComissaoFormatado;
-      valorComissaoNumerico =
-          Formatters.parseCurrencyToDouble(valorComissaoFormatado);
+      valorComissaoNumerico = Formatters.parseCurrencyToDouble(valorComissaoFormatado);
       notifyListeners();
     }
   }
 
   void setValorComissaoNumerico(double valorComissaoNumerico) {
-    String valorComissaoFormatado =
-        Formatters.formatToCurrency(valorComissaoNumerico);
+    String valorComissaoFormatado = Formatters.formatToCurrency(valorComissaoNumerico);
 
     valorComissaoNumerico = valorComissaoNumerico;
     valorComissao.value = valorComissaoFormatado;
