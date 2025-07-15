@@ -3,7 +3,7 @@ part of 'lista_bloc.dart';
 @immutable
 sealed class ListaEvent {}
 
-final class ListaInitialEvent extends ListaEvent {}
+final class ListaClearEvent extends ListaEvent {}
 
 final class ListaClearSelectionEvent extends ListaEvent {}
 

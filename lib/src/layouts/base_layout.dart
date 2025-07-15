@@ -51,17 +51,17 @@ class BaseLayoutState extends State<BaseLayout> {
     _screens[index] = switch (index) {
       0 => BlocProvider.value(value: _servicoBloc, child: Home(key: UniqueKey())),
       1 => MultiBlocProvider(
-          providers: [BlocProvider.value(value: _tecnicoBloc), BlocProvider(create: (_) => ListaBloc()..add(ListaInitialEvent()))],
+          providers: [BlocProvider.value(value: _tecnicoBloc), BlocProvider(create: (_) => ListaBloc()..add(ListaClearEvent()))],
           child: TecnicoScreen(key: UniqueKey()),
         ),
       2 => MultiBlocProvider(
-          providers: [BlocProvider.value(value: _clienteBloc), BlocProvider(create: (_) => ListaBloc()..add(ListaInitialEvent()))],
+          providers: [BlocProvider.value(value: _clienteBloc), BlocProvider(create: (_) => ListaBloc()..add(ListaClearEvent()))],
           child: ClienteScreen(key: UniqueKey()),
         ),
       3 => MultiBlocProvider(
           providers: [
             BlocProvider.value(value: _servicoBloc),
-            BlocProvider(create: (_) => ListaBloc()..add(ListaInitialEvent())),
+            BlocProvider(create: (_) => ListaBloc()..add(ListaClearEvent())),
           ],
           child: ServicoScreen(key: UniqueKey()),
         ),

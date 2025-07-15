@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/screen/cards/card_client.dart';
@@ -7,82 +6,29 @@ import 'package:serv_oeste/src/components/layout/fab_remove.dart';
 import 'package:serv_oeste/src/components/screen/grid_view.dart';
 import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
+import 'package:serv_oeste/src/screens/base_list_screen.dart';
 import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
 import 'package:serv_oeste/src/components/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
+import 'package:serv_oeste/src/shared/debouncer.dart';
 import 'package:serv_oeste/src/shared/routes.dart';
 
-class ClienteScreen extends StatefulWidget {
+class ClienteScreen extends BaseListScreen<ClienteScreen> {
   const ClienteScreen({super.key});
 
   @override
-  State<ClienteScreen> createState() => _ClienteScreenState();
+  BaseListScreenState<ClienteScreen> createState() => _ClienteScreenState();
 }
 
-class _ClienteScreenState extends State<ClienteScreen> {
-  late final ListaBloc _listaBloc;
+class _ClienteScreenState extends BaseListScreenState<ClienteScreen> {
   late final ClienteBloc _clienteBloc;
-  late final TextEditingController _nomeController,
-      _telefoneController,
-      _enderecoController;
-  Timer? _debounce;
-
-  @override
-  void initState() {
-    super.initState();
-    _clienteBloc = context.read<ClienteBloc>();
-    _listaBloc = context.read<ListaBloc>();
-    _nomeController = TextEditingController();
-    _telefoneController = TextEditingController();
-    _enderecoController = TextEditingController();
-    _listaBloc.add(ListaInitialEvent());
-    _setFilterValues();
-  }
+  late final TextEditingController _nomeController, _telefoneController, _enderecoController;
+  final Debouncer debouncer = Debouncer();
 
   void _setFilterValues() {
     _nomeController.text = _clienteBloc.nomeMenu ?? "";
     _telefoneController.text = _clienteBloc.telefoneMenu ?? "";
     _enderecoController.text = _clienteBloc.enderecoMenu ?? "";
-  }
-
-  void _onSearchFieldChanged() {
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-
-    _debounce = Timer(
-      Duration(milliseconds: 150),
-      () => _clienteBloc.add(
-        ClienteSearchMenuEvent(
-          nome: _nomeController.text,
-          telefone: _telefoneController.text,
-          endereco: _enderecoController.text,
-        ),
-      ),
-    );
-  }
-
-  void _onNavigateToUpdateScreen(int id) {
-    Navigator.of(context, rootNavigator: true).push(
-      MaterialPageRoute(
-        builder: (context) => UpdateCliente(id: id),
-      ),
-    );
-    _listaBloc.add(ListaClearSelectionEvent());
-  }
-
-  void _onSelectItemList(int id) {
-    _listaBloc.add(ListaToggleItemSelectEvent(id: id));
-  }
-
-  bool _isClienteSelected(int id, ListaState stateLista) {
-    return (stateLista is ListaSelectState)
-        ? stateLista.selectedIds.contains(id)
-        : false;
-  }
-
-  bool _isSelectionMode(ListaState stateLista) {
-    return (stateLista is ListaSelectState)
-        ? stateLista.selectedIds.isNotEmpty
-        : false;
   }
 
   Widget _buildSearchInputs() {
@@ -91,41 +37,58 @@ class _ClienteScreenState extends State<ClienteScreen> {
     final isMediumScreen = screenWidth >= 500 && screenWidth < 1000;
     final maxContainerWidth = 1200.0;
 
-    Widget buildSearchField(
-            {required String hint,
-            TextEditingController? controller,
-            TextInputType? keyboardType}) =>
-        CustomSearchTextFormField(
-          hint: hint,
-          leftPadding: 4,
-          rightPadding: 4,
-          controller: controller,
-          keyboardType: keyboardType,
-          onChangedAction: (value) => _onSearchFieldChanged(),
-          onSuffixAction: (value) {
-            setState(() {
-              controller?.clear();
-            });
-            _onSearchFieldChanged();
-          },
-        );
+    Widget buildSearchField({required String hint, TextEditingController? controller, TextInputType? keyboardType}) => CustomSearchTextFormField(
+      hint: hint,
+      leftPadding: 4,
+      rightPadding: 4,
+      controller: controller,
+      keyboardType: keyboardType,
+      onChangedAction: (value) => onSearchFieldChanged(),
+      onSuffixAction: (value) {
+        setState(() {
+          controller?.clear();
+        });
+        onSearchFieldChanged();
+      },
+    );
 
     Widget buildLargeScreenLayout() => Row(
+      children: [
+        Expanded(
+          flex: 2,
+          child: buildSearchField(
+            hint: "Procure por Clientes...",
+            controller: _nomeController,
+          ),
+        ),
+        Expanded(
+          flex: 2,
+          child: buildSearchField(
+            hint: 'Endereço...',
+            controller: _enderecoController,
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: buildSearchField(
+            hint: 'Telefone...',
+            keyboardType: TextInputType.phone,
+            controller: _telefoneController,
+          ),
+        ),
+      ],
+    );
+
+    Widget buildMediumScreenLayout() => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        buildSearchField(
+          hint: "Procure por Clientes...",
+          controller: _nomeController,
+        ),
+        SizedBox(height: 5),
+        Row(
           children: [
-            Expanded(
-              flex: 2,
-              child: buildSearchField(
-                hint: "Procure por Clientes...",
-                controller: _nomeController,
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: buildSearchField(
-                hint: 'Endereço...',
-                controller: _enderecoController,
-              ),
-            ),
             Expanded(
               flex: 1,
               child: buildSearchField(
@@ -134,58 +97,37 @@ class _ClienteScreenState extends State<ClienteScreen> {
                 controller: _telefoneController,
               ),
             ),
-          ],
-        );
-
-    Widget buildMediumScreenLayout() => Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            buildSearchField(
-              hint: "Procure por Clientes...",
-              controller: _nomeController,
-            ),
-            SizedBox(height: 5),
-            Row(
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: buildSearchField(
-                    hint: 'Telefone...',
-                    keyboardType: TextInputType.phone,
-                    controller: _telefoneController,
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: buildSearchField(
-                    hint: 'Endereço...',
-                    controller: _enderecoController,
-                  ),
-                ),
-              ],
+            Expanded(
+              flex: 1,
+              child: buildSearchField(
+                hint: 'Endereço...',
+                controller: _enderecoController,
+              ),
             ),
           ],
-        );
+        ),
+      ],
+    );
 
     Widget buildSmallScreenLayout() => Column(
-          children: [
-            buildSearchField(
-              hint: "Procure por Clientes...",
-              controller: _nomeController,
-            ),
-            SizedBox(height: 5),
-            buildSearchField(
-              hint: 'Telefone...',
-              keyboardType: TextInputType.phone,
-              controller: _telefoneController,
-            ),
-            SizedBox(height: 5),
-            buildSearchField(
-              hint: 'Endereço...',
-              controller: _enderecoController,
-            ),
-          ],
-        );
+      children: [
+        buildSearchField(
+          hint: "Procure por Clientes...",
+          controller: _nomeController,
+        ),
+        SizedBox(height: 5),
+        buildSearchField(
+          hint: 'Telefone...',
+          keyboardType: TextInputType.phone,
+          controller: _telefoneController,
+        ),
+        SizedBox(height: 5),
+        buildSearchField(
+          hint: 'Endereço...',
+          controller: _enderecoController,
+        ),
+      ],
+    );
 
     return Container(
       width: isLargeScreen ? maxContainerWidth : double.infinity,
@@ -193,14 +135,40 @@ class _ClienteScreenState extends State<ClienteScreen> {
       child: (isLargeScreen)
           ? buildLargeScreenLayout()
           : (isMediumScreen)
-              ? buildMediumScreenLayout()
-              : buildSmallScreenLayout(),
+          ? buildMediumScreenLayout()
+          : buildSmallScreenLayout(),
     );
   }
 
-  void _disableClientes(BuildContext context, List<int> selectedIds) {
+  @override
+  Widget getUpdateScreen(int id) => UpdateCliente(id: id);
+
+  @override
+  void onSearchFieldChanged() {
+    debouncer.execute(
+      () => _clienteBloc.add(
+        ClienteSearchMenuEvent(
+          nome: _nomeController.text,
+          telefone: _telefoneController.text,
+          endereco: _enderecoController.text,
+        ),
+      )
+    );
+  }
+
+  @override
+  void onDisableItems(List<int> selectedIds) {
     _clienteBloc.add(ClienteDeleteListEvent(selectedList: selectedIds));
-    _listaBloc.add(ListaClearSelectionEvent());
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _clienteBloc = context.read<ClienteBloc>();
+    _nomeController = TextEditingController();
+    _telefoneController = TextEditingController();
+    _enderecoController = TextEditingController();
+    _setFilterValues();
   }
 
   @override
@@ -209,19 +177,12 @@ class _ClienteScreenState extends State<ClienteScreen> {
       resizeToAvoidBottomInset: true,
       floatingActionButton: BlocBuilder<ListaBloc, ListaState>(
         builder: (context, state) {
-          final bool hasSelection =
-              state is ListaSelectState && state.selectedIds.isNotEmpty;
+          final bool hasSelection = state is ListaSelectState && state.selectedIds.isNotEmpty;
 
           return (!hasSelection)
-              ? FloatingActionButtonAdd(
-                  route: Routes.clienteCreate,
-                  event: () => _clienteBloc.add(ClienteSearchMenuEvent()),
-                  tooltip: "Adicionar um Cliente")
+              ? FloatingActionButtonAdd(route: Routes.clienteCreate, event: () => _clienteBloc.add(ClienteSearchMenuEvent()), tooltip: "Adicionar um Cliente")
               : FloatingActionButtonRemove(
-                  removeMethod: () {
-                    _disableClientes(context, state.selectedIds);
-                    context.read<ListaBloc>().add(ListaClearSelectionEvent());
-                  },
+                  removeMethod: () => disableSelectedItems(context, state.selectedIds),
                   tooltip: "Excluir clientes Selecionados",
                 );
         },
@@ -250,12 +211,8 @@ class _ClienteScreenState extends State<ClienteScreen> {
                       child: CircularProgressIndicator.adaptive(),
                     );
                   }
-                  if (stateCliente is ClienteSearchSuccessState ||
-                      stateCliente is ClienteErrorState) {
-                    final List<Cliente>? clientes =
-                        (stateCliente is ClienteSearchSuccessState)
-                            ? stateCliente.clientes
-                            : (stateCliente as ClienteErrorState).clientes;
+                  if (stateCliente is ClienteSearchSuccessState || stateCliente is ClienteErrorState) {
+                    final List<Cliente>? clientes = (stateCliente is ClienteSearchSuccessState) ? stateCliente.clientes : (stateCliente as ClienteErrorState).clientes;
 
                     if (stateCliente is ClienteErrorState) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -274,23 +231,17 @@ class _ClienteScreenState extends State<ClienteScreen> {
                         child: GridListView(
                           aspectRatio: 1.65,
                           dataList: clientes,
-                          buildCard: (cliente) =>
-                              BlocBuilder<ListaBloc, ListaState>(
-                            bloc: _listaBloc,
+                          buildCard: (cliente) => BlocBuilder<ListaBloc, ListaState>(
                             builder: (context, stateLista) {
-                              final bool isSelected =
-                                  _isClienteSelected(cliente.id, stateLista);
-                              final bool isSelectionMode =
-                                  _isSelectionMode(stateLista);
+                              final bool isSelected = isItemSelected(cliente.id, stateLista);
+                              final bool isSelectMode = isSelectionMode(stateLista);
 
                               return CardClient(
-                                onDoubleTap: () =>
-                                    _onNavigateToUpdateScreen(cliente.id!),
-                                onLongPress: () =>
-                                    _onSelectItemList(cliente.id!),
+                                onDoubleTap: () => onNavigateToUpdateScreen(cliente.id!),
+                                onLongPress: () => onSelectItemList(cliente.id!),
                                 onTap: () {
-                                  if (isSelectionMode) {
-                                    _onSelectItemList(cliente.id!);
+                                  if (isSelectMode) {
+                                    onSelectItemList(cliente.id!);
                                   }
                                 },
                                 name: (cliente as Cliente).nome!,
@@ -317,8 +268,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
                             SizedBox(height: 10),
                             Text(
                               "Nenhum cliente encontrado.",
-                              style:
-                                  TextStyle(fontSize: 18.0, color: Colors.grey),
+                              style: TextStyle(fontSize: 18.0, color: Colors.grey),
                             ),
                           ],
                         ),

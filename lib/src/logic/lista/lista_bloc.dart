@@ -7,12 +7,12 @@ part 'lista_state.dart';
 
 class ListaBloc extends Bloc<ListaEvent, ListaState> {
   ListaBloc() : super(ListaInitialState()) {
-    on<ListaInitialEvent>(_onInitialEvent);
+    on<ListaClearEvent>(_onClearEvent);
     on<ListaToggleItemSelectEvent>(_onToggleItemsSelect);
     on<ListaClearSelectionEvent>(_onClearSelection);
   }
 
-  void _onInitialEvent(ListaInitialEvent event, Emitter<ListaState> emit) {
+  void _onClearEvent(ListaClearEvent event, Emitter<ListaState> emit) {
     emit(ListaSelectState(selectedIds: []));
   }
 
