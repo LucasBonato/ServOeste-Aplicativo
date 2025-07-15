@@ -23,7 +23,8 @@ import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/servico/servico_form.dart';
 import 'package:serv_oeste/src/models/servico/servico_request.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
-import 'package:serv_oeste/src/models/validators/validator.dart';
+import 'package:serv_oeste/src/models/validators/cliente_validator.dart';
+import 'package:serv_oeste/src/models/validators/servico_validator.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/shared/input_masks.dart';
 

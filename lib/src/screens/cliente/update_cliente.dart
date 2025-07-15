@@ -6,7 +6,7 @@ import 'package:serv_oeste/src/components/screen/elevated_form_button.dart';
 import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
-import 'package:serv_oeste/src/models/validators/validator.dart';
+import 'package:serv_oeste/src/models/validators/cliente_validator.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';

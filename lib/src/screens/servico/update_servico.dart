@@ -25,7 +25,7 @@ import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/models/servico/servico_form.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
-import 'package:serv_oeste/src/models/validators/validator.dart';
+import 'package:serv_oeste/src/models/validators/servico_validator.dart';
 import 'package:serv_oeste/src/pdfs/orcamento_pdf.dart';
 import 'package:serv_oeste/src/pdfs/recibo_pdf.dart';
 import 'package:serv_oeste/src/pdfs/relatorio_visitas_pdf.dart';
