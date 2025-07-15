@@ -3,14 +3,14 @@ import 'package:meta/meta.dart';
 import 'package:serv_oeste/src/logic/base_entity_bloc.dart';
 import 'package:serv_oeste/src/models/endereco/endereco.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
-import 'package:serv_oeste/src/repository/endereco_repository.dart';
+import 'package:serv_oeste/src/clients/endereco_client.dart';
 
 part 'endereco_event.dart';
 
 part 'endereco_state.dart';
 
 class EnderecoBloc extends BaseEntityBloc<EnderecoEvent, EnderecoState> {
-  final EnderecoRepository _enderecoRepository = EnderecoRepository();
+  final EnderecoClient _enderecoClient = EnderecoClient();
 
   @override
   EnderecoState errorState(ErrorEntity error) => EnderecoErrorState(errorMessage: error.errorMessage);
@@ -25,7 +25,7 @@ class EnderecoBloc extends BaseEntityBloc<EnderecoEvent, EnderecoState> {
   Future<void> _fetchEnderecoByCep(EnderecoSearchCepEvent event, Emitter<EnderecoState> emit) async {
     await handleRequest<Endereco?>(
       emit: emit,
-      request: () => _enderecoRepository.getEndereco(event.cep),
+      request: () => _enderecoClient.getEndereco(event.cep),
       onSuccess: (Endereco? endereco) {
         if (endereco != null && endereco.logradouro != null) {
           emit(EnderecoSuccessState(

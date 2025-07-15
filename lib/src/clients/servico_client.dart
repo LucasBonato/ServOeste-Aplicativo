@@ -3,15 +3,15 @@ import 'dart:convert';
 import 'package:logger/logger.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
-import 'package:serv_oeste/src/repository/dio/server_endpoints.dart';
+import 'package:serv_oeste/src/clients/dio/server_endpoints.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_request.dart';
 import 'package:serv_oeste/src/models/servico/servico_request.dart';
-import 'package:serv_oeste/src/repository/dio/dio_service.dart';
+import 'package:serv_oeste/src/clients/dio/dio_service.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:dio/dio.dart';
 import 'package:serv_oeste/src/shared/formatters.dart';
 
-class ServicoRepository extends DioService {
+class ServicoClient extends DioService {
   Future<List<Servico>?> getServicosByFilter(ServicoFilterRequest servicoFilter) async {
     try {
       final response = await dio.post(

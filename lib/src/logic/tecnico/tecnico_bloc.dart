@@ -7,14 +7,14 @@ import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/servico/tecnico_disponivel.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
-import 'package:serv_oeste/src/repository/tecnico_repository.dart';
+import 'package:serv_oeste/src/clients/tecnico_client.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 
 part 'tecnico_event.dart';
 part 'tecnico_state.dart';
 
 class TecnicoBloc extends BaseEntityBloc<TecnicoEvent, TecnicoState> {
-  final TecnicoRepository _tecnicoRepository = TecnicoRepository();
+  final TecnicoClient _tecnicoClient = TecnicoClient();
   bool isFirstRequest = true;
   String? _nome, _situacao, nomeMenu, situacaoMenu;
   int? _id, idMenu;
@@ -39,7 +39,7 @@ class TecnicoBloc extends BaseEntityBloc<TecnicoEvent, TecnicoState> {
   Future<void> _fetchAllTecnicos(TecnicoLoadingEvent event, Emitter<TecnicoState> emit) async {
     await handleRequest<List<TecnicoResponse>>(
       emit: emit,
-      request: () => _tecnicoRepository.fetchListByFilter(
+      request: () => _tecnicoClient.fetchListByFilter(
         id: event.id,
         nome: event.nome,
         situacao: event.situacao,
@@ -52,7 +52,7 @@ class TecnicoBloc extends BaseEntityBloc<TecnicoEvent, TecnicoState> {
   Future<void> _fetchOneTecnico(TecnicoSearchOneEvent event, Emitter<TecnicoState> emit) async {
     await handleRequest<Tecnico?>(
       emit: emit,
-      request: () => _tecnicoRepository.fetchOneById(event.id),
+      request: () => _tecnicoClient.fetchOneById(event.id),
       onSuccess: (Tecnico? tecnico) {
         if (tecnico != null) {
           emit(TecnicoSearchOneSuccessState(tecnico: tecnico));
@@ -64,7 +64,7 @@ class TecnicoBloc extends BaseEntityBloc<TecnicoEvent, TecnicoState> {
   Future<void> _fetchAvailability(TecnicoAvailabilitySearchEvent event, Emitter<TecnicoState> emit) async {
     await handleRequest<List<TecnicoDisponivel>>(
       emit: emit,
-      request: () => _tecnicoRepository.fetchListAvailabilityBySpecialityId(event.idEspecialidade),
+      request: () => _tecnicoClient.fetchListAvailabilityBySpecialityId(event.idEspecialidade),
       onSuccess: (List<TecnicoDisponivel> tecnicosDisponiveis) => emit(TecnicoSearchAvailabilitySuccessState(tecnicosDisponiveis: tecnicosDisponiveis)),
     );
   }
@@ -89,7 +89,7 @@ class TecnicoBloc extends BaseEntityBloc<TecnicoEvent, TecnicoState> {
     event.tecnico.sobrenome = event.sobrenome;
     await handleRequest(
       emit: emit,
-      request: () => _tecnicoRepository.create(event.tecnico),
+      request: () => _tecnicoClient.create(event.tecnico),
       onSuccess: (_) => emit(TecnicoRegisterSuccessState())
     );
   }
@@ -98,7 +98,7 @@ class TecnicoBloc extends BaseEntityBloc<TecnicoEvent, TecnicoState> {
     event.tecnico.sobrenome = event.sobrenome;
     await handleRequest(
       emit: emit,
-      request: () => _tecnicoRepository.update(event.tecnico),
+      request: () => _tecnicoClient.update(event.tecnico),
       onSuccess: (_) => emit(TecnicoUpdateSuccessState())
     );
   }
@@ -106,7 +106,7 @@ class TecnicoBloc extends BaseEntityBloc<TecnicoEvent, TecnicoState> {
   Future<void> _deleteListTecnicos(TecnicoDisableListEvent event, Emitter<TecnicoState> emit) async {
     await handleRequest(
       emit: emit,
-      request: () => _tecnicoRepository.disableListByIds(event.selectedList),
+      request: () => _tecnicoClient.disableListByIds(event.selectedList),
       onSuccess: (_) => add(TecnicoLoadingEvent(id: _id, nome: _nome)),
     );
   }

@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:serv_oeste/src/models/endereco/endereco.dart';
-import 'package:serv_oeste/src/repository/dio/dio_service.dart';
-import 'package:serv_oeste/src/repository/dio/server_endpoints.dart';
+import 'package:serv_oeste/src/clients/dio/dio_service.dart';
+import 'package:serv_oeste/src/clients/dio/server_endpoints.dart';
 
-class EnderecoRepository extends DioService {
+class EnderecoClient extends DioService {
   Future<Endereco?> getEndereco(String cep) async{
     try {
       final response = await dio.get(

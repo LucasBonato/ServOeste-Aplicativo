@@ -1,10 +1,10 @@
-import 'package:serv_oeste/src/repository/dio/server_endpoints.dart';
-import 'package:serv_oeste/src/repository/dio/dio_service.dart';
+import 'package:serv_oeste/src/clients/dio/server_endpoints.dart';
+import 'package:serv_oeste/src/clients/dio/dio_service.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:dio/dio.dart';
 import 'dart:convert';
 
-class ClienteRepository extends DioService {
+class ClienteClient extends DioService {
   Future<List<Cliente>> fetchListByFilter({String? nome, String? telefone, String? endereco}) async {
     try {
       final Response<dynamic> response = await dio.post(

@@ -3,14 +3,14 @@ import 'package:meta/meta.dart';
 import 'package:serv_oeste/src/logic/base_entity_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
-import 'package:serv_oeste/src/repository/cliente_repository.dart';
+import 'package:serv_oeste/src/clients/cliente_client.dart';
 
 part 'cliente_event.dart';
 
 part 'cliente_state.dart';
 
 class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
-  final ClienteRepository _clienteRepository = ClienteRepository();
+  final ClienteClient _clienteClient = ClienteClient();
   String? _nome, _telefone, _endereco,
       nomeMenu, telefoneMenu, enderecoMenu;
 
@@ -34,7 +34,7 @@ class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
   Future<void> _fetchOneClient(ClienteSearchOneEvent event, Emitter<ClienteState> emit) async {
     await handleRequest<Cliente?>(
       emit: emit,
-      request: () => _clienteRepository.fetchOneById(id: event.id),
+      request: () => _clienteClient.fetchOneById(id: event.id),
       onSuccess: (Cliente? cliente) {
         if (cliente != null) {
           emit(ClienteSearchOneSuccessState(cliente: cliente));
@@ -46,7 +46,7 @@ class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
   Future<void> _fetchAllClients(ClienteLoadingEvent event, Emitter<ClienteState> emit) async {
     await handleRequest<List<Cliente>>(
       emit: emit,
-      request: () => _clienteRepository.fetchListByFilter(
+      request: () => _clienteClient.fetchListByFilter(
         nome: event.nome,
         telefone: event.telefone,
         endereco: event.endereco,
@@ -74,7 +74,7 @@ class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
   Future<void> _registerClient(ClienteRegisterEvent event, Emitter<ClienteState> emit) async {
     await handleRequest(
       emit: emit,
-      request: () => _clienteRepository.create(event.cliente, event.sobrenome),
+      request: () => _clienteClient.create(event.cliente, event.sobrenome),
       onSuccess: (_) => emit(ClienteRegisterSuccessState()),
       onError: (error) => emit(ClienteErrorState(error: error))
     );
@@ -83,7 +83,7 @@ class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
   Future<void> _updateClient(ClienteUpdateEvent event, Emitter<ClienteState> emit) async {
     await handleRequest(
       emit: emit,
-      request: () => _clienteRepository.update(event.cliente, event.sobrenome),
+      request: () => _clienteClient.update(event.cliente, event.sobrenome),
       onSuccess: (_) => emit(ClienteUpdateSuccessState()),
       onError: (error) => emit(ClienteErrorState(error: error))
     );
@@ -101,7 +101,7 @@ class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
     
     await handleRequest(
       emit: emit, 
-      request: () => _clienteRepository.deleteListByIds(event.selectedList), 
+      request: () => _clienteClient.deleteListByIds(event.selectedList), 
       onSuccess: (_) => add(ClienteLoadingEvent(nome: _nome, endereco: _endereco, telefone: _telefone)),
       onError: (error) => emit(ClienteErrorState(error: error, clientes: existingClientes))
     );
