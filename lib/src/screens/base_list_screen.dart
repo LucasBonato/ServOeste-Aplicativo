@@ -14,6 +14,12 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
 
   void onDisableItems(List<int> selectedIds);
 
+  Widget getUpdateScreen(int id);
+
+  Widget buildDefaultFloatingActionButton();
+
+  Widget buildSelectionFloatingActionButton(List<int> selectedIds);
+
   void onNavigateToUpdateScreen(int id) {
     Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute(
@@ -32,8 +38,6 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
     context.read<ListaBloc>().add(ListaClearSelectionEvent());
   }
 
-  Widget getUpdateScreen(int id);
-
   bool isSelectionMode(ListaState stateLista) {
     return (stateLista is ListaSelectState)
         ? stateLista.selectedIds.isNotEmpty
@@ -46,8 +50,15 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
         : false;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
+  Widget buildFloatingActionButton() {
+    return BlocBuilder<ListaBloc, ListaState>(
+        builder: (context, state) {
+          final bool hasSelection = state is ListaSelectState && state.selectedIds.isNotEmpty;
+
+          return !hasSelection
+              ? buildDefaultFloatingActionButton()
+              : buildSelectionFloatingActionButton(state.selectedIds);
+        },
+    );
   }
 }

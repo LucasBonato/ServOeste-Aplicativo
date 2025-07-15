@@ -144,6 +144,23 @@ class _ClienteScreenState extends BaseListScreenState<ClienteScreen> {
   Widget getUpdateScreen(int id) => UpdateCliente(id: id);
 
   @override
+  Widget buildDefaultFloatingActionButton() {
+    return FloatingActionButtonAdd(
+      route: Routes.clienteCreate,
+      event: () => _clienteBloc.add(ClienteSearchMenuEvent()),
+      tooltip: "Adicionar um Cliente"
+    );
+  }
+
+  @override
+  Widget buildSelectionFloatingActionButton(List<int> selectedIds) {
+    return FloatingActionButtonRemove(
+      removeMethod: () => disableSelectedItems(context, selectedIds),
+      tooltip: "Excluir clientes Selecionados",
+    );
+  }
+
+  @override
   void onSearchFieldChanged() {
     debouncer.execute(
       () => _clienteBloc.add(
@@ -175,18 +192,7 @@ class _ClienteScreenState extends BaseListScreenState<ClienteScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      floatingActionButton: BlocBuilder<ListaBloc, ListaState>(
-        builder: (context, state) {
-          final bool hasSelection = state is ListaSelectState && state.selectedIds.isNotEmpty;
-
-          return (!hasSelection)
-              ? FloatingActionButtonAdd(route: Routes.clienteCreate, event: () => _clienteBloc.add(ClienteSearchMenuEvent()), tooltip: "Adicionar um Cliente")
-              : FloatingActionButtonRemove(
-                  removeMethod: () => disableSelectedItems(context, state.selectedIds),
-                  tooltip: "Excluir clientes Selecionados",
-                );
-        },
-      ),
+      floatingActionButton: buildFloatingActionButton(),
       body: BlocListener<ClienteBloc, ClienteState>(
         listener: (context, state) {
           if (state is ClienteErrorState) {

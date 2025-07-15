@@ -185,6 +185,23 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoScreen> {
   Widget getUpdateScreen(int id) => UpdateTecnico(id: id);
 
   @override
+  Widget buildDefaultFloatingActionButton() {
+    return FloatingActionButtonAdd(
+      route: Routes.tecnicoCreate,
+      event: () => _tecnicoBloc.add(TecnicoSearchMenuEvent()),
+      tooltip: "Adicionar um Técnico"
+    );
+  }
+
+  @override
+  Widget buildSelectionFloatingActionButton(List<int> selectedIds) {
+    return FloatingActionButtonRemove(
+      removeMethod: () => disableSelectedItems(context, selectedIds),
+      tooltip: "Excluir técnicos selecionados",
+    );
+  }
+
+  @override
   void onSearchFieldChanged() {
     debouncer.execute(
       () => _tecnicoBloc.add(
@@ -220,18 +237,7 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      floatingActionButton: BlocBuilder<ListaBloc, ListaState>(
-        builder: (context, state) {
-          final bool hasSelection = state is ListaSelectState && state.selectedIds.isNotEmpty;
-
-          return (!hasSelection)
-              ? FloatingActionButtonAdd(route: Routes.tecnicoCreate, event: () => _tecnicoBloc.add(TecnicoSearchMenuEvent()), tooltip: "Adicionar um Técnico")
-              : FloatingActionButtonRemove(
-                  removeMethod: () => disableSelectedItems(context, state.selectedIds),
-                  tooltip: "Excluir técnicos selecionados",
-                );
-        },
-      ),
+      floatingActionButton: buildFloatingActionButton(),
       body: Column(
         children: [
           _buildSearchInputs(),

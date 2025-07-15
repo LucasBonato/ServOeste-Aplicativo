@@ -133,12 +133,49 @@ class _ServicoScreenState extends BaseListScreenState<ServicoScreen> {
   Widget getUpdateScreen(int id) => UpdateServico(id: id);
 
   @override
+  Widget buildDefaultFloatingActionButton() {
+    return ExpandableFabItems(
+      firstHeroTag: 'add_service',
+      secondHeroTag: 'add_service_cliente',
+      firstRouterName: Routes.servicoCreate,
+      secondRouterName: Routes.servicoCreate,
+      firstTooltip: 'Adicionar Serviço',
+      secondTooltip: 'Adicionar Serviço e Cliente',
+      firstChild: Image.asset(
+        'assets/addService.png',
+        fit: BoxFit.contain,
+        width: 36,
+        height: 36,
+      ),
+      secondChild: const Icon(
+        Icons.group_add,
+        size: 36,
+        color: Colors.white,
+      ),
+      updateList: onSearchFieldChanged,
+    );
+  }
+
+  @override
+  Widget buildSelectionFloatingActionButton(List<int> selectedIds) {
+    return FloatingActionButtonRemove(
+        removeMethod: () => disableSelectedItems(context, selectedIds),
+        tooltip: "Excluir serviços selecionados"
+    );
+  }
+
+  @override
   void onSearchFieldChanged() {
-    debouncer.execute(() => _servicoBloc.add(ServicoLoadingEvent(
-            filterRequest: ServicoFilterRequest(
-          clienteNome: _nomeClienteController.text,
-          tecnicoNome: _nomeTecnicoController.text,
-        ))));
+    debouncer.execute(
+      () => _servicoBloc.add(
+        ServicoLoadingEvent(
+          filterRequest: ServicoFilterRequest(
+            clienteNome: _nomeClienteController.text,
+            tecnicoNome: _nomeTecnicoController.text,
+          )
+        )
+      )
+    );
   }
 
   @override
@@ -166,39 +203,8 @@ class _ServicoScreenState extends BaseListScreenState<ServicoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: BlocBuilder<ListaBloc, ListaState>(
-        builder: (context, state) {
-          final bool hasSelection = state is ListaSelectState && state.selectedIds.isNotEmpty;
-
-          return (!hasSelection)
-              ? ExpandableFabItems(
-                  firstHeroTag: 'add_service',
-                  secondHeroTag: 'add_service_cliente',
-                  firstRouterName: Routes.servicoCreate,
-                  secondRouterName: Routes.servicoCreate,
-                  firstTooltip: 'Adicionar Serviço',
-                  secondTooltip: 'Adicionar Serviço e Cliente',
-                  firstChild: Image.asset(
-                    'assets/addService.png',
-                    fit: BoxFit.contain,
-                    width: 36,
-                    height: 36,
-                  ),
-                  secondChild: const Icon(
-                    Icons.group_add,
-                    size: 36,
-                    color: Colors.white,
-                  ),
-                  updateList: onSearchFieldChanged,
-                )
-              : FloatingActionButtonRemove(
-                  removeMethod: () {
-                    disableSelectedItems(context, state.selectedIds);
-                    context.read<ListaBloc>().add(ListaClearSelectionEvent());
-                  },
-                  tooltip: "Excluir serviços selecionados");
-        },
-      ),
+      resizeToAvoidBottomInset: true,
+      floatingActionButton: buildFloatingActionButton(),
       body: Column(
         children: [
           _buildSearchInputs(),
