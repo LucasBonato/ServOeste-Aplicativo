@@ -213,7 +213,8 @@ class _ServicoScreenState extends BaseListScreenState<ServicoScreen> {
               builder: (context, stateServico) {
                 if (stateServico is ServicoInitialState || stateServico is ServicoLoadingState) {
                   return const Center(child: CircularProgressIndicator.adaptive());
-                } else if (stateServico is ServicoSearchSuccessState) {
+                }
+                else if (stateServico is ServicoSearchSuccessState) {
                   if (stateServico.servicos.isNotEmpty) {
                     return SingleChildScrollView(
                       child: GridListView(
@@ -268,6 +269,17 @@ class _ServicoScreenState extends BaseListScreenState<ServicoScreen> {
                       ],
                     ),
                   );
+                }
+                else if (stateServico is ServicoErrorState) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(stateServico.error.errorMessage),
+                        duration: const Duration(seconds: 3),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  });
                 }
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,

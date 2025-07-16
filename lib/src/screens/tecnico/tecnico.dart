@@ -246,7 +246,8 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoScreen> {
               builder: (context, stateTecnico) {
                 if (stateTecnico is TecnicoInitialState || stateTecnico is TecnicoLoadingState) {
                   return const Center(child: CircularProgressIndicator.adaptive());
-                } else if (stateTecnico is TecnicoSearchSuccessState) {
+                }
+                else if (stateTecnico is TecnicoSearchSuccessState) {
                   if (stateTecnico.tecnicos.isNotEmpty) {
                     return SingleChildScrollView(
                       child: GridListView(
@@ -295,6 +296,17 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoScreen> {
                       ],
                     ),
                   );
+                }
+                else if (stateTecnico is TecnicoErrorState) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(stateTecnico.error.errorMessage),
+                        duration: const Duration(seconds: 3),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  });
                 }
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,

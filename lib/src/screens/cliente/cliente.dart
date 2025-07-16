@@ -193,107 +193,87 @@ class _ClienteScreenState extends BaseListScreenState<ClienteScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       floatingActionButton: buildFloatingActionButton(),
-      body: BlocListener<ClienteBloc, ClienteState>(
-        listener: (context, state) {
-          if (state is ClienteErrorState) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.error.errorMessage),
-                duration: Duration(seconds: 3),
-                backgroundColor: Colors.red,
-              ),
-            );
-          }
-        },
-        child: Column(
-          children: [
-            _buildSearchInputs(),
-            Expanded(
-              child: BlocBuilder<ClienteBloc, ClienteState>(
-                bloc: _clienteBloc,
-                builder: (context, stateCliente) {
-                  if (stateCliente is ClienteLoadingState) {
-                    return const Center(
-                      child: CircularProgressIndicator.adaptive(),
+      body: Column(
+        children: [
+          _buildSearchInputs(),
+          Expanded(
+            child: BlocBuilder<ClienteBloc, ClienteState>(
+              builder: (context, stateCliente) {
+                if (stateCliente is ClienteInitialState || stateCliente is ClienteLoadingState) {
+                  return const Center(child: CircularProgressIndicator.adaptive());
+                }
+                else if (stateCliente is ClienteSearchSuccessState) {
+                  if (stateCliente.clientes.isNotEmpty) {
+                    return SingleChildScrollView(
+                      child: GridListView(
+                        aspectRatio: 1.65,
+                        dataList: stateCliente.clientes,
+                        buildCard: (cliente) => BlocBuilder<ListaBloc, ListaState>(
+                          builder: (context, stateLista) {
+                            final bool isSelected = isItemSelected(cliente.id, stateLista);
+                            final bool isSelectMode = isSelectionMode(stateLista);
+
+                            return CardClient(
+                              onDoubleTap: () => onNavigateToUpdateScreen(cliente.id!),
+                              onLongPress: () => onSelectItemList(cliente.id!),
+                              onTap: () {
+                                if (isSelectMode) {
+                                  onSelectItemList(cliente.id!);
+                                }
+                              },
+                              name: (cliente as Cliente).nome!,
+                              phoneNumber: cliente.telefoneFixo!,
+                              cellphone: cliente.telefoneCelular!,
+                              city: cliente.municipio!,
+                              street: cliente.endereco!,
+                              isSelected: isSelected,
+                            );
+                          },
+                        ),
+                      ),
                     );
                   }
-                  if (stateCliente is ClienteSearchSuccessState || stateCliente is ClienteErrorState) {
-                    final List<Cliente>? clientes = (stateCliente is ClienteSearchSuccessState) ? stateCliente.clientes : (stateCliente as ClienteErrorState).clientes;
-
-                    if (stateCliente is ClienteErrorState) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(stateCliente.error.errorMessage),
-                            duration: const Duration(seconds: 3),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      });
-                    }
-
-                    if (clientes != null && clientes.isNotEmpty) {
-                      return SingleChildScrollView(
-                        child: GridListView(
-                          aspectRatio: 1.65,
-                          dataList: clientes,
-                          buildCard: (cliente) => BlocBuilder<ListaBloc, ListaState>(
-                            builder: (context, stateLista) {
-                              final bool isSelected = isItemSelected(cliente.id, stateLista);
-                              final bool isSelectMode = isSelectionMode(stateLista);
-
-                              return CardClient(
-                                onDoubleTap: () => onNavigateToUpdateScreen(cliente.id!),
-                                onLongPress: () => onSelectItemList(cliente.id!),
-                                onTap: () {
-                                  if (isSelectMode) {
-                                    onSelectItemList(cliente.id!);
-                                  }
-                                },
-                                name: (cliente as Cliente).nome!,
-                                phoneNumber: cliente.telefoneFixo!,
-                                cellphone: cliente.telefoneCelular!,
-                                city: cliente.municipio!,
-                                street: cliente.endereco!,
-                                isSelected: isSelected,
-                              );
-                            },
-                          ),
+                  return const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.search_off,
+                          color: Colors.grey,
+                          size: 40.0,
                         ),
-                      );
-                    } else {
-                      return const Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.search_off,
-                              color: Colors.grey,
-                              size: 40.0,
-                            ),
-                            SizedBox(height: 10),
-                            Text(
-                              "Nenhum cliente encontrado.",
-                              style: TextStyle(fontSize: 18.0, color: Colors.grey),
-                            ),
-                          ],
+                        SizedBox(height: 10),
+                        Text(
+                          "Nenhum cliente encontrado.",
+                          style: TextStyle(fontSize: 18.0, color: Colors.grey),
                         ),
-                      );
-                    }
-                  }
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.not_interested, size: 30),
-                      const SizedBox(height: 16),
-                      const Text("Aconteceu um erro!!"),
-                    ],
+                      ],
+                    ),
                   );
-                },
-              ),
+                }
+                else if (stateCliente is ClienteErrorState) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(stateCliente.error.errorMessage),
+                        duration: const Duration(seconds: 3),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  });
+                }
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.not_interested, size: 30),
+                    const SizedBox(height: 16),
+                    const Text("Aconteceu um erro!!"),
+                  ],
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
