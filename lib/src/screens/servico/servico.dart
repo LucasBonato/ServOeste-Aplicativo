@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
 import 'package:serv_oeste/src/components/layout/fab_remove.dart';
+import 'package:serv_oeste/src/components/layout/responsive_search_inputs.dart';
 import 'package:serv_oeste/src/components/screen/grid_view.dart';
 import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
@@ -36,96 +38,23 @@ class _ServicoScreenState extends BaseListScreenState<ServicoScreen> {
   }
 
   Widget _buildSearchInputs() {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isLargeScreen = screenWidth >= 1000;
-    final maxContainerWidth = 1200.0;
-
-    Widget buildSearchField({required String hint, TextEditingController? controller}) => CustomSearchTextFormField(
-          hint: hint,
-          leftPadding: 4,
-          rightPadding: 4,
-          controller: controller,
-          onChangedAction: (value) => onSearchFieldChanged(),
-          onSuffixAction: (value) {
-            setState(() {
-              controller?.clear();
-            });
-            onSearchFieldChanged();
-          },
-        );
-
-    Widget buildFilterIcon() => InkWell(
-          onTap: () => Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(builder: (context) => FilterService())).then((_) => onSearchFieldChanged()),
-          hoverColor: const Color(0xFFF5EEED),
-          borderRadius: BorderRadius.circular(10),
-          child: Ink(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: const Color(0xFFFFF8F7),
-              border: Border.all(
-                color: const Color(0xFFEAE6E5),
-              ),
-            ),
-            child: const Icon(
-              Icons.filter_list,
-              size: 30.0,
-              color: Colors.black,
-            ),
-          ),
-        );
-
-    Widget buildLargeScreenLayout() => Row(
-          children: [
-            Expanded(
-              flex: 8,
-              child: buildSearchField(
-                hint: 'Nome do Cliente...',
-                controller: _nomeClienteController,
-              ),
-            ),
-            Expanded(
-              flex: 8,
-              child: buildSearchField(
-                hint: 'Nome do Técnico...',
-                controller: _nomeTecnicoController,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 4, top: 4, left: 4),
-              child: buildFilterIcon(),
-            ),
-          ],
-        );
-
-    Widget buildSmallScreenLayout() => Column(
-          children: [
-            buildSearchField(
-              hint: 'Nome do Cliente...',
-              controller: _nomeClienteController,
-            ),
-            SizedBox(height: 5),
-            Row(
-              children: [
-                Expanded(
-                  child: buildSearchField(
-                    hint: 'Nome do Técnico...',
-                    controller: _nomeTecnicoController,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 4, top: 4, left: 4),
-                  child: buildFilterIcon(),
-                ),
-              ],
-            ),
-          ],
-        );
-
-    return Container(
-      width: isLargeScreen ? maxContainerWidth : double.infinity,
-      padding: const EdgeInsets.all(5),
-      child: isLargeScreen ? buildLargeScreenLayout() : buildSmallScreenLayout(),
+    return ResponsiveSearchInputs(
+      onChanged: onSearchFieldChanged,
+      fields: [
+        TextInputField(
+            hint: "Nome do Cliente...",
+            controller: _nomeClienteController,
+            keyboardType: TextInputType.text
+        ),
+        TextInputField(
+            hint: "Nome do Técnico...",
+            controller: _nomeTecnicoController,
+            keyboardType: TextInputType.text
+        ),
+      ],
+      onFilterTap: () => Navigator.of(context, rootNavigator: true)
+          .push(MaterialPageRoute(builder: (context) => FilterService()))
+          .then((_) => onSearchFieldChanged()),
     );
   }
 

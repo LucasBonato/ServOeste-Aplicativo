@@ -1,10 +1,10 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:serv_oeste/src/components/formFields/custom_search_form_field.dart';
-import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
+import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
 import 'package:serv_oeste/src/components/layout/fab_add.dart';
 import 'package:serv_oeste/src/components/layout/fab_remove.dart';
+import 'package:serv_oeste/src/components/layout/responsive_search_inputs.dart';
 import 'package:serv_oeste/src/components/screen/cards/card_technical.dart';
 import 'package:serv_oeste/src/components/screen/grid_view.dart';
 import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
@@ -42,142 +42,33 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoScreen> {
   }
 
   Widget _buildSearchInputs() {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isLargeScreen = screenWidth >= 1000;
-    final isMediumScreen = screenWidth >= 500 && screenWidth < 1000;
-    final maxContainerWidth = 1200.0;
-
-    Widget buildSearchField({required String hint, TextEditingController? controller, TextInputType? keyboardType}) => CustomSearchTextFormField(
-      hint: hint,
-      leftPadding: 4,
-      rightPadding: 4,
-      controller: controller,
-      keyboardType: keyboardType,
-      onChangedAction: (value) => onSearchFieldChanged(),
-      onSuffixAction: (value) {
-        setState(() {
-          controller?.clear();
-        });
-        onSearchFieldChanged();
-      },
-    );
-
-    Widget buildDropdownField(
-        {required String label, required SingleSelectController<String> controller, required ValueNotifier<String> valueNotifier, required List<String> dropdownValues}) =>
-        CustomDropdownFormField(
-          label: label,
-          dropdownValues: dropdownValues,
-          controller: controller,
-          valueNotifier: valueNotifier,
-          leftPadding: 4,
-          rightPadding: 4,
-          onChanged: (situacao) {
-            valueNotifier.value = situacao;
-            _tecnicoBloc.add(
-              TecnicoSearchMenuEvent(
-                id: int.tryParse(_idController.text),
-                nome: _nomeController.text,
-                situacao: situacao,
-              ),
-            );
-          },
-        );
-
-    Widget buildLargeScreenLayout() => Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          flex: 2,
-          child: buildSearchField(
-            hint: "Procure por Técnicos...",
-            controller: _nomeController,
-          ),
-        ),
-        Expanded(
-          flex: 1,
-          child: buildSearchField(
-            hint: 'ID...',
-            keyboardType: TextInputType.number,
-            controller: _idController,
-          ),
-        ),
-        Expanded(
-          flex: 1,
-          child: buildDropdownField(
-            label: "Situação...",
-            dropdownValues: Constants.situationTecnicoList,
-            controller: _situacaoController,
-            valueNotifier: _situacaoNotifier,
-          ),
-        ),
-      ],
-    );
-
-    Widget buildMediumScreenLayout() => Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        buildSearchField(
+    return ResponsiveSearchInputs(
+      onChanged: onSearchFieldChanged,
+      fields: [
+        TextInputField(
           hint: "Procure por Técnicos...",
           controller: _nomeController,
+          keyboardType: TextInputType.text
         ),
-        SizedBox(height: 5),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              flex: 1,
-              child: buildSearchField(
-                hint: 'ID...',
-                keyboardType: TextInputType.number,
-                controller: _idController,
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: buildDropdownField(
-                label: "Situação...",
-                dropdownValues: Constants.situationTecnicoList,
-                controller: _situacaoController,
-                valueNotifier: _situacaoNotifier,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-
-    Widget buildSmallScreenLayout() => Column(
-      children: [
-        buildSearchField(
-          hint: "Procure por Técnicos...",
-          controller: _nomeController,
-        ),
-        SizedBox(height: 5),
-        buildSearchField(
-          hint: 'ID...',
-          keyboardType: TextInputType.number,
+        TextInputField(
+          hint: "ID...",
           controller: _idController,
+          keyboardType: TextInputType.number
         ),
-        SizedBox(height: 5),
-        buildDropdownField(
+        DropdownInputField(
           label: "Situação...",
-          dropdownValues: Constants.situationTecnicoList,
           controller: _situacaoController,
           valueNotifier: _situacaoNotifier,
+          dropdownValues: Constants.situationTecnicoList,
+          onChanged: (situacao) => _tecnicoBloc.add(
+            TecnicoSearchMenuEvent(
+              id: int.tryParse(_idController.text),
+              nome: _nomeController.text,
+              situacao: situacao,
+            ),
+          )
         ),
       ],
-    );
-
-    return Center(
-      child: Container(
-        width: isLargeScreen ? maxContainerWidth : double.infinity,
-        padding: const EdgeInsets.all(5),
-        child: isLargeScreen
-            ? buildLargeScreenLayout()
-            : isMediumScreen
-            ? buildMediumScreenLayout()
-            : buildSmallScreenLayout(),
-      ),
     );
   }
 

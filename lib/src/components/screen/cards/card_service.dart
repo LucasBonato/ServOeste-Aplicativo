@@ -130,152 +130,151 @@ class CardService extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Stack(
-                    children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Align(
-                            alignment: Alignment.center,
-                            child: Padding(
-                              padding: EdgeInsets.only(left: constraints.maxWidth * 0.05, bottom: constraints.maxWidth * 0.05),
-                              child: Text(
-                                '$codigo',
-                                style: TextStyle(
-                                  fontSize: constraints.maxWidth * 0.065,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: constraints.maxWidth * 0.05),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: Padding(
+                            padding: EdgeInsets.only(left: constraints.maxWidth * 0.05, bottom: constraints.maxWidth * 0.05),
                             child: Text(
-                              cliente,
+                              '$codigo',
                               style: TextStyle(
-                                fontSize: constraints.maxWidth * 0.055,
+                                fontSize: constraints.maxWidth * 0.065,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
                               ),
                             ),
                           ),
-                          const SizedBox(height: 5),
-                          Padding(
-                            padding: EdgeInsets.only(left: constraints.maxWidth * 0.1),
-                            child: SizedBox(
-                              width: constraints.maxWidth * 0.5,
-                              child: Text(
-                                "$equipamento - $marca",
-                                style: TextStyle(
-                                  fontSize: constraints.maxWidth * 0.05,
-                                  color: Colors.black,
-                                ),
-                                maxLines: 2,
-                              ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: constraints.maxWidth * 0.05),
+                          child: Text(
+                            cliente,
+                            style: TextStyle(
+                              fontSize: constraints.maxWidth * 0.055,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
                             ),
                           ),
-                          const SizedBox(height: 5),
-                          Padding(
-                            padding: EdgeInsets.only(left: constraints.maxWidth * 0.1, top: constraints.maxWidth * 0.035),
+                        ),
+                        const SizedBox(height: 5),
+                        Padding(
+                          padding: EdgeInsets.only(left: constraints.maxWidth * 0.1),
+                          child: SizedBox(
+                            width: constraints.maxWidth * 0.5,
                             child: Text(
-                              "Técnico - ${(tecnico == null) ? "Não declarado" : tecnico}",
+                              "$equipamento - $marca",
                               style: TextStyle(
                                 fontSize: constraints.maxWidth * 0.05,
-                                fontWeight: FontWeight.bold,
                                 color: Colors.black,
                               ),
+                              maxLines: 2,
                             ),
                           ),
-                          const SizedBox(height: 5),
+                        ),
+                        const SizedBox(height: 5),
+                        Padding(
+                          padding: EdgeInsets.only(left: constraints.maxWidth * 0.1, top: constraints.maxWidth * 0.035),
+                          child: Text(
+                            "Técnico - ${(tecnico == null) ? "Não declarado" : tecnico}",
+                            style: TextStyle(
+                              fontSize: constraints.maxWidth * 0.05,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Padding(
+                          padding: EdgeInsets.only(left: constraints.maxWidth * 0.15),
+                          child: Text(
+                            filial,
+                            style: TextStyle(
+                              fontSize: constraints.maxWidth * 0.045,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                        if (dataPrevista != null && dataEfetiva == null)
                           Padding(
-                            padding: EdgeInsets.only(left: constraints.maxWidth * 0.15),
+                            padding: EdgeInsets.only(
+                              left: constraints.maxWidth * 0.15,
+                            ),
                             child: Text(
-                              filial,
+                              "Data Prevista: ${Formatters.applyDateMask(dataPrevista!)} - ${Formatters.formatHorario(horario!)}",
                               style: TextStyle(
                                 fontSize: constraints.maxWidth * 0.045,
                                 color: Colors.black,
                               ),
                             ),
                           ),
-                          const SizedBox(height: 3),
-                          if (dataPrevista != null && dataEfetiva == null)
-                            Padding(
-                              padding: EdgeInsets.only(
-                                left: constraints.maxWidth * 0.15,
-                              ),
-                              child: Text(
-                                "Data Prevista: ${Formatters.applyDateMask(dataPrevista!)} - ${Formatters.formatHorario(horario!)}",
-                                style: TextStyle(
-                                  fontSize: constraints.maxWidth * 0.045,
-                                  color: Colors.black,
-                                ),
-                              ),
+                        if (dataEfetiva != null)
+                          Padding(
+                            padding: EdgeInsets.only(
+                              left: constraints.maxWidth * 0.15,
                             ),
-                          if (dataEfetiva != null)
-                            Padding(
-                              padding: EdgeInsets.only(
-                                left: constraints.maxWidth * 0.15,
-                              ),
-                              child: Text(
-                                "Data Efetiva: ${Formatters.applyDateMask(dataEfetiva!)} - ${Formatters.formatHorario(horario!)}",
-                                style: TextStyle(
-                                  fontSize: constraints.maxWidth * 0.045,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          if (dataFechamento != null)
-                            Padding(
-                              padding: EdgeInsets.only(
-                                top: 3,
-                                left: constraints.maxWidth * 0.15,
-                              ),
-                              child: Text(
-                                "Data Fechamento: ${Formatters.applyDateMask(dataFechamento!)}",
-                                style: TextStyle(
-                                  fontSize: constraints.maxWidth * 0.045,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          if (dataFinalGarantia != null)
-                            Padding(
-                              padding: EdgeInsets.only(
-                                top: 3,
-                                left: constraints.maxWidth * 0.15,
-                              ),
-                              child: Text(
-                                "Data Final da Garantia: ${Formatters.applyDateMask(dataFinalGarantia!)}",
-                                style: TextStyle(
-                                  fontSize: constraints.maxWidth * 0.045,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Padding(
-                              padding: EdgeInsets.only(left: constraints.maxWidth * 0.05, top: constraints.maxWidth * 0.05),
-                              child: SizedBox(
-                                width: constraints.maxWidth * 0.45,
-                                child: Text(
-                                  _convertEnumStatusToString(status),
-                                  style: TextStyle(
-                                    fontSize: constraints.maxWidth * 0.05,
-                                    fontWeight: FontWeight.bold,
-                                    color: _getStatusColor(Formatters.mapStringStatusToEnumStatus(status)),
-                                  ),
-                                  maxLines: 3,
-                                  textAlign: TextAlign.center,
-                                ),
+                            child: Text(
+                              "Data Efetiva: ${Formatters.applyDateMask(dataEfetiva!)} - ${Formatters.formatHorario(horario!)}",
+                              style: TextStyle(
+                                fontSize: constraints.maxWidth * 0.045,
+                                color: Colors.black,
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                    ],
+                        if (dataFechamento != null)
+                          Padding(
+                            padding: EdgeInsets.only(
+                              top: 3,
+                              left: constraints.maxWidth * 0.15,
+                            ),
+                            child: Text(
+                              "Data Fechamento: ${Formatters.applyDateMask(dataFechamento!)}",
+                              style: TextStyle(
+                                fontSize: constraints.maxWidth * 0.045,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        if (dataFinalGarantia != null)
+                          Padding(
+                            padding: EdgeInsets.only(
+                              top: 3,
+                              left: constraints.maxWidth * 0.15,
+                            ),
+                            child: Text(
+                              "Data Final da Garantia: ${Formatters.applyDateMask(dataFinalGarantia!)}",
+                              style: TextStyle(
+                                fontSize: constraints.maxWidth * 0.045,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        Align(
+                          alignment: Alignment.center,
+                          child: Padding(
+                            padding: EdgeInsets.only(left: constraints.maxWidth * 0.05, top: constraints.maxWidth * 0.05),
+                            child: SizedBox(
+                              width: constraints.maxWidth * 0.45,
+                              child: Text(
+                                _convertEnumStatusToString(status),
+                                style: TextStyle(
+                                  fontSize: constraints.maxWidth * 0.05,
+                                  fontWeight: FontWeight.bold,
+                                  color: _getStatusColor(Formatters.mapStringStatusToEnumStatus(status)),
+                                ),
+                                maxLines: 3,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
