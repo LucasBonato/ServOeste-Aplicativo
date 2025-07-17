@@ -12,7 +12,6 @@ import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/base_list_screen.dart';
 import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
-import 'package:serv_oeste/src/shared/debouncer.dart';
 import 'package:serv_oeste/src/shared/routes.dart';
 
 class ClienteScreen extends BaseListScreen<Cliente> {
@@ -25,7 +24,6 @@ class ClienteScreen extends BaseListScreen<Cliente> {
 class _ClienteScreenState extends BaseListScreenState<Cliente> {
   late final ClienteBloc _clienteBloc;
   late final TextEditingController _nomeController, _telefoneController, _enderecoController;
-  final Debouncer debouncer = Debouncer();
 
   void _setFilterValues() {
     _nomeController.text = _clienteBloc.nomeMenu ?? "";
@@ -96,16 +94,13 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
   }
 
   @override
-  void onSearchFieldChanged() {
-    debouncer.execute(
-            () =>
-            _clienteBloc.add(
-              ClienteSearchMenuEvent(
-                nome: _nomeController.text,
-                telefone: _telefoneController.text,
-                endereco: _enderecoController.text,
-              ),
-            )
+  void searchFieldChanged() {
+    _clienteBloc.add(
+      ClienteSearchMenuEvent(
+        nome: _nomeController.text,
+        telefone: _telefoneController.text,
+        endereco: _enderecoController.text,
+      ),
     );
   }
 

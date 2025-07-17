@@ -51,11 +51,17 @@ class BaseLayoutState extends State<BaseLayout> {
     _screens[index] = switch (index) {
       0 => BlocProvider.value(value: _servicoBloc, child: Home(key: UniqueKey())),
       1 => MultiBlocProvider(
-          providers: [BlocProvider.value(value: _tecnicoBloc), BlocProvider(create: (_) => ListaBloc()..add(ListaClearEvent()))],
+          providers: [
+            BlocProvider.value(value: _tecnicoBloc),
+            BlocProvider(create: (_) => ListaBloc()..add(ListaClearEvent())),
+          ],
           child: TecnicoScreen(key: UniqueKey()),
         ),
       2 => MultiBlocProvider(
-          providers: [BlocProvider.value(value: _clienteBloc), BlocProvider(create: (_) => ListaBloc()..add(ListaClearEvent()))],
+          providers: [
+            BlocProvider.value(value: _clienteBloc),
+            BlocProvider(create: (_) => ListaBloc()..add(ListaClearEvent())),
+          ],
           child: ClienteScreen(key: UniqueKey()),
         ),
       3 => MultiBlocProvider(
@@ -73,8 +79,7 @@ class BaseLayoutState extends State<BaseLayout> {
   void _selectTab(int index) {
     if (_currentIndex == index) {
       _navigatorKeys[index].currentState?.popUntil((route) => route.isFirst);
-    }
-    else {
+    } else {
       setState(() => _currentIndex = index);
       _loadTab(index);
     }

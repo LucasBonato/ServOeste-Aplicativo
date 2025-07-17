@@ -14,7 +14,6 @@ import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/screens/base_list_screen.dart';
 import 'package:serv_oeste/src/screens/servico/filter_servico.dart';
 import 'package:serv_oeste/src/screens/servico/update_servico.dart';
-import 'package:serv_oeste/src/shared/debouncer.dart';
 import 'package:serv_oeste/src/shared/routes.dart';
 
 class ServicoScreen extends BaseListScreen<Servico> {
@@ -28,7 +27,6 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
   late final ServicoBloc _servicoBloc;
   late final TextEditingController _nomeClienteController;
   late final TextEditingController _nomeTecnicoController;
-  final Debouncer debouncer = Debouncer();
 
   void _setFilterValues() {
     if (_servicoBloc.filterRequest != null) {
@@ -121,17 +119,14 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
   }
 
   @override
-  void onSearchFieldChanged() {
-    debouncer.execute(
-            () =>
-            _servicoBloc.add(
-                ServicoLoadingEvent(
-                    filterRequest: ServicoFilterRequest(
-                      clienteNome: _nomeClienteController.text,
-                      tecnicoNome: _nomeTecnicoController.text,
-                    )
-                )
-            )
+  void searchFieldChanged() {
+    _servicoBloc.add(
+      ServicoLoadingEvent(
+        filterRequest: ServicoFilterRequest(
+          clienteNome: _nomeClienteController.text,
+          tecnicoNome: _nomeTecnicoController.text,
+        )
+      )
     );
   }
 

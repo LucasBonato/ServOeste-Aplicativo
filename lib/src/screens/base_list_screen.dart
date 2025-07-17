@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/screen/grid_view.dart';
 import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
+import 'package:serv_oeste/src/shared/debouncer.dart';
 
 abstract class BaseListScreen<T> extends StatefulWidget {
   const BaseListScreen({super.key});
@@ -11,7 +12,9 @@ abstract class BaseListScreen<T> extends StatefulWidget {
 }
 
 abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
-  void onSearchFieldChanged();
+  final Debouncer debouncer = Debouncer();
+
+  void searchFieldChanged();
 
   void onDisableItems(List<int> selectedIds);
 
@@ -22,6 +25,10 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
   Widget buildSelectionFloatingActionButton(List<int> selectedIds);
 
   Widget buildItemCard(T item, bool isSelected, bool isSelectMode);
+
+  void onSearchFieldChanged() {
+    debouncer.execute(searchFieldChanged);
+  }
 
   void onNavigateToUpdateScreen(int id) {
     Navigator.of(context, rootNavigator: true).push(

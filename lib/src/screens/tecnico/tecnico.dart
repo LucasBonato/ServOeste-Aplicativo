@@ -14,7 +14,6 @@ import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
 import 'package:serv_oeste/src/screens/base_list_screen.dart';
 import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
-import 'package:serv_oeste/src/shared/debouncer.dart';
 import 'package:serv_oeste/src/shared/routes.dart';
 
 class TecnicoScreen extends BaseListScreen<TecnicoResponse> {
@@ -29,7 +28,6 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
   late TextEditingController _idController, _nomeController;
   late SingleSelectController<String> _situacaoController;
   late ValueNotifier<String> _situacaoNotifier;
-  final Debouncer debouncer = Debouncer();
 
   void _setFilterValues() {
     _idController.text = (_tecnicoBloc.idMenu == null) ? "" : _tecnicoBloc.idMenu.toString();
@@ -116,16 +114,13 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
   }
 
   @override
-  void onSearchFieldChanged() {
-    debouncer.execute(
-          () =>
-          _tecnicoBloc.add(
-            TecnicoSearchMenuEvent(
-              nome: _nomeController.text,
-              id: int.tryParse(_idController.text),
-              situacao: _situacaoNotifier.value,
-            ),
-          ),
+  void searchFieldChanged() {
+    _tecnicoBloc.add(
+      TecnicoSearchMenuEvent(
+        nome: _nomeController.text,
+        id: int.tryParse(_idController.text),
+        situacao: _situacaoNotifier.value,
+      ),
     );
   }
 
