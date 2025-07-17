@@ -3,28 +3,27 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
 import 'package:serv_oeste/src/components/layout/fab_remove.dart';
 import 'package:serv_oeste/src/components/layout/responsive_search_inputs.dart';
-import 'package:serv_oeste/src/components/screen/grid_view.dart';
-import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
-import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/components/screen/cards/card_service.dart';
+import 'package:serv_oeste/src/components/screen/entity_not_found.dart';
+import 'package:serv_oeste/src/components/screen/error_component.dart';
+import 'package:serv_oeste/src/components/screen/expandable_fab_items.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
-import 'package:serv_oeste/src/components/formFields/custom_search_form_field.dart';
+import 'package:serv_oeste/src/models/servico/servico.dart';
+import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/screens/base_list_screen.dart';
 import 'package:serv_oeste/src/screens/servico/filter_servico.dart';
-import 'package:serv_oeste/src/components/screen/expandable_fab_items.dart';
-import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/screens/servico/update_servico.dart';
 import 'package:serv_oeste/src/shared/debouncer.dart';
 import 'package:serv_oeste/src/shared/routes.dart';
 
-class ServicoScreen extends BaseListScreen<ServicoScreen> {
+class ServicoScreen extends BaseListScreen<Servico> {
   const ServicoScreen({super.key});
 
   @override
-  BaseListScreenState<ServicoScreen> createState() => _ServicoScreenState();
+  BaseListScreenState<Servico> createState() => _ServicoScreenState();
 }
 
-class _ServicoScreenState extends BaseListScreenState<ServicoScreen> {
+class _ServicoScreenState extends BaseListScreenState<Servico> {
   late final ServicoBloc _servicoBloc;
   late final TextEditingController _nomeClienteController;
   late final TextEditingController _nomeTecnicoController;
@@ -94,6 +93,32 @@ class _ServicoScreenState extends BaseListScreenState<ServicoScreen> {
   }
 
   @override
+  Widget buildItemCard(Servico servico, bool isSelected, bool isSelectMode) {
+    return CardService(
+      onDoubleTap: () => onNavigateToUpdateScreen(servico.id),
+      onLongPress: () => onSelectItemList(servico.id),
+      onTap: () {
+        if (isSelectMode) {
+          onSelectItemList(servico.id);
+        }
+      },
+      codigo: servico.id,
+      cliente: servico.nomeCliente,
+      tecnico: servico.nomeTecnico,
+      equipamento: servico.equipamento,
+      marca: servico.marca,
+      filial: servico.filial,
+      horario: servico.horarioPrevisto,
+      dataPrevista: servico.dataAtendimentoPrevisto,
+      dataEfetiva: servico.dataAtendimentoEfetivo,
+      dataFechamento: servico.dataFechamento,
+      dataFinalGarantia: servico.dataFimGarantia,
+      status: servico.situacao,
+      isSelected: isSelected,
+    );
+  }
+
+  @override
   void onSearchFieldChanged() {
     debouncer.execute(
       () => _servicoBloc.add(
@@ -145,59 +170,9 @@ class _ServicoScreenState extends BaseListScreenState<ServicoScreen> {
                 }
                 else if (stateServico is ServicoSearchSuccessState) {
                   if (stateServico.servicos.isNotEmpty) {
-                    return SingleChildScrollView(
-                      child: GridListView(
-                        aspectRatio: .9,
-                        dataList: stateServico.servicos,
-                        buildCard: (servico) => BlocBuilder<ListaBloc, ListaState>(
-                          builder: (context, stateLista) {
-                            final bool isSelected = isItemSelected(servico.id, stateLista);
-                            final bool isSelectMode = isSelectionMode(stateLista);
-
-                            return CardService(
-                              onDoubleTap: () => onNavigateToUpdateScreen(servico.id),
-                              onLongPress: () => onSelectItemList(servico.id),
-                              onTap: () {
-                                if (isSelectMode) {
-                                  onSelectItemList(servico.id);
-                                }
-                              },
-                              codigo: servico.id,
-                              cliente: (servico as Servico).nomeCliente,
-                              tecnico: servico.nomeTecnico,
-                              equipamento: servico.equipamento,
-                              marca: servico.marca,
-                              filial: servico.filial,
-                              horario: servico.horarioPrevisto,
-                              dataPrevista: servico.dataAtendimentoPrevisto,
-                              dataEfetiva: servico.dataAtendimentoEfetivo,
-                              dataFechamento: servico.dataFechamento,
-                              dataFinalGarantia: servico.dataFimGarantia,
-                              status: servico.situacao,
-                              isSelected: isSelected,
-                            );
-                          },
-                        ),
-                      ),
-                    );
+                    return buildGridOfCards(stateServico.servicos, 0.9);
                   }
-                  return const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.search_off,
-                          color: Colors.grey,
-                          size: 40.0,
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          "Nenhum serviço encontrado.",
-                          style: TextStyle(fontSize: 18.0, color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  );
+                  return const EntityNotFound(message: "Nenhum serviço encontrado.");
                 }
                 else if (stateServico is ServicoErrorState) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -210,14 +185,7 @@ class _ServicoScreenState extends BaseListScreenState<ServicoScreen> {
                     );
                   });
                 }
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.not_interested, size: 30),
-                    const SizedBox(height: 16),
-                    const Text("Aconteceu um erro!!"),
-                  ],
-                );
+                return const ErrorComponent();
               },
             ),
           )

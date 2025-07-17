@@ -5,23 +5,23 @@ import 'package:serv_oeste/src/components/layout/fab_add.dart';
 import 'package:serv_oeste/src/components/layout/fab_remove.dart';
 import 'package:serv_oeste/src/components/layout/responsive_search_inputs.dart';
 import 'package:serv_oeste/src/components/screen/cards/card_client.dart';
-import 'package:serv_oeste/src/components/screen/grid_view.dart';
+import 'package:serv_oeste/src/components/screen/entity_not_found.dart';
+import 'package:serv_oeste/src/components/screen/error_component.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
-import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/base_list_screen.dart';
 import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
 import 'package:serv_oeste/src/shared/debouncer.dart';
 import 'package:serv_oeste/src/shared/routes.dart';
 
-class ClienteScreen extends BaseListScreen<ClienteScreen> {
+class ClienteScreen extends BaseListScreen<Cliente> {
   const ClienteScreen({super.key});
 
   @override
-  BaseListScreenState<ClienteScreen> createState() => _ClienteScreenState();
+  BaseListScreenState<Cliente> createState() => _ClienteScreenState();
 }
 
-class _ClienteScreenState extends BaseListScreenState<ClienteScreen> {
+class _ClienteScreenState extends BaseListScreenState<Cliente> {
   late final ClienteBloc _clienteBloc;
   late final TextEditingController _nomeController, _telefoneController, _enderecoController;
   final Debouncer debouncer = Debouncer();
@@ -76,6 +76,25 @@ class _ClienteScreenState extends BaseListScreenState<ClienteScreen> {
   }
 
   @override
+  Widget buildItemCard(Cliente cliente, bool isSelected, bool isSelectMode) {
+    return CardClient(
+      onDoubleTap: () => onNavigateToUpdateScreen(cliente.id!),
+      onLongPress: () => onSelectItemList(cliente.id!),
+      onTap: () {
+        if (isSelectMode) {
+          onSelectItemList(cliente.id!);
+        }
+      },
+      name: cliente.nome!,
+      phoneNumber: cliente.telefoneFixo!,
+      cellphone: cliente.telefoneCelular!,
+      city: cliente.municipio!,
+      street: cliente.endereco!,
+      isSelected: isSelected,
+    );
+  }
+
+  @override
   void onSearchFieldChanged() {
     debouncer.execute(
       () => _clienteBloc.add(
@@ -119,52 +138,9 @@ class _ClienteScreenState extends BaseListScreenState<ClienteScreen> {
                 }
                 else if (stateCliente is ClienteSearchSuccessState) {
                   if (stateCliente.clientes.isNotEmpty) {
-                    return SingleChildScrollView(
-                      child: GridListView(
-                        aspectRatio: 1.65,
-                        dataList: stateCliente.clientes,
-                        buildCard: (cliente) => BlocBuilder<ListaBloc, ListaState>(
-                          builder: (context, stateLista) {
-                            final bool isSelected = isItemSelected(cliente.id, stateLista);
-                            final bool isSelectMode = isSelectionMode(stateLista);
-
-                            return CardClient(
-                              onDoubleTap: () => onNavigateToUpdateScreen(cliente.id!),
-                              onLongPress: () => onSelectItemList(cliente.id!),
-                              onTap: () {
-                                if (isSelectMode) {
-                                  onSelectItemList(cliente.id!);
-                                }
-                              },
-                              name: (cliente as Cliente).nome!,
-                              phoneNumber: cliente.telefoneFixo!,
-                              cellphone: cliente.telefoneCelular!,
-                              city: cliente.municipio!,
-                              street: cliente.endereco!,
-                              isSelected: isSelected,
-                            );
-                          },
-                        ),
-                      ),
-                    );
+                    return buildGridOfCards(stateCliente.clientes, 1.65);
                   }
-                  return const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.search_off,
-                          color: Colors.grey,
-                          size: 40.0,
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          "Nenhum cliente encontrado.",
-                          style: TextStyle(fontSize: 18.0, color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  );
+                  return const EntityNotFound(message: "Nenhum cliente encontrado.");
                 }
                 else if (stateCliente is ClienteErrorState) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -177,14 +153,7 @@ class _ClienteScreenState extends BaseListScreenState<ClienteScreen> {
                     );
                   });
                 }
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.not_interested, size: 30),
-                    const SizedBox(height: 16),
-                    const Text("Aconteceu um erro!!"),
-                  ],
-                );
+                return const ErrorComponent();
               },
             ),
           ),

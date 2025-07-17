@@ -6,23 +6,24 @@ import 'package:serv_oeste/src/components/layout/fab_add.dart';
 import 'package:serv_oeste/src/components/layout/fab_remove.dart';
 import 'package:serv_oeste/src/components/layout/responsive_search_inputs.dart';
 import 'package:serv_oeste/src/components/screen/cards/card_technical.dart';
-import 'package:serv_oeste/src/components/screen/grid_view.dart';
-import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
+import 'package:serv_oeste/src/components/screen/entity_not_found.dart';
+import 'package:serv_oeste/src/components/screen/error_component.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
+import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
 import 'package:serv_oeste/src/screens/base_list_screen.dart';
 import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/shared/debouncer.dart';
 import 'package:serv_oeste/src/shared/routes.dart';
 
-class TecnicoScreen extends BaseListScreen<TecnicoScreen> {
+class TecnicoScreen extends BaseListScreen<TecnicoResponse> {
   const TecnicoScreen({super.key});
 
   @override
-  BaseListScreenState<TecnicoScreen> createState() => _TecnicoScreenState();
+  BaseListScreenState<TecnicoResponse> createState() => _TecnicoScreenState();
 }
 
-class _TecnicoScreenState extends BaseListScreenState<TecnicoScreen> {
+class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
   late final TecnicoBloc _tecnicoBloc;
   late TextEditingController _idController, _nomeController;
   late SingleSelectController<String> _situacaoController;
@@ -93,6 +94,26 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoScreen> {
   }
 
   @override
+  Widget buildItemCard(TecnicoResponse tecnico, bool isSelected, bool isSelectMode) {
+    return CardTechnician(
+      onDoubleTap: () => onNavigateToUpdateScreen(tecnico.id!),
+      onLongPress: () => onSelectItemList(tecnico.id!),
+      onTap: () {
+        if (isSelectMode) {
+          onSelectItemList(tecnico.id!);
+        }
+      },
+      id: tecnico.id!,
+      nome: tecnico.nome!,
+      sobrenome: tecnico.sobrenome!,
+      telefone: tecnico.telefoneFixo!,
+      celular: tecnico.telefoneCelular!,
+      status: tecnico.situacao!,
+      isSelected: isSelected,
+    );
+  }
+
+  @override
   void onSearchFieldChanged() {
     debouncer.execute(
       () => _tecnicoBloc.add(
@@ -140,53 +161,9 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoScreen> {
                 }
                 else if (stateTecnico is TecnicoSearchSuccessState) {
                   if (stateTecnico.tecnicos.isNotEmpty) {
-                    return SingleChildScrollView(
-                      child: GridListView(
-                        aspectRatio: 2.5,
-                        dataList: stateTecnico.tecnicos,
-                        buildCard: (tecnico) => BlocBuilder<ListaBloc, ListaState>(
-                          builder: (context, stateLista) {
-                            final bool isSelected = isItemSelected(tecnico.id, stateLista);
-                            final bool isSelectMode = isSelectionMode(stateLista);
-
-                            return CardTechnician(
-                              onDoubleTap: () => onNavigateToUpdateScreen(tecnico.id!),
-                              onLongPress: () => onSelectItemList(tecnico.id),
-                              onTap: () {
-                                if (isSelectMode) {
-                                  onSelectItemList(tecnico.id);
-                                }
-                              },
-                              id: tecnico.id!,
-                              nome: tecnico.nome!,
-                              sobrenome: tecnico.sobrenome!,
-                              telefone: tecnico.telefoneFixo!,
-                              celular: tecnico.telefoneCelular!,
-                              status: tecnico.situacao!,
-                              isSelected: isSelected,
-                            );
-                          },
-                        ),
-                      ),
-                    );
+                    return buildGridOfCards(stateTecnico.tecnicos, 2.5);
                   }
-                  return const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.search_off,
-                          color: Colors.grey,
-                          size: 40.0,
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          "Nenhum técnico encontrado.",
-                          style: TextStyle(fontSize: 18.0, color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  );
+                  return const EntityNotFound(message: "Nenhum técnico encontrado.");
                 }
                 else if (stateTecnico is TecnicoErrorState) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -199,14 +176,7 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoScreen> {
                     );
                   });
                 }
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.not_interested, size: 30),
-                    const SizedBox(height: 16),
-                    const Text("Aconteceu um erro!!"),
-                  ],
-                );
+                return const ErrorComponent();
               },
             ),
           ),

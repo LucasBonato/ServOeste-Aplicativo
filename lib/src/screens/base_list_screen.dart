@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/src/components/screen/grid_view.dart';
 import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 
 abstract class BaseListScreen<T> extends StatefulWidget {
@@ -19,6 +20,8 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
   Widget buildDefaultFloatingActionButton();
 
   Widget buildSelectionFloatingActionButton(List<int> selectedIds);
+
+  Widget buildItemCard(T item, bool isSelected, bool isSelectMode);
 
   void onNavigateToUpdateScreen(int id) {
     Navigator.of(context, rootNavigator: true).push(
@@ -59,6 +62,23 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
               ? buildDefaultFloatingActionButton()
               : buildSelectionFloatingActionButton(state.selectedIds);
         },
+    );
+  }
+
+  Widget buildGridOfCards(List<T> items, double aspectRatio) {
+    return SingleChildScrollView(
+      child: GridListView(
+        aspectRatio: aspectRatio,
+        dataList: items,
+        buildCard: (item) => BlocBuilder<ListaBloc, ListaState>(
+          builder: (context, stateLista) {
+            final bool isSelected = isItemSelected(item.id, stateLista);
+            final bool isSelectMode = isSelectionMode(stateLista);
+
+            return buildItemCard(item, isSelected, isSelectMode);
+          },
+        ),
+      ),
     );
   }
 }

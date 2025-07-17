@@ -22,10 +22,10 @@ class CreateCliente extends StatefulWidget {
   const CreateCliente({super.key});
 
   @override
-  State<CreateCliente> createState() => _CreateClienteState();
+  State<CreateCliente> createState() => CreateClienteState();
 }
 
-class _CreateClienteState extends State<CreateCliente> {
+class CreateClienteState extends State<CreateCliente> {
   late final ClienteBloc _clienteBloc;
   final EnderecoBloc _enderecoBloc = EnderecoBloc();
   final ClienteForm _clienteCreateForm = ClienteForm();
@@ -85,6 +85,375 @@ class _CreateClienteState extends State<CreateCliente> {
     Navigator.pop(context, "Back");
   }
 
+  Form buildClientForm() {
+    return Form(
+      key: _clienteFormKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Text(
+            "Adicionar Cliente",
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          const SizedBox(height: 48),
+          BlocListener<ClienteBloc, ClienteState>(
+            listener: (context, state) {
+              if (state is ClienteSearchSuccessState) {
+                List<String> nomes = state.clientes.take(5).map((cliente) => cliente.nome!).toList();
+
+                if (_dropdownValuesNomes != nomes) {
+                  setState(() {
+                    _dropdownValuesNomes = nomes;
+                  });
+                }
+              }
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomSearchDropDownFormField(
+                  label: "Nome*",
+                  maxLength: 40,
+                  dropdownValues: _dropdownValuesNomes,
+                  leftPadding: 4,
+                  rightPadding: 4,
+                  validator: _clienteCreateValidator.byField(
+                    _clienteCreateForm,
+                    ErrorCodeKey.nomeESobrenome.name,
+                  ),
+                  onChanged: _onNomeChanged,
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.65,
+                  child: Transform.translate(
+                    offset: Offset(24, -18),
+                    child: Text(
+                      "Obs. os nomes que aparecerem já estão cadastrados",
+                      style: TextStyle(
+                        fontSize: (MediaQuery.of(context).size.width * 0.04).clamp(9.0, 13.0),
+                        color: Colors.grey,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    if (constraints.maxWidth < 400) {
+                      return Column(
+                        children: [
+                          CustomTextFormField(
+                            hint: "(99) 9999-9999",
+                            label: "Telefone Fixo**",
+                            type: TextInputType.phone,
+                            maxLength: 14,
+                            leftPadding: 4,
+                            rightPadding: 4,
+                            hide: true,
+                            masks: InputMasks.telefoneFixo,
+                            valueNotifier: _clienteCreateForm.telefoneFixo,
+                            validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.telefones.name),
+                            onChanged: _clienteCreateForm.setTelefoneFixo,
+                          ),
+                          CustomTextFormField(
+                            valueNotifier: _clienteCreateForm.telefoneCelular,
+                            hint: "(99) 99999-9999",
+                            label: "Telefone Celular**",
+                            masks: InputMasks.telefoneCelular,
+                            maxLength: 15,
+                            leftPadding: 4,
+                            rightPadding: 4,
+                            type: TextInputType.phone,
+                            hide: true,
+                            validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.telefones.name),
+                            onChanged: _clienteCreateForm.setTelefoneCelular,
+                          ),
+                        ],
+                      );
+                    } else {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: CustomTextFormField(
+                              hint: "(99) 9999-9999",
+                              label: "Telefone Fixo**",
+                              type: TextInputType.phone,
+                              leftPadding: 4,
+                              rightPadding: 4,
+                              maxLength: 14,
+                              hide: true,
+                              masks: InputMasks.telefoneFixo,
+                              valueNotifier: _clienteCreateForm.telefoneFixo,
+                              validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.telefones.name),
+                              onChanged: _clienteCreateForm.setTelefoneFixo,
+                            ),
+                          ),
+                          Expanded(
+                            child: CustomTextFormField(
+                              valueNotifier: _clienteCreateForm.telefoneCelular,
+                              hint: "(99) 99999-9999",
+                              label: "Telefone Celular**",
+                              masks: InputMasks.telefoneCelular,
+                              leftPadding: 4,
+                              rightPadding: 4,
+                              maxLength: 15,
+                              type: TextInputType.phone,
+                              hide: true,
+                              validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.telefones.name),
+                              onChanged: _clienteCreateForm.setTelefoneCelular,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth < 400) {
+                return Column(
+                  children: [
+                    BlocListener<EnderecoBloc, EnderecoState>(
+                      bloc: _enderecoBloc,
+                      listener: (context, state) {
+                        if (state is EnderecoSuccessState) {
+                          _clienteCreateForm.setBairro(state.bairro);
+                          _clienteCreateForm.setRua(state.rua);
+                          _clienteCreateForm.setMunicipio(state.municipio);
+                          _municipioController.text = state.municipio;
+                        }
+                      },
+                      child: CustomTextFormField(
+                        hint: "00000-000",
+                        label: "CEP",
+                        type: TextInputType.number,
+                        maxLength: 9,
+                        hide: true,
+                        leftPadding: 4,
+                        rightPadding: 4,
+                        masks: InputMasks.cep,
+                        valueNotifier: _clienteCreateForm.cep,
+                        validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.cep.name),
+                        onChanged: _fetchInformationAboutCep,
+                      ),
+                    ),
+                    CustomSearchDropDownFormField(
+                      label: "Município*",
+                      dropdownValues: Constants.municipios,
+                      maxLength: 20,
+                      controller: _municipioController,
+                      valueNotifier: _clienteCreateForm.municipio,
+                      validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.municipio.name),
+                      onChanged: _clienteCreateForm.setMunicipio,
+                      rightPadding: 4,
+                      leftPadding: 4,
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                );
+              } else {
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: BlocListener<EnderecoBloc, EnderecoState>(
+                        bloc: _enderecoBloc,
+                        listener: (context, state) {
+                          if (state is EnderecoSuccessState) {
+                            _clienteCreateForm.setBairro(state.bairro);
+                            _clienteCreateForm.setRua(state.rua);
+                            _clienteCreateForm.setMunicipio(state.municipio);
+                            _municipioController.text = state.municipio;
+                          }
+                        },
+                        child: CustomTextFormField(
+                          hint: "00000-000",
+                          label: "CEP",
+                          type: TextInputType.number,
+                          maxLength: 9,
+                          rightPadding: 4,
+                          leftPadding: 4,
+                          hide: true,
+                          masks: InputMasks.cep,
+                          valueNotifier: _clienteCreateForm.cep,
+                          validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.cep.name),
+                          onChanged: _fetchInformationAboutCep,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: CustomSearchDropDownFormField(
+                        label: "Município*",
+                        dropdownValues: Constants.municipios,
+                        maxLength: 20,
+                        controller: _municipioController,
+                        valueNotifier: _clienteCreateForm.municipio,
+                        validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.municipio.name),
+                        onChanged: _clienteCreateForm.setMunicipio,
+                        rightPadding: 4,
+                        leftPadding: 4,
+                      ),
+                    ),
+                  ],
+                );
+              }
+            },
+          ),
+          CustomTextFormField(
+            hint: "Bairro...",
+            label: "Bairro*",
+            type: TextInputType.text,
+            maxLength: 255,
+            hide: true,
+            leftPadding: 4,
+            rightPadding: 4,
+            valueNotifier: _clienteCreateForm.bairro,
+            validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.bairro.name),
+            onChanged: _clienteCreateForm.setBairro,
+          ),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth < 400) {
+                return Column(
+                  children: [
+                    CustomTextFormField(
+                      hint: "Rua...",
+                      label: "Rua*",
+                      type: TextInputType.text,
+                      maxLength: 255,
+                      hide: true,
+                      leftPadding: 4,
+                      rightPadding: 4,
+                      valueNotifier: _clienteCreateForm.rua,
+                      validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.rua.name),
+                      onChanged: _clienteCreateForm.setRua,
+                    ),
+                    CustomTextFormField(
+                      hint: "Número...",
+                      label: "Número*",
+                      type: TextInputType.text,
+                      maxLength: 10,
+                      hide: true,
+                      leftPadding: 4,
+                      rightPadding: 4,
+                      valueNotifier: _clienteCreateForm.numero,
+                      validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.numero.name),
+                      onChanged: _clienteCreateForm.setNumero,
+                    ),
+                  ],
+                );
+              } else {
+                return Row(
+                  children: [
+                    Expanded(
+                      flex: 5,
+                      child: CustomTextFormField(
+                        hint: "Rua...",
+                        label: "Rua*",
+                        type: TextInputType.text,
+                        maxLength: 255,
+                        rightPadding: 4,
+                        leftPadding: 4,
+                        hide: true,
+                        valueNotifier: _clienteCreateForm.rua,
+                        validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.rua.name),
+                        onChanged: _clienteCreateForm.setRua,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: CustomTextFormField(
+                        hint: "Número...",
+                        label: "Número*",
+                        type: TextInputType.text,
+                        maxLength: 10,
+                        leftPadding: 4,
+                        rightPadding: 4,
+                        hide: true,
+                        valueNotifier: _clienteCreateForm.numero,
+                        validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.numero.name),
+                        onChanged: _clienteCreateForm.setNumero,
+                      ),
+                    ),
+                  ],
+                );
+              }
+            },
+          ),
+          CustomTextFormField(
+            hint: "Complemento...",
+            label: "Complemento",
+            type: TextInputType.text,
+            maxLength: 255,
+            hide: false,
+            leftPadding: 4,
+            rightPadding: 4,
+            valueNotifier: _clienteCreateForm.complemento,
+            validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.complemento.name),
+            onChanged: _clienteCreateForm.setComplemento,
+          ),
+          const Padding(padding: EdgeInsets.only(left: 16), child: BuildFieldLabels()),
+          const SizedBox(height: 24),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 750),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 128),
+                  child: BlocListener<ClienteBloc, ClienteState>(
+                    bloc: _clienteBloc,
+                    listener: (context, state) {
+                      if (state is ClienteRegisterSuccessState) {
+                        _handleBackNavigation();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Cliente adicionado com sucesso!')),
+                        );
+                      } else if (state is ClienteErrorState) {
+                        ErrorEntity error = state.error;
+
+                        _clienteCreateValidator.applyBackendError(error);
+                        _clienteFormKey.currentState?.validate();
+                        _clienteCreateValidator.cleanExternalErrors();
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              "[ERROR] Informação(ões) inválida(s) ao registrar o Cliente.",
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    child: ElevatedFormButton(
+                      text: "Adicionar",
+                      onPressed: _registerCliente,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,369 +470,7 @@ class _CreateClienteState extends State<CreateCliente> {
             child: ScrollConfiguration(
               behavior: ScrollBehavior().copyWith(overscroll: false, scrollbars: false),
               child: SingleChildScrollView(
-                child: Form(
-                  key: _clienteFormKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "Adicionar Cliente",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 48),
-                      BlocListener<ClienteBloc, ClienteState>(
-                        bloc: _clienteBloc,
-                        listener: (context, state) {
-                          if (state is ClienteSearchSuccessState) {
-                            List<String> nomes = state.clientes.take(5).map((cliente) => cliente.nome!).toList();
-
-                            if (_dropdownValuesNomes != nomes) {
-                              setState(() {
-                                _dropdownValuesNomes = nomes;
-                              });
-                            }
-                          }
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CustomSearchDropDownFormField(
-                              label: "Nome*",
-                              maxLength: 40,
-                              dropdownValues: _dropdownValuesNomes,
-                              leftPadding: 4,
-                              rightPadding: 4,
-                              validator: _clienteCreateValidator.byField(
-                                _clienteCreateForm,
-                                ErrorCodeKey.nomeESobrenome.name,
-                              ),
-                              onChanged: _onNomeChanged,
-                            ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.65,
-                              child: Transform.translate(
-                                offset: Offset(24, -18),
-                                child: Text(
-                                  "Obs. os nomes que aparecerem já estão cadastrados",
-                                  style: TextStyle(
-                                    fontSize: (MediaQuery.of(context).size.width * 0.04).clamp(9.0, 13.0),
-                                    color: Colors.grey,
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: LayoutBuilder(
-                              builder: (context, constraints) {
-                                if (constraints.maxWidth < 400) {
-                                  return Column(
-                                    children: [
-                                      CustomTextFormField(
-                                        hint: "(99) 9999-9999",
-                                        label: "Telefone Fixo**",
-                                        type: TextInputType.phone,
-                                        maxLength: 14,
-                                        leftPadding: 4,
-                                        rightPadding: 4,
-                                        hide: true,
-                                        masks: InputMasks.telefoneFixo,
-                                        valueNotifier: _clienteCreateForm.telefoneFixo,
-                                        validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.telefones.name),
-                                        onChanged: _clienteCreateForm.setTelefoneFixo,
-                                      ),
-                                      CustomTextFormField(
-                                        valueNotifier: _clienteCreateForm.telefoneCelular,
-                                        hint: "(99) 99999-9999",
-                                        label: "Telefone Celular**",
-                                        masks: InputMasks.telefoneCelular,
-                                        maxLength: 15,
-                                        leftPadding: 4,
-                                        rightPadding: 4,
-                                        type: TextInputType.phone,
-                                        hide: true,
-                                        validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.telefones.name),
-                                        onChanged: _clienteCreateForm.setTelefoneCelular,
-                                      ),
-                                    ],
-                                  );
-                                } else {
-                                  return Row(
-                                    children: [
-                                      Expanded(
-                                        child: CustomTextFormField(
-                                          hint: "(99) 9999-9999",
-                                          label: "Telefone Fixo**",
-                                          type: TextInputType.phone,
-                                          leftPadding: 4,
-                                          rightPadding: 4,
-                                          maxLength: 14,
-                                          hide: true,
-                                          masks: InputMasks.telefoneFixo,
-                                          valueNotifier: _clienteCreateForm.telefoneFixo,
-                                          validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.telefones.name),
-                                          onChanged: _clienteCreateForm.setTelefoneFixo,
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: CustomTextFormField(
-                                          valueNotifier: _clienteCreateForm.telefoneCelular,
-                                          hint: "(99) 99999-9999",
-                                          label: "Telefone Celular**",
-                                          masks: InputMasks.telefoneCelular,
-                                          leftPadding: 4,
-                                          rightPadding: 4,
-                                          maxLength: 15,
-                                          type: TextInputType.phone,
-                                          hide: true,
-                                          validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.telefones.name),
-                                          onChanged: _clienteCreateForm.setTelefoneCelular,
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                }
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          if (constraints.maxWidth < 400) {
-                            return Column(
-                              children: [
-                                BlocListener<EnderecoBloc, EnderecoState>(
-                                  bloc: _enderecoBloc,
-                                  listener: (context, state) {
-                                    if (state is EnderecoSuccessState) {
-                                      _clienteCreateForm.setBairro(state.bairro);
-                                      _clienteCreateForm.setRua(state.rua);
-                                      _clienteCreateForm.setMunicipio(state.municipio);
-                                      _municipioController.text = state.municipio;
-                                    }
-                                  },
-                                  child: CustomTextFormField(
-                                    hint: "00000-000",
-                                    label: "CEP",
-                                    type: TextInputType.number,
-                                    maxLength: 9,
-                                    hide: true,
-                                    leftPadding: 4,
-                                    rightPadding: 4,
-                                    masks: InputMasks.cep,
-                                    valueNotifier: _clienteCreateForm.cep,
-                                    validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.cep.name),
-                                    onChanged: _fetchInformationAboutCep,
-                                  ),
-                                ),
-                                CustomSearchDropDownFormField(
-                                  label: "Município*",
-                                  dropdownValues: Constants.municipios,
-                                  leftPadding: 4,
-                                  rightPadding: 4,
-                                  controller: _municipioController,
-                                  validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.municipio.name),
-                                  onChanged: _clienteCreateForm.setMunicipio,
-                                ),
-                                const SizedBox(height: 16),
-                              ],
-                            );
-                          } else {
-                            return Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: BlocListener<EnderecoBloc, EnderecoState>(
-                                    bloc: _enderecoBloc,
-                                    listener: (context, state) {
-                                      if (state is EnderecoSuccessState) {
-                                        _clienteCreateForm.setBairro(state.bairro);
-                                        _clienteCreateForm.setRua(state.rua);
-                                        _clienteCreateForm.setMunicipio(state.municipio);
-                                        _municipioController.text = state.municipio;
-                                      }
-                                    },
-                                    child: CustomTextFormField(
-                                      hint: "00000-000",
-                                      label: "CEP",
-                                      type: TextInputType.number,
-                                      maxLength: 9,
-                                      rightPadding: 4,
-                                      leftPadding: 4,
-                                      hide: true,
-                                      masks: InputMasks.cep,
-                                      valueNotifier: _clienteCreateForm.cep,
-                                      validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.cep.name),
-                                      onChanged: _fetchInformationAboutCep,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: CustomSearchDropDownFormField(
-                                    label: "Município*",
-                                    dropdownValues: Constants.municipios,
-                                    leftPadding: 4,
-                                    rightPadding: 4,
-                                    controller: _municipioController,
-                                    validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.municipio.name),
-                                    onChanged: _clienteCreateForm.setMunicipio,
-                                  ),
-                                ),
-                              ],
-                            );
-                          }
-                        },
-                      ),
-                      CustomTextFormField(
-                        hint: "Bairro...",
-                        label: "Bairro*",
-                        type: TextInputType.text,
-                        maxLength: 255,
-                        hide: true,
-                        leftPadding: 4,
-                        rightPadding: 4,
-                        valueNotifier: _clienteCreateForm.bairro,
-                        validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.bairro.name),
-                        onChanged: _clienteCreateForm.setBairro,
-                      ),
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          if (constraints.maxWidth < 400) {
-                            return Column(
-                              children: [
-                                CustomTextFormField(
-                                  hint: "Rua...",
-                                  label: "Rua*",
-                                  type: TextInputType.text,
-                                  maxLength: 255,
-                                  hide: true,
-                                  leftPadding: 4,
-                                  rightPadding: 4,
-                                  valueNotifier: _clienteCreateForm.rua,
-                                  validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.rua.name),
-                                  onChanged: _clienteCreateForm.setRua,
-                                ),
-                                CustomTextFormField(
-                                  hint: "Número...",
-                                  label: "Número*",
-                                  type: TextInputType.text,
-                                  maxLength: 10,
-                                  hide: true,
-                                  leftPadding: 4,
-                                  rightPadding: 4,
-                                  valueNotifier: _clienteCreateForm.numero,
-                                  validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.numero.name),
-                                  onChanged: _clienteCreateForm.setNumero,
-                                ),
-                              ],
-                            );
-                          } else {
-                            return Row(
-                              children: [
-                                Expanded(
-                                  flex: 5,
-                                  child: CustomTextFormField(
-                                    hint: "Rua...",
-                                    label: "Rua*",
-                                    type: TextInputType.text,
-                                    maxLength: 255,
-                                    rightPadding: 4,
-                                    leftPadding: 4,
-                                    hide: true,
-                                    valueNotifier: _clienteCreateForm.rua,
-                                    validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.rua.name),
-                                    onChanged: _clienteCreateForm.setRua,
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: CustomTextFormField(
-                                    hint: "Número...",
-                                    label: "Número*",
-                                    type: TextInputType.text,
-                                    maxLength: 10,
-                                    leftPadding: 4,
-                                    rightPadding: 4,
-                                    hide: true,
-                                    valueNotifier: _clienteCreateForm.numero,
-                                    validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.numero.name),
-                                    onChanged: _clienteCreateForm.setNumero,
-                                  ),
-                                ),
-                              ],
-                            );
-                          }
-                        },
-                      ),
-                      CustomTextFormField(
-                        hint: "Complemento...",
-                        label: "Complemento",
-                        type: TextInputType.text,
-                        maxLength: 255,
-                        hide: false,
-                        leftPadding: 4,
-                        rightPadding: 4,
-                        valueNotifier: _clienteCreateForm.complemento,
-                        validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.complemento.name),
-                        onChanged: _clienteCreateForm.setComplemento,
-                      ),
-                      const Padding(padding: EdgeInsets.only(left: 16), child: BuildFieldLabels()),
-                      const SizedBox(height: 24),
-                      ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 750),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 128),
-                              child: BlocListener<ClienteBloc, ClienteState>(
-                                bloc: _clienteBloc,
-                                listener: (context, state) {
-                                  if (state is ClienteRegisterSuccessState) {
-                                    _handleBackNavigation();
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Cliente adicionado com sucesso!')),
-                                    );
-                                  } else if (state is ClienteErrorState) {
-                                    ErrorEntity error = state.error;
-
-                                    _clienteCreateValidator.applyBackendError(error);
-                                    _clienteFormKey.currentState?.validate();
-                                    _clienteCreateValidator.cleanExternalErrors();
-
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          "[ERROR] Informação(ões) inválida(s) ao registrar o Cliente.",
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                },
-                                child: ElevatedFormButton(
-                                  text: "Adicionar",
-                                  onPressed: _registerCliente,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                child: buildClientForm(),
               ),
             ),
           ),
