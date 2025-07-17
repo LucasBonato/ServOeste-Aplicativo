@@ -182,6 +182,7 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
                 builder: (context, stateServico) {
                   if (stateServico is ServicoInitialState || stateServico is ServicoLoadingState) {
                     return Skeletonizer(
+                      enableSwitchAnimation: true,
                       child: buildGridOfCards(
                         List.generate(8, (_) => Servico.skeleton()),
                         0.9,

@@ -148,6 +148,7 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
                 builder: (context, stateCliente) {
                   if (stateCliente is ClienteInitialState || stateCliente is ClienteLoadingState) {
                     return Skeletonizer(
+                      enableSwitchAnimation: true,
                       child: buildGridOfCards(
                         List.generate(16, (_) => Cliente()..applySkeletonData()),
                         1.65,

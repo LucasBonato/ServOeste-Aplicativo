@@ -173,6 +173,7 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
                 builder: (context, stateTecnico) {
                   if (stateTecnico is TecnicoInitialState || stateTecnico is TecnicoLoadingState) {
                     return Skeletonizer(
+                      enableSwitchAnimation: true,
                       child: buildGridOfCards(
                         List.generate(20, (_) => TecnicoResponse()..applySkeletonData()),
                         2.5,

@@ -177,7 +177,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
       for (var item in outrosItens) {
         item = item.trim();
         if (item.isNotEmpty) {
-          _tecnicoUpdateForm.addConhecimentos(checkersMap.length + 1);
+          //_tecnicoUpdateForm.addConhecimentos(checkersMap.length + 1);
         }
       }
     }
@@ -305,7 +305,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                                         maxLength: 40,
                                         leftPadding: 4,
                                         rightPadding: 4,
-                                        hide: false,
+                                        hide: true,
                                         valueNotifier: _tecnicoUpdateForm.nome,
                                         validator: _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, ErrorCodeKey.nomeESobrenome.name),
                                         onChanged: _tecnicoUpdateForm.setNome,
@@ -337,7 +337,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                                           type: TextInputType.name,
                                           maxLength: 40,
                                           rightPadding: 4,
-                                          hide: false,
+                                          hide: true,
                                           valueNotifier: _tecnicoUpdateForm.nome,
                                           validator: _tecnicoUpdateValidator.byField(_tecnicoUpdateForm, ErrorCodeKey.nomeESobrenome.name),
                                           onChanged: _tecnicoUpdateForm.setNome,
