@@ -51,9 +51,10 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
             keyboardType: TextInputType.text
         ),
       ],
-      onFilterTap: () => Navigator.of(context, rootNavigator: true)
-          .push(MaterialPageRoute(builder: (context) => FilterService()))
-          .then((_) => onSearchFieldChanged()),
+      onFilterTap: () =>
+          Navigator.of(context, rootNavigator: true)
+              .push(MaterialPageRoute(builder: (context) => FilterService()))
+              .then((_) => onSearchFieldChanged()),
     );
   }
 
@@ -121,14 +122,15 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
   @override
   void onSearchFieldChanged() {
     debouncer.execute(
-      () => _servicoBloc.add(
-        ServicoLoadingEvent(
-          filterRequest: ServicoFilterRequest(
-            clienteNome: _nomeClienteController.text,
-            tecnicoNome: _nomeTecnicoController.text,
-          )
-        )
-      )
+            () =>
+            _servicoBloc.add(
+                ServicoLoadingEvent(
+                    filterRequest: ServicoFilterRequest(
+                      clienteNome: _nomeClienteController.text,
+                      tecnicoNome: _nomeTecnicoController.text,
+                    )
+                )
+            )
     );
   }
 
@@ -163,30 +165,35 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
         children: [
           _buildSearchInputs(),
           Expanded(
-            child: BlocBuilder<ServicoBloc, ServicoState>(
-              builder: (context, stateServico) {
-                if (stateServico is ServicoInitialState || stateServico is ServicoLoadingState) {
-                  return const Center(child: CircularProgressIndicator.adaptive());
-                }
-                else if (stateServico is ServicoSearchSuccessState) {
-                  if (stateServico.servicos.isNotEmpty) {
-                    return buildGridOfCards(stateServico.servicos, 0.9);
-                  }
-                  return const EntityNotFound(message: "Nenhum serviço encontrado.");
-                }
-                else if (stateServico is ServicoErrorState) {
+            child: BlocListener<ServicoBloc, ServicoState>(
+              listenWhen: (previous, current) => current is ServicoErrorState,
+              listener: (context, state) {
+                if (state is ServicoErrorState) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(stateServico.error.errorMessage),
+                        content: Text(state.error.errorMessage),
                         duration: const Duration(seconds: 3),
                         backgroundColor: Colors.red,
                       ),
                     );
                   });
                 }
-                return const ErrorComponent();
               },
+              child: BlocBuilder<ServicoBloc, ServicoState>(
+                builder: (context, stateServico) {
+                  if (stateServico is ServicoInitialState || stateServico is ServicoLoadingState) {
+                    return const Center(child: CircularProgressIndicator.adaptive());
+                  }
+                  else if (stateServico is ServicoSearchSuccessState) {
+                    if (stateServico.servicos.isNotEmpty) {
+                      return buildGridOfCards(stateServico.servicos, 0.9);
+                    }
+                    return const EntityNotFound(message: "Nenhum serviço encontrado.");
+                  }
+                  return const ErrorComponent();
+                },
+              ),
             ),
           )
         ],

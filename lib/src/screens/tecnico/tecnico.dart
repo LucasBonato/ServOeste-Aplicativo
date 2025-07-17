@@ -47,27 +47,28 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
       onChanged: onSearchFieldChanged,
       fields: [
         TextInputField(
-          hint: "Procure por Técnicos...",
-          controller: _nomeController,
-          keyboardType: TextInputType.text
+            hint: "Procure por Técnicos...",
+            controller: _nomeController,
+            keyboardType: TextInputType.text
         ),
         TextInputField(
-          hint: "ID...",
-          controller: _idController,
-          keyboardType: TextInputType.number
+            hint: "ID...",
+            controller: _idController,
+            keyboardType: TextInputType.number
         ),
         DropdownInputField(
-          label: "Situação...",
-          controller: _situacaoController,
-          valueNotifier: _situacaoNotifier,
-          dropdownValues: Constants.situationTecnicoList,
-          onChanged: (situacao) => _tecnicoBloc.add(
-            TecnicoSearchMenuEvent(
-              id: int.tryParse(_idController.text),
-              nome: _nomeController.text,
-              situacao: situacao,
-            ),
-          )
+            label: "Situação...",
+            controller: _situacaoController,
+            valueNotifier: _situacaoNotifier,
+            dropdownValues: Constants.situationTecnicoList,
+            onChanged: (situacao) =>
+                _tecnicoBloc.add(
+                  TecnicoSearchMenuEvent(
+                    id: int.tryParse(_idController.text),
+                    nome: _nomeController.text,
+                    situacao: situacao,
+                  ),
+                )
         ),
       ],
     );
@@ -79,9 +80,9 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
   @override
   Widget buildDefaultFloatingActionButton() {
     return FloatingActionButtonAdd(
-      route: Routes.tecnicoCreate,
-      event: () => _tecnicoBloc.add(TecnicoSearchMenuEvent()),
-      tooltip: "Adicionar um Técnico"
+        route: Routes.tecnicoCreate,
+        event: () => _tecnicoBloc.add(TecnicoSearchMenuEvent()),
+        tooltip: "Adicionar um Técnico"
     );
   }
 
@@ -116,13 +117,14 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
   @override
   void onSearchFieldChanged() {
     debouncer.execute(
-      () => _tecnicoBloc.add(
-        TecnicoSearchMenuEvent(
-          nome: _nomeController.text,
-          id: int.tryParse(_idController.text),
-          situacao: _situacaoNotifier.value,
-        ),
-      ),
+          () =>
+          _tecnicoBloc.add(
+            TecnicoSearchMenuEvent(
+              nome: _nomeController.text,
+              id: int.tryParse(_idController.text),
+              situacao: _situacaoNotifier.value,
+            ),
+          ),
     );
   }
 
@@ -154,30 +156,35 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
         children: [
           _buildSearchInputs(),
           Expanded(
-            child: BlocBuilder<TecnicoBloc, TecnicoState>(
-              builder: (context, stateTecnico) {
-                if (stateTecnico is TecnicoInitialState || stateTecnico is TecnicoLoadingState) {
-                  return const Center(child: CircularProgressIndicator.adaptive());
-                }
-                else if (stateTecnico is TecnicoSearchSuccessState) {
-                  if (stateTecnico.tecnicos.isNotEmpty) {
-                    return buildGridOfCards(stateTecnico.tecnicos, 2.5);
-                  }
-                  return const EntityNotFound(message: "Nenhum técnico encontrado.");
-                }
-                else if (stateTecnico is TecnicoErrorState) {
+            child: BlocListener<TecnicoBloc, TecnicoState>(
+              listenWhen: (previous, current) => current is TecnicoErrorState,
+              listener: (context, state) {
+                if (state is TecnicoErrorState) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(stateTecnico.error.errorMessage),
+                        content: Text(state.error.errorMessage),
                         duration: const Duration(seconds: 3),
                         backgroundColor: Colors.red,
                       ),
                     );
                   });
                 }
-                return const ErrorComponent();
               },
+              child: BlocBuilder<TecnicoBloc, TecnicoState>(
+                builder: (context, stateTecnico) {
+                  if (stateTecnico is TecnicoInitialState || stateTecnico is TecnicoLoadingState) {
+                    return const Center(child: CircularProgressIndicator.adaptive());
+                  }
+                  else if (stateTecnico is TecnicoSearchSuccessState) {
+                    if (stateTecnico.tecnicos.isNotEmpty) {
+                      return buildGridOfCards(stateTecnico.tecnicos, 2.5);
+                    }
+                    return const EntityNotFound(message: "Nenhum técnico encontrado.");
+                  }
+                  return const ErrorComponent();
+                },
+              ),
             ),
           ),
         ],

@@ -37,19 +37,19 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
       onChanged: onSearchFieldChanged,
       fields: [
         TextInputField(
-          hint: "Procure por Clientes...",
-          controller: _nomeController,
-          keyboardType: TextInputType.text
+            hint: "Procure por Clientes...",
+            controller: _nomeController,
+            keyboardType: TextInputType.text
         ),
         TextInputField(
-          hint: "Endereço...",
-          controller: _enderecoController,
-          keyboardType: TextInputType.text
+            hint: "Endereço...",
+            controller: _enderecoController,
+            keyboardType: TextInputType.text
         ),
         TextInputField(
-          hint: "Telefone...",
-          controller: _telefoneController,
-          keyboardType: TextInputType.phone
+            hint: "Telefone...",
+            controller: _telefoneController,
+            keyboardType: TextInputType.phone
         ),
       ],
     );
@@ -61,9 +61,9 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
   @override
   Widget buildDefaultFloatingActionButton() {
     return FloatingActionButtonAdd(
-      route: Routes.clienteCreate,
-      event: () => _clienteBloc.add(ClienteSearchMenuEvent()),
-      tooltip: "Adicionar um Cliente"
+        route: Routes.clienteCreate,
+        event: () => _clienteBloc.add(ClienteSearchMenuEvent()),
+        tooltip: "Adicionar um Cliente"
     );
   }
 
@@ -97,13 +97,14 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
   @override
   void onSearchFieldChanged() {
     debouncer.execute(
-      () => _clienteBloc.add(
-        ClienteSearchMenuEvent(
-          nome: _nomeController.text,
-          telefone: _telefoneController.text,
-          endereco: _enderecoController.text,
-        ),
-      )
+            () =>
+            _clienteBloc.add(
+              ClienteSearchMenuEvent(
+                nome: _nomeController.text,
+                telefone: _telefoneController.text,
+                endereco: _enderecoController.text,
+              ),
+            )
     );
   }
 
@@ -131,30 +132,35 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
         children: [
           _buildSearchInputs(),
           Expanded(
-            child: BlocBuilder<ClienteBloc, ClienteState>(
-              builder: (context, stateCliente) {
-                if (stateCliente is ClienteInitialState || stateCliente is ClienteLoadingState) {
-                  return const Center(child: CircularProgressIndicator.adaptive());
-                }
-                else if (stateCliente is ClienteSearchSuccessState) {
-                  if (stateCliente.clientes.isNotEmpty) {
-                    return buildGridOfCards(stateCliente.clientes, 1.65);
-                  }
-                  return const EntityNotFound(message: "Nenhum cliente encontrado.");
-                }
-                else if (stateCliente is ClienteErrorState) {
+            child: BlocListener<ClienteBloc, ClienteState>(
+              listenWhen: (previous, current) => current is ClienteErrorState,
+              listener: (context, state) {
+                if (state is ClienteErrorState) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(stateCliente.error.errorMessage),
+                        content: Text(state.error.errorMessage),
                         duration: const Duration(seconds: 3),
                         backgroundColor: Colors.red,
                       ),
                     );
                   });
                 }
-                return const ErrorComponent();
               },
+              child: BlocBuilder<ClienteBloc, ClienteState>(
+                builder: (context, stateCliente) {
+                  if (stateCliente is ClienteInitialState || stateCliente is ClienteLoadingState) {
+                    return const Center(child: CircularProgressIndicator.adaptive());
+                  }
+                  else if (stateCliente is ClienteSearchSuccessState) {
+                    if (stateCliente.clientes.isNotEmpty) {
+                      return buildGridOfCards(stateCliente.clientes, 1.65);
+                    }
+                    return const EntityNotFound(message: "Nenhum cliente encontrado.");
+                  }
+                  return const ErrorComponent();
+                },
+              ),
             ),
           ),
         ],
