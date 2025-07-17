@@ -9,6 +9,7 @@ class CardTechnician extends StatelessWidget {
   final String? celular;
   final String status;
   final bool isSelected;
+  final bool isSkeleton;
   final void Function()? onLongPress;
   final void Function()? onDoubleTap;
   final void Function()? onTap;
@@ -18,10 +19,11 @@ class CardTechnician extends StatelessWidget {
     required this.id,
     required this.nome,
     required this.sobrenome,
+    required this.status,
     this.telefone,
     this.celular,
-    required this.status,
     this.isSelected = false,
+    this.isSkeleton = false,
     this.onLongPress,
     this.onDoubleTap,
     this.onTap,
@@ -51,9 +53,9 @@ class CardTechnician extends StatelessWidget {
         valueListenable: isHovered,
         builder: (context, hovered, child) {
           return GestureDetector(
-            onLongPress: onLongPress,
-            onDoubleTap: onDoubleTap,
-            onTap: onTap,
+            onLongPress: isSkeleton ? () {} :onLongPress,
+            onDoubleTap: isSkeleton ? () {} :onDoubleTap,
+            onTap: isSkeleton ? () {} :onTap,
             child: LayoutBuilder(
               builder: (context, constraints) {
                 return Container(
@@ -67,7 +69,7 @@ class CardTechnician extends StatelessWidget {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
+                        color: Colors.grey.withValues(alpha: 0.2),
                         blurRadius: 6,
                         offset: const Offset(0, 3),
                       ),

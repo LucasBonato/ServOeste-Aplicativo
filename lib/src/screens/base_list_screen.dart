@@ -24,7 +24,7 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
 
   Widget buildSelectionFloatingActionButton(List<int> selectedIds);
 
-  Widget buildItemCard(T item, bool isSelected, bool isSelectMode);
+  Widget buildItemCard(T item, bool isSelected, bool isSelectMode, bool isSkeleton);
 
   void onSearchFieldChanged() {
     _debouncer.execute(searchFieldChanged);
@@ -72,17 +72,17 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
     );
   }
 
-  Widget buildGridOfCards(List<T> items, double aspectRatio) {
+  Widget buildGridOfCards(List<T> items, double aspectRatio, {bool isSkeleton = false}) {
     return SingleChildScrollView(
       child: GridListView(
         aspectRatio: aspectRatio,
         dataList: items,
         buildCard: (item) => BlocBuilder<ListaBloc, ListaState>(
           builder: (context, stateLista) {
-            final bool isSelected = isItemSelected(item.id, stateLista);
-            final bool isSelectMode = isSelectionMode(stateLista);
+            final bool isSelected = isSkeleton ? false : isItemSelected(item.id, stateLista);
+            final bool isSelectMode = isSkeleton ? false : isSelectionMode(stateLista);
 
-            return buildItemCard(item, isSelected, isSelectMode);
+            return buildItemCard(item, isSelected, isSelectMode, isSkeleton);
           },
         ),
       ),

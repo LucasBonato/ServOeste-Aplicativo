@@ -15,6 +15,7 @@ import 'package:serv_oeste/src/screens/base_list_screen.dart';
 import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/shared/routes.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class TecnicoScreen extends BaseListScreen<TecnicoResponse> {
   const TecnicoScreen({super.key});
@@ -94,7 +95,7 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
   }
 
   @override
-  Widget buildItemCard(TecnicoResponse tecnico, bool isSelected, bool isSelectMode) {
+  Widget buildItemCard(TecnicoResponse tecnico, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return CardTechnician(
       onDoubleTap: () => onNavigateToUpdateScreen(tecnico.id!),
       onLongPress: () => onSelectItemList(tecnico.id!),
@@ -110,6 +111,7 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
       celular: tecnico.telefoneCelular!,
       status: tecnico.situacao!,
       isSelected: isSelected,
+      isSkeleton: isSkeleton
     );
   }
 
@@ -170,7 +172,13 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
               child: BlocBuilder<TecnicoBloc, TecnicoState>(
                 builder: (context, stateTecnico) {
                   if (stateTecnico is TecnicoInitialState || stateTecnico is TecnicoLoadingState) {
-                    return const Loading();
+                    return Skeletonizer(
+                      child: buildGridOfCards(
+                        List.generate(20, (_) => TecnicoResponse()..applySkeletonData()),
+                        2.5,
+                        isSkeleton: true,
+                      ),
+                    );
                   }
                   else if (stateTecnico is TecnicoSearchSuccessState) {
                     if (stateTecnico.tecnicos.isNotEmpty) {

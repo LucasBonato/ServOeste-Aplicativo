@@ -2,10 +2,12 @@ import 'dart:convert';
 
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
 import 'package:serv_oeste/src/shared/formatters.dart';
+import 'package:serv_oeste/src/shared/skeleton/skeleton_generator.dart';
+import 'package:serv_oeste/src/shared/skeleton/skeletonizable.dart';
 
 List<Cliente> clienteFromJson(String str) => List<Cliente>.from(json.decode(str));
 
-class Cliente {
+class Cliente implements Skeletonizable {
   int? id;
   String? nome;
   String? telefoneFixo;
@@ -34,4 +36,15 @@ class Cliente {
       endereco: json["endereco"],
       bairro: json["bairro"],
       municipio: json["municipio"]);
+
+  @override
+  void applySkeletonData() {
+    id = SkeletonDataGenerator.integer();
+    nome = SkeletonDataGenerator.name();
+    telefoneFixo = SkeletonDataGenerator.phone();
+    telefoneCelular = SkeletonDataGenerator.phone();
+    endereco = SkeletonDataGenerator.string(length: 15);
+    bairro = SkeletonDataGenerator.string(length: 7);
+    municipio = SkeletonDataGenerator.string(length: 7);
+  }
 }

@@ -15,6 +15,7 @@ import 'package:serv_oeste/src/screens/base_list_screen.dart';
 import 'package:serv_oeste/src/screens/servico/filter_servico.dart';
 import 'package:serv_oeste/src/screens/servico/update_servico.dart';
 import 'package:serv_oeste/src/shared/routes.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class ServicoScreen extends BaseListScreen<Servico> {
   const ServicoScreen({super.key});
@@ -93,7 +94,7 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
   }
 
   @override
-  Widget buildItemCard(Servico servico, bool isSelected, bool isSelectMode) {
+  Widget buildItemCard(Servico servico, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return CardService(
       onDoubleTap: () => onNavigateToUpdateScreen(servico.id),
       onLongPress: () => onSelectItemList(servico.id),
@@ -115,6 +116,7 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
       dataFinalGarantia: servico.dataFimGarantia,
       status: servico.situacao,
       isSelected: isSelected,
+
     );
   }
 
@@ -179,7 +181,13 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
               child: BlocBuilder<ServicoBloc, ServicoState>(
                 builder: (context, stateServico) {
                   if (stateServico is ServicoInitialState || stateServico is ServicoLoadingState) {
-                    return const Loading();
+                    return Skeletonizer(
+                      child: buildGridOfCards(
+                        List.generate(8, (_) => Servico.skeleton()),
+                        0.9,
+                        isSkeleton: true
+                      )
+                    );
                   }
                   else if (stateServico is ServicoSearchSuccessState) {
                     if (stateServico.servicos.isNotEmpty) {

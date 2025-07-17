@@ -8,21 +8,23 @@ class CardClient extends StatelessWidget {
   final String city;
   final String street;
   final bool isSelected;
+  final bool isSkeleton;
   final void Function()? onLongPress;
   final void Function()? onDoubleTap;
   final void Function()? onTap;
 
   const CardClient({
     super.key,
-    required this.name,
-    this.phoneNumber,
-    this.cellphone,
-    required this.city,
-    required this.street,
     required this.isSelected,
-    this.onLongPress,
+    required this.street,
+    required this.name,
+    required this.city,
+    this.phoneNumber,
     this.onDoubleTap,
+    this.onLongPress,
+    this.cellphone,
     this.onTap,
+    this.isSkeleton = false,
   });
 
   @override
@@ -33,9 +35,9 @@ class CardClient extends StatelessWidget {
       valueListenable: isHovered,
       builder: (context, hovered, _) {
         return GestureDetector(
-          onLongPress: onLongPress,
-          onDoubleTap: onDoubleTap,
-          onTap: onTap,
+          onLongPress: isSkeleton ? () {} : onLongPress,
+          onDoubleTap: isSkeleton ? () {} : onDoubleTap,
+          onTap: isSkeleton ? () {} : onTap,
           child: LayoutBuilder(
             builder: (context, constraints) {
               return Container(
@@ -48,7 +50,7 @@ class CardClient extends StatelessWidget {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 6,
                       offset: const Offset(0, 2),
                     ),

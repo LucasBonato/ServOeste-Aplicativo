@@ -16,6 +16,7 @@ class CardService extends StatelessWidget {
   final DateTime? dataFechamento;
   final DateTime? dataFinalGarantia;
   final bool isSelected;
+  final bool isSkeleton;
   final void Function()? onLongPress;
   final void Function()? onDoubleTap;
   final void Function()? onTap;
@@ -35,6 +36,7 @@ class CardService extends StatelessWidget {
     this.dataFechamento,
     this.dataFinalGarantia,
     this.isSelected = false,
+    this.isSkeleton = false,
     this.onLongPress,
     this.onDoubleTap,
     this.onTap,
@@ -103,9 +105,9 @@ class CardService extends StatelessWidget {
           valueListenable: isHovered,
           builder: (context, hovered, child) {
             return GestureDetector(
-              onLongPress: onLongPress,
-              onDoubleTap: onDoubleTap,
-              onTap: onTap,
+              onLongPress: isSkeleton ? () {} : onLongPress,
+              onDoubleTap: isSkeleton ? () {} :onDoubleTap,
+              onTap: isSkeleton ? () {} :onTap,
               child: ConstrainedBox(
                 constraints: BoxConstraints(
                   minHeight: 100,

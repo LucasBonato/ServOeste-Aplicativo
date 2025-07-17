@@ -484,6 +484,7 @@ class CreateClienteState extends State<CreateCliente> {
   @override
   void dispose() {
     _enderecoBloc.close();
+    _municipioController.dispose();
     super.dispose();
   }
 }

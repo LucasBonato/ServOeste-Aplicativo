@@ -7,12 +7,12 @@ import 'package:serv_oeste/src/components/layout/responsive_search_inputs.dart';
 import 'package:serv_oeste/src/components/screen/cards/card_client.dart';
 import 'package:serv_oeste/src/components/screen/entity_not_found.dart';
 import 'package:serv_oeste/src/components/screen/error_component.dart';
-import 'package:serv_oeste/src/components/screen/loading.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/base_list_screen.dart';
 import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
 import 'package:serv_oeste/src/shared/routes.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class ClienteScreen extends BaseListScreen<Cliente> {
   const ClienteScreen({super.key});
@@ -75,12 +75,12 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
   }
 
   @override
-  Widget buildItemCard(Cliente cliente, bool isSelected, bool isSelectMode) {
+  Widget buildItemCard(Cliente cliente, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return CardClient(
-      onDoubleTap: () => onNavigateToUpdateScreen(cliente.id!),
-      onLongPress: () => onSelectItemList(cliente.id!),
+      onDoubleTap: isSkeleton ? () {} : () => onNavigateToUpdateScreen(cliente.id!),
+      onLongPress: isSkeleton ? () {} : () => onSelectItemList(cliente.id!),
       onTap: () {
-        if (isSelectMode) {
+        if (isSelectMode && !isSkeleton) {
           onSelectItemList(cliente.id!);
         }
       },
@@ -90,6 +90,7 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
       city: cliente.municipio!,
       street: cliente.endereco!,
       isSelected: isSelected,
+      isSkeleton: isSkeleton,
     );
   }
 
@@ -146,7 +147,13 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
               child: BlocBuilder<ClienteBloc, ClienteState>(
                 builder: (context, stateCliente) {
                   if (stateCliente is ClienteInitialState || stateCliente is ClienteLoadingState) {
-                    return const Loading();
+                    return Skeletonizer(
+                      child: buildGridOfCards(
+                        List.generate(16, (_) => Cliente()..applySkeletonData()),
+                        1.65,
+                        isSkeleton: true,
+                      ),
+                    );
                   }
                   else if (stateCliente is ClienteSearchSuccessState) {
                     if (stateCliente.clientes.isNotEmpty) {

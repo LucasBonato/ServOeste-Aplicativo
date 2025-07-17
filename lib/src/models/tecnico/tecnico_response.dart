@@ -1,4 +1,7 @@
-class TecnicoResponse {
+import 'package:serv_oeste/src/shared/skeleton/skeleton_generator.dart';
+import 'package:serv_oeste/src/shared/skeleton/skeletonizable.dart';
+
+class TecnicoResponse implements Skeletonizable {
   int? id;
   String? nome;
   String? sobrenome;
@@ -23,4 +26,14 @@ class TecnicoResponse {
     telefoneCelular: json["telefoneCelular"],
     situacao: json["situacao"],
   );
+
+  @override
+  void applySkeletonData() {
+    id = SkeletonDataGenerator.integer();
+    nome = SkeletonDataGenerator.name();
+    sobrenome = SkeletonDataGenerator.name();
+    telefoneFixo = SkeletonDataGenerator.phone();
+    telefoneCelular = SkeletonDataGenerator.phone();
+    situacao = SkeletonDataGenerator.string(length: 7);
+  }
 }
