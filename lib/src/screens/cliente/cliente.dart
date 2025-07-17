@@ -48,7 +48,7 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
         ),
         TextInputField(
           hint: "Telefone...",
-          controller: _nomeController,
+          controller: _telefoneController,
           keyboardType: TextInputType.phone
         ),
       ],
