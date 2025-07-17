@@ -7,6 +7,7 @@ import 'package:serv_oeste/src/components/layout/responsive_search_inputs.dart';
 import 'package:serv_oeste/src/components/screen/cards/card_client.dart';
 import 'package:serv_oeste/src/components/screen/entity_not_found.dart';
 import 'package:serv_oeste/src/components/screen/error_component.dart';
+import 'package:serv_oeste/src/components/screen/loading.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/base_list_screen.dart';
@@ -150,7 +151,7 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
               child: BlocBuilder<ClienteBloc, ClienteState>(
                 builder: (context, stateCliente) {
                   if (stateCliente is ClienteInitialState || stateCliente is ClienteLoadingState) {
-                    return const Center(child: CircularProgressIndicator.adaptive());
+                    return const Loading();
                   }
                   else if (stateCliente is ClienteSearchSuccessState) {
                     if (stateCliente.clientes.isNotEmpty) {

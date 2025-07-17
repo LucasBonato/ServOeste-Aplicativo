@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/src/components/screen/filtered_clients_table.dart';
+import 'package:serv_oeste/src/components/screen/loading.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 
 class ClientSelectionModal extends StatefulWidget {
@@ -133,9 +134,7 @@ class ClientSelectionModalState extends State<ClientSelectionModal> {
                     },
                   );
                 }
-                return const Center(
-                  child: CircularProgressIndicator.adaptive(),
-                );
+                return const Loading();
               },
             ),
           ),

@@ -15,6 +15,7 @@ import 'package:serv_oeste/src/components/layout/app_bar_form.dart';
 import 'package:serv_oeste/src/components/screen/cards/card_builder_form.dart';
 import 'package:serv_oeste/src/components/screen/client_selection_modal.dart';
 import 'package:serv_oeste/src/components/screen/elevated_form_button.dart';
+import 'package:serv_oeste/src/components/screen/loading.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
@@ -1792,15 +1793,11 @@ class _UpdateServicoState extends State<UpdateServico> {
                     ),
                   );
                 }
-                return const Center(
-                  child: CircularProgressIndicator.adaptive(),
-                );
+                return const Loading();
               },
             );
           }
-          return const Center(
-            child: CircularProgressIndicator.adaptive(),
-          );
+          return const Loading();
         },
       ),
     );

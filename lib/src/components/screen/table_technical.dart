@@ -3,6 +3,7 @@ import 'package:logger/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/src/components/screen/loading.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 
 class TableTecnicosModal extends StatefulWidget {
@@ -226,7 +227,7 @@ class TableTecnicosModalState extends State<TableTecnicosModal> {
         } else if (state is TecnicoErrorState) {
           return Center(child: Text('Erro ao carregar as disponibilidades.'));
         }
-        return Center(child: CircularProgressIndicator());
+        return const Loading();
       },
     );
   }

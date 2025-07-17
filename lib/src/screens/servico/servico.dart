@@ -7,6 +7,7 @@ import 'package:serv_oeste/src/components/screen/cards/card_service.dart';
 import 'package:serv_oeste/src/components/screen/entity_not_found.dart';
 import 'package:serv_oeste/src/components/screen/error_component.dart';
 import 'package:serv_oeste/src/components/screen/expandable_fab_items.dart';
+import 'package:serv_oeste/src/components/screen/loading.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
@@ -183,7 +184,7 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
               child: BlocBuilder<ServicoBloc, ServicoState>(
                 builder: (context, stateServico) {
                   if (stateServico is ServicoInitialState || stateServico is ServicoLoadingState) {
-                    return const Center(child: CircularProgressIndicator.adaptive());
+                    return const Loading();
                   }
                   else if (stateServico is ServicoSearchSuccessState) {
                     if (stateServico.servicos.isNotEmpty) {
