@@ -77,10 +77,10 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
   @override
   Widget buildItemCard(Cliente cliente, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return CardClient(
-      onDoubleTap: isSkeleton ? () {} : () => onNavigateToUpdateScreen(cliente.id!),
-      onLongPress: isSkeleton ? () {} : () => onSelectItemList(cliente.id!),
+      onDoubleTap: () => onNavigateToUpdateScreen(cliente.id!),
+      onLongPress: () => onSelectItemList(cliente.id!),
       onTap: () {
-        if (isSelectMode && !isSkeleton) {
+        if (isSelectMode) {
           onSelectItemList(cliente.id!);
         }
       },
