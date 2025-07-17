@@ -1,7 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
@@ -32,6 +30,7 @@ import 'package:serv_oeste/src/pdfs/recibo_pdf.dart';
 import 'package:serv_oeste/src/pdfs/relatorio_visitas_pdf.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/shared/currency_input_formatter.dart';
+import 'package:serv_oeste/src/shared/debouncer.dart';
 import 'package:serv_oeste/src/shared/formatters.dart';
 import 'package:serv_oeste/src/shared/input_masks.dart';
 
@@ -47,7 +46,7 @@ class UpdateServico extends StatefulWidget {
 }
 
 class _UpdateServicoState extends State<UpdateServico> {
-  Timer? _debounce;
+  final Debouncer _debouncer = Debouncer();
   late String _currentSituation;
   late final ServicoBloc _servicoBloc;
   late final TecnicoBloc _tecnicoBloc;
@@ -96,8 +95,7 @@ class _UpdateServicoState extends State<UpdateServico> {
   void _onNameTechnicalChanged(String nome) {
     _servicoUpdateForm.setIdTecnico(null);
     if (_servicoUpdateForm.equipamento.value.isEmpty) return;
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(Duration(milliseconds: 150), () => _fetchTechnicalNames(nome));
+    _debouncer.execute(() => _fetchTechnicalNames(nome));
   }
 
   void _fetchTechnicalNames(String nome) {
@@ -1805,7 +1803,6 @@ class _UpdateServicoState extends State<UpdateServico> {
 
   @override
   void dispose() {
-    _debounce?.cancel();
     _nomeTecnicoController.dispose();
     _nomeClienteController.dispose();
     _enderecoController.dispose();

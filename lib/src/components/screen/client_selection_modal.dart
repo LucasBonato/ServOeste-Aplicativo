@@ -1,10 +1,10 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/src/components/screen/filtered_clients_table.dart';
 import 'package:serv_oeste/src/components/screen/loading.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
+import 'package:serv_oeste/src/shared/debouncer.dart';
 
 class ClientSelectionModal extends StatefulWidget {
   final TextEditingController nomeController;
@@ -23,22 +23,23 @@ class ClientSelectionModal extends StatefulWidget {
 }
 
 class ClientSelectionModalState extends State<ClientSelectionModal> {
-  Timer? _debounce;
+  final Debouncer _debouncer = Debouncer();
   List<Map<String, String>> _clientesFiltrados = [];
 
   void _onSearchChanged() {
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      context.read<ClienteBloc>().add(ClienteSearchEvent(
-            nome: widget.nomeController.text,
-            endereco: widget.enderecoController.text,
-          ));
-    });
+    _debouncer.execute(
+      () => context.read<ClienteBloc>().add(
+        ClienteSearchEvent(
+          nome: widget.nomeController.text,
+          endereco: widget.enderecoController.text,
+        )
+      ),
+      delay: const Duration(milliseconds: 500)
+    );
   }
 
   @override
   void dispose() {
-    _debounce?.cancel();
     super.dispose();
   }
 

@@ -12,7 +12,7 @@ abstract class BaseListScreen<T> extends StatefulWidget {
 }
 
 abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
-  final Debouncer debouncer = Debouncer();
+  final Debouncer _debouncer = Debouncer();
 
   void searchFieldChanged();
 
@@ -27,7 +27,7 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
   Widget buildItemCard(T item, bool isSelected, bool isSelectMode);
 
   void onSearchFieldChanged() {
-    debouncer.execute(searchFieldChanged);
+    _debouncer.execute(searchFieldChanged);
   }
 
   void onNavigateToUpdateScreen(int id) {

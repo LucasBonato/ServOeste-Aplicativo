@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
@@ -16,6 +14,7 @@ import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
 import 'package:serv_oeste/src/models/validators/tecnico_validator.dart';
+import 'package:serv_oeste/src/shared/debouncer.dart';
 import 'package:serv_oeste/src/shared/input_masks.dart';
 
 class CreateTecnico extends StatefulWidget {
@@ -31,7 +30,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
   final TecnicoValidator _tecnicoCreateValidator = TecnicoValidator();
   final GlobalKey<FormState> _tecnicoFormKey = GlobalKey<FormState>();
   List<String> _dropdownValuesNomes = [];
-  Timer? _debounce;
+  final Debouncer _debouncer = Debouncer();
   late TextEditingController _nomeController, _telefoneCelularController, _telefoneFixoController, _outrosController;
 
   bool _outrosSelected = false;
@@ -73,8 +72,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
   }
 
   void _onNomeChanged(String nome) {
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(Duration(milliseconds: 150), () => _fetchTecnicoNames(nome));
+    _debouncer.execute(() => _fetchTecnicoNames(nome));
   }
 
   void _fetchTecnicoNames(String nome) async {

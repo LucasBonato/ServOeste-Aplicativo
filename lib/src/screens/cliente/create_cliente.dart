@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucid_validation/lucid_validation.dart';
@@ -16,6 +14,7 @@ import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/validators/cliente_validator.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:serv_oeste/src/shared/debouncer.dart';
 import 'package:serv_oeste/src/shared/input_masks.dart';
 
 class CreateCliente extends StatefulWidget {
@@ -33,7 +32,7 @@ class CreateClienteState extends State<CreateCliente> {
   final GlobalKey<FormState> _clienteFormKey = GlobalKey<FormState>();
   late final TextEditingController _municipioController;
   List<String> _dropdownValuesNomes = [];
-  Timer? _debounce;
+  final Debouncer _debouncer = Debouncer();
 
   @override
   void initState() {
@@ -43,9 +42,7 @@ class CreateClienteState extends State<CreateCliente> {
   }
 
   void _onNomeChanged(String nome) {
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-
-    _debounce = Timer(Duration(milliseconds: 150), () => _fetchClienteNames(nome));
+    _debouncer.execute(() => _fetchClienteNames(nome));
   }
 
   void _fetchClienteNames(String nome) async {
@@ -487,7 +484,6 @@ class CreateClienteState extends State<CreateCliente> {
   @override
   void dispose() {
     _enderecoBloc.close();
-    _debounce?.cancel();
     super.dispose();
   }
 }

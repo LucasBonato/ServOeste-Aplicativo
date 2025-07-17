@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucid_validation/lucid_validation.dart';
@@ -26,6 +24,7 @@ import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
 import 'package:serv_oeste/src/models/validators/cliente_validator.dart';
 import 'package:serv_oeste/src/models/validators/servico_validator.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:serv_oeste/src/shared/debouncer.dart';
 import 'package:serv_oeste/src/shared/input_masks.dart';
 
 class CreateServico extends StatefulWidget {
@@ -38,8 +37,8 @@ class CreateServico extends StatefulWidget {
 }
 
 class _CreateServicoState extends State<CreateServico> {
-  Timer? _debounce;
   bool _isDataLoaded = true;
+  final Debouncer _debouncer = Debouncer();
   late bool isClientAndService;
   late List<TecnicoResponse> _tecnicos;
   late List<Cliente> _clientes;
@@ -87,8 +86,7 @@ class _CreateServicoState extends State<CreateServico> {
 
   void _onNomeClienteChanged(String nome) {
     _servicoForm.setIdCliente(null);
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(Duration(milliseconds: 150), () => _fetchClienteNames(nome));
+    _debouncer.execute(() => _fetchClienteNames(nome));
   }
 
   void _fetchClienteNames(String nome) {
@@ -123,24 +121,21 @@ class _CreateServicoState extends State<CreateServico> {
 
   void _onSearchFieldChanged() {
     _isDataLoaded = false;
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
 
-    _debounce = Timer(
-      Duration(milliseconds: 150),
+    _debouncer.execute(
       () => _clienteBloc.add(
         ClienteSearchEvent(
           nome: _nomeClienteController.text,
           endereco: _enderecoController.text,
         ),
-      ),
+      )
     );
   }
 
   void _onNomeTecnicoChanged(String nome) {
     _servicoForm.setIdTecnico(null);
     if (_servicoForm.equipamento.value.isEmpty) return;
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(Duration(milliseconds: 150), () => _fetchTecnicoNames(nome));
+    _debouncer.execute(() => _fetchTecnicoNames(nome));
   }
 
   void _fetchTecnicoNames(String nome) {
@@ -987,7 +982,6 @@ class _CreateServicoState extends State<CreateServico> {
 
   @override
   void dispose() {
-    _debounce?.cancel();
     _nomeClienteController.dispose();
     _enderecoController.dispose();
     super.dispose();
