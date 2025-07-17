@@ -843,6 +843,7 @@ class _CreateServicoState extends State<CreateServico> {
             onChanged: _servicoForm.setFilial,
             enabled: _isInputEnabled(),
           ),
+          const SizedBox(height: 16),
           BlocListener<TecnicoBloc, TecnicoState>(
             bloc: _tecnicoBloc,
             listener: (context, state) {

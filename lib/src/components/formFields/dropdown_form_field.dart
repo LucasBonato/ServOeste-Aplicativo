@@ -68,7 +68,7 @@ class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(widget.leftPadding ?? 16, 4, widget.rightPadding ?? 16, 4),
+      padding: EdgeInsets.fromLTRB(widget.leftPadding ?? 16, 4, widget.rightPadding ?? 16, 0),
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         onEnter: (_) {

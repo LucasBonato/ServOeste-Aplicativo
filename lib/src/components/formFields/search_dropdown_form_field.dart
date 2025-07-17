@@ -129,7 +129,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(
-                color: Color(0xFF6C757D),
+                color: Colors.blueAccent,
                 width: 1,
               ),
             ),
