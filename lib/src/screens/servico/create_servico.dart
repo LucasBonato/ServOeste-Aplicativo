@@ -509,7 +509,7 @@ class _CreateServicoState extends State<CreateServico> {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.6,
                     child: Transform.translate(
-                      offset: Offset(0, -18),
+                      offset: Offset(24, 0),
                       child: Text(
                         "Obs. os nomes que aparecerem já estão cadastrados",
                         style: TextStyle(
@@ -646,6 +646,7 @@ class _CreateServicoState extends State<CreateServico> {
                               label: "Município*",
                               dropdownValues: Constants.municipios,
                               maxLength: 20,
+                              hide: true,
                               controller: _municipioController,
                               valueNotifier: _clienteForm.municipio,
                               validator: _clienteValidator.byField(_clienteForm, ErrorCodeKey.municipio.name),
@@ -843,7 +844,7 @@ class _CreateServicoState extends State<CreateServico> {
             onChanged: _servicoForm.setFilial,
             enabled: _isInputEnabled(),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           BlocListener<TecnicoBloc, TecnicoState>(
             bloc: _tecnicoBloc,
             listener: (context, state) {
@@ -891,6 +892,7 @@ class _CreateServicoState extends State<CreateServico> {
               },
             ),
           ),
+          const SizedBox(height: 8),
           LayoutBuilder(
             builder: (context, constraints) {
               if (constraints.maxWidth < 400) {
@@ -962,6 +964,7 @@ class _CreateServicoState extends State<CreateServico> {
               }
             },
           ),
+          const SizedBox(height: 8),
           CustomTextFormField(
             hint: "Descrição/Observação...",
             label: "Descrição/Observação*",

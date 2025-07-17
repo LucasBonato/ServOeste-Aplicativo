@@ -130,7 +130,7 @@ class CreateClienteState extends State<CreateCliente> {
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.65,
                   child: Transform.translate(
-                    offset: Offset(24, -18),
+                    offset: Offset(24, 0),
                     child: Text(
                       "Obs. os nomes que aparecerem já estão cadastrados",
                       style: TextStyle(
@@ -144,6 +144,7 @@ class CreateClienteState extends State<CreateCliente> {
               ],
             ),
           ),
+          const SizedBox(height: 8),
           Row(
             children: [
               Expanded(
@@ -221,6 +222,7 @@ class CreateClienteState extends State<CreateCliente> {
               ),
             ],
           ),
+          const SizedBox(height: 8),
           LayoutBuilder(
             builder: (context, constraints) {
               if (constraints.maxWidth < 400) {
@@ -312,6 +314,7 @@ class CreateClienteState extends State<CreateCliente> {
               }
             },
           ),
+          const SizedBox(height: 8),
           CustomTextFormField(
             hint: "Bairro...",
             label: "Bairro*",
@@ -324,6 +327,7 @@ class CreateClienteState extends State<CreateCliente> {
             validator: _clienteCreateValidator.byField(_clienteCreateForm, ErrorCodeKey.bairro.name),
             onChanged: _clienteCreateForm.setBairro,
           ),
+          const SizedBox(height: 8),
           LayoutBuilder(
             builder: (context, constraints) {
               if (constraints.maxWidth < 400) {
@@ -393,6 +397,7 @@ class CreateClienteState extends State<CreateCliente> {
               }
             },
           ),
+          const SizedBox(height: 8),
           CustomTextFormField(
             hint: "Complemento...",
             label: "Complemento",

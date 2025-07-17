@@ -167,7 +167,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.65,
                         child: Transform.translate(
-                          offset: Offset(0, -18),
+                          offset: Offset(24, 0),
                           child: Text(
                             "Obs. os nomes que aparecerem já estão cadastrados",
                             style: TextStyle(
@@ -178,6 +178,7 @@ class _CreateTecnicoState extends State<CreateTecnico> {
                           ),
                         ),
                       ),
+                      const SizedBox(height: 8),
                       LayoutBuilder(
                         builder: (context, constraints) {
                           if (constraints.maxWidth < 400) {

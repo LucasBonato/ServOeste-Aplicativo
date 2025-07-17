@@ -95,6 +95,7 @@ class FilterService extends StatelessWidget {
                       },
                       valueNotifier: ValueNotifier(provider.filter.situacao ?? ''),
                     ),
+                    const SizedBox(height: 16),
                     CustomDropdownFormField(
                       label: 'Garantia...',
                       dropdownValues: Constants.garantias,
@@ -109,6 +110,7 @@ class FilterService extends StatelessWidget {
                       },
                       valueNotifier: ValueNotifier(provider.filter.garantia ?? ''),
                     ),
+                    const SizedBox(height: 16),
                     LayoutBuilder(
                       builder: (context, constraints) {
                         if (constraints.maxWidth < 400) {
@@ -181,6 +183,7 @@ class FilterService extends StatelessWidget {
                         }
                       },
                     ),
+                    const SizedBox(height: 16),
                     LayoutBuilder(
                       builder: (context, constraints) {
                         if (constraints.maxWidth < 400) {
@@ -285,6 +288,7 @@ class FilterService extends StatelessWidget {
                         }
                       },
                     ),
+                    const SizedBox(height: 16),
                     LayoutBuilder(
                       builder: (context, constraints) {
                         if (constraints.maxWidth < 400) {
@@ -328,7 +332,8 @@ class FilterService extends StatelessWidget {
                               ),
                             ],
                           );
-                        } else {
+                        }
+                        else {
                           return Row(
                             children: [
                               Expanded(

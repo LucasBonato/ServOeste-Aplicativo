@@ -99,7 +99,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
             widget.valueNotifier?.value = value;
           },
           decoration: InputDecoration(
-            counterText: widget.hide ? "" : null,
+            counterText: widget.hide ? null : "",
             labelText: widget.label,
             labelStyle: TextStyle(
               color: labelColor,
@@ -173,7 +173,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
             child: suggestionBox,
           );
         },
-        suggestionsBoxVerticalOffset: widget.hide ? 0 : -20,
+        suggestionsBoxVerticalOffset: widget.hide ? -20 : 0,
       ),
     );
   }
