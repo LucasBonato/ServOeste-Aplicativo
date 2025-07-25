@@ -23,7 +23,9 @@ class ClienteScreen extends BaseListScreen<Cliente> {
 
 class _ClienteScreenState extends BaseListScreenState<Cliente> {
   late final ClienteBloc _clienteBloc;
-  late final TextEditingController _nomeController, _telefoneController, _enderecoController;
+  late final TextEditingController _nomeController,
+      _telefoneController,
+      _enderecoController;
 
   void _setFilterValues() {
     _nomeController.text = _clienteBloc.nomeMenu ?? "";
@@ -38,18 +40,15 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
         TextInputField(
             hint: "Procure por Clientes...",
             controller: _nomeController,
-            keyboardType: TextInputType.text
-        ),
+            keyboardType: TextInputType.text),
         TextInputField(
             hint: "Endereço...",
             controller: _enderecoController,
-            keyboardType: TextInputType.text
-        ),
+            keyboardType: TextInputType.text),
         TextInputField(
             hint: "Telefone...",
             controller: _telefoneController,
-            keyboardType: TextInputType.phone
-        ),
+            keyboardType: TextInputType.phone),
       ],
     );
   }
@@ -62,8 +61,7 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
     return FloatingActionButtonAdd(
         route: Routes.clienteCreate,
         event: () => _clienteBloc.add(ClienteSearchMenuEvent()),
-        tooltip: "Adicionar um Cliente"
-    );
+        tooltip: "Adicionar um Cliente");
   }
 
   @override
@@ -75,7 +73,8 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
   }
 
   @override
-  Widget buildItemCard(Cliente cliente, bool isSelected, bool isSelectMode, bool isSkeleton) {
+  Widget buildItemCard(
+      Cliente cliente, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return CardClient(
       onDoubleTap: () => onNavigateToUpdateScreen(cliente.id!),
       onLongPress: () => onSelectItemList(cliente.id!),
@@ -146,21 +145,23 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
               },
               child: BlocBuilder<ClienteBloc, ClienteState>(
                 builder: (context, stateCliente) {
-                  if (stateCliente is ClienteInitialState || stateCliente is ClienteLoadingState) {
+                  if (stateCliente is ClienteInitialState ||
+                      stateCliente is ClienteLoadingState) {
                     return Skeletonizer(
                       enableSwitchAnimation: true,
                       child: buildGridOfCards(
-                        List.generate(16, (_) => Cliente()..applySkeletonData()),
+                        List.generate(
+                            16, (_) => Cliente()..applySkeletonData()),
                         1.65,
                         isSkeleton: true,
                       ),
                     );
-                  }
-                  else if (stateCliente is ClienteSearchSuccessState) {
+                  } else if (stateCliente is ClienteSearchSuccessState) {
                     if (stateCliente.clientes.isNotEmpty) {
                       return buildGridOfCards(stateCliente.clientes, 1.65);
                     }
-                    return const EntityNotFound(message: "Nenhum cliente encontrado.");
+                    return const EntityNotFound(
+                        message: "Nenhum cliente encontrado.");
                   }
                   return const ErrorComponent();
                 },

@@ -63,7 +63,9 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
     if (_isDisposed || !mounted) return;
 
     setState(() {
-      labelColor = _customSearchController.text.isNotEmpty ? const Color(0xFF948F8F) : const Color(0xFF000000);
+      labelColor = _customSearchController.text.isNotEmpty
+          ? const Color(0xFF948F8F)
+          : const Color(0xFF000000);
     });
   }
 
@@ -141,7 +143,10 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
         ),
         suggestionsCallback: (query) async {
           if (query.isEmpty) return widget.dropdownValues;
-          return widget.dropdownValues.where((element) => element.toLowerCase().contains(query.toLowerCase())).toList();
+          return widget.dropdownValues
+              .where((element) =>
+                  element.toLowerCase().contains(query.toLowerCase()))
+              .toList();
         },
         onSuggestionSelected: (String? suggestion) {
           if (suggestion != null && suggestion.isNotEmpty && !_isDisposed) {

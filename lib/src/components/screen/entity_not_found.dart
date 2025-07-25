@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 class EntityNotFound extends StatelessWidget {
   final String message;
 
-  const EntityNotFound({
-    super.key,
-    required this.message
-  });
+  const EntityNotFound({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +23,6 @@ class EntityNotFound extends StatelessWidget {
           ),
         ],
       ),
-    );;
+    );
   }
 }

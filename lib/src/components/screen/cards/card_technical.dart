@@ -53,23 +53,29 @@ class CardTechnician extends StatelessWidget {
         valueListenable: isHovered,
         builder: (context, hovered, child) {
           return GestureDetector(
-            onLongPress: isSkeleton ? () {} :onLongPress,
-            onDoubleTap: isSkeleton ? () {} :onDoubleTap,
-            onTap: isSkeleton ? () {} :onTap,
+            onLongPress: isSkeleton ? () {} : onLongPress,
+            onDoubleTap: isSkeleton ? () {} : onDoubleTap,
+            onTap: isSkeleton ? () {} : onTap,
             child: LayoutBuilder(
               builder: (context, constraints) {
                 return Container(
                   padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
-                    color: isSelected ? const Color(0xFFE9E7E7) : const Color(0xFCFDFDFF),
+                    color: isSelected
+                        ? const Color(0xFFE9E7E7)
+                        : const Color(0xFCFDFDFF),
                     borderRadius: BorderRadius.circular(8.0),
                     border: Border.all(
-                      color: isSelected ? Colors.black38 : (hovered ? Colors.black38 : const Color(0xFFEAE6E5)),
+                      color: isSelected
+                          ? Colors.black38
+                          : (hovered
+                              ? Colors.black38
+                              : const Color(0xFFEAE6E5)),
                       width: 1.5,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withValues(alpha: 0.2),
+                        color: Colors.grey.withOpacity(0.2),
                         blurRadius: 6,
                         offset: const Offset(0, 3),
                       ),

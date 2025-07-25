@@ -60,19 +60,23 @@ class _UpdateServicoState extends State<UpdateServico> {
 
   final ServicoForm _servicoUpdateForm = ServicoForm();
   final ClienteForm _clienteUpdateForm = ClienteForm();
-  final ServicoValidator _servicoUpdateValidator = ServicoValidator(isUpdate: true);
+  final ServicoValidator _servicoUpdateValidator =
+      ServicoValidator(isUpdate: true);
   final GlobalKey<FormState> _servicoFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _clienteFormKey = GlobalKey<FormState>();
 
   final ValueNotifier<bool> isNomeTecnicoEnabled = ValueNotifier(false);
   final ValueNotifier<bool> isHorarioEnabled = ValueNotifier(false);
-  final ValueNotifier<bool> isDataAtendimentoPrevistoEnabled = ValueNotifier(false);
-  final ValueNotifier<bool> isDataAtendimentoEfetivoEnabled = ValueNotifier(false);
+  final ValueNotifier<bool> isDataAtendimentoPrevistoEnabled =
+      ValueNotifier(false);
+  final ValueNotifier<bool> isDataAtendimentoEfetivoEnabled =
+      ValueNotifier(false);
   final ValueNotifier<bool> isValorServicoEnabled = ValueNotifier(false);
   final ValueNotifier<bool> isValorPecasEnabled = ValueNotifier(false);
   final ValueNotifier<bool> isFormaPagamentoEnabled = ValueNotifier(false);
   final ValueNotifier<bool> isDataFechamentoEnabled = ValueNotifier(false);
-  final ValueNotifier<bool> isDataPagamentoComissaoEnabled = ValueNotifier(false);
+  final ValueNotifier<bool> isDataPagamentoComissaoEnabled =
+      ValueNotifier(false);
   final ValueNotifier<bool> isDataInicioGarantiaEnabled = ValueNotifier(false);
   final ValueNotifier<bool> isDataFinalGarantiaEnabled = ValueNotifier(false);
 
@@ -104,13 +108,15 @@ class _UpdateServicoState extends State<UpdateServico> {
     _servicoUpdateForm.setNomeTecnico(nome);
     if (nome == "") return;
     if (nome.split(" ").length > 1 && _dropdownNomeTecnicos.isEmpty) return;
-    _tecnicoBloc.add(TecnicoSearchEvent(nome: nome, equipamento: _servicoUpdateForm.equipamento.value));
+    _tecnicoBloc.add(TecnicoSearchEvent(
+        nome: nome, equipamento: _servicoUpdateForm.equipamento.value));
   }
 
   void _getTechnicalId(String nome) {
     _servicoUpdateForm.setNomeTecnico(nome);
     for (TecnicoResponse tecnico in _tecnicos) {
-      if ("${tecnico.nome} ${tecnico.sobrenome}" == _servicoUpdateForm.nomeTecnico.value) {
+      if ("${tecnico.nome} ${tecnico.sobrenome}" ==
+          _servicoUpdateForm.nomeTecnico.value) {
         _servicoUpdateForm.setIdTecnico(tecnico.id);
       }
     }
@@ -139,9 +145,13 @@ class _UpdateServicoState extends State<UpdateServico> {
 
     List<String> enderecoParts = cliente.endereco?.split(',') ?? [];
 
-    _clienteUpdateForm.setRua(enderecoParts.isNotEmpty ? enderecoParts.first.trim() : '');
-    _clienteUpdateForm.setNumero(enderecoParts.length > 1 ? enderecoParts[1].trim() : '');
-    _clienteUpdateForm.setComplemento(enderecoParts.length > 2 ? enderecoParts.sublist(2).join(',').trim() : '');
+    _clienteUpdateForm
+        .setRua(enderecoParts.isNotEmpty ? enderecoParts.first.trim() : '');
+    _clienteUpdateForm
+        .setNumero(enderecoParts.length > 1 ? enderecoParts[1].trim() : '');
+    _clienteUpdateForm.setComplemento(enderecoParts.length > 2
+        ? enderecoParts.sublist(2).join(',').trim()
+        : '');
 
     _servicoUpdateForm.setIdCliente(cliente.id);
     _servicoUpdateForm.setNomeCliente(cliente.nome ?? '');
@@ -160,14 +170,18 @@ class _UpdateServicoState extends State<UpdateServico> {
       return specialCases[status]!;
     }
 
-    String convertedStatus = "${status[0]}${status.substring(1).replaceAll("_", " ").toLowerCase()}";
+    String convertedStatus =
+        "${status[0]}${status.substring(1).replaceAll("_", " ").toLowerCase()}";
     return convertedStatus;
   }
 
-  void _populateServicoFormWithState(ServicoSearchOneSuccessState stateServico) {
-    _currentSituation = _convertEnumStatusToString(stateServico.servico.situacao);
+  void _populateServicoFormWithState(
+      ServicoSearchOneSuccessState stateServico) {
+    _currentSituation =
+        _convertEnumStatusToString(stateServico.servico.situacao);
 
-    Logger().w(Formatters.formatToCurrency(stateServico.servico.valorComissao ?? 0.0));
+    Logger().w(
+        Formatters.formatToCurrency(stateServico.servico.valorComissao ?? 0.0));
 
     _servicoUpdateForm.setIdCliente(stateServico.servico.idCliente);
     _servicoUpdateForm.setNomeCliente(stateServico.servico.nomeCliente);
@@ -178,18 +192,28 @@ class _UpdateServicoState extends State<UpdateServico> {
     _servicoUpdateForm.setFilial(stateServico.servico.filial);
     _servicoUpdateForm.setSituacao(stateServico.servico.situacao);
     _servicoUpdateForm.setHorario(stateServico.servico.horarioPrevisto);
-    _servicoUpdateForm.setDataAtendimentoPrevistoDate(stateServico.servico.dataAtendimentoPrevisto);
-    _servicoUpdateForm.setDataAtendimentoEfetivoDate(stateServico.servico.dataAtendimentoEfetivo);
-    _servicoUpdateForm.setDataAtendimentoAberturaDate(stateServico.servico.dataAtendimentoAbertura);
-    _servicoUpdateForm.setValorServico(Formatters.formatToCurrency(stateServico.servico.valor ?? 0.0));
-    _servicoUpdateForm.setValorPecas(Formatters.formatToCurrency(stateServico.servico.valorPecas ?? 0.0));
-    _servicoUpdateForm.setValorComissao(Formatters.formatToCurrency(stateServico.servico.valorComissao ?? 0.0));
+    _servicoUpdateForm.setDataAtendimentoPrevistoDate(
+        stateServico.servico.dataAtendimentoPrevisto);
+    _servicoUpdateForm.setDataAtendimentoEfetivoDate(
+        stateServico.servico.dataAtendimentoEfetivo);
+    _servicoUpdateForm.setDataAtendimentoAberturaDate(
+        stateServico.servico.dataAtendimentoAbertura);
+    _servicoUpdateForm.setValorServico(
+        Formatters.formatToCurrency(stateServico.servico.valor ?? 0.0));
+    _servicoUpdateForm.setValorPecas(
+        Formatters.formatToCurrency(stateServico.servico.valorPecas ?? 0.0));
+    _servicoUpdateForm.setValorComissao(
+        Formatters.formatToCurrency(stateServico.servico.valorComissao ?? 0.0));
     _servicoUpdateForm.setFormaPagamento(stateServico.servico.formaPagamento);
-    _servicoUpdateForm.setDataFechamentoDate(stateServico.servico.dataFechamento);
-    _servicoUpdateForm.setDataPagamentoComissaoDate(stateServico.servico.dataPagamentoComissao);
+    _servicoUpdateForm
+        .setDataFechamentoDate(stateServico.servico.dataFechamento);
+    _servicoUpdateForm.setDataPagamentoComissaoDate(
+        stateServico.servico.dataPagamentoComissao);
     _servicoUpdateForm.setGarantiaBool(stateServico.servico.garantia);
-    _servicoUpdateForm.setDataInicioGarantiaDate(stateServico.servico.dataInicioGarantia);
-    _servicoUpdateForm.setDataFinalGarantiaDate(stateServico.servico.dataFimGarantia);
+    _servicoUpdateForm
+        .setDataInicioGarantiaDate(stateServico.servico.dataInicioGarantia);
+    _servicoUpdateForm
+        .setDataFinalGarantiaDate(stateServico.servico.dataFimGarantia);
     _servicoUpdateForm.setHistorico(stateServico.servico.descricao);
 
     _updateEnabledFields();
@@ -299,23 +323,31 @@ class _UpdateServicoState extends State<UpdateServico> {
 
     isHorarioEnabled.value = !isFieldDisabled(situacoesHorarioDisabled);
 
-    isDataAtendimentoPrevistoEnabled.value = !isFieldDisabled(situacoesDataAtendimentoPrevistoDisabled);
+    isDataAtendimentoPrevistoEnabled.value =
+        !isFieldDisabled(situacoesDataAtendimentoPrevistoDisabled);
 
-    isDataAtendimentoEfetivoEnabled.value = !isFieldDisabled(situacoesDataAtendimentoEfetivoDisabled);
+    isDataAtendimentoEfetivoEnabled.value =
+        !isFieldDisabled(situacoesDataAtendimentoEfetivoDisabled);
 
-    isValorServicoEnabled.value = !isFieldDisabled(situacoesValorServicoDisabled);
+    isValorServicoEnabled.value =
+        !isFieldDisabled(situacoesValorServicoDisabled);
 
     isValorPecasEnabled.value = !isFieldDisabled(situacoesValorPecasDisabled);
 
-    isFormaPagamentoEnabled.value = !isFieldDisabled(situacoesFormaPagamentoDisabled);
+    isFormaPagamentoEnabled.value =
+        !isFieldDisabled(situacoesFormaPagamentoDisabled);
 
-    isDataFechamentoEnabled.value = !isFieldDisabled(situacoesDataFechamentoDisabled);
+    isDataFechamentoEnabled.value =
+        !isFieldDisabled(situacoesDataFechamentoDisabled);
 
-    isDataPagamentoComissaoEnabled.value = !isFieldDisabled(situacoesDataPagamentoComissaoDisabled);
+    isDataPagamentoComissaoEnabled.value =
+        !isFieldDisabled(situacoesDataPagamentoComissaoDisabled);
 
-    isDataInicioGarantiaEnabled.value = !isFieldDisabled(situacoesDataInicioGarantiaDisabled);
+    isDataInicioGarantiaEnabled.value =
+        !isFieldDisabled(situacoesDataInicioGarantiaDisabled);
 
-    isDataFinalGarantiaEnabled.value = !isFieldDisabled(situacoesDataFinalGarantiaDisabled);
+    isDataFinalGarantiaEnabled.value =
+        !isFieldDisabled(situacoesDataFinalGarantiaDisabled);
   }
 
   void _updateServico() {
@@ -327,7 +359,9 @@ class _UpdateServicoState extends State<UpdateServico> {
     _servicoBloc.add(ServicoUpdateEvent(servico: servico));
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Serviço atualizado com sucesso! (Caso ele não esteja atualizado, recarregue a página)')),
+      const SnackBar(
+          content: Text(
+              'Serviço atualizado com sucesso! (Caso ele não esteja atualizado, recarregue a página)')),
     );
   }
 
@@ -352,7 +386,8 @@ class _UpdateServicoState extends State<UpdateServico> {
     final int currentLevel = _getServiceLevel(previousValue);
     final int newLevel = _getServiceLevel(value);
 
-    Logger().w("Mudando de $previousValue (Nível: $currentLevel) para $value (Nível: $newLevel)");
+    Logger().w(
+        "Mudando de $previousValue (Nível: $currentLevel) para $value (Nível: $newLevel)");
 
     if (currentLevel > newLevel) {
       WidgetsBinding.instance.addPostFrameCallback(
@@ -368,9 +403,11 @@ class _UpdateServicoState extends State<UpdateServico> {
                 ),
                 title: Row(
                   children: [
-                    Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 28),
+                    Icon(Icons.warning_amber_rounded,
+                        color: Colors.orange, size: 28),
                     SizedBox(width: 8),
-                    Text("Aviso!", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text("Aviso!",
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                   ],
                 ),
                 content: Text(
@@ -391,7 +428,9 @@ class _UpdateServicoState extends State<UpdateServico> {
                       _servicoUpdateForm.situacao.value = previousValue;
                       _servicoUpdateForm.setSituacao(previousValue);
                     },
-                    child: Text("Cancelar", style: TextStyle(color: Colors.grey[700], fontSize: 16)),
+                    child: Text("Cancelar",
+                        style:
+                            TextStyle(color: Colors.grey[700], fontSize: 16)),
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -404,7 +443,8 @@ class _UpdateServicoState extends State<UpdateServico> {
                       Navigator.pop(context);
                       _updateServiceSituation(value);
                     },
-                    child: Text("Confirmar", style: TextStyle(color: Colors.white, fontSize: 14)),
+                    child: Text("Confirmar",
+                        style: TextStyle(color: Colors.white, fontSize: 14)),
                   ),
                 ],
               );
@@ -420,7 +460,8 @@ class _UpdateServicoState extends State<UpdateServico> {
     }
   }
 
-  Future<List<Servico>> _fetchHistoricoEquipamento(Servico servicoAtual, Cliente cliente) async {
+  Future<List<Servico>> _fetchHistoricoEquipamento(
+      Servico servicoAtual, Cliente cliente) async {
     try {
       final filterRequest = ServicoFilterRequest(
         equipamento: servicoAtual.equipamento,
@@ -430,13 +471,16 @@ class _UpdateServicoState extends State<UpdateServico> {
 
       _servicoBloc.add(ServicoSearchMenuEvent(filterRequest: filterRequest));
 
-      await _servicoBloc.stream.firstWhere((state) => state is ServicoSearchSuccessState || state is ServicoErrorState);
+      await _servicoBloc.stream.firstWhere((state) =>
+          state is ServicoSearchSuccessState || state is ServicoErrorState);
 
       if (_servicoBloc.state is ServicoSearchSuccessState) {
-        final response = (_servicoBloc.state as ServicoSearchSuccessState).servicos;
+        final response =
+            (_servicoBloc.state as ServicoSearchSuccessState).servicos;
 
         return response.where((servico) {
-          final marcaAtual = servicoAtual.marca.toLowerCase().replaceAll(' ', '');
+          final marcaAtual =
+              servicoAtual.marca.toLowerCase().replaceAll(' ', '');
           final marcaServico = servico.marca.toLowerCase().replaceAll(' ', '');
           return marcaAtual == marcaServico && servico.id != servicoAtual.id;
         }).toList();
@@ -485,7 +529,8 @@ class _UpdateServicoState extends State<UpdateServico> {
   }
 
   void _updateServiceSituation(String value) {
-    Logger().w("Atualizando situação para: $value (Nível: ${_getServiceLevel(value)})");
+    Logger().w(
+        "Atualizando situação para: $value (Nível: ${_getServiceLevel(value)})");
     if (_servicoUpdateForm.situacao.value == value) return;
 
     _servicoUpdateForm.situacao.value = value;
@@ -496,7 +541,8 @@ class _UpdateServicoState extends State<UpdateServico> {
   bool _isValidForm() {
     _clienteFormKey.currentState?.validate();
     _servicoFormKey.currentState?.validate();
-    final ValidationResult response = _servicoUpdateValidator.validate(_servicoUpdateForm);
+    final ValidationResult response =
+        _servicoUpdateValidator.validate(_servicoUpdateForm);
     return response.isValid;
   }
 
@@ -566,6 +612,7 @@ class _UpdateServicoState extends State<UpdateServico> {
             ),
             enabled: false,
           ),
+          const SizedBox(height: 8),
           LayoutBuilder(
             builder: (context, constraints) {
               if (constraints.maxWidth < 400) {
@@ -578,11 +625,13 @@ class _UpdateServicoState extends State<UpdateServico> {
                       maxLength: 255,
                       hide: true,
                       valueNotifier: _clienteUpdateForm.municipio,
-                      validator: _servicoUpdateValidator.byField(_servicoUpdateForm, ErrorCodeKey.municipio.name),
+                      validator: _servicoUpdateValidator.byField(
+                          _servicoUpdateForm, ErrorCodeKey.municipio.name),
                       rightPadding: 4,
                       leftPadding: 4,
                       enabled: false,
                     ),
+                    const SizedBox(height: 8),
                     CustomTextFormField(
                       label: "Bairro",
                       hint: "Bairro...",
@@ -590,11 +639,13 @@ class _UpdateServicoState extends State<UpdateServico> {
                       maxLength: 255,
                       hide: true,
                       valueNotifier: _clienteUpdateForm.bairro,
-                      validator: _servicoUpdateValidator.byField(_servicoUpdateForm, ErrorCodeKey.bairro.name),
+                      validator: _servicoUpdateValidator.byField(
+                          _servicoUpdateForm, ErrorCodeKey.bairro.name),
                       rightPadding: 4,
                       leftPadding: 4,
                       enabled: false,
                     ),
+                    const SizedBox(height: 8),
                     CustomTextFormField(
                       hint: "Rua...",
                       label: "Rua",
@@ -602,11 +653,13 @@ class _UpdateServicoState extends State<UpdateServico> {
                       maxLength: 255,
                       hide: true,
                       valueNotifier: _clienteUpdateForm.rua,
-                      validator: _servicoUpdateValidator.byField(_servicoUpdateForm, ErrorCodeKey.rua.name),
+                      validator: _servicoUpdateValidator.byField(
+                          _servicoUpdateForm, ErrorCodeKey.rua.name),
                       rightPadding: 4,
                       leftPadding: 4,
                       enabled: false,
                     ),
+                    const SizedBox(height: 8),
                     CustomTextFormField(
                       label: "Número",
                       hint: "Número...",
@@ -614,7 +667,8 @@ class _UpdateServicoState extends State<UpdateServico> {
                       maxLength: 10,
                       hide: true,
                       valueNotifier: _clienteUpdateForm.numero,
-                      validator: _servicoUpdateValidator.byField(_servicoUpdateForm, ErrorCodeKey.numero.name),
+                      validator: _servicoUpdateValidator.byField(
+                          _servicoUpdateForm, ErrorCodeKey.numero.name),
                       rightPadding: 4,
                       leftPadding: 4,
                       enabled: false,
@@ -634,7 +688,8 @@ class _UpdateServicoState extends State<UpdateServico> {
                           maxLength: 255,
                           hide: true,
                           valueNotifier: _clienteUpdateForm.municipio,
-                          validator: _servicoUpdateValidator.byField(_servicoUpdateForm, ErrorCodeKey.municipio.name),
+                          validator: _servicoUpdateValidator.byField(
+                              _servicoUpdateForm, ErrorCodeKey.municipio.name),
                           rightPadding: 4,
                           leftPadding: 4,
                           enabled: false,
@@ -648,7 +703,8 @@ class _UpdateServicoState extends State<UpdateServico> {
                           maxLength: 255,
                           hide: true,
                           valueNotifier: _clienteUpdateForm.bairro,
-                          validator: _servicoUpdateValidator.byField(_servicoUpdateForm, ErrorCodeKey.bairro.name),
+                          validator: _servicoUpdateValidator.byField(
+                              _servicoUpdateForm, ErrorCodeKey.bairro.name),
                           rightPadding: 4,
                           leftPadding: 4,
                           enabled: false,
@@ -656,6 +712,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       Expanded(
@@ -667,7 +724,8 @@ class _UpdateServicoState extends State<UpdateServico> {
                           maxLength: 255,
                           hide: true,
                           valueNotifier: _clienteUpdateForm.rua,
-                          validator: _servicoUpdateValidator.byField(_servicoUpdateForm, ErrorCodeKey.rua.name),
+                          validator: _servicoUpdateValidator.byField(
+                              _servicoUpdateForm, ErrorCodeKey.rua.name),
                           rightPadding: 4,
                           leftPadding: 4,
                           enabled: false,
@@ -682,7 +740,8 @@ class _UpdateServicoState extends State<UpdateServico> {
                           maxLength: 10,
                           hide: true,
                           valueNotifier: _clienteUpdateForm.numero,
-                          validator: _servicoUpdateValidator.byField(_servicoUpdateForm, ErrorCodeKey.numero.name),
+                          validator: _servicoUpdateValidator.byField(
+                              _servicoUpdateForm, ErrorCodeKey.numero.name),
                           rightPadding: 4,
                           leftPadding: 4,
                           enabled: false,
@@ -694,6 +753,7 @@ class _UpdateServicoState extends State<UpdateServico> {
               );
             },
           ),
+          const SizedBox(height: 8),
           CustomTextFormField(
             label: "Complemento",
             hint: "Complemento...",
@@ -703,7 +763,8 @@ class _UpdateServicoState extends State<UpdateServico> {
             rightPadding: 4,
             leftPadding: 4,
             valueNotifier: _clienteUpdateForm.complemento,
-            validator: _servicoUpdateValidator.byField(_servicoUpdateForm, ErrorCodeKey.complemento.name),
+            validator: _servicoUpdateValidator.byField(
+                _servicoUpdateForm, ErrorCodeKey.complemento.name),
             enabled: false,
           ),
         ],
@@ -732,9 +793,9 @@ class _UpdateServicoState extends State<UpdateServico> {
                         _servicoUpdateForm,
                         ErrorCodeKey.equipamento.name,
                       ),
-                      hide: true,
+                      hide: false,
                     ), // Equipamento
-
+                    const SizedBox(height: 8),
                     CustomSearchDropDownFormField(
                       label: 'Marca*',
                       dropdownValues: Constants.marcas,
@@ -746,14 +807,18 @@ class _UpdateServicoState extends State<UpdateServico> {
                         _servicoUpdateForm,
                         ErrorCodeKey.marca.name,
                       ),
-                      hide: true,
+                      hide: false,
                     ), // Marca
-
+                    const SizedBox(height: 8),
                     BlocListener<TecnicoBloc, TecnicoState>(
                       listener: (context, state) {
                         if (state is TecnicoSearchSuccessState) {
                           _tecnicos = state.tecnicos;
-                          List<String> nomes = state.tecnicos.take(5).map((tecnico) => "${tecnico.nome} ${tecnico.sobrenome}").toList();
+                          List<String> nomes = state.tecnicos
+                              .take(5)
+                              .map((tecnico) =>
+                                  "${tecnico.nome} ${tecnico.sobrenome}")
+                              .toList();
                           if (_dropdownNomeTecnicos != nomes) {
                             if (mounted) {
                               setState(() {
@@ -769,21 +834,27 @@ class _UpdateServicoState extends State<UpdateServico> {
                           return ValueListenableBuilder(
                             valueListenable: _servicoUpdateForm.equipamento,
                             builder: (context, value, child) {
-                              bool isFieldEnabled = isEnabled && (value.isNotEmpty || _servicoUpdateForm.idCliente.value != null);
+                              bool isFieldEnabled = isEnabled &&
+                                  (value.isNotEmpty ||
+                                      _servicoUpdateForm.idCliente.value !=
+                                          null);
                               return Tooltip(
-                                message: (isFieldEnabled) ? "" : "Selecione um equipamento para continuar",
+                                message: (isFieldEnabled)
+                                    ? ""
+                                    : "Selecione um equipamento para continuar",
                                 textAlign: TextAlign.center,
                                 child: CustomSearchDropDownFormField(
                                   label: "Nome do Técnico*",
                                   dropdownValues: _dropdownNomeTecnicos,
                                   maxLength: 50,
-                                  hide: true,
+                                  hide: false,
                                   leftPadding: 4,
                                   rightPadding: 4,
                                   controller: _nomeTecnicoController,
                                   valueNotifier: _servicoUpdateForm.nomeTecnico,
                                   validator: ([value]) {
-                                    if (isFieldEnabled && (value == null || value.isEmpty)) {
+                                    if (isFieldEnabled &&
+                                        (value == null || value.isEmpty)) {
                                       return "Nome do técnico é obrigatório";
                                     }
                                     return null;
@@ -798,7 +869,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                         },
                       ),
                     ), // Nome Técnico
-
+                    const SizedBox(height: 8),
                     CustomDropdownFormField(
                       label: 'Filial*',
                       dropdownValues: Constants.filiais,
@@ -812,7 +883,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       ),
                       enabled: false,
                     ), // Filial
-
+                    const SizedBox(height: 8),
                     ValueListenableBuilder<bool>(
                       valueListenable: isHorarioEnabled,
                       builder: (context, isEnabled, child) {
@@ -823,10 +894,14 @@ class _UpdateServicoState extends State<UpdateServico> {
                           rightPadding: 4,
                           valueNotifier: _servicoUpdateForm.horario,
                           onChanged: (String? novoValor) {
-                            _servicoUpdateForm.setHorario(novoValor == "Selecione um horário" ? null : novoValor);
+                            _servicoUpdateForm.setHorario(
+                                novoValor == "Selecione um horário"
+                                    ? null
+                                    : novoValor);
                           },
                           validator: ([value]) {
-                            if (_servicoUpdateForm.situacao.value == "Cancelado") {
+                            if (_servicoUpdateForm.situacao.value ==
+                                "Cancelado") {
                               return null;
                             }
                             if (isEnabled && (value == null || value.isEmpty)) {
@@ -838,7 +913,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                         );
                       },
                     ), // Horário
-
+                    const SizedBox(height: 8),
                     ValueListenableBuilder<bool>(
                       valueListenable: isDataAtendimentoPrevistoEnabled,
                       builder: (context, isEnabled, child) {
@@ -851,10 +926,13 @@ class _UpdateServicoState extends State<UpdateServico> {
                           leftPadding: 4,
                           rightPadding: 4,
                           type: TextInputType.datetime,
-                          valueNotifier: _servicoUpdateForm.dataAtendimentoPrevisto,
-                          onChanged: _servicoUpdateForm.setDataAtendimentoPrevisto,
+                          valueNotifier:
+                              _servicoUpdateForm.dataAtendimentoPrevisto,
+                          onChanged:
+                              _servicoUpdateForm.setDataAtendimentoPrevisto,
                           validator: ([value]) {
-                            if (_servicoUpdateForm.situacao.value == "Cancelado") {
+                            if (_servicoUpdateForm.situacao.value ==
+                                "Cancelado") {
                               return null;
                             }
                             if (isEnabled && (value == null || value.isEmpty)) {
@@ -866,7 +944,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                         );
                       },
                     ), // Data Atendimento Previsto
-
+                    const SizedBox(height: 8),
                     ValueListenableBuilder<bool>(
                       valueListenable: isDataAtendimentoEfetivoEnabled,
                       builder: (context, isEnabled, child) {
@@ -879,8 +957,10 @@ class _UpdateServicoState extends State<UpdateServico> {
                           leftPadding: 4,
                           rightPadding: 4,
                           type: TextInputType.datetime,
-                          valueNotifier: _servicoUpdateForm.dataAtendimentoEfetivo,
-                          onChanged: _servicoUpdateForm.setDataAtendimentoEfetivo,
+                          valueNotifier:
+                              _servicoUpdateForm.dataAtendimentoEfetivo,
+                          onChanged:
+                              _servicoUpdateForm.setDataAtendimentoEfetivo,
                           validator: ([value]) {
                             if (isEnabled && (value == null || value.isEmpty)) {
                               return "Data efetiva é obrigatória";
@@ -891,7 +971,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                         );
                       },
                     ), // Data Atendimento Efetivo
-
+                    const SizedBox(height: 8),
                     CustomDropdownFormField(
                       label: 'Situação*',
                       dropdownValues: Constants.situationServiceList,
@@ -899,7 +979,8 @@ class _UpdateServicoState extends State<UpdateServico> {
                       rightPadding: 4,
                       valueNotifier: _servicoUpdateForm.situacao,
                       onChanged: (String? newValue) {
-                        if (newValue != null && newValue != _servicoUpdateForm.situacao.value) {
+                        if (newValue != null &&
+                            newValue != _servicoUpdateForm.situacao.value) {
                           _handleSituationChange(newValue);
                         }
                       },
@@ -908,7 +989,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                         ErrorCodeKey.situacao.name,
                       ),
                     ), // Situação
-
+                    const SizedBox(height: 8),
                     ValueListenableBuilder<bool>(
                       valueListenable: isValorServicoEnabled,
                       builder: (context, isEnabled, child) {
@@ -935,7 +1016,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                         );
                       },
                     ), // Valor Serviço
-
+                    const SizedBox(height: 8),
                     ValueListenableBuilder<bool>(
                       valueListenable: isValorPecasEnabled,
                       builder: (context, isEnabled, child) {
@@ -962,7 +1043,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                         );
                       },
                     ), // Valor Peças
-
+                    const SizedBox(height: 8),
                     ValueListenableBuilder<bool>(
                       valueListenable: isFormaPagamentoEnabled,
                       builder: (context, isEnabled, child) {
@@ -980,7 +1061,8 @@ class _UpdateServicoState extends State<UpdateServico> {
                               "Não retira há 3 meses",
                             ];
 
-                            if (situacoesOpcionais.contains(_servicoUpdateForm.situacao.value)) {
+                            if (situacoesOpcionais
+                                .contains(_servicoUpdateForm.situacao.value)) {
                               return null;
                             }
                             if (isEnabled && (value == null || value.isEmpty)) {
@@ -992,7 +1074,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                         );
                       },
                     ), // Forma de Pagamento
-
+                    const SizedBox(height: 8),
                     ValueListenableBuilder<bool>(
                       valueListenable: isDataFechamentoEnabled,
                       builder: (context, isEnabled, child) {
@@ -1017,7 +1099,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                         );
                       },
                     ), // Data Encerramento
-
+                    const SizedBox(height: 8),
                     CustomTextFormField(
                       label: 'Valor Comissão',
                       leftPadding: 4,
@@ -1036,7 +1118,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       ],
                       enabled: false,
                     ), // Valor Comissão
-
+                    const SizedBox(height: 8),
                     ValueListenableBuilder<bool>(
                       valueListenable: isDataPagamentoComissaoEnabled,
                       builder: (context, isEnabled, child) {
@@ -1049,8 +1131,10 @@ class _UpdateServicoState extends State<UpdateServico> {
                           leftPadding: 4,
                           rightPadding: 4,
                           type: TextInputType.datetime,
-                          valueNotifier: _servicoUpdateForm.dataPagamentoComissao,
-                          onChanged: _servicoUpdateForm.setDataPagamentoComissao,
+                          valueNotifier:
+                              _servicoUpdateForm.dataPagamentoComissao,
+                          onChanged:
+                              _servicoUpdateForm.setDataPagamentoComissao,
                           validator: _servicoUpdateValidator.byField(
                             _servicoUpdateForm,
                             'ErrorCodeKey.data.name',
@@ -1059,7 +1143,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                         );
                       },
                     ), // Data Pagamento Comissão
-
+                    const SizedBox(height: 8),
                     ValueListenableBuilder<bool>(
                       valueListenable: isDataInicioGarantiaEnabled,
                       builder: (context, isEnabled, child) {
@@ -1084,7 +1168,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                         );
                       },
                     ), // Data Início Garantia
-
+                    const SizedBox(height: 8),
                     ValueListenableBuilder<bool>(
                       valueListenable: isDataFinalGarantiaEnabled,
                       builder: (context, isEnabled, child) {
@@ -1146,12 +1230,16 @@ class _UpdateServicoState extends State<UpdateServico> {
                       ), // Marca
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8),
                   BlocListener<TecnicoBloc, TecnicoState>(
                     listener: (context, state) {
                       if (state is TecnicoSearchSuccessState) {
                         _tecnicos = state.tecnicos;
-                        List<String> nomes = state.tecnicos.take(5).map((tecnico) => "${tecnico.nome} ${tecnico.sobrenome}").toList();
+                        List<String> nomes = state.tecnicos
+                            .take(5)
+                            .map((tecnico) =>
+                                "${tecnico.nome} ${tecnico.sobrenome}")
+                            .toList();
                         if (_dropdownNomeTecnicos != nomes) {
                           if (mounted) {
                             setState(() {
@@ -1167,21 +1255,26 @@ class _UpdateServicoState extends State<UpdateServico> {
                         return ValueListenableBuilder(
                           valueListenable: _servicoUpdateForm.equipamento,
                           builder: (context, value, child) {
-                            bool isFieldEnabled = isEnabled && (value.isNotEmpty || _servicoUpdateForm.idCliente.value != null);
+                            bool isFieldEnabled = isEnabled &&
+                                (value.isNotEmpty ||
+                                    _servicoUpdateForm.idCliente.value != null);
                             return Tooltip(
-                              message: (isFieldEnabled) ? "" : "Selecione um equipamento para continuar",
+                              message: (isFieldEnabled)
+                                  ? ""
+                                  : "Selecione um equipamento para continuar",
                               textAlign: TextAlign.center,
                               child: CustomSearchDropDownFormField(
                                 label: "Nome do Técnico*",
                                 dropdownValues: _dropdownNomeTecnicos,
                                 maxLength: 50,
-                                hide: true,
+                                hide: false,
                                 leftPadding: 4,
                                 rightPadding: 4,
                                 controller: _nomeTecnicoController,
                                 valueNotifier: _servicoUpdateForm.nomeTecnico,
                                 validator: ([value]) {
-                                  if (isFieldEnabled && (value == null || value.isEmpty)) {
+                                  if (isFieldEnabled &&
+                                      (value == null || value.isEmpty)) {
                                     return "Nome do técnico é obrigatório";
                                   }
                                   return null;
@@ -1196,6 +1289,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       },
                     ), // Nome Técnico
                   ),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       Expanded(
@@ -1209,13 +1303,18 @@ class _UpdateServicoState extends State<UpdateServico> {
                               rightPadding: 4,
                               valueNotifier: _servicoUpdateForm.horario,
                               onChanged: (String? novoValor) {
-                                _servicoUpdateForm.setHorario(novoValor == "Selecione um horário" ? null : novoValor);
+                                _servicoUpdateForm.setHorario(
+                                    novoValor == "Selecione um horário"
+                                        ? null
+                                        : novoValor);
                               },
                               validator: ([value]) {
-                                if (_servicoUpdateForm.situacao.value == "Cancelado") {
+                                if (_servicoUpdateForm.situacao.value ==
+                                    "Cancelado") {
                                   return null;
                                 }
-                                if (isEnabled && (value == null || value.isEmpty)) {
+                                if (isEnabled &&
+                                    (value == null || value.isEmpty)) {
                                   return "Horário é obrigatório";
                                 }
                                 return null;
@@ -1242,6 +1341,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       Expanded(
@@ -1257,13 +1357,17 @@ class _UpdateServicoState extends State<UpdateServico> {
                               leftPadding: 4,
                               rightPadding: 4,
                               type: TextInputType.datetime,
-                              valueNotifier: _servicoUpdateForm.dataAtendimentoPrevisto,
-                              onChanged: _servicoUpdateForm.setDataAtendimentoPrevisto,
+                              valueNotifier:
+                                  _servicoUpdateForm.dataAtendimentoPrevisto,
+                              onChanged:
+                                  _servicoUpdateForm.setDataAtendimentoPrevisto,
                               validator: ([value]) {
-                                if (_servicoUpdateForm.situacao.value == "Cancelado") {
+                                if (_servicoUpdateForm.situacao.value ==
+                                    "Cancelado") {
                                   return null;
                                 }
-                                if (isEnabled && (value == null || value.isEmpty)) {
+                                if (isEnabled &&
+                                    (value == null || value.isEmpty)) {
                                   return "Data de atendimento previsto é obrigatória";
                                 }
                                 return null;
@@ -1286,10 +1390,13 @@ class _UpdateServicoState extends State<UpdateServico> {
                               leftPadding: 4,
                               rightPadding: 4,
                               type: TextInputType.datetime,
-                              valueNotifier: _servicoUpdateForm.dataAtendimentoEfetivo,
-                              onChanged: _servicoUpdateForm.setDataAtendimentoEfetivo,
+                              valueNotifier:
+                                  _servicoUpdateForm.dataAtendimentoEfetivo,
+                              onChanged:
+                                  _servicoUpdateForm.setDataAtendimentoEfetivo,
                               validator: ([value]) {
-                                if (isEnabled && (value == null || value.isEmpty)) {
+                                if (isEnabled &&
+                                    (value == null || value.isEmpty)) {
                                   return "Data efetiva é obrigatória";
                                 }
                                 return null;
@@ -1301,6 +1408,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 8),
                   CustomDropdownFormField(
                     label: 'Situação*',
                     dropdownValues: Constants.situationServiceList,
@@ -1308,7 +1416,8 @@ class _UpdateServicoState extends State<UpdateServico> {
                     rightPadding: 4,
                     valueNotifier: _servicoUpdateForm.situacao,
                     onChanged: (String? newValue) {
-                      if (newValue != null && newValue != _servicoUpdateForm.situacao.value) {
+                      if (newValue != null &&
+                          newValue != _servicoUpdateForm.situacao.value) {
                         _handleSituationChange(newValue);
                       }
                     },
@@ -1317,6 +1426,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       ErrorCodeKey.situacao.name,
                     ),
                   ), // Situação
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       Expanded(
@@ -1330,11 +1440,13 @@ class _UpdateServicoState extends State<UpdateServico> {
                               rightPadding: 4,
                               maxLength: 13,
                               hide: true,
-                              type: TextInputType.numberWithOptions(decimal: true),
+                              type: TextInputType.numberWithOptions(
+                                  decimal: true),
                               valueNotifier: _servicoUpdateForm.valor,
                               onChanged: _servicoUpdateForm.setValorServico,
                               validator: ([value]) {
-                                if (isEnabled && (value == null || value.isEmpty)) {
+                                if (isEnabled &&
+                                    (value == null || value.isEmpty)) {
                                   return "Valor do serviço é obrigatório";
                                 }
                                 return null;
@@ -1343,7 +1455,8 @@ class _UpdateServicoState extends State<UpdateServico> {
                                 CurrencyInputFormatter(),
                               ],
                               enabled: isEnabled,
-                              initialValue: _servicoUpdateForm.valor.value.toString(),
+                              initialValue:
+                                  _servicoUpdateForm.valor.value.toString(),
                             );
                           },
                         ),
@@ -1359,11 +1472,13 @@ class _UpdateServicoState extends State<UpdateServico> {
                               rightPadding: 4,
                               maxLength: 13,
                               hide: true,
-                              type: TextInputType.numberWithOptions(decimal: true),
+                              type: TextInputType.numberWithOptions(
+                                  decimal: true),
                               valueNotifier: _servicoUpdateForm.valorPecas,
                               onChanged: _servicoUpdateForm.setValorPecas,
                               validator: ([value]) {
-                                if (isEnabled && (value == null || value.isEmpty)) {
+                                if (isEnabled &&
+                                    (value == null || value.isEmpty)) {
                                   return "Valor das peças é obrigatório";
                                 }
                                 return null;
@@ -1372,13 +1487,15 @@ class _UpdateServicoState extends State<UpdateServico> {
                                 CurrencyInputFormatter(),
                               ],
                               enabled: isEnabled,
-                              initialValue: _servicoUpdateForm.valorPecas.value.toString(),
+                              initialValue: _servicoUpdateForm.valorPecas.value
+                                  .toString(),
                             );
                           },
                         ),
                       ), // Valor Peças
                     ],
                   ),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       Expanded(
@@ -1419,10 +1536,12 @@ class _UpdateServicoState extends State<UpdateServico> {
                                   "Não retira há 3 meses",
                                 ];
 
-                                if (situacoesOpcionais.contains(_servicoUpdateForm.situacao.value)) {
+                                if (situacoesOpcionais.contains(
+                                    _servicoUpdateForm.situacao.value)) {
                                   return null;
                                 }
-                                if (isEnabled && (value == null || value.isEmpty)) {
+                                if (isEnabled &&
+                                    (value == null || value.isEmpty)) {
                                   return "Forma de pagamento é obrigatória";
                                 }
                                 return null;
@@ -1434,6 +1553,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       ), // Forma de Pagamento
                     ],
                   ),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       Expanded(
@@ -1452,7 +1572,8 @@ class _UpdateServicoState extends State<UpdateServico> {
                               valueNotifier: _servicoUpdateForm.dataFechamento,
                               onChanged: _servicoUpdateForm.setDataFechamento,
                               validator: ([value]) {
-                                if (isEnabled && (value == null || value.isEmpty)) {
+                                if (isEnabled &&
+                                    (value == null || value.isEmpty)) {
                                   return "Data de encerramento é obrigatória";
                                 }
                                 return null;
@@ -1475,8 +1596,10 @@ class _UpdateServicoState extends State<UpdateServico> {
                               leftPadding: 4,
                               rightPadding: 4,
                               type: TextInputType.datetime,
-                              valueNotifier: _servicoUpdateForm.dataPagamentoComissao,
-                              onChanged: _servicoUpdateForm.setDataPagamentoComissao,
+                              valueNotifier:
+                                  _servicoUpdateForm.dataPagamentoComissao,
+                              onChanged:
+                                  _servicoUpdateForm.setDataPagamentoComissao,
                               validator: _servicoUpdateValidator.byField(
                                 _servicoUpdateForm,
                                 'ErrorCodeKey.data.name',
@@ -1488,6 +1611,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       Expanded(
@@ -1503,10 +1627,13 @@ class _UpdateServicoState extends State<UpdateServico> {
                               leftPadding: 4,
                               rightPadding: 4,
                               type: TextInputType.datetime,
-                              valueNotifier: _servicoUpdateForm.dataInicioGarantia,
-                              onChanged: _servicoUpdateForm.setDataInicioGarantia,
+                              valueNotifier:
+                                  _servicoUpdateForm.dataInicioGarantia,
+                              onChanged:
+                                  _servicoUpdateForm.setDataInicioGarantia,
                               validator: ([value]) {
-                                if (isEnabled && (value == null || value.isEmpty)) {
+                                if (isEnabled &&
+                                    (value == null || value.isEmpty)) {
                                   return "Data início da garantia é obrigatória";
                                 }
                                 return null;
@@ -1529,10 +1656,13 @@ class _UpdateServicoState extends State<UpdateServico> {
                               leftPadding: 4,
                               rightPadding: 4,
                               type: TextInputType.datetime,
-                              valueNotifier: _servicoUpdateForm.dataFinalGarantia,
-                              onChanged: _servicoUpdateForm.setDataFinalGarantia,
+                              valueNotifier:
+                                  _servicoUpdateForm.dataFinalGarantia,
+                              onChanged:
+                                  _servicoUpdateForm.setDataFinalGarantia,
                               validator: ([value]) {
-                                if (isEnabled && (value == null || value.isEmpty)) {
+                                if (isEnabled &&
+                                    (value == null || value.isEmpty)) {
                                   return "Data final da garantia é obrigatória";
                                 }
                                 return null;
@@ -1548,6 +1678,7 @@ class _UpdateServicoState extends State<UpdateServico> {
               );
             },
           ),
+          const SizedBox(height: 8),
           CustomTextFormField(
             hint: "Descrição/Observação...",
             label: "Descrição/Observação*",
@@ -1559,7 +1690,8 @@ class _UpdateServicoState extends State<UpdateServico> {
             leftPadding: 4,
             rightPadding: 4,
             valueNotifier: _servicoUpdateForm.descricao,
-            validator: _servicoUpdateValidator.byField(_servicoUpdateForm, ErrorCodeKey.descricao.name),
+            validator: _servicoUpdateValidator.byField(
+                _servicoUpdateForm, ErrorCodeKey.descricao.name),
             onChanged: _servicoUpdateForm.setDescricao,
           ),
         ],
@@ -1597,11 +1729,13 @@ class _UpdateServicoState extends State<UpdateServico> {
                 final servicoState = context.read<ServicoBloc>().state;
                 final clienteState = context.read<ClienteBloc>().state;
 
-                if (servicoState is! ServicoSearchOneSuccessState || clienteState is! ClienteSearchOneSuccessState) {
+                if (servicoState is! ServicoSearchOneSuccessState ||
+                    clienteState is! ClienteSearchOneSuccessState) {
                   return;
                 }
 
-                final historico = await _fetchHistoricoEquipamento(servicoState.servico, clienteState.cliente);
+                final historico = await _fetchHistoricoEquipamento(
+                    servicoState.servico, clienteState.cliente);
 
                 if (!mounted) return;
 
@@ -1618,10 +1752,12 @@ class _UpdateServicoState extends State<UpdateServico> {
         ],
       ),
       body: BlocBuilder<ServicoBloc, ServicoState>(
-        buildWhen: (previousState, state) => (state is ServicoSearchOneSuccessState),
+        buildWhen: (previousState, state) =>
+            (state is ServicoSearchOneSuccessState),
         builder: (context, servicoState) {
           if (servicoState is ServicoSearchOneSuccessState) {
-            _clienteBloc.add(ClienteSearchOneEvent(id: servicoState.servico.idCliente));
+            _clienteBloc
+                .add(ClienteSearchOneEvent(id: servicoState.servico.idCliente));
             _populateServicoFormWithState(servicoState);
 
             return BlocBuilder<ClienteBloc, ClienteState>(
@@ -1634,12 +1770,14 @@ class _UpdateServicoState extends State<UpdateServico> {
                       child: Padding(
                         padding: const EdgeInsets.all(8),
                         child: ScrollConfiguration(
-                          behavior: ScrollBehavior().copyWith(overscroll: false, scrollbars: false),
+                          behavior: ScrollBehavior()
+                              .copyWith(overscroll: false, scrollbars: false),
                           child: SingleChildScrollView(
                             child: Column(
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 48.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 48.0),
                                   child: const Text(
                                     "Consultar/Atualizar Serviço",
                                     style: TextStyle(
@@ -1653,19 +1791,25 @@ class _UpdateServicoState extends State<UpdateServico> {
                                   builder: (context, constraints) {
                                     if (constraints.maxWidth > 800) {
                                       return Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Expanded(
                                             flex: 3,
                                             child: Column(
                                               children: [
-                                                CardBuilderForm(title: "Cliente", child: _buildClientForm()),
+                                                CardBuilderForm(
+                                                    title: "Cliente",
+                                                    child: _buildClientForm()),
                                                 const SizedBox(height: 8),
-                                                BuildFieldLabels(isClientAndService: false),
+                                                BuildFieldLabels(
+                                                    isClientAndService: false),
                                                 const SizedBox(height: 28),
                                                 ElevatedFormButton(
                                                   text: "Alterar Cliente",
-                                                  onPressed: () => _showClientSelectionModal(context),
+                                                  onPressed: () =>
+                                                      _showClientSelectionModal(
+                                                          context),
                                                 ),
                                               ],
                                             ),
@@ -1673,31 +1817,42 @@ class _UpdateServicoState extends State<UpdateServico> {
                                           const SizedBox(width: 16),
                                           Expanded(
                                             flex: 4,
-                                            child: CardBuilderForm(title: "Serviço", child: _buildServiceForm()),
+                                            child: CardBuilderForm(
+                                                title: "Serviço",
+                                                child: _buildServiceForm()),
                                           ),
                                         ],
                                       );
                                     }
                                     return Column(
                                       children: [
-                                        CardBuilderForm(title: "Cliente", child: _buildClientForm()),
+                                        CardBuilderForm(
+                                            title: "Cliente",
+                                            child: _buildClientForm()),
                                         const SizedBox(height: 12),
                                         ElevatedFormButton(
                                           text: "Alterar Cliente",
-                                          onPressed: () => _showClientSelectionModal(context),
+                                          onPressed: () =>
+                                              _showClientSelectionModal(
+                                                  context),
                                         ),
                                         const SizedBox(height: 12),
-                                        CardBuilderForm(title: "Serviço", child: _buildServiceForm()),
+                                        CardBuilderForm(
+                                            title: "Serviço",
+                                            child: _buildServiceForm()),
                                         const SizedBox(height: 8),
-                                        BuildFieldLabels(isClientAndService: false),
+                                        BuildFieldLabels(
+                                            isClientAndService: false),
                                       ],
                                     );
                                   },
                                 ),
                                 const SizedBox(height: 24),
                                 ConstrainedBox(
-                                  constraints: const BoxConstraints(maxWidth: 750),
-                                  child: BlocListener<ServicoBloc, ServicoState>(
+                                  constraints:
+                                      const BoxConstraints(maxWidth: 750),
+                                  child:
+                                      BlocListener<ServicoBloc, ServicoState>(
                                     listener: (context, state) {
                                       if (state is ServicoUpdateSuccessState) {
                                         _handleBackNavigation();
@@ -1714,50 +1869,79 @@ class _UpdateServicoState extends State<UpdateServico> {
                                               context: context,
                                               builder: (context) => Dialog(
                                                 shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(12),
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
                                                 ),
                                                 child: ConstrainedBox(
                                                   constraints: BoxConstraints(
-                                                    maxWidth: MediaQuery.of(context).size.width * 0.6,
-                                                    maxHeight: MediaQuery.of(context).size.height * 0.5,
+                                                    maxWidth:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.6,
+                                                    maxHeight:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.5,
                                                   ),
                                                   child: AlertDialog(
                                                     title: const Text(
                                                       "Histórico do serviço",
-                                                      textAlign: TextAlign.center,
+                                                      textAlign:
+                                                          TextAlign.center,
                                                     ),
-                                                    backgroundColor: const Color(0xFFF9F9FF),
+                                                    backgroundColor:
+                                                        const Color(0xFFF9F9FF),
                                                     content: SizedBox(
                                                       width: double.maxFinite,
-                                                      child: SingleChildScrollView(
+                                                      child:
+                                                          SingleChildScrollView(
                                                         child: Container(
-                                                          padding: const EdgeInsets.all(4),
-                                                          decoration: BoxDecoration(
-                                                            color: Colors.transparent,
-                                                            borderRadius: BorderRadius.circular(12),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(4),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors
+                                                                .transparent,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        12),
                                                             border: Border.all(
-                                                              color: const Color(0xFFEAE6E5),
+                                                              color: const Color(
+                                                                  0xFFEAE6E5),
                                                               width: 1,
                                                             ),
                                                           ),
                                                           child: Column(
-                                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                                            mainAxisSize: MainAxisSize.min,
-                                                            children: _servicoUpdateForm.historico.value
-                                                                .split('\n')
-                                                                .expand((texto) => [
-                                                                      Text(
-                                                                        texto,
-                                                                        textAlign: TextAlign.left,
-                                                                      ),
-                                                                      const Divider(
-                                                                        color: Colors.black,
-                                                                        thickness: 1,
-                                                                        height: 10,
-                                                                      ),
-                                                                    ])
-                                                                .toList()
-                                                              ..removeLast(),
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children:
+                                                                _servicoUpdateForm
+                                                                    .historico
+                                                                    .value
+                                                                    .split('\n')
+                                                                    .expand(
+                                                                        (texto) =>
+                                                                            [
+                                                                              Text(
+                                                                                texto,
+                                                                                textAlign: TextAlign.left,
+                                                                              ),
+                                                                              const Divider(
+                                                                                color: Colors.black,
+                                                                                thickness: 1,
+                                                                                height: 10,
+                                                                              ),
+                                                                            ])
+                                                                    .toList()
+                                                                  ..removeLast(),
                                                           ),
                                                         ),
                                                       ),
@@ -1765,7 +1949,9 @@ class _UpdateServicoState extends State<UpdateServico> {
                                                     actions: [
                                                       ElevatedFormButton(
                                                         text: "Ok",
-                                                        onPressed: () => Navigator.pop(context),
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                context),
                                                       ),
                                                     ],
                                                   ),

@@ -1,11 +1,11 @@
 {
-    "name": "serv_oeste",
-    "short_name": "serv_oeste",
+    "name": "Serv-Oeste",
+    "short_name": "Serv-Oeste",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "ServOeste app",
+    "description": "Serv-Oeste app",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
