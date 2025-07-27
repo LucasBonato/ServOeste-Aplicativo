@@ -117,7 +117,7 @@ extension CustomValidIsEmpty on LucidValidationBuilder<List<int>, TecnicoForm> {
       if (especialidades.isNotEmpty) {
         return null;
       }
-      return ValidationException(message: message, key: code, code: code);
+      return ValidationException(message: message, key: code, code: code, entity: code);
     }
 
     return use(callback);
@@ -130,7 +130,7 @@ extension CustomValidExternalError on LucidValidationBuilder {
       if (externalErrors[code] == null) {
         return null;
       }
-      return ValidationException(message: externalErrors[code]!, code: code, key: code);
+      return ValidationException(message: externalErrors[code]!, code: code, key: code, entity: code);
     }
 
     return use(callback);

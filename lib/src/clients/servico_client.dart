@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:dartz/dartz.dart';
+import 'package:flutter/gestures.dart';
 import 'package:logger/logger.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
@@ -12,7 +14,7 @@ import 'package:dio/dio.dart';
 import 'package:serv_oeste/src/shared/formatters.dart';
 
 class ServicoClient extends DioService {
-  Future<List<Servico>?> getServicosByFilter(ServicoFilterRequest servicoFilter) async {
+  Future<Either<ErrorEntity, List<Servico>>> getServicosByFilter(ServicoFilterRequest servicoFilter) async {
     try {
       final response = await dio.post(
         ServerEndpoints.servicoFilterEndpoint,
@@ -37,29 +39,31 @@ class ServicoClient extends DioService {
       );
 
       if (response.data != null && response.data is List) {
-        return (response.data as List)
-            .whereType<Map<String, dynamic>>()
-            .map((json) {
-              try {
-                return Servico.fromJson(json);
-              } catch (e) {
-                Logger().e('Erro ao converter item para Servico: $e\nDados do item: $json');
-                return null;
-              }
-            })
-            .whereType<Servico>()
-            .toList();
+        return Right(
+            (response.data as List)
+                .whereType<Map<String, dynamic>>()
+                .map((json) {
+                  try {
+                    return Servico.fromJson(json);
+                  } catch (e) {
+                    Logger().e('Erro ao converter item para Servico: $e\nDados do item: $json');
+                    return null;
+                  }
+                })
+                .whereType<Servico>()
+                .toList()
+        );
       }
     } on DioException catch (e) {
       Logger().e('Erro na requisição: ${onRequestError(e)}');
-      throw Exception(onRequestError(e));
+      return Left(onRequestError(e));
     } catch (e) {
       Logger().e('Erro inesperado: $e');
     }
-    return null;
+    return Right([]);
   }
 
-  Future<ErrorEntity?> createServicoComClienteNaoExistente(ServicoRequest servico, ClienteRequest cliente) async {
+  Future<Either<ErrorEntity, void>> createServicoComClienteNaoExistente(ServicoRequest servico, ClienteRequest cliente) async {
     try {
       await dio.post(ServerEndpoints.servicoMaisClienteEndpoint, data: {
         "clienteRequest": {
@@ -82,12 +86,12 @@ class ServicoClient extends DioService {
         }
       });
     } on DioException catch (e) {
-      return onRequestError(e);
+      return Left(onRequestError(e));
     }
-    return null;
+    return Right(null);
   }
 
-  Future<ErrorEntity?> createServicoComClienteExistente(ServicoRequest servico) async {
+  Future<Either<ErrorEntity, void>> createServicoComClienteExistente(ServicoRequest servico) async {
     try {
       await dio.post(ServerEndpoints.servicoEndpoint, data: {
         "idCliente": servico.idCliente,
@@ -100,12 +104,12 @@ class ServicoClient extends DioService {
         "descricao": servico.descricao,
       });
     } on DioException catch (e) {
-      return onRequestError(e);
+      return Left(onRequestError(e));
     }
-    return null;
+    return Right(null);
   }
 
-  Future<Servico?> putServico(Servico servico) async {
+  Future<Either<ErrorEntity, void>> putServico(Servico servico) async {
     try {
       final response = await dio.put(ServerEndpoints.servicoEndpoint, queryParameters: {
         "id": servico.id
@@ -129,21 +133,18 @@ class ServicoClient extends DioService {
         "dataAtendimentoEfetiva": servico.dataAtendimentoEfetivoString,
         "dataPagamentoComissao": servico.dataPagamentoComissaoString
       });
-
-      if (response.data != null && response.data is Map) {
-        return Servico.fromJson(response.data as Map<String, dynamic>);
-      }
-      throw Exception('Resposta do backend inválida: ${response.data}');
     } on DioException catch (e) {
-      throw Exception(onRequestError(e));
+      return Left(onRequestError(e));
     }
+    return Right(null);
   }
 
-  Future<void> disableListOfServico(List<int> selectedItems) async {
+  Future<Either<ErrorEntity, void>> disableListOfServico(List<int> selectedItems) async {
     try {
       await dio.delete(ServerEndpoints.servicoEndpoint, data: jsonEncode(selectedItems));
     } on DioException catch (e) {
-      throw Exception(onRequestError(e));
+      return Left(onRequestError(e));
     }
+    return Right(null);
   }
 }

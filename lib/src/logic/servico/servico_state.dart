@@ -21,11 +21,7 @@ final class ServicoSearchSuccessState extends ServicoState {
 
 final class ServicoRegisterSuccessState extends ServicoState {}
 
-final class ServicoUpdateSuccessState extends ServicoState {
-  final Servico servico;
-
-  ServicoUpdateSuccessState({required this.servico});
-}
+final class ServicoUpdateSuccessState extends ServicoState {}
 
 final class ServicoDeleteSuccessState extends ServicoState {}
 

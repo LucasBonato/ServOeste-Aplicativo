@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/servico/tecnico_disponivel.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
 import 'package:serv_oeste/src/clients/dio/dio_service.dart';
@@ -9,7 +11,7 @@ import 'package:serv_oeste/src/clients/dio/server_endpoints.dart';
 import '../models/tecnico/tecnico.dart';
 
 class TecnicoClient extends DioService {
-  Future<List<TecnicoResponse>> fetchListByFilter({int? id, String? nome, String? telefoneFixo, String? telefoneCelular, String? situacao, String? equipamento}) async {
+  Future<Either<ErrorEntity, List<TecnicoResponse>>> fetchListByFilter({int? id, String? nome, String? telefoneFixo, String? telefoneCelular, String? situacao, String? equipamento}) async {
     try {
       final response = await dio.post(
         ServerEndpoints.tecnicoFindEndpoint,
@@ -24,41 +26,49 @@ class TecnicoClient extends DioService {
       );
 
       if (response.data is List) {
-        return (response.data as List).map((json) => TecnicoResponse.fromJson(json)).toList();
+        return Right(
+            (response.data as List)
+                .map((json) => TecnicoResponse.fromJson(json))
+                .toList()
+        );
       }
     } on DioException catch (e) {
-      throw Exception(onRequestError(e));
+      return Left(onRequestError(e));
     }
-    return [];
+    return Right([]);
   }
 
-  Future<List<TecnicoDisponivel>> fetchListAvailabilityBySpecialityId(int especialidadeId) async {
+  Future<Either<ErrorEntity, List<TecnicoDisponivel>>> fetchListAvailabilityBySpecialityId(int especialidadeId) async {
     try {
       final response = await dio.post(ServerEndpoints.tecnicoDisponibilidadeEndpoint, data: {"especialidadeId": especialidadeId});
 
       if (response.data is List) {
-        return (response.data as List).map((json) => TecnicoDisponivel.fromJson(json)).toList();
+        return Right(
+            (response.data as List)
+                .map((json) => TecnicoDisponivel.fromJson(json))
+                .toList()
+        );
       }
     } on DioException catch (e) {
-      throw Exception(onRequestError(e));
+      return Left(onRequestError(e));
     }
-    return [];
+    return Right([]);
   }
 
-  Future<Tecnico?> fetchOneById(int id) async {
+  Future<Either<ErrorEntity, Tecnico?>> fetchOneById(int id) async {
     try {
       final response = await dio.get("${ServerEndpoints.tecnicoEndpoint}/$id");
 
       if (response.data != null) {
-        return Tecnico.fromJson(response.data as Map<String, dynamic>);
+        return Right(Tecnico.fromJson(response.data as Map<String, dynamic>));
       }
     } on DioException catch (e) {
-      throw Exception(onRequestError(e));
+      return Left(onRequestError(e));
     }
-    return null;
+    return Right(null);
   }
 
-  Future<void> create(Tecnico tecnico) async {
+  Future<Either<ErrorEntity, void>> create(Tecnico tecnico) async {
     try {
       await dio.post(
         ServerEndpoints.tecnicoEndpoint,
@@ -71,11 +81,12 @@ class TecnicoClient extends DioService {
         }
       );
     } on DioException catch (e) {
-      throw Exception(onRequestError(e));
+      return Left(onRequestError(e));
     }
+    return Right(null);
   }
 
-  Future<void> update(Tecnico tecnico) async {
+  Future<Either<ErrorEntity, void>> update(Tecnico tecnico) async {
     try {
       await dio.put(
         "${ServerEndpoints.tecnicoEndpoint}/${tecnico.id}",
@@ -89,15 +100,17 @@ class TecnicoClient extends DioService {
         }
       );
     } on DioException catch (e) {
-      throw Exception(onRequestError(e));
+      return Left(onRequestError(e));
     }
+    return Right(null);
   }
 
-  Future<void> disableListByIds(List<int> selectedItems) async {
+  Future<Either<ErrorEntity, void>> disableListByIds(List<int> selectedItems) async {
     try {
       await dio.delete(ServerEndpoints.tecnicoEndpoint, data: jsonEncode(selectedItems));
     } on DioException catch (e) {
-      throw Exception(onRequestError(e));
+      return Left(onRequestError(e));
     }
+    return Right(null);
   }
 }

@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:dartz/dartz.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 
 abstract class BaseEntityBloc<Event, State> extends Bloc<Event, State> {
@@ -9,24 +10,25 @@ abstract class BaseEntityBloc<Event, State> extends Bloc<Event, State> {
 
   Future<void> handleRequest<T>({
     required Emitter<State> emit,
-    required Future<T> Function() request,
+    required Future<Either<ErrorEntity, T>> Function() request,
     required void Function(T result) onSuccess,
     void Function(ErrorEntity error)? onError,
   }) async {
     emit(loadingState());
-    try {
-      final result = await request();
-      onSuccess(result);
-    }
-    catch (e) {
-      final ErrorEntity error = (e is ErrorEntity) ? e : ErrorEntity(id: 0, errorMessage: "Erro ao processar a requisição!");
+    final Either<ErrorEntity, T> result = await request();
 
-      if (onError != null) {
-        onError(error);
+    result.fold(
+      (ErrorEntity error) {
+        if (onError != null) {
+          onError(error);
+        }
+        else {
+          emit(errorState(error));
+        }
+      },
+      (T success) {
+        onSuccess(success);
       }
-      else {
-        emit(errorState(error));
-      }
-    }
+    );
   }
 }
