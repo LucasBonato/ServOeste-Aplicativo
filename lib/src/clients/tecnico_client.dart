@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
+import 'package:serv_oeste/src/models/page_content.dart';
 import 'package:serv_oeste/src/models/servico/tecnico_disponivel.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
 import 'package:serv_oeste/src/clients/dio/dio_service.dart';
@@ -11,7 +12,7 @@ import 'package:serv_oeste/src/clients/dio/server_endpoints.dart';
 import '../models/tecnico/tecnico.dart';
 
 class TecnicoClient extends DioService {
-  Future<Either<ErrorEntity, List<TecnicoResponse>>> fetchListByFilter({int? id, String? nome, String? telefoneFixo, String? telefoneCelular, String? situacao, String? equipamento}) async {
+  Future<Either<ErrorEntity, PageContent<TecnicoResponse>>> fetchListByFilter({int? id, String? nome, String? telefoneFixo, String? telefoneCelular, String? situacao, String? equipamento}) async {
     try {
       final response = await dio.post(
         ServerEndpoints.tecnicoFindEndpoint,
@@ -25,17 +26,18 @@ class TecnicoClient extends DioService {
         }
       );
 
-      if (response.data is List) {
+      if (response.data is Map<String, dynamic>) {
         return Right(
-            (response.data as List)
-                .map((json) => TecnicoResponse.fromJson(json))
-                .toList()
+          PageContent.fromJson(
+            response.data,
+            (json) => TecnicoResponse.fromJson(json)
+          )
         );
       }
     } on DioException catch (e) {
       return Left(onRequestError(e));
     }
-    return Right([]);
+    return Right(PageContent.empty());
   }
 
   Future<Either<ErrorEntity, List<TecnicoDisponivel>>> fetchListAvailabilityBySpecialityId(int especialidadeId) async {

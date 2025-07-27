@@ -6,9 +6,10 @@ import 'package:dio/dio.dart';
 import 'dart:convert';
 
 import 'package:serv_oeste/src/models/error/error_entity.dart';
+import 'package:serv_oeste/src/models/page_content.dart';
 
 class ClienteClient extends DioService {
-  Future<Either<ErrorEntity, List<Cliente>>> fetchListByFilter({String? nome, String? telefone, String? endereco}) async {
+  Future<Either<ErrorEntity, PageContent<Cliente>>> fetchListByFilter({String? nome, String? telefone, String? endereco}) async {
     try {
       final Response<dynamic> response = await dio.post(
         ServerEndpoints.clienteFindEndpoint,
@@ -19,17 +20,18 @@ class ClienteClient extends DioService {
         }
       );
 
-      if (response.data != null && response.data is List) {
+      if (response.data != null && response.data is Map<String, dynamic>) {
         return Right(
-            (response.data as List)
-                .map((json) => Cliente.fromJson(json))
-                .toList()
+          PageContent.fromJson(
+            response.data,
+            (json) => Cliente.fromJson(json)
+          )
         );
       }
     } on DioException catch (e) {
       return Left(onRequestError(e));
     }
-    return Right([]);
+    return Right(PageContent.empty());
   }
 
   Future<Either<ErrorEntity, Cliente?>> fetchOneById({required int id}) async {

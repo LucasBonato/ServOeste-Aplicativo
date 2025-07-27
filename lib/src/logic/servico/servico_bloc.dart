@@ -4,6 +4,7 @@ import 'package:serv_oeste/src/clients/servico_client.dart';
 import 'package:serv_oeste/src/logic/base_entity_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_request.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
+import 'package:serv_oeste/src/models/page_content.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/models/servico/servico_request.dart';
@@ -36,18 +37,18 @@ class ServicoBloc extends BaseEntityBloc<ServicoEvent, ServicoState> {
   Future<void> _fetchAllServicesWithFilter(ServicoLoadingEvent event, Emitter<ServicoState> emit) async {
     filterRequest = _combineFilters(filterRequest?? ServicoFilterRequest(), event.filterRequest);
 
-    await handleRequest<List<Servico>>(
+    await handleRequest<PageContent<Servico>>(
       emit: emit,
       request: () => _servicoClient.getServicosByFilter(filterRequest!),
-      onSuccess: (List<Servico> servicos) => emit(ServicoSearchSuccessState(servicos: servicos))
+      onSuccess: (PageContent<Servico> page) => emit(ServicoSearchSuccessState(servicos: page.content))
     );
   }
 
   Future<void> _fetchAllServicesInitial(ServicoInitialLoadingEvent event, Emitter<ServicoState> emit) async {
-    await handleRequest<List<Servico>>(
+    await handleRequest<PageContent<Servico>>(
       emit: emit,
       request: () => _servicoClient.getServicosByFilter(event.filterRequest),
-      onSuccess: (List<Servico> servicos) => emit(ServicoSearchSuccessState(servicos: servicos))
+      onSuccess: (PageContent<Servico> page) => emit(ServicoSearchSuccessState(servicos: page.content))
     );
   }
 
@@ -59,18 +60,18 @@ class ServicoBloc extends BaseEntityBloc<ServicoEvent, ServicoState> {
       filterRequest = _combineFilters(filterRequest!, event.filterRequest!);
     }
 
-    await handleRequest<List<Servico>>(
+    await handleRequest<PageContent<Servico>>(
       emit: emit,
       request: () => _servicoClient.getServicosByFilter(filterRequest!),
-      onSuccess: (List<Servico> servicos) => emit(ServicoSearchSuccessState(servicos: servicos))
+      onSuccess: (PageContent<Servico> page) => emit(ServicoSearchSuccessState(servicos: page.content))
     );
   }
 
   Future<void> _fetchOneService(ServicoSearchOneEvent event, Emitter<ServicoState> emit) async {
-    await handleRequest<List<Servico>>(
+    await handleRequest<PageContent<Servico>>(
       emit: emit,
       request: () => _servicoClient.getServicosByFilter(ServicoFilterRequest(id: event.id)),
-      onSuccess: (List<Servico> servicos) => emit(ServicoSearchOneSuccessState(servico: servicos[0]))
+      onSuccess: (PageContent<Servico> page) => emit(ServicoSearchOneSuccessState(servico: page.content[0]))
     );
   }
 

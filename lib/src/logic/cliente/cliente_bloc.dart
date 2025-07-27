@@ -4,6 +4,7 @@ import 'package:serv_oeste/src/logic/base_entity_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/clients/cliente_client.dart';
+import 'package:serv_oeste/src/models/page_content.dart';
 
 part 'cliente_event.dart';
 
@@ -44,15 +45,15 @@ class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
   }
 
   Future<void> _fetchAllClients(ClienteLoadingEvent event, Emitter<ClienteState> emit) async {
-    await handleRequest<List<Cliente>>(
+    await handleRequest<PageContent<Cliente>>(
       emit: emit,
       request: () => _clienteClient.fetchListByFilter(
         nome: event.nome,
         telefone: event.telefone,
         endereco: event.endereco,
       ),
-      onSuccess: (List<Cliente> clientes) {
-        emit(ClienteSearchSuccessState(clientes: clientes));
+      onSuccess: (PageContent<Cliente> pageClients) {
+        emit(ClienteSearchSuccessState(clientes: pageClients.content));
       }
     );
   }
@@ -98,10 +99,10 @@ class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
     else if (state is ClienteErrorState) {
       existingClientes = (state as ClienteErrorState).clientes?? [];
     }
-    
+
     await handleRequest(
-      emit: emit, 
-      request: () => _clienteClient.deleteListByIds(event.selectedList), 
+      emit: emit,
+      request: () => _clienteClient.deleteListByIds(event.selectedList),
       onSuccess: (_) => add(ClienteLoadingEvent(nome: _nome, endereco: _endereco, telefone: _telefone)),
       onError: (error) => emit(ClienteErrorState(error: error, clientes: existingClientes))
     );

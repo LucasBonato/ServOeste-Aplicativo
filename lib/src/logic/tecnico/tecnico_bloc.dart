@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:serv_oeste/src/logic/base_entity_bloc.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
+import 'package:serv_oeste/src/models/page_content.dart';
 import 'package:serv_oeste/src/models/servico/tecnico_disponivel.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
@@ -37,7 +38,7 @@ class TecnicoBloc extends BaseEntityBloc<TecnicoEvent, TecnicoState> {
   }
 
   Future<void> _fetchAllTecnicos(TecnicoLoadingEvent event, Emitter<TecnicoState> emit) async {
-    await handleRequest<List<TecnicoResponse>>(
+    await handleRequest<PageContent<TecnicoResponse>>(
       emit: emit,
       request: () => _tecnicoClient.fetchListByFilter(
         id: event.id,
@@ -45,7 +46,7 @@ class TecnicoBloc extends BaseEntityBloc<TecnicoEvent, TecnicoState> {
         situacao: event.situacao,
         equipamento: event.equipamento
       ),
-      onSuccess: (List<TecnicoResponse> tecnicos) => emit(TecnicoSearchSuccessState(tecnicos: tecnicos)),
+      onSuccess: (PageContent<TecnicoResponse> page) => emit(TecnicoSearchSuccessState(tecnicos: page.content)),
     );
   }
 
