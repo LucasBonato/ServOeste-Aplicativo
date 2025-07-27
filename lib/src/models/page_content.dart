@@ -44,7 +44,7 @@ class PageInfo {
   factory PageInfo.empty()
     => PageInfo(
       totalElements: 0,
-      totalPages: 0,
+      totalPages: 1,
       page: 0,
       size: 10
     );
