@@ -6,9 +6,6 @@ import 'package:serv_oeste/src/shared/debouncer.dart';
 
 abstract class BaseListScreen<T> extends StatefulWidget {
   const BaseListScreen({super.key});
-
-  @override
-  State<BaseListScreen<T>> createState();
 }
 
 abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {

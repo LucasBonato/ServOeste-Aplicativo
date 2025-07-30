@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
-import 'package:serv_oeste/src/shared/string_extensions.dart';
+import 'package:serv_oeste/src/shared/extensions.dart';
 import 'package:serv_oeste/src/shared/formatters.dart';
 
 List<Tecnico> tecnicoFromJson(String str) => List<Tecnico>.from(json.decode(str));

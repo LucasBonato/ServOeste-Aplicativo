@@ -56,7 +56,7 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
             keyboardType: TextInputType.number
         ),
         DropdownInputField(
-            label: "Situação...",
+            hint: "Situação...",
             controller: _situacaoController,
             valueNotifier: _situacaoNotifier,
             dropdownValues: Constants.situationTecnicoList,

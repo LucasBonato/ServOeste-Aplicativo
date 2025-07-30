@@ -38,7 +38,7 @@ class ResponsiveSearchInputs extends StatelessWidget {
       return CustomDropdownFormField(
         leftPadding: 4,
         rightPadding: 4,
-        label: field.label,
+        label: field.hint,
         dropdownValues: field.dropdownValues,
         controller: field.controller,
         valueNotifier: field.valueNotifier,
@@ -87,10 +87,12 @@ class ResponsiveSearchInputs extends StatelessWidget {
         lista = [];
       }
 
-      lista.add(Expanded(
+      lista.add(
+        Expanded(
           flex: 1,
           child: _buildSearchField(fields[i])
-      ));
+        )
+      );
     }
 
     if (lista.isNotEmpty) {

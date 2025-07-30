@@ -7,6 +7,7 @@ import 'package:serv_oeste/src/components/formFields/date_picker_form_field.dart
 import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
+import 'package:serv_oeste/src/components/layout/app_bar_form.dart';
 import 'package:serv_oeste/src/components/screen/filtered_clients_table.dart';
 import 'package:serv_oeste/src/components/screen/table_technical.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
@@ -185,8 +186,7 @@ class _CreateServicoState extends State<CreateServico> {
     );
   }
 
-  void _setTableValues(
-      String nomeTecnico, String data, String periodo, int idTecnico) {
+  void _setTableValues(String nomeTecnico, String data, String periodo, int idTecnico) {
     _servicoForm.setNomeTecnico(nomeTecnico);
     _nomeTecnicoController.text = nomeTecnico;
     _servicoForm.setDataAtendimentoPrevisto(data);
@@ -243,31 +243,17 @@ class _CreateServicoState extends State<CreateServico> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9FF),
-      appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
-          child: Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black),
-                onPressed: () => Navigator.pop(context, "Back"),
-              )
-            ],
-          ),
-        ),
-        title: const Text(
-          "Voltar",
-          style: TextStyle(color: Colors.black, fontSize: 16),
-        ),
-        backgroundColor: Color(0xFCFDFDFF),
-        elevation: 0,
+      appBar: AppBarForm(
+        onPressed: () => Navigator.pop(context, true),
+        title: isClientAndService
+            ? 'Adicionar Cliente/Serviço'
+            : 'Adicionar Serviço',
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           bool isMobile = constraints.maxWidth < 950;
           return ScrollConfiguration(
-            behavior:
-                ScrollBehavior().copyWith(overscroll: false, scrollbars: false),
+            behavior: ScrollBehavior().copyWith(overscroll: false, scrollbars: false),
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Center(
@@ -276,17 +262,6 @@ class _CreateServicoState extends State<CreateServico> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const SizedBox(height: 42),
-                      Text(
-                        isClientAndService
-                            ? 'Adicionar Cliente/Serviço'
-                            : 'Adicionar Serviço',
-                        style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 48),
                       isMobile
                           ? Column(
                               children: [
@@ -344,7 +319,7 @@ class _CreateServicoState extends State<CreateServico> {
                             'Verificar disponibilidade',
                             equipamentoSelecionado.isNotEmpty
                                 ? Colors.blue
-                                : Colors.grey.withOpacity(0.5),
+                                : Colors.grey.withValues(alpha: 0.5),
                             equipamentoSelecionado.isNotEmpty
                                 ? _onShowAvailabilityTechnicianTable
                                 : () {},

@@ -35,9 +35,21 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
     return ResponsiveSearchInputs(
       onChanged: onSearchFieldChanged,
       fields: [
-        TextInputField(hint: "Procure por Clientes...", controller: _nomeController, keyboardType: TextInputType.text),
-        TextInputField(hint: "Endereço...", controller: _enderecoController, keyboardType: TextInputType.text),
-        TextInputField(hint: "Telefone...", controller: _telefoneController, keyboardType: TextInputType.phone),
+        TextInputField(
+          hint: "Procure por Clientes...",
+          controller: _nomeController,
+          keyboardType: TextInputType.text,
+        ),
+        TextInputField(
+          hint: "Endereço...",
+          controller: _enderecoController,
+          keyboardType: TextInputType.text,
+        ),
+        TextInputField(
+          hint: "Telefone...",
+          controller: _telefoneController,
+          keyboardType: TextInputType.phone,
+        ),
       ],
     );
   }
@@ -47,7 +59,11 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
 
   @override
   Widget buildDefaultFloatingActionButton() {
-    return FloatingActionButtonAdd(route: Routes.clienteCreate, event: () => _clienteBloc.add(ClienteSearchMenuEvent()), tooltip: "Adicionar um Cliente");
+    return FloatingActionButtonAdd(
+      route: Routes.clienteCreate,
+      event: () => _clienteBloc.add(ClienteSearchMenuEvent()),
+      tooltip: "Adicionar um Cliente",
+    );
   }
 
   @override
