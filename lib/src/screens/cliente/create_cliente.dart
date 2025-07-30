@@ -71,8 +71,7 @@ class CreateCliente extends StatelessWidget {
 
           clienteForm.setNome("$nome $sobrenome");
         },
-        buildFields: () =>
-        [
+        buildFields: () => [
           BlocListener<ClienteBloc, ClienteState>(
             bloc: bloc,
             listener: (context, state) {
