@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
 import 'package:serv_oeste/src/components/layout/fab_remove.dart';
+import 'package:serv_oeste/src/components/layout/pagination_widget.dart';
 import 'package:serv_oeste/src/components/layout/responsive_search_inputs.dart';
 import 'package:serv_oeste/src/components/screen/cards/card_service.dart';
 import 'package:serv_oeste/src/components/screen/entity_not_found.dart';
@@ -30,8 +31,10 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
 
   void _setFilterValues() {
     if (_servicoBloc.filterRequest != null) {
-      _nomeClienteController.text = _servicoBloc.filterRequest!.clienteNome ?? "";
-      _nomeTecnicoController.text = _servicoBloc.filterRequest!.tecnicoNome ?? "";
+      _nomeClienteController.text =
+          _servicoBloc.filterRequest!.clienteNome ?? "";
+      _nomeTecnicoController.text =
+          _servicoBloc.filterRequest!.tecnicoNome ?? "";
     }
   }
 
@@ -42,18 +45,15 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
         TextInputField(
             hint: "Nome do Cliente...",
             controller: _nomeClienteController,
-            keyboardType: TextInputType.text
-        ),
+            keyboardType: TextInputType.text),
         TextInputField(
             hint: "Nome do Técnico...",
             controller: _nomeTecnicoController,
-            keyboardType: TextInputType.text
-        ),
+            keyboardType: TextInputType.text),
       ],
-      onFilterTap: () =>
-          Navigator.of(context, rootNavigator: true)
-              .push(MaterialPageRoute(builder: (context) => FilterService()))
-              .then((_) => onSearchFieldChanged()),
+      onFilterTap: () => Navigator.of(context, rootNavigator: true)
+          .push(MaterialPageRoute(builder: (context) => FilterService()))
+          .then((_) => onSearchFieldChanged()),
     );
   }
 
@@ -88,47 +88,43 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
   Widget buildSelectionFloatingActionButton(List<int> selectedIds) {
     return FloatingActionButtonRemove(
         removeMethod: () => disableSelectedItems(context, selectedIds),
-        tooltip: "Excluir serviços selecionados"
-    );
+        tooltip: "Excluir serviços selecionados");
   }
 
   @override
-  Widget buildItemCard(Servico servico, bool isSelected, bool isSelectMode, bool isSkeleton) {
+  Widget buildItemCard(
+      Servico servico, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return CardService(
-      onDoubleTap: () => onNavigateToUpdateScreen(servico.id),
-      onLongPress: () => onSelectItemList(servico.id),
-      onTap: () {
-        if (isSelectMode) {
-          onSelectItemList(servico.id);
-        }
-      },
-      codigo: servico.id,
-      cliente: servico.nomeCliente,
-      tecnico: servico.nomeTecnico,
-      equipamento: servico.equipamento,
-      marca: servico.marca,
-      filial: servico.filial,
-      horario: servico.horarioPrevisto,
-      dataPrevista: servico.dataAtendimentoPrevisto,
-      dataEfetiva: servico.dataAtendimentoEfetivo,
-      dataFechamento: servico.dataFechamento,
-      dataFinalGarantia: servico.dataFimGarantia,
-      status: servico.situacao,
-      isSelected: isSelected,
-      isSkeleton: isSkeleton
-    );
+        onDoubleTap: () => onNavigateToUpdateScreen(servico.id),
+        onLongPress: () => onSelectItemList(servico.id),
+        onTap: () {
+          if (isSelectMode) {
+            onSelectItemList(servico.id);
+          }
+        },
+        codigo: servico.id,
+        cliente: servico.nomeCliente,
+        tecnico: servico.nomeTecnico,
+        equipamento: servico.equipamento,
+        marca: servico.marca,
+        filial: servico.filial,
+        horario: servico.horarioPrevisto,
+        dataPrevista: servico.dataAtendimentoPrevisto,
+        dataEfetiva: servico.dataAtendimentoEfetivo,
+        dataFechamento: servico.dataFechamento,
+        dataFinalGarantia: servico.dataFimGarantia,
+        status: servico.situacao,
+        isSelected: isSelected,
+        isSkeleton: isSkeleton);
   }
 
   @override
   void searchFieldChanged() {
-    _servicoBloc.add(
-      ServicoLoadingEvent(
+    _servicoBloc.add(ServicoLoadingEvent(
         filterRequest: ServicoFilterRequest(
-          clienteNome: _nomeClienteController.text,
-          tecnicoNome: _nomeTecnicoController.text,
-        )
-      )
-    );
+      clienteNome: _nomeClienteController.text,
+      tecnicoNome: _nomeTecnicoController.text,
+    )));
   }
 
   @override
@@ -179,21 +175,38 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
               },
               child: BlocBuilder<ServicoBloc, ServicoState>(
                 builder: (context, stateServico) {
-                  if (stateServico is ServicoInitialState || stateServico is ServicoLoadingState) {
+                  if (stateServico is ServicoInitialState ||
+                      stateServico is ServicoLoadingState) {
                     return Skeletonizer(
-                      enableSwitchAnimation: true,
-                      child: buildGridOfCards(
-                        List.generate(8, (_) => Servico.skeleton()),
-                        0.9,
-                        isSkeleton: true
-                      )
+                        enableSwitchAnimation: true,
+                        child: buildGridOfCards(
+                            List.generate(8, (_) => Servico.skeleton()), 0.9,
+                            isSkeleton: true));
+                  } else if (stateServico is ServicoSearchSuccessState) {
+                    return Column(
+                      children: [
+                        Expanded(
+                          child: stateServico.servicos.isNotEmpty
+                              ? buildGridOfCards(stateServico.servicos, 0.9)
+                              : const EntityNotFound(
+                                  message: "Nenhum serviço encontrado."),
+                        ),
+                        if (stateServico.totalPages > 1)
+                          PaginationWidget(
+                            currentPage: stateServico.currentPage + 1,
+                            totalPages: stateServico.totalPages,
+                            onPageChanged: (page) {
+                              _servicoBloc.add(ServicoLoadingEvent(
+                                filterRequest: _servicoBloc.filterRequest ??
+                                    ServicoFilterRequest(),
+                                page: page - 1,
+                                size: 15,
+                              ));
+                            },
+                          ),
+                        const SizedBox(height: 16),
+                      ],
                     );
-                  }
-                  else if (stateServico is ServicoSearchSuccessState) {
-                    if (stateServico.servicos.isNotEmpty) {
-                      return buildGridOfCards(stateServico.servicos, 0.9);
-                    }
-                    return const EntityNotFound(message: "Nenhum serviço encontrado.");
                   }
                   return const ErrorComponent();
                 },

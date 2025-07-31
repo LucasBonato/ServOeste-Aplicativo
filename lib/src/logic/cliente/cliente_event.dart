@@ -7,8 +7,16 @@ final class ClienteLoadingEvent extends ClienteEvent {
   final String? nome;
   final String? telefone;
   final String? endereco;
+  final int page;
+  final int size;
 
-  ClienteLoadingEvent({this.nome, this.telefone, this.endereco});
+  ClienteLoadingEvent({
+    this.nome,
+    this.telefone,
+    this.endereco,
+    this.page = 0,
+    this.size = 20,
+  });
 }
 
 final class ClienteSearchOneEvent extends ClienteEvent {

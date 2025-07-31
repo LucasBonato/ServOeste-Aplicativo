@@ -6,7 +6,9 @@ class Formatters {
     if (phone == null || phone.isEmpty) {
       return isCell ? '(  )    -    ' : '(  )    -    ';
     }
-    return isCell ? Formatters.applyCelularMask(phone) : Formatters.applyTelefoneMask(phone);
+    return isCell
+        ? Formatters.applyCelularMask(phone)
+        : Formatters.applyTelefoneMask(phone);
   }
 
   static String applyTelefoneMask(String telefone) {
@@ -21,7 +23,11 @@ class Formatters {
 
   static String transformTelefoneMask(String telefone) {
     if (telefone.length < 14 || telefone.length > 15) return "";
-    return telefone.replaceAll("(", "").replaceAll(")", "").replaceAll(" ", "").replaceAll("-", "");
+    return telefone
+        .replaceAll("(", "")
+        .replaceAll(")", "")
+        .replaceAll(" ", "")
+        .replaceAll("-", "");
   }
 
   static String formatDatePdf(DateTime? date) {
@@ -56,12 +62,17 @@ class Formatters {
   }
 
   static String formatToCurrency(double value) {
-    final NumberFormat formatter = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
+    final NumberFormat formatter =
+        NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
     return formatter.format(value);
   }
 
   static double parseCurrencyToDouble(String formattedValue) {
-    String cleanedValue = formattedValue.replaceAll("R\$", "").replaceAll(".", "").replaceAll(",", ".").trim();
+    String cleanedValue = formattedValue
+        .replaceAll("R\$", "")
+        .replaceAll(".", "")
+        .replaceAll(",", ".")
+        .trim();
 
     return double.tryParse(cleanedValue) ?? 0.0;
   }
@@ -71,7 +82,8 @@ class Formatters {
       return null;
     }
 
-    String cleanedValue = value.replaceAll(RegExp(r'[^\d,]'), '').replaceAll(',', '.');
+    String cleanedValue =
+        value.replaceAll(RegExp(r'[^\d,]'), '').replaceAll(',', '.');
 
     double? parsedValue = double.tryParse(cleanedValue);
     return parsedValue;
@@ -80,10 +92,8 @@ class Formatters {
   static double parseToDouble(String value) {
     if (value.isEmpty) return 0.0;
 
-    // Remove "R$" e outros caracteres que não sejam números ou vírgulas
     String sanitizedValue = value.replaceAll(RegExp(r'[^\d,]'), '');
 
-    // Troca ',' por '.' para conversão correta
     sanitizedValue = sanitizedValue.replaceAll(',', '.');
 
     return double.tryParse(sanitizedValue) ?? 0.0;
@@ -91,18 +101,34 @@ class Formatters {
 
   static ServiceStatus mapStringStatusToEnumStatus(String status) {
     return switch (status) {
-      "AGUARDANDO_AGENDAMENTO" || "Aguardando agendamento" => ServiceStatus.aguardandoAgendamento,
-      "AGUARDANDO_ATENDIMENTO" || "Aguardando atendimento" => ServiceStatus.aguardandoAtendimento,
-      "AGUARDANDO_APROVACAO" || "Aguardando aprovação do cliente" => ServiceStatus.aguardandoAprovacaoCliente,
-      "AGUARDANDO_CLIENTE_RETIRAR" || "Aguardando cliente retirar" => ServiceStatus.aguardandoClienteRetirar,
-      "AGUARDANDO_ORCAMENTO" || "Aguardando orçamento" => ServiceStatus.aguardandoOrcamento,
+      "AGUARDANDO_AGENDAMENTO" ||
+      "Aguardando agendamento" =>
+        ServiceStatus.aguardandoAgendamento,
+      "AGUARDANDO_ATENDIMENTO" ||
+      "Aguardando atendimento" =>
+        ServiceStatus.aguardandoAtendimento,
+      "AGUARDANDO_APROVACAO" ||
+      "Aguardando aprovação do cliente" =>
+        ServiceStatus.aguardandoAprovacaoCliente,
+      "AGUARDANDO_CLIENTE_RETIRAR" ||
+      "Aguardando cliente retirar" =>
+        ServiceStatus.aguardandoClienteRetirar,
+      "AGUARDANDO_ORCAMENTO" ||
+      "Aguardando orçamento" =>
+        ServiceStatus.aguardandoOrcamento,
       "CANCELADO" || "Cancelado" => ServiceStatus.cancelado,
       "COMPRA" || "Compra" => ServiceStatus.compra,
       "CORTESIA" || "Cortesia" => ServiceStatus.cortesia,
       "GARANTIA" || "Garantia" => ServiceStatus.garantia,
-      "NAO_APROVADO" || "Não aprovado pelo cliente" => ServiceStatus.naoAprovadoPeloCliente,
-      "NAO_RETIRA_3_MESES" || "Não retira há 3 meses" => ServiceStatus.naoRetira3Meses,
-      "ORCAMENTO_APROVADO" || "Orçamento aprovado" => ServiceStatus.orcamentoAprovado,
+      "NAO_APROVADO" ||
+      "Não aprovado pelo cliente" =>
+        ServiceStatus.naoAprovadoPeloCliente,
+      "NAO_RETIRA_3_MESES" ||
+      "Não retira há 3 meses" =>
+        ServiceStatus.naoRetira3Meses,
+      "ORCAMENTO_APROVADO" ||
+      "Orçamento aprovado" =>
+        ServiceStatus.orcamentoAprovado,
       "RESOLVIDO" || "Resolvido" => ServiceStatus.resolvido,
       "SEM_DEFEITO" || "Sem defeito" => ServiceStatus.semDefeito,
       _ => ServiceStatus.aguardandoAgendamento

@@ -344,7 +344,7 @@ class _CreateServicoState extends State<CreateServico> {
                             'Verificar disponibilidade',
                             equipamentoSelecionado.isNotEmpty
                                 ? Colors.blue
-                                : Colors.grey.withOpacity(0.5),
+                                : Colors.grey.withValues(alpha: 0.5),
                             equipamentoSelecionado.isNotEmpty
                                 ? _onShowAvailabilityTechnicianTable
                                 : () {},
@@ -471,7 +471,8 @@ class _CreateServicoState extends State<CreateServico> {
                 .map((cliente) => {
                       'id': cliente.id.toString(),
                       'nome': cliente.nome ?? '',
-                      'endereco': cliente.endereco ?? '',
+                      'endereco':
+                          '${cliente.municipio ?? ''} - ${cliente.bairro ?? ''} - ${cliente.endereco ?? ''}',
                     })
                 .toList();
             _isDataLoaded = true;
