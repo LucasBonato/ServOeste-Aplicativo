@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/src/components/layout/pagination_widget.dart';
+import 'package:serv_oeste/src/components/screen/entity_not_found.dart';
+import 'package:serv_oeste/src/components/screen/error_component.dart';
 import 'package:serv_oeste/src/components/screen/grid_view.dart';
 import 'package:serv_oeste/src/components/screen/cards/card_service.dart';
 import 'package:serv_oeste/src/components/screen/loading.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
+import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/screens/servico/update_servico.dart';
 
 class Home extends StatefulWidget {
@@ -89,54 +93,62 @@ class _HomeState extends State<Home> {
                 return const Loading();
               } else if (stateServico is ServicoSearchSuccessState) {
                 if (stateServico.servicos.isEmpty) {
-                  return Center(
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.calendar_today,
-                          size: 80,
-                          color: Colors.grey[400],
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          "Nenhum serviço agendado para essa semana",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
+                  return const EntityNotFound(
+                      message: "Nenhum serviço agendado para essa semana",
+                      icon: Icons.calendar_today);
                 }
-                return GridListView(
-                  aspectRatio: .9,
-                  dataList: stateServico.servicos,
-                  buildCard: (dynamic servico) => CardService(
-                    onDoubleTap: () => _onNavigateToUpdateScreen(servico.id),
-                    cliente: (servico as Servico).nomeCliente,
-                    codigo: servico.id,
-                    tecnico: servico.nomeTecnico,
-                    equipamento: servico.equipamento,
-                    marca: servico.marca,
-                    filial: servico.filial,
-                    horario: servico.horarioPrevisto,
-                    dataPrevista: servico.dataAtendimentoPrevisto,
-                    dataEfetiva: servico.dataAtendimentoEfetivo,
-                    dataFechamento: servico.dataFechamento,
-                    dataFinalGarantia: servico.dataFimGarantia,
-                    status: servico.situacao,
-                  ),
+                return Column(
+                  children: [
+                    GridListView(
+                      aspectRatio: .9,
+                      dataList: stateServico.servicos,
+                      buildCard: (dynamic servico) => CardService(
+                        onDoubleTap: () =>
+                            _onNavigateToUpdateScreen(servico.id),
+                        cliente: (servico as Servico).nomeCliente,
+                        codigo: servico.id,
+                        tecnico: servico.nomeTecnico,
+                        equipamento: servico.equipamento,
+                        marca: servico.marca,
+                        filial: servico.filial,
+                        horario: servico.horarioPrevisto,
+                        dataPrevista: servico.dataAtendimentoPrevisto,
+                        dataEfetiva: servico.dataAtendimentoEfetivo,
+                        dataFechamento: servico.dataFechamento,
+                        dataFinalGarantia: servico.dataFimGarantia,
+                        status: servico.situacao,
+                      ),
+                    ),
+                    if (stateServico.totalPages > 1)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        child: PaginationWidget(
+                          currentPage: stateServico.currentPage + 1,
+                          totalPages: stateServico.totalPages,
+                          onPageChanged: (page) {
+                            DateTime today = DateTime.now();
+
+                            DateTime startOfDay =
+                                DateTime(today.year, today.month, today.day);
+                            DateTime week = startOfDay.add(Duration(days: 7));
+
+                            context.read<ServicoBloc>().add(
+                                  ServicoInitialLoadingEvent(
+                                    filterRequest: ServicoFilterRequest(
+                                      dataAtendimentoPrevistoAntes: startOfDay,
+                                      dataAtendimentoPrevistoDepois: week,
+                                    ),
+                                    page: page - 1,
+                                    size: 10,
+                                  ),
+                                );
+                          },
+                        ),
+                      ),
+                  ],
                 );
               }
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.not_interested, size: 30),
-                  const SizedBox(height: 16),
-                  const Text("Aconteceu um erro!!"),
-                ],
-              );
+              return const ErrorComponent();
             },
           ),
         ],

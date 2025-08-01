@@ -23,7 +23,7 @@ final class ServicoInitialLoadingEvent extends ServicoEvent {
   ServicoInitialLoadingEvent({
     required this.filterRequest,
     this.page = 0,
-    this.size = 15,
+    this.size = 10,
   });
 }
 

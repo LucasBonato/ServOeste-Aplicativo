@@ -2,8 +2,19 @@ import 'package:flutter/material.dart';
 
 class EntityNotFound extends StatelessWidget {
   final String message;
+  final IconData icon;
+  final Color? iconColor;
+  final double? iconSize;
+  final TextStyle? textStyle;
 
-  const EntityNotFound({super.key, required this.message});
+  const EntityNotFound({
+    super.key,
+    required this.message,
+    this.icon = Icons.search_off,
+    this.iconColor = Colors.grey,
+    this.iconSize = 40.0,
+    this.textStyle = const TextStyle(fontSize: 18.0, color: Colors.grey),
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -11,15 +22,15 @@ class EntityNotFound extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.search_off,
-            color: Colors.grey,
-            size: 40.0,
+          Icon(
+            icon,
+            color: iconColor,
+            size: iconSize,
           ),
           const SizedBox(height: 10),
           Text(
             message,
-            style: const TextStyle(fontSize: 18.0, color: Colors.grey),
+            style: textStyle,
           ),
         ],
       ),
