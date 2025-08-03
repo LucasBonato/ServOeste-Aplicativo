@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
 import 'package:serv_oeste/src/components/layout/fab_add.dart';
 import 'package:serv_oeste/src/components/layout/fab_remove.dart';
+import 'package:serv_oeste/src/components/layout/pagination_widget.dart';
 import 'package:serv_oeste/src/components/layout/responsive_search_inputs.dart';
 import 'package:serv_oeste/src/components/screen/cards/card_client.dart';
 import 'package:serv_oeste/src/components/screen/entity_not_found.dart';
@@ -157,10 +158,32 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
                     );
                   }
                   else if (stateCliente is ClienteSearchSuccessState) {
-                    if (stateCliente.clientes.isNotEmpty) {
-                      return buildGridOfCards(stateCliente.clientes, 1.65);
-                    }
-                    return const EntityNotFound(message: "Nenhum cliente encontrado.");
+                    return Column(
+                      children: [
+                        Expanded(
+                          child: stateCliente.clientes.isNotEmpty
+                              ? buildGridOfCards(stateCliente.clientes, 1.65)
+                              : const EntityNotFound(message: "Nenhum técnico encontrado."),
+                        ),
+                        if (stateCliente.totalPages > 1)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            child: PaginationWidget(
+                              currentPage: stateCliente.currentPage + 1,
+                              totalPages: stateCliente.totalPages,
+                              onPageChanged: (page) {
+                                _clienteBloc.add(ClienteLoadingEvent(
+                                  nome: _clienteBloc.nomeMenu,
+                                  telefone: _clienteBloc.telefoneMenu,
+                                  endereco: _clienteBloc.enderecoMenu,
+                                  page: page - 1,
+                                  size: 20,
+                                ));
+                              },
+                            ),
+                          ),
+                      ],
+                    );
                   }
                   return const ErrorComponent();
                 },

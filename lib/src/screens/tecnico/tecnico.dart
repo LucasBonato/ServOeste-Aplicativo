@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
 import 'package:serv_oeste/src/components/layout/fab_add.dart';
 import 'package:serv_oeste/src/components/layout/fab_remove.dart';
+import 'package:serv_oeste/src/components/layout/pagination_widget.dart';
 import 'package:serv_oeste/src/components/layout/responsive_search_inputs.dart';
 import 'package:serv_oeste/src/components/screen/cards/card_technical.dart';
 import 'package:serv_oeste/src/components/screen/entity_not_found.dart';
@@ -181,10 +182,34 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
                     );
                   }
                   else if (stateTecnico is TecnicoSearchSuccessState) {
-                    if (stateTecnico.tecnicos.isNotEmpty) {
-                      return buildGridOfCards(stateTecnico.tecnicos, 2.5);
-                    }
-                    return const EntityNotFound(message: "Nenhum técnico encontrado.");
+                    return Column(
+                      children: [
+                        Expanded(
+                          child: stateTecnico.tecnicos.isNotEmpty
+                              ? buildGridOfCards(stateTecnico.tecnicos, 2.5)
+                              : const EntityNotFound(
+                                  message: "Nenhum técnico encontrado."),
+                        ),
+                        if (stateTecnico.totalPages > 1)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            child: PaginationWidget(
+                              currentPage: stateTecnico.currentPage + 1,
+                              totalPages: stateTecnico.totalPages,
+                              onPageChanged: (page) {
+                                _tecnicoBloc.add(TecnicoLoadingEvent(
+                                  id: _tecnicoBloc.idMenu,
+                                  nome: _tecnicoBloc.nomeMenu,
+                                  situacao: _tecnicoBloc.situacaoMenu,
+                                  equipamento: null,
+                                  page: page - 1,
+                                  size: 20,
+                                ));
+                              },
+                            ),
+                          ),
+                      ],
+                    );
                   }
                   return const ErrorComponent();
                 },

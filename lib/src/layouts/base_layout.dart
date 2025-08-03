@@ -49,7 +49,8 @@ class BaseLayoutState extends State<BaseLayout> {
 
   Widget _getScreen(int index) {
     _screens[index] = switch (index) {
-      0 => BlocProvider.value(value: _servicoBloc, child: Home(key: UniqueKey())),
+      0 =>
+        BlocProvider.value(value: _servicoBloc, child: Home(key: UniqueKey())),
       1 => MultiBlocProvider(
           providers: [
             BlocProvider.value(value: _tecnicoBloc),
@@ -86,24 +87,30 @@ class BaseLayoutState extends State<BaseLayout> {
   }
 
   void _loadTab(int index) {
-    final Map<int, VoidCallback> tabLoadAction = {0: _loadHome, 1: _loadTecnico, 2: _loadCliente, 3: _loadServico};
+    final Map<int, VoidCallback> tabLoadAction = {
+      0: _loadHome,
+      1: _loadTecnico,
+      2: _loadCliente,
+      3: _loadServico
+    };
     tabLoadAction[index]?.call();
   }
 
   void _loadHome() {
     DateTime today = DateTime.now();
-
     DateTime startOfDay = DateTime(today.year, today.month, today.day);
     DateTime week = startOfDay.add(Duration(days: 7));
 
-    _servicoBloc.add(
-      ServicoInitialLoadingEvent(
-        filterRequest: ServicoFilterRequest(
-          dataAtendimentoPrevistoAntes: startOfDay,
-          dataAtendimentoPrevistoDepois: week,
-        ),
-      ),
-    );
+    context.read<ServicoBloc>().add(
+          ServicoInitialLoadingEvent(
+            filterRequest: ServicoFilterRequest(
+              dataAtendimentoPrevistoAntes: startOfDay,
+              dataAtendimentoPrevistoDepois: week,
+            ),
+            page: 0,
+            size: 10,
+          ),
+        );
   }
 
   void _loadTecnico() {

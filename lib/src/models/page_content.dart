@@ -7,17 +7,16 @@ class PageContent<T> {
     required this.page,
   });
 
-  factory PageContent.fromJson(Map<String, dynamic> json, T Function(Map<String, dynamic>) fromJsonT)
-    => PageContent(
-      content: (json["content"] as List).map((item) => fromJsonT(item as Map<String, dynamic>)).toList(),
-      page: PageInfo.fromJson(json["page"])
-    );
+  factory PageContent.fromJson(Map<String, dynamic> json,
+          T Function(Map<String, dynamic>) fromJsonT) =>
+      PageContent(
+          content: (json["content"] as List)
+              .map((item) => fromJsonT(item as Map<String, dynamic>))
+              .toList(),
+          page: PageInfo.fromJson(json["page"]));
 
-  factory PageContent.empty()
-    => PageContent(
-        content: [],
-        page: PageInfo.empty()
-    );
+  factory PageContent.empty() =>
+      PageContent(content: [], page: PageInfo.empty());
 }
 
 class PageInfo {
@@ -33,19 +32,12 @@ class PageInfo {
     required this.size,
   });
 
-  factory PageInfo.fromJson(Map<String, dynamic> json)
-    => PageInfo(
+  factory PageInfo.fromJson(Map<String, dynamic> json) => PageInfo(
       totalElements: json["totalElements"],
       totalPages: json["totalPages"],
       page: json["page"],
-      size: json["size"]
-    );
+      size: json["size"]);
 
-  factory PageInfo.empty()
-    => PageInfo(
-      totalElements: 0,
-      totalPages: 1,
-      page: 0,
-      size: 10
-    );
+  factory PageInfo.empty() =>
+      PageInfo(totalElements: 0, totalPages: 1, page: 0, size: 10);
 }

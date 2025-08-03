@@ -18,7 +18,9 @@ mixin BackendErrorsValidator {
         addError(ErrorCodeKey.telefoneFixo.name, errorEntity.errorMessage);
         break;
       case 4:
-        addListError([ErrorCodeKey.telefoneFixo.name, ErrorCodeKey.telefoneCelular.name], errorEntity.errorMessage);
+        addListError(
+            [ErrorCodeKey.telefoneFixo.name, ErrorCodeKey.telefoneCelular.name],
+            errorEntity.errorMessage);
         break;
       case 5:
         addError(ErrorCodeKey.cep.name, errorEntity.errorMessage);
@@ -86,7 +88,9 @@ mixin BackendErrorsValidator {
 }
 
 extension CustomValidDateValidator on SimpleValidationBuilder<String> {
-  SimpleValidationBuilder<String> customValidNotSunday({String message = 'Datas aos domingos não são permitidas!', String code = 'invalid_sunday_date'}) {
+  SimpleValidationBuilder<String> customValidNotSunday(
+      {String message = 'Datas aos domingos não são permitidas!',
+      String code = 'invalid_sunday_date'}) {
     return must(
       (date) {
         if (date.trim().isEmpty) return true;
@@ -112,12 +116,14 @@ extension CustomValidDateValidator on SimpleValidationBuilder<String> {
 }
 
 extension CustomValidIsEmpty on LucidValidationBuilder<List<int>, TecnicoForm> {
-  LucidValidationBuilder<List<int>, TecnicoForm> customValidIsEmpty(List<int> especialidades, String message, String code) {
+  LucidValidationBuilder<List<int>, TecnicoForm> customValidIsEmpty(
+      List<int> especialidades, String message, String code) {
     ValidationException? callback(value, entity) {
       if (especialidades.isNotEmpty) {
         return null;
       }
-      return ValidationException(message: message, key: code, code: code, entity: code);
+      return ValidationException(
+          message: message, key: code, code: code, entity: code);
     }
 
     return use(callback);
@@ -125,12 +131,14 @@ extension CustomValidIsEmpty on LucidValidationBuilder<List<int>, TecnicoForm> {
 }
 
 extension CustomValidExternalError on LucidValidationBuilder {
-  LucidValidationBuilder customValidExternalErrors(Map<String, String> externalErrors, String code) {
+  LucidValidationBuilder customValidExternalErrors(
+      Map<String, String> externalErrors, String code) {
     ValidationException? callback(value, entity) {
       if (externalErrors[code] == null) {
         return null;
       }
-      return ValidationException(message: externalErrors[code]!, code: code, key: code, entity: code);
+      return ValidationException(
+          message: externalErrors[code]!, code: code, key: code, entity: code);
     }
 
     return use(callback);

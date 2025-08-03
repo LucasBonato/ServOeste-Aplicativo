@@ -446,7 +446,8 @@ class _CreateServicoState extends State<CreateServico> {
                 .map((cliente) => {
                       'id': cliente.id.toString(),
                       'nome': cliente.nome ?? '',
-                      'endereco': cliente.endereco ?? '',
+                      'endereco':
+                          '${cliente.municipio ?? ''} - ${cliente.bairro ?? ''} - ${cliente.endereco ?? ''}',
                     })
                 .toList();
             _isDataLoaded = true;

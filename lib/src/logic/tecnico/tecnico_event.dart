@@ -10,14 +10,19 @@ final class TecnicoLoadingEvent extends TecnicoEvent {
   final String? telefoneCelular;
   final String? situacao;
   final String? equipamento;
+  final int page;
+  final int size;
 
-  TecnicoLoadingEvent(
-      {this.id,
-      this.nome,
-      this.telefoneFixo,
-      this.telefoneCelular,
-      this.situacao,
-      this.equipamento});
+  TecnicoLoadingEvent({
+    this.id,
+    this.nome,
+    this.telefoneFixo,
+    this.telefoneCelular,
+    this.situacao,
+    this.equipamento,
+    this.page = 0,
+    this.size = 20,
+  });
 }
 
 final class TecnicoSearchOneEvent extends TecnicoEvent {

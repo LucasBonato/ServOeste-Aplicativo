@@ -35,7 +35,6 @@ class FilterService extends StatelessWidget {
     context
         .read<ServicoBloc>()
         .add(ServicoSearchMenuEvent(filterRequest: filterRequest));
-    // .add(ServicoLoadingEvent(filterRequest: filterRequest));
 
     context.read<FiltroServicoProvider>().clearFields();
 

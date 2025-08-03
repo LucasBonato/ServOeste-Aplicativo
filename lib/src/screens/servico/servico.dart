@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
 import 'package:serv_oeste/src/components/layout/fab_remove.dart';
+import 'package:serv_oeste/src/components/layout/pagination_widget.dart';
 import 'package:serv_oeste/src/components/layout/responsive_search_inputs.dart';
 import 'package:serv_oeste/src/components/screen/cards/card_service.dart';
 import 'package:serv_oeste/src/components/screen/entity_not_found.dart';
@@ -181,12 +182,37 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
                 builder: (context, stateServico) {
                   if (stateServico is ServicoInitialState || stateServico is ServicoLoadingState) {
                     return Skeletonizer(
-                      enableSwitchAnimation: true,
-                      child: buildGridOfCards(
-                        List.generate(8, (_) => Servico.skeleton()),
-                        0.9,
-                        isSkeleton: true
-                      )
+                        enableSwitchAnimation: true,
+                        child: buildGridOfCards(
+                            List.generate(8, (_) => Servico.skeleton()),
+                            0.9,
+                            isSkeleton: true,
+                        ),
+                    );
+                  }
+                  else if (stateServico is ServicoSearchSuccessState) {
+                    return Column(
+                      children: [
+                        Expanded(
+                          child: stateServico.servicos.isNotEmpty
+                              ? buildGridOfCards(stateServico.servicos, 0.9)
+                              : const EntityNotFound(message: "Nenhum serviço encontrado."),
+                        ),
+                        if (stateServico.totalPages > 1)
+                          PaginationWidget(
+                            currentPage: stateServico.currentPage + 1,
+                            totalPages: stateServico.totalPages,
+                            onPageChanged: (page) {
+                              _servicoBloc.add(ServicoLoadingEvent(
+                                filterRequest: _servicoBloc.filterRequest ??
+                                    ServicoFilterRequest(),
+                                page: page - 1,
+                                size: 15,
+                              ));
+                            },
+                          ),
+                        const SizedBox(height: 16),
+                      ],
                     );
                   }
                   else if (stateServico is ServicoSearchSuccessState) {

@@ -37,74 +37,105 @@ class TecnicoBloc extends BaseEntityBloc<TecnicoEvent, TecnicoState> {
     on<TecnicoDisableListEvent>(_deleteListTecnicos);
   }
 
-  Future<void> _fetchAllTecnicos(TecnicoLoadingEvent event, Emitter<TecnicoState> emit) async {
+  Future<void> _fetchAllTecnicos(
+      TecnicoLoadingEvent event, Emitter<TecnicoState> emit) async {
     await handleRequest<PageContent<TecnicoResponse>>(
       emit: emit,
       request: () => _tecnicoClient.fetchListByFilter(
         id: event.id,
         nome: event.nome,
         situacao: event.situacao,
-        equipamento: event.equipamento
+        equipamento: event.equipamento,
+        page: event.page,
+        size: event.size,
       ),
-      onSuccess: (PageContent<TecnicoResponse> page) => emit(TecnicoSearchSuccessState(tecnicos: page.content)),
+      onSuccess: (PageContent<TecnicoResponse> pageTecnicos) =>
+          emit(TecnicoSearchSuccessState(
+        tecnicos: pageTecnicos.content,
+        currentPage: pageTecnicos.page.page,
+        totalPages: pageTecnicos.page.totalPages,
+        totalElements: pageTecnicos.page.totalElements,
+      )),
     );
   }
 
-  Future<void> _fetchOneTecnico(TecnicoSearchOneEvent event, Emitter<TecnicoState> emit) async {
+  Future<void> _fetchOneTecnico(
+      TecnicoSearchOneEvent event, Emitter<TecnicoState> emit) async {
     await handleRequest<Tecnico?>(
-      emit: emit,
-      request: () => _tecnicoClient.fetchOneById(event.id),
-      onSuccess: (Tecnico? tecnico) {
-        if (tecnico != null) {
-          emit(TecnicoSearchOneSuccessState(tecnico: tecnico));
-        }
-      }
-    );
+        emit: emit,
+        request: () => _tecnicoClient.fetchOneById(event.id),
+        onSuccess: (Tecnico? tecnico) {
+          if (tecnico != null) {
+            emit(TecnicoSearchOneSuccessState(tecnico: tecnico));
+          }
+        });
   }
 
-  Future<void> _fetchAvailability(TecnicoAvailabilitySearchEvent event, Emitter<TecnicoState> emit) async {
+  Future<void> _fetchAvailability(
+      TecnicoAvailabilitySearchEvent event, Emitter<TecnicoState> emit) async {
     await handleRequest<List<TecnicoDisponivel>>(
       emit: emit,
-      request: () => _tecnicoClient.fetchListAvailabilityBySpecialityId(event.idEspecialidade),
-      onSuccess: (List<TecnicoDisponivel> tecnicosDisponiveis) => emit(TecnicoSearchAvailabilitySuccessState(tecnicosDisponiveis: tecnicosDisponiveis)),
+      request: () => _tecnicoClient
+          .fetchListAvailabilityBySpecialityId(event.idEspecialidade),
+      onSuccess: (List<TecnicoDisponivel> tecnicosDisponiveis) => emit(
+          TecnicoSearchAvailabilitySuccessState(
+              tecnicosDisponiveis: tecnicosDisponiveis)),
     );
   }
 
-  Future<void> _searchTecnicos(TecnicoSearchEvent event, Emitter<TecnicoState> emit) async {
+  Future<void> _searchTecnicos(
+      TecnicoSearchEvent event, Emitter<TecnicoState> emit) async {
     _id = event.id;
     _nome = (event.nome?.isNotEmpty == true) ? event.nome : null;
-    _situacao = (event.situacao?.isNotEmpty == true && event.situacao != null) ? event.situacao!.toLowerCase() : null;
-    add(TecnicoLoadingEvent(id: _id, nome: _nome, situacao: _situacao, equipamento: event.equipamento));
+    _situacao = (event.situacao?.isNotEmpty == true && event.situacao != null)
+        ? event.situacao!.toLowerCase()
+        : null;
+    add(TecnicoLoadingEvent(
+        id: _id,
+        nome: _nome,
+        situacao: _situacao,
+        equipamento: event.equipamento));
   }
 
-  Future<void> _searchMenuTecnicos(TecnicoSearchMenuEvent event, Emitter<TecnicoState> emit) async {
-    idMenu = event.id?? idMenu;
-    nomeMenu = event.nome?? nomeMenu;
-    situacaoMenu = (event.situacao?.isNotEmpty == true && event.situacao != null) ? event.situacao!.toLowerCase() : situacaoMenu;
-    situacaoMenu = (isFirstRequest) ? Constants.situationTecnicoList.first.toLowerCase() : situacaoMenu;
+  Future<void> _searchMenuTecnicos(
+      TecnicoSearchMenuEvent event, Emitter<TecnicoState> emit) async {
+    idMenu = event.id ?? idMenu;
+    nomeMenu = event.nome ?? nomeMenu;
+    situacaoMenu =
+        (event.situacao?.isNotEmpty == true && event.situacao != null)
+            ? event.situacao!.toLowerCase()
+            : situacaoMenu;
+    situacaoMenu = (isFirstRequest)
+        ? Constants.situationTecnicoList.first.toLowerCase()
+        : situacaoMenu;
     isFirstRequest = false;
-    add(TecnicoLoadingEvent(id: idMenu, nome: nomeMenu, situacao: situacaoMenu, equipamento: event.equipamento));
+    add(TecnicoLoadingEvent(
+        id: idMenu,
+        nome: nomeMenu,
+        situacao: situacaoMenu,
+        equipamento: event.equipamento));
   }
 
-  Future<void> _registerTecnico(TecnicoRegisterEvent event, Emitter<TecnicoState> emit) async {
+  Future<void> _registerTecnico(
+      TecnicoRegisterEvent event, Emitter<TecnicoState> emit) async {
     event.tecnico.sobrenome = event.sobrenome;
     await handleRequest(
-      emit: emit,
-      request: () => _tecnicoClient.create(event.tecnico),
-      onSuccess: (_) => emit(TecnicoRegisterSuccessState())
-    );
+        emit: emit,
+        request: () => _tecnicoClient.create(event.tecnico),
+        onSuccess: (_) => emit(TecnicoRegisterSuccessState()));
   }
 
-  Future<void> _updateTecnico(TecnicoUpdateEvent event, Emitter<TecnicoState> emit) async {
+  Future<void> _updateTecnico(
+      TecnicoUpdateEvent event, Emitter<TecnicoState> emit) async {
     event.tecnico.sobrenome = event.sobrenome;
     await handleRequest(
-      emit: emit,
-      request: () => _tecnicoClient.update(event.tecnico),
-      onSuccess: (_) => emit(TecnicoUpdateSuccessState())
-    );
+        emit: emit,
+        request: () => _tecnicoClient.update(event.tecnico),
+        onSuccess: (_) => emit(TecnicoUpdateSuccessState()));
   }
 
-  Future<void> _deleteListTecnicos(TecnicoDisableListEvent event, Emitter<TecnicoState> emit) async {
+  Future<void> _deleteListTecnicos(
+      TecnicoDisableListEvent event, Emitter<TecnicoState> emit) async {
     await handleRequest(
       emit: emit,
       request: () => _tecnicoClient.disableListByIds(event.selectedList),

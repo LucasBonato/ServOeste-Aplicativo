@@ -12,8 +12,7 @@ part 'cliente_state.dart';
 
 class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
   final ClienteClient _clienteClient = ClienteClient();
-  String? _nome, _telefone, _endereco,
-      nomeMenu, telefoneMenu, enderecoMenu;
+  String? _nome, _telefone, _endereco, nomeMenu, telefoneMenu, enderecoMenu;
 
   @override
   ClienteState loadingState() => ClienteLoadingState();
@@ -52,10 +51,16 @@ class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
         nome: event.nome,
         telefone: event.telefone,
         endereco: event.endereco,
+        page: event.page,
+        size: event.size,
       ),
-      onSuccess: (PageContent<Cliente> pageClients) {
-        emit(ClienteSearchSuccessState(clientes: pageClients.content));
-      }
+      onSuccess: (PageContent<Cliente> pageClientes) =>
+          emit(ClienteSearchSuccessState(
+        clientes: pageClientes.content,
+        currentPage: pageClientes.page.page,
+        totalPages: pageClientes.page.totalPages,
+        totalElements: pageClientes.page.totalElements,
+      )),
     );
   }
 

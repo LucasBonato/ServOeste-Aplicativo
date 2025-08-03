@@ -23,14 +23,12 @@ class FilteredClientsTable extends StatelessWidget {
               width: MediaQuery.of(context).size.width,
               child: DataTable(
                 columns: const [
-                  DataColumn(label: Text('ID')),
                   DataColumn(label: Text('Nome')),
                   DataColumn(label: Text('Endereço')),
                 ],
                 rows: clientesFiltrados.isEmpty
                     ? [
                         DataRow(cells: [
-                          DataCell(Text('')),
                           DataCell(Text('Nenhum cliente encontrado')),
                           DataCell(Text('')),
                         ]),
@@ -39,16 +37,14 @@ class FilteredClientsTable extends StatelessWidget {
                         return DataRow(
                           cells: [
                             DataCell(
-                              Text(cliente['id']!),
-                              onDoubleTap: () => onClientSelected(cliente['id']!),
-                            ),
-                            DataCell(
                               Text(cliente['nome']!),
-                              onDoubleTap: () => onClientSelected(cliente['id']!),
+                              onDoubleTap: () =>
+                                  onClientSelected(cliente['id']!),
                             ),
                             DataCell(
                               Text(cliente['endereco']!),
-                              onDoubleTap: () => onClientSelected(cliente['id']!),
+                              onDoubleTap: () =>
+                                  onClientSelected(cliente['id']!),
                             ),
                           ],
                         );

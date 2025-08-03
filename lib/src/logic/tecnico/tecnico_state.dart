@@ -16,15 +16,21 @@ final class TecnicoSearchOneSuccessState extends TecnicoState {
 final class TecnicoSearchAvailabilitySuccessState extends TecnicoState {
   final List<TecnicoDisponivel>? tecnicosDisponiveis;
 
-  TecnicoSearchAvailabilitySuccessState({
-    this.tecnicosDisponiveis
-  });
+  TecnicoSearchAvailabilitySuccessState({this.tecnicosDisponiveis});
 }
 
 final class TecnicoSearchSuccessState extends TecnicoState {
   final List<TecnicoResponse> tecnicos;
+  final int currentPage;
+  final int totalPages;
+  final int totalElements;
 
-  TecnicoSearchSuccessState({required this.tecnicos});
+  TecnicoSearchSuccessState({
+    required this.tecnicos,
+    required this.currentPage,
+    required this.totalPages,
+    required this.totalElements,
+  });
 }
 
 final class TecnicoRegisterSuccessState extends TecnicoState {}
