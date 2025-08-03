@@ -13,8 +13,9 @@ abstract class BaseEntityBloc<Event, State> extends Bloc<Event, State> {
     required Future<Either<ErrorEntity, T>> Function() request,
     required void Function(T result) onSuccess,
     void Function(ErrorEntity error)? onError,
+    State? loading,
   }) async {
-    emit(loadingState());
+    emit(loading?? loadingState());
     final Either<ErrorEntity, T> result = await request();
 
     result.fold(

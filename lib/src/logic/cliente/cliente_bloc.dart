@@ -35,6 +35,7 @@ class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
   Future<void> _fetchOneClient(ClienteSearchOneEvent event, Emitter<ClienteState> emit) async {
     await handleRequest<Cliente?>(
       emit: emit,
+      loading: ClienteSearchOneLoadingState(),
       request: () => _clienteClient.fetchOneById(id: event.id),
       onSuccess: (Cliente? cliente) {
         if (cliente != null) {

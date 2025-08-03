@@ -4,8 +4,15 @@ class AppBarForm extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final void Function()? onPressed;
   final List<Widget>? actions;
+  final bool shouldActivateEvent;
 
-  const AppBarForm({super.key, required this.title, this.onPressed, this.actions});
+  const AppBarForm({
+    super.key,
+    required this.title,
+    this.onPressed,
+    this.actions,
+    this.shouldActivateEvent = false,
+  });
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -15,7 +22,7 @@ class AppBarForm extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: Colors.black),
-        onPressed: onPressed ?? () => Navigator.pop(context, false),
+        onPressed: onPressed ?? () => Navigator.pop(context, shouldActivateEvent),
         tooltip: "Voltar",
         iconSize: 32,
       ),

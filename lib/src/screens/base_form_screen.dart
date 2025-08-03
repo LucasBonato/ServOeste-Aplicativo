@@ -5,11 +5,13 @@ class BaseFormScreen extends StatelessWidget {
   final String title;
   final Widget child;
   final VoidCallback? onBack;
+  final bool shouldActivateEvent;
 
   const BaseFormScreen({
     super.key,
     required this.title,
     required this.child,
+    this.shouldActivateEvent = false,
     this.onBack,
   });
 
@@ -20,6 +22,7 @@ class BaseFormScreen extends StatelessWidget {
       appBar: AppBarForm(
         title: title,
         onPressed: onBack,
+        shouldActivateEvent: shouldActivateEvent,
       ),
       body: Center(
         child: ConstrainedBox(

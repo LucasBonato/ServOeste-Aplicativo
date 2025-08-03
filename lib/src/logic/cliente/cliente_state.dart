@@ -7,6 +7,8 @@ final class ClienteInitialState extends ClienteState {}
 
 final class ClienteLoadingState extends ClienteState {}
 
+final class ClienteSearchOneLoadingState extends ClienteLoadingState {}
+
 final class ClienteSearchOneSuccessState extends ClienteState {
   final Cliente cliente;
 

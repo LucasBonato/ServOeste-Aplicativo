@@ -77,7 +77,7 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
   @override
   Widget buildItemCard(Cliente cliente, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return CardClient(
-      onDoubleTap: () => onNavigateToUpdateScreen(cliente.id!),
+      onDoubleTap: () => onNavigateToUpdateScreen(cliente.id!, () => _clienteBloc.add(ClienteSearchMenuEvent())),
       onLongPress: () => onSelectItemList(cliente.id!),
       onTap: () {
         if (isSelectMode) {
@@ -155,7 +155,8 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
                         isSkeleton: true,
                       ),
                     );
-                  } else if (stateCliente is ClienteSearchSuccessState) {
+                  }
+                  else if (stateCliente is ClienteSearchSuccessState) {
                     if (stateCliente.clientes.isNotEmpty) {
                       return buildGridOfCards(stateCliente.clientes, 1.65);
                     }

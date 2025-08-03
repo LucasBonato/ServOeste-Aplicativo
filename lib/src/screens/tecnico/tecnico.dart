@@ -96,7 +96,7 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
   @override
   Widget buildItemCard(TecnicoResponse tecnico, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return CardTechnician(
-      onDoubleTap: () => onNavigateToUpdateScreen(tecnico.id!),
+      onDoubleTap: () => onNavigateToUpdateScreen(tecnico.id!, () => _tecnicoBloc.add(TecnicoSearchMenuEvent())),
       onLongPress: () => onSelectItemList(tecnico.id!),
       onTap: () {
         if (isSelectMode) {

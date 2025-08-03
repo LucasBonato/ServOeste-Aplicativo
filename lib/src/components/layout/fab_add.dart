@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class FloatingActionButtonAdd extends StatelessWidget {
   final String route;
-  final dynamic event;
+  final void Function() event;
   final String tooltip;
 
   const FloatingActionButtonAdd({

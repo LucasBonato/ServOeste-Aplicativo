@@ -27,12 +27,18 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
     _debouncer.execute(searchFieldChanged);
   }
 
-  void onNavigateToUpdateScreen(int id) {
-    Navigator.of(context, rootNavigator: true).push(
-      MaterialPageRoute(
-        builder: (context) => getUpdateScreen(id),
-      ),
-    );
+  void onNavigateToUpdateScreen(int id, void Function() event) {
+    Navigator.of(context, rootNavigator: true)
+      .push(
+        MaterialPageRoute(
+          builder: (context) => getUpdateScreen(id),
+        ),
+      )
+      .then((value) {
+        if (value == true) {
+          event();
+        }
+      });
     context.read<ListaBloc>().add(ListaClearSelectionEvent());
   }
 

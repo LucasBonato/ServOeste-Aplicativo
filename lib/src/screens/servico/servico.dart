@@ -95,7 +95,7 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
   @override
   Widget buildItemCard(Servico servico, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return CardService(
-      onDoubleTap: () => onNavigateToUpdateScreen(servico.id),
+      onDoubleTap: () => onNavigateToUpdateScreen(servico.id, onSearchFieldChanged),
       onLongPress: () => onSelectItemList(servico.id),
       onTap: () {
         if (isSelectMode) {
