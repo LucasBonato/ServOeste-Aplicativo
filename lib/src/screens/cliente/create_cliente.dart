@@ -1,20 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
-import 'package:serv_oeste/src/components/formFields/field_labels.dart';
-import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
-import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
-import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
-import 'package:serv_oeste/src/models/enums/error_code_key.dart';
-import 'package:serv_oeste/src/models/validators/cliente_validator.dart';
-import 'package:serv_oeste/src/screens/base_entity_form.dart';
-import 'package:serv_oeste/src/screens/base_form_screen.dart';
-import 'package:serv_oeste/src/shared/constants.dart';
-import 'package:serv_oeste/src/shared/debouncer.dart';
-import 'package:serv_oeste/src/shared/input_masks.dart';
+import 'package:serv_oeste/src/screens/cliente/cliente_form.dart';
 
 class CreateCliente extends StatelessWidget {
   const CreateCliente({super.key});
