@@ -25,7 +25,7 @@ class ClienteFormPage extends StatelessWidget {
   final void Function() onSubmit;
   final TextEditingController? nomeController;
   final bool isUpdate;
-  final bool skeleton;
+  final bool isSkeleton;
 
   const ClienteFormPage({
     super.key,
@@ -36,7 +36,7 @@ class ClienteFormPage extends StatelessWidget {
     required this.onSubmit,
     this.nomeController,
     this.isUpdate = false,
-    this.skeleton = false
+    this.isSkeleton = false
   });
 
   @override
@@ -65,7 +65,7 @@ class ClienteFormPage extends StatelessWidget {
       title: title,
       shouldActivateEvent: isUpdate,
       child: Skeletonizer(
-        enabled: skeleton,
+        enabled: isSkeleton,
         child: BaseEntityForm<ClienteBloc, ClienteState>(
           bloc: bloc,
           formKey: formKey,

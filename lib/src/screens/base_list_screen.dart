@@ -35,7 +35,7 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
         ),
       )
       .then((value) {
-        if (value == true) {
+        if (value == true && mounted) {
           event();
         }
       });

@@ -121,7 +121,7 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
         if (currentRow.isNotEmpty) {
           flushRow();
         }
-        if (field is Wrap) {
+        if (field is Wrap && field.children.length > 1) {
           currentRow = field.children
               .map((input) => Expanded(child: input))
               .toList();

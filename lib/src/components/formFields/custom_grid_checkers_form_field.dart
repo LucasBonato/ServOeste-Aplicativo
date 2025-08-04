@@ -4,12 +4,14 @@ class CustomGridCheckersFormField extends StatelessWidget {
   final String? Function([String?])? validator;
   final Map<String, bool> checkersMap;
   final Function(bool)? onOutrosSelected;
+  final String? title;
 
   const CustomGridCheckersFormField({
     super.key,
     required this.validator,
     required this.checkersMap,
     this.onOutrosSelected,
+    this.title
   });
 
   @override
@@ -19,6 +21,15 @@ class CustomGridCheckersFormField extends StatelessWidget {
       builder: (field) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Padding(
+            padding: EdgeInsets.only(left: 0),
+            child: Text(
+              title?? "",
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
+          ),
           Container(
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey, width: 1.5),

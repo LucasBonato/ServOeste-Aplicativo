@@ -23,7 +23,7 @@ class _UpdateClienteState extends State<UpdateCliente> {
   final ClienteForm form = ClienteForm();
   final TextEditingController nomeController = TextEditingController();
 
-  void _fillForm(ClienteForm form, Cliente cliente, TextEditingController nomeController) {
+  void _fillForm(Cliente cliente, TextEditingController nomeController) {
     form.setId(widget.id);
     form.setNome(cliente.nome ?? "");
     nomeController.text = form.nome.value;
@@ -56,10 +56,14 @@ class _UpdateClienteState extends State<UpdateCliente> {
       listenWhen: (previous, current) => current is ClienteUpdateSuccessState || current is ClienteSearchOneSuccessState,
       listener: (context, state) {
         if (state is ClienteUpdateSuccessState) {
-          Navigator.pop(context, true);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context, true);
+            }
+          });
         }
         else if (state is ClienteSearchOneSuccessState) {
-          _fillForm(form, state.cliente, nomeController);
+          _fillForm(state.cliente, nomeController);
         }
       },
       child: BlocBuilder<ClienteBloc, ClienteState>(
@@ -67,7 +71,7 @@ class _UpdateClienteState extends State<UpdateCliente> {
         buildWhen: (previous, current) => current is ClienteSearchOneSuccessState || current is ClienteSearchOneLoadingState,
         builder: (context, state) {
           return ClienteFormPage(
-            skeleton: state is ClienteSearchOneLoadingState,
+            isSkeleton: state is ClienteSearchOneLoadingState,
             title: "Consultar/Atualizar Cliente",
             submitText: "Atualizar Cliente",
             bloc: bloc,

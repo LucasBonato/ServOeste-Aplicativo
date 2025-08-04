@@ -80,9 +80,9 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
   @override
   Widget buildDefaultFloatingActionButton() {
     return FloatingActionButtonAdd(
-        route: Routes.tecnicoCreate,
-        event: () => _tecnicoBloc.add(TecnicoSearchMenuEvent()),
-        tooltip: "Adicionar um Técnico"
+      route: Routes.tecnicoCreate,
+      event: () => _tecnicoBloc.add(TecnicoSearchMenuEvent()),
+      tooltip: "Adicionar um Técnico"
     );
   }
 

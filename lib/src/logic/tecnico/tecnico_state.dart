@@ -7,6 +7,8 @@ final class TecnicoInitialState extends TecnicoState {}
 
 final class TecnicoLoadingState extends TecnicoState {}
 
+final class TecnicoSearchOneLoadingState extends TecnicoState {}
+
 final class TecnicoSearchOneSuccessState extends TecnicoState {
   final Tecnico tecnico;
 
