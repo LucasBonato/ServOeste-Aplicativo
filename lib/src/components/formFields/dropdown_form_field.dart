@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
+import 'package:flutter/material.dart';
 
 class CustomDropdownFormField extends StatefulWidget {
   final String label;
@@ -10,7 +10,6 @@ class CustomDropdownFormField extends StatefulWidget {
   final ValueNotifier<String> valueNotifier;
   final String? Function([String?])? validator;
   final void Function(String) onChanged;
-  final SingleSelectController<String>? controller;
 
   const CustomDropdownFormField({
     super.key,
@@ -18,9 +17,8 @@ class CustomDropdownFormField extends StatefulWidget {
     required this.valueNotifier,
     required this.onChanged,
     required this.label,
-    this.rightPadding,
-    this.leftPadding,
-    this.controller,
+    this.rightPadding = 4,
+    this.leftPadding = 4,
     this.validator,
     this.enabled,
   });
@@ -31,37 +29,50 @@ class CustomDropdownFormField extends StatefulWidget {
 
 class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
   late SingleSelectController<String> _internalController;
-  late SingleSelectController<String> _effectiveController;
   bool _isHovered = false;
   bool _hasFocus = false;
 
   @override
   void initState() {
     super.initState();
-
-    final initialValue = widget.dropdownValues.contains(widget.valueNotifier.value)
-        ? widget.valueNotifier.value
-        : widget.dropdownValues.isNotEmpty
-            ? widget.dropdownValues.first
-            : null;
-
-    _internalController = SingleSelectController(initialValue);
-    _effectiveController = widget.controller ?? _internalController;
-
-    widget.valueNotifier.addListener(_updateController);
+    _internalController = SingleSelectController<String>(null);
+    widget.valueNotifier.addListener(_onNotifierValueChanged);
+    _synchronizeControllerWithValueNotifier();
   }
 
-  void _updateController() {
-    if (widget.dropdownValues.contains(widget.valueNotifier.value)) {
-      if (_effectiveController.value != widget.valueNotifier.value) {
-        _effectiveController.value = widget.valueNotifier.value;
-      }
+  void _onNotifierValueChanged() {
+    if (!mounted) return;
+    _synchronizeControllerWithValueNotifier();
+  }
+
+  void _synchronizeControllerWithValueNotifier() {
+    final String notifierValue = widget.valueNotifier.value;
+    String? targetControllerValue = widget.dropdownValues.contains(notifierValue)
+        ? notifierValue
+        : null;
+
+    if (_internalController.value != targetControllerValue) {
+      _internalController.value = targetControllerValue;
+    }
+  }
+
+  @override
+  void didUpdateWidget(CustomDropdownFormField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.valueNotifier != oldWidget.valueNotifier) {
+      oldWidget.valueNotifier.removeListener(_onNotifierValueChanged);
+      widget.valueNotifier.addListener(_onNotifierValueChanged);
+      _synchronizeControllerWithValueNotifier();
+    }
+    else if (widget.dropdownValues != oldWidget.dropdownValues) {
+      _synchronizeControllerWithValueNotifier();
     }
   }
 
   @override
   void dispose() {
-    widget.valueNotifier.removeListener(_updateController);
+    widget.valueNotifier.removeListener(_onNotifierValueChanged);
+    _internalController.dispose();
     super.dispose();
   }
 
@@ -96,25 +107,10 @@ class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
           child: ValueListenableBuilder<String>(
             valueListenable: widget.valueNotifier,
             builder: (BuildContext context, String value, Widget? child) {
-              if (!widget.dropdownValues.contains(value)) {
-                value = widget.dropdownValues.isNotEmpty ? widget.dropdownValues.first : "";
-              }
-
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (_effectiveController.value != value && mounted) {
-                  _effectiveController.value = value;
-                }
-              });
-
               return CustomDropdown<String>(
+                controller: _internalController,
                 enabled: widget.enabled ?? true,
-                disabledDecoration: CustomDropdownDisabledDecoration(
-                  fillColor: const Color(0xFFFFF8F7),
-                  border: Border.all(color: Colors.black38),
-                  suffixIcon: Icon(Icons.arrow_drop_down, color: Colors.black38, size: 20),
-                ),
                 items: widget.dropdownValues,
-                controller: _effectiveController,
                 hintText: widget.label,
                 hintBuilder: (context, hint, enabled) => Text(
                   hint,
@@ -124,22 +120,40 @@ class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
+                closedHeaderPadding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 16,
+                ),
+                excludeSelected: false,
+                validator: widget.validator,
+                onChanged: (String? value) {
+                  if (value != null && widget.valueNotifier.value != value) {
+                    widget.valueNotifier.value = value;
+                  }
+
+                  if (value != null) widget.onChanged(value);
+                },
+                disabledDecoration: CustomDropdownDisabledDecoration(
+                  fillColor: const Color(0xFFFFF8F7),
+                  border: Border.all(color: Colors.black38),
+                  suffixIcon: Icon(Icons.arrow_drop_down, color: Colors.black38, size: 20),
+                ),
                 decoration: CustomDropdownDecoration(
                   errorStyle: TextStyle(fontSize: 12, decoration: TextDecoration.none),
                   closedSuffixIcon: Icon(Icons.arrow_drop_down, color: Colors.black38, size: 20),
                   closedFillColor: _isHovered
                       ? const Color(0xFFF5EEED)
                       : (widget.enabled ?? true)
-                          ? const Color(0xFFFFF8F7)
-                          : const Color(0xFFE2E1E0),
+                      ? const Color(0xFFFFF8F7)
+                      : const Color(0xFFE2E1E0),
                   closedBorderRadius: BorderRadius.circular(12),
                   expandedBorderRadius: BorderRadius.circular(12),
                   closedBorder: Border.all(
                     color: _hasFocus
                         ? Colors.black
                         : (widget.enabled ?? true)
-                            ? const Color(0xFFEAE6E5)
-                            : const Color(0xFFCCCBCB),
+                        ? const Color(0xFFEAE6E5)
+                        : const Color(0xFFCCCBCB),
                     width: 1,
                   ),
                   expandedBorder: Border.all(
@@ -148,15 +162,6 @@ class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
                   ),
                   expandedFillColor: const Color(0xFFFFF8F7),
                 ),
-                closedHeaderPadding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                  horizontal: 16,
-                ),
-                excludeSelected: false,
-                validator: widget.validator,
-                onChanged: (String? value) {
-                  if (value != null) widget.onChanged(value);
-                },
               );
             },
           ),
