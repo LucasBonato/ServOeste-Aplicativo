@@ -139,7 +139,7 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text(
-          'Serviço deletado com sucesso! (Caso ele continue, recarregue a página)',
+          'Serviço deletado com sucesso! (Caso ele continue aparecendo, recarregue a página)',
         ),
       ),
     );
@@ -182,12 +182,12 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
                 builder: (context, stateServico) {
                   if (stateServico is ServicoInitialState || stateServico is ServicoLoadingState) {
                     return Skeletonizer(
-                        enableSwitchAnimation: true,
-                        child: buildGridOfCards(
-                            List.generate(8, (_) => Servico.skeleton()),
-                            0.9,
-                            isSkeleton: true,
-                        ),
+                      enableSwitchAnimation: true,
+                      child: buildGridOfCards(
+                        List.generate(8, (_) => Servico.skeleton()),
+                        0.9,
+                        isSkeleton: true,
+                      ),
                     );
                   }
                   else if (stateServico is ServicoSearchSuccessState) {

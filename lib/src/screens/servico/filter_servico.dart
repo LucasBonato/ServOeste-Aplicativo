@@ -226,7 +226,7 @@ class FilterService extends StatelessWidget {
                                       : '',
                                 ),
                                 onChanged: (value) {
-                                  if (value != null && value.isNotEmpty) {
+                                  if (value.isNotEmpty) {
                                     final parsedDate =
                                         DateFormat('dd/MM/yyyy').parse(value);
                                     provider.updateFilter(
@@ -254,7 +254,7 @@ class FilterService extends StatelessWidget {
                                       : '',
                                 ),
                                 onChanged: (value) {
-                                  if (value != null && value.isNotEmpty) {
+                                  if (value.isNotEmpty) {
                                     final parsedDate =
                                         DateFormat('dd/MM/yyyy').parse(value);
                                     provider.updateFilter(
@@ -289,7 +289,7 @@ class FilterService extends StatelessWidget {
                                         : '',
                                   ),
                                   onChanged: (value) {
-                                    if (value != null && value.isNotEmpty) {
+                                    if (value.isNotEmpty) {
                                       final parsedDate =
                                           DateFormat('dd/MM/yyyy').parse(value);
                                       provider.updateFilter(
@@ -320,7 +320,7 @@ class FilterService extends StatelessWidget {
                                         : '',
                                   ),
                                   onChanged: (value) {
-                                    if (value != null && value.isNotEmpty) {
+                                    if (value.isNotEmpty) {
                                       final parsedDate =
                                           DateFormat('dd/MM/yyyy').parse(value);
                                       provider.updateFilter(
@@ -359,7 +359,7 @@ class FilterService extends StatelessWidget {
                                       : '',
                                 ),
                                 onChanged: (value) {
-                                  if (value != null && value.isNotEmpty) {
+                                  if (value.isNotEmpty) {
                                     final parsedDate =
                                         DateFormat('dd/MM/yyyy').parse(value);
                                     provider.updateFilter(
@@ -407,7 +407,7 @@ class FilterService extends StatelessWidget {
                                         : '',
                                   ),
                                   onChanged: (value) {
-                                    if (value != null && value.isNotEmpty) {
+                                    if (value.isNotEmpty) {
                                       final parsedDate =
                                           DateFormat('dd/MM/yyyy').parse(value);
                                       provider.updateFilter(
