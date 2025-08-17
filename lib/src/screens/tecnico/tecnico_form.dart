@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/formFields/custom_grid_checkers_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
-import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
+import 'package:serv_oeste/src/components/formFields/tecnico/tecnico_search_field.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
@@ -11,7 +10,6 @@ import 'package:serv_oeste/src/models/validators/tecnico_validator.dart';
 import 'package:serv_oeste/src/screens/base_entity_form.dart';
 import 'package:serv_oeste/src/screens/base_form_screen.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
-import 'package:serv_oeste/src/shared/debouncer.dart';
 import 'package:serv_oeste/src/shared/input_masks.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -45,16 +43,7 @@ class TecnicoFormPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     final TecnicoValidator validator = TecnicoValidator();
-    final Debouncer debouncer = Debouncer();
-    final ValueNotifier<List<String>> nomes = ValueNotifier<List<String>>([]);
     final ValueNotifier<String> situacoes = ValueNotifier<String>(Constants.situationTecnicoList.first);
-
-    void fetchTecnicoNames(String nome) async {
-      tecnicoForm.setNome(nome);
-      if (nome == "") return;
-      if (nome.split(" ").length > 1 && nomes.value.isEmpty) return;
-      bloc.add(TecnicoSearchEvent(nome: nome));
-    }
 
     return BaseFormScreen(
       title: title,
@@ -92,31 +81,13 @@ class TecnicoFormPage extends StatelessWidget {
             Wrap(
               runSpacing: 8,
               children: [
-                BlocListener<TecnicoBloc, TecnicoState>(
-                  bloc: bloc,
-                  listener: (context, state) {
-                    if (state is TecnicoSearchSuccessState) {
-                      nomes.value = state.tecnicos
-                          .take(5)
-                          .map((tecnico) => "${tecnico.nome} ${tecnico.sobrenome}")
-                          .toList();
-                    }
-                  },
-                  child: ValueListenableBuilder<List<String>>(
-                    valueListenable: nomes,
-                    builder: (context, nomes, _) {
-                      return CustomSearchDropDownFormField(
-                        label: "Nome*",
-                        maxLength: 40,
-                        rightPadding: 4,
-                        leftPadding: 4,
-                        dropdownValues: nomes,
-                        controller: nomeController,
-                        validator: validator.byField(tecnicoForm, ErrorCodeKey.nomeESobrenome.name),
-                        onChanged: (nome) => debouncer.execute(() => fetchTecnicoNames(nome)),
-                      );
-                    },
-                  ),
+                TecnicoSearchField(
+                  label: "Nome*",
+                  tecnicoBloc: bloc,
+                  controller: nomeController,
+                  validator: validator.byField(tecnicoForm, ErrorCodeKey.nomeESobrenome.name),
+                  onChanged: tecnicoForm.setNome,
+                  buildSearchEvent: (nome) => TecnicoSearchEvent(nome: nome)
                 ),
                 if (isUpdate)
                   CustomDropdownFormField(

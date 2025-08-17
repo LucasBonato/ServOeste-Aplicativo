@@ -54,11 +54,10 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
         TextInputField(
             hint: "ID...",
             controller: _idController,
-            keyboardType: TextInputType.number
+            keyboardType: TextInputType.number,
         ),
         DropdownInputField(
             hint: "Situação...",
-            controller: _situacaoController,
             valueNotifier: _situacaoNotifier,
             dropdownValues: Constants.situationTecnicoList,
             onChanged: (situacao) =>
