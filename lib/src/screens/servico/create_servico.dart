@@ -18,7 +18,7 @@ import 'package:serv_oeste/src/models/validators/cliente_validator.dart';
 import 'package:serv_oeste/src/models/validators/servico_validator.dart';
 import 'package:serv_oeste/src/screens/base_form_screen.dart';
 import 'package:serv_oeste/src/screens/cliente/cliente_form.dart';
-import 'package:serv_oeste/src/screens/servico/new_create_servico.dart';
+import 'package:serv_oeste/src/screens/servico/servico_form.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
 import 'package:serv_oeste/src/shared/debouncer.dart';
 import 'package:skeletonizer/skeletonizer.dart';
