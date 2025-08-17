@@ -31,22 +31,29 @@ class ExpandableFabItems extends StatelessWidget {
       distance: 100,
       children: [
         FloatingActionButton(
-            onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed(firstRouterName, arguments: {"isClientAndService": false}).then((value) {
-                  if (value == null) {
-                    updateList();
-                  }
-                }),
-            heroTag: firstHeroTag,
-            backgroundColor: Colors.blue,
-            shape: const CircleBorder(),
-            tooltip: firstTooltip,
-            child: firstChild),
+          onPressed: () =>
+              Navigator.of(context, rootNavigator: true)
+                  .pushNamed(firstRouterName, arguments: {"isClientAndService": false})
+                  .then((value) {
+                    if (value == true) {
+                      updateList();
+                    }
+                  }),
+          heroTag: firstHeroTag,
+          backgroundColor: Colors.blue,
+          shape: const CircleBorder(),
+          tooltip: firstTooltip,
+          child: firstChild,
+        ),
         FloatingActionButton(
-          onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed(secondRouterName).then((value) {
-            if (value == null) {
-              updateList();
-            }
-          }),
+          onPressed: () =>
+              Navigator.of(context, rootNavigator: true)
+                  .pushNamed(secondRouterName)
+                  .then((value) {
+                    if (value == true) {
+                      updateList();
+                    }
+                  }),
           heroTag: secondHeroTag,
           shape: const CircleBorder(),
           tooltip: secondTooltip,
