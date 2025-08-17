@@ -37,8 +37,8 @@ class ErrorEntity {
 
   factory ErrorEntity.fromJson(Map<String, dynamic> json) =>
       ErrorEntity(
-        id: json["error.idError"],
-        errorMessage: json["error.message"],
+        id: json["idError"],
+        errorMessage: json["message"],
       );
 
   @override

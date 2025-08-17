@@ -17,6 +17,11 @@ enum ErrorCodeKey {
   filial,
   horario,
   data,
+  dataAtendimentoPrevisto,
+  dataAtendimentoEfetivo,
+  dataInicioGarantia,
+  dataFinalGarantia,
+  formaPagamento,
   conhecimento,
   rua,
   numero,
@@ -24,4 +29,5 @@ enum ErrorCodeKey {
   valor,
   valorPecas,
   valorComissao,
+  servico
 }

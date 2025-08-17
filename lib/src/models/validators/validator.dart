@@ -27,45 +27,43 @@ mixin BackendErrorsValidator {
         break;
       case 6:
         addError(ErrorCodeKey.endereco.name, errorEntity.errorMessage);
-        break;
-      case 7:
         addError(ErrorCodeKey.rua.name, errorEntity.errorMessage);
         break;
-      case 8:
-        addError(ErrorCodeKey.numero.name, errorEntity.errorMessage);
-        break;
-      case 9:
+      case 7:
         addError(ErrorCodeKey.municipio.name, errorEntity.errorMessage);
         break;
-      case 10:
+      case 8:
         addError(ErrorCodeKey.bairro.name, errorEntity.errorMessage);
         break;
-      case 11:
+      case 9:
         addError(ErrorCodeKey.cliente.name, errorEntity.errorMessage);
         break;
-      case 12:
+      case 10:
         addError(ErrorCodeKey.tecnico.name, errorEntity.errorMessage);
         break;
-      case 13:
+      case 11:
         addError(ErrorCodeKey.equipamento.name, errorEntity.errorMessage);
         break;
-      case 14:
+      case 12:
         addError(ErrorCodeKey.marca.name, errorEntity.errorMessage);
         break;
-      case 15:
+      case 13:
         addError(ErrorCodeKey.descricao.name, errorEntity.errorMessage);
         break;
-      case 16:
+      case 14:
         addError(ErrorCodeKey.filial.name, errorEntity.errorMessage);
         break;
-      case 17:
+      case 15:
         addError(ErrorCodeKey.horario.name, errorEntity.errorMessage);
         break;
-      case 18:
+      case 16:
         addError(ErrorCodeKey.data.name, errorEntity.errorMessage);
         break;
-      case 19:
+      case 17:
         addError(ErrorCodeKey.conhecimento.name, errorEntity.errorMessage);
+        break;
+      case 18:
+        addError(ErrorCodeKey.servico.name, errorEntity.errorMessage);
         break;
       default:
         addError(ErrorCodeKey.global.name, errorEntity.errorMessage);
