@@ -3,7 +3,7 @@ import 'package:drop_down_search_field/drop_down_search_field.dart';
 
 class CustomSearchDropDownFormField extends StatefulWidget {
   final List<String> dropdownValues;
-  final Function(String) onChanged;
+  final void Function(String)? onChanged;
   final int? maxLength;
   final String label;
   final bool hide;
@@ -97,7 +97,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
           maxLength: widget.maxLength,
           controller: _customSearchController,
           onChanged: (value) {
-            widget.onChanged(value);
+            widget.onChanged!(value);
             widget.valueNotifier?.value = value;
           },
           decoration: InputDecoration(
@@ -152,7 +152,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
           if (suggestion != null && suggestion.isNotEmpty && !_isDisposed) {
             setState(() {
               _customSearchController.text = suggestion;
-              widget.onChanged(suggestion);
+              widget.onChanged!(suggestion);
               widget.valueNotifier?.value = suggestion;
               widget.onSelected?.call(suggestion);
             });

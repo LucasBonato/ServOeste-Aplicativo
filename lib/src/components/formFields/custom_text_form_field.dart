@@ -15,7 +15,7 @@ class CustomTextFormField extends StatefulWidget {
   final int? maxLines;
   final int? minLines;
   final void Function(String?)? onSaved;
-  final void Function(String?)? onChanged;
+  final void Function(String)? onChanged;
   final void Function()? onTap;
   final List<MaskTextInputFormatter>? masks;
   final List<TextInputFormatter>? inputFormatters;

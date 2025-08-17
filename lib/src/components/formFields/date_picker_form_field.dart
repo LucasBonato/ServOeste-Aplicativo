@@ -14,7 +14,7 @@ class CustomDatePickerFormField extends StatefulWidget {
   final double? rightPadding;
   final double? leftPadding;
   final bool? validation;
-  final Function(String?)? onChanged;
+  final void Function(String)? onChanged;
   final String? Function([String?])? validator;
   final ValueNotifier<String> valueNotifier;
   final bool hide;
