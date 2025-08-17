@@ -60,19 +60,16 @@ class Constants {
   ];
 
   static const List<String> filiais = [
-    "Selecione uma filial*",
     "Osasco",
     "Carapicuíba",
   ];
 
   static const List<String> dataAtendimento = [
-    "Selecione um horário",
-    "manha",
-    "tarde",
+    "Manhã",
+    "Tarde",
   ];
 
   static const List<String> formasPagamento = [
-    "Selecione uma forma de pagamento*",
     "Pix",
     "Crédito",
     "Débito",
