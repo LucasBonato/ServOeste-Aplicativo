@@ -40,10 +40,9 @@ class ResponsiveSearchInputs extends StatelessWidget {
         rightPadding: 4,
         label: field.hint,
         dropdownValues: field.dropdownValues,
-        controller: field.controller,
-        valueNotifier: field.valueNotifier,
+        valueNotifier: field.valueNotifier!,
         onChanged: (value) {
-          field.valueNotifier.value = value;
+          field.valueNotifier!.value = value;
           field.onChanged?.call(value);
         },
       );
