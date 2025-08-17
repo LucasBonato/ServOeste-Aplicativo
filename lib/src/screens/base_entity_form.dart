@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
+import 'package:serv_oeste/src/components/formFields/date_picker_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
+import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
 import 'package:serv_oeste/src/components/screen/elevated_form_button.dart';
 
@@ -17,6 +19,7 @@ class BaseEntityForm<B extends StateStreamable<S>, S> extends StatefulWidget {
   final bool Function(S state) isLoading;
   final bool Function(S state) isSuccess;
   final bool Function(S state) isError;
+  final bool shouldBuildButton;
   final String Function(S state)? getErrorMessage;
   final VoidCallback? onSuccess;
 
@@ -32,7 +35,8 @@ class BaseEntityForm<B extends StateStreamable<S>, S> extends StatefulWidget {
     required this.isError,
     this.getErrorMessage,
     this.onSuccess,
-    this.space = 8
+    this.space = 8,
+    this.shouldBuildButton = true
   });
 
   @override
@@ -40,31 +44,34 @@ class BaseEntityForm<B extends StateStreamable<S>, S> extends StatefulWidget {
 }
 
 class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEntityForm<B, S>> {
-  late final List<Object> _cachedFields = widget.buildFields();
-  List<Object> get _fields => _cachedFields;
-
-  Widget _buildFormContent(BuildContext context, bool isLargeScreen) {
+  Widget _buildFormContent(BuildContext context, bool isLargeScreen, List<Object> currentFields) {
     final fields = isLargeScreen
-        ? _buildLargeScreenFormFields()
-        : _buildSmallScreenFormFields();
+        ? _buildLargeScreenFormFields(currentFields)
+        : _buildSmallScreenFormFields(currentFields);
+
+    final button = widget.shouldBuildButton
+      ? [
+          SizedBox(height: 24),
+          BlocBuilder<B, S>(
+            builder: (context, state) {
+              return ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 650),
+                child: ElevatedFormButton(
+                  text: widget.submitText,
+                  onPressed: widget.isLoading(context.read<B>().state) ? null : widget.onSubmit,
+                ),
+              );
+            },
+          ),
+        ]
+      : [];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         ...fields,
-        const SizedBox(height: 24),
-        BlocBuilder<B, S>(
-          builder: (context, state) {
-            return ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 650),
-              child: ElevatedFormButton(
-                text: widget.submitText,
-                onPressed: widget.isLoading(context.read<B>().state) ? null : widget.onSubmit,
-              ),
-            );
-          },
-        ),
+        ...button
       ],
     );
   }
@@ -80,9 +87,12 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
         hint: field.hint,
         label: field.label,
         masks: field.mask,
-        valueNotifier: field.valueNotifier,
+        minLines: field.keyboardType == TextInputType.multiline ? 1 : null,
+        maxLines: field.keyboardType == TextInputType.multiline ? 3 : null,
+        valueNotifier: field.valueNotifier!,
         validator: field.validator,
         onChanged: field.onChanged,
+        enabled: field.enabled,
       );
     }
     else if (field is DropdownInputField) {
@@ -91,12 +101,40 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
         rightPadding: 4,
         label: field.hint,
         dropdownValues: field.dropdownValues,
-        controller: field.controller,
-        valueNotifier: field.valueNotifier,
+        valueNotifier: field.valueNotifier!,
+        enabled: field.enabled,
         onChanged: (value) {
-          field.valueNotifier.value = value;
+          field.valueNotifier!.value = value;
           field.onChanged?.call(value);
         },
+      );
+    }
+    else if (field is DropdownSearchInputField) {
+      return CustomSearchDropDownFormField(
+        leftPadding: 4,
+        rightPadding: 4,
+        label: field.hint,
+        dropdownValues: field.dropdownValues,
+        valueNotifier: field.valueNotifier,
+        validator: field.validator,
+        onChanged: field.onChanged,
+        enabled: field.enabled,
+      );
+    }
+    else if (field is DatePickerInputField) {
+      return CustomDatePickerFormField(
+        label: field.hint,
+        hint: "dd/mm/aaaa",
+        leftPadding: 4,
+        rightPadding: 4,
+        mask: field.mask,
+        type: TextInputType.datetime,
+        maxLength: 10,
+        hide: true,
+        valueNotifier: field.valueNotifier!,
+        validator: field.validator,
+        onChanged: field.onChanged,
+        enabled: field.enabled,
       );
     }
     return const SizedBox.shrink();
@@ -136,6 +174,12 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
 
       Widget formField = _buildFormField(field);
 
+      if (field.listenTo != null && field.listenTo!.isNotEmpty) {
+        // This AnimatedBuilder is a way to use the `Listenable.merge` without problem,
+        // if u know a better way to do this please refactor this piece of code
+        formField = AnimatedBuilder(animation: Listenable.merge(field.listenTo!), builder: (context, child) => formField);
+      }
+
       if (field.shouldExpand) {
         formField = Expanded(flex: field.flex, child: formField);
         currentRow.add(formField);
@@ -159,8 +203,8 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
     return rows;
   }
 
-  List<Widget> _buildLargeScreenFormFields() {
-    final List<List<Widget>> rows = _chunkFieldsIntoRows(_fields);
+  List<Widget> _buildLargeScreenFormFields(List<Object> fields) {
+    final List<List<Widget>> rows = _chunkFieldsIntoRows(fields);
 
     return [
       for (final List<Widget> row in rows)
@@ -174,8 +218,8 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
     ];
   }
 
-  List<Widget> _buildSmallScreenFormFields() {
-    return _fields
+  List<Widget> _buildSmallScreenFormFields(List<Object> fields) {
+    return fields
       .map((field) {
         if (field is Widget) {
           return field;
@@ -210,14 +254,15 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
         }
       },
       builder: (context, state) {
+        final List<Object> currentFields = widget.buildFields();
         return AbsorbPointer(
           absorbing: widget.isLoading(state),
           child: Form(
             key: widget.formKey,
             child: LayoutBuilder(
               builder: (context, constraints) {
-                final isLargeScreen = constraints.maxWidth >= 750;
-                return _buildFormContent(context, isLargeScreen);
+                final isLargeScreen = constraints.maxWidth >= 450;
+                return _buildFormContent(context, isLargeScreen, currentFields);
               },
             ),
           ),

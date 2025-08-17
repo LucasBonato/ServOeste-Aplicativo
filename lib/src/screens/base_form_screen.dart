@@ -6,6 +6,7 @@ class BaseFormScreen extends StatelessWidget {
   final Widget child;
   final VoidCallback? onBack;
   final bool shouldActivateEvent;
+  final double sizeMultiplier;
 
   const BaseFormScreen({
     super.key,
@@ -13,6 +14,7 @@ class BaseFormScreen extends StatelessWidget {
     required this.child,
     this.shouldActivateEvent = false,
     this.onBack,
+    this.sizeMultiplier = 1
   });
 
   @override
@@ -26,7 +28,7 @@ class BaseFormScreen extends StatelessWidget {
       ),
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 800),
+          constraints: BoxConstraints(maxWidth: 800 * sizeMultiplier),
           child: Padding(
             padding: const EdgeInsets.all(12),
             child: ScrollConfiguration(
