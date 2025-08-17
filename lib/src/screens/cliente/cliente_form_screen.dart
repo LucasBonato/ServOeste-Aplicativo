@@ -48,9 +48,9 @@ class ClienteFormPage extends StatelessWidget {
     final ValueNotifier<List<String>> nomes = ValueNotifier<List<String>>([]);
     final TextEditingController municipioController = TextEditingController();
 
-    void fetchClienteNames(String nome) async {
+    void fetchClienteNames(String? nome) async {
       clienteForm.setNome(nome);
-      if (nome == "") return;
+      if (nome == "" || nome == null) return;
       if (nome.split(" ").length > 1 && nomes.value.isEmpty) return;
       bloc.add(ClienteSearchEvent(nome: nome));
     }
