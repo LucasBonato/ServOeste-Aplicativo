@@ -1,4 +1,3 @@
-import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucid_validation/lucid_validation.dart';
@@ -45,8 +44,6 @@ class _CreateServicoState extends State<CreateServico> {
   late TextEditingController _nomeTecnicoController;
   late TextEditingController _nomeClienteController;
   late TextEditingController _enderecoController;
-
-  SingleSelectController<String>? _horarioController;
 
   late final ServicoBloc _servicoBloc;
   late final ClienteBloc _clienteBloc;
@@ -133,7 +130,6 @@ class _CreateServicoState extends State<CreateServico> {
     _servicoForm.setNomeTecnico(nomeTecnico);
     _servicoForm.setDataAtendimentoPrevisto(data);
     _servicoForm.setHorario(periodo);
-    _horarioController = SingleSelectController<String>(periodo);
     _servicoForm.setIdTecnico(idTecnico);
   }
 
@@ -410,7 +406,6 @@ class _CreateServicoState extends State<CreateServico> {
         validator: _servicoValidator,
         tecnicoBloc: _tecnicoBloc,
         nameTecnicoController: _nomeTecnicoController,
-        horarioController: _horarioController,
         submitText: "",
         isClientAndService: isClientAndService,
         onSubmit: () {}
