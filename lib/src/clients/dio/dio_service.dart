@@ -29,7 +29,8 @@ class DioService {
     }
 
     if (e.response?.data is Map<String, dynamic>) {
-      return ErrorEntity.fromJson(e.response!.data as Map<String, dynamic>);
+      Map<String, dynamic> data = (e.response!.data as Map<String, dynamic>)["error"];
+      return ErrorEntity.fromJson(data);
     }
 
     if (e.error is JsonUnsupportedObjectError) {
