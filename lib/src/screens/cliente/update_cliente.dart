@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
-import 'package:serv_oeste/src/screens/cliente/cliente_form.dart';
+import 'package:serv_oeste/src/screens/cliente/cliente_form_screen.dart';
 import 'package:serv_oeste/src/shared/formatters.dart';
 
 class UpdateCliente extends StatefulWidget {
@@ -70,7 +70,7 @@ class _UpdateClienteState extends State<UpdateCliente> {
         bloc: bloc,
         buildWhen: (previous, current) => current is ClienteSearchOneSuccessState || current is ClienteSearchOneLoadingState,
         builder: (context, state) {
-          return ClienteFormPage(
+          return ClienteFormScreen(
             isSkeleton: state is ClienteSearchOneLoadingState,
             title: "Consultar/Atualizar Cliente",
             submitText: "Atualizar Cliente",

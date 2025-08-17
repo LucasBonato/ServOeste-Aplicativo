@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
-import 'package:serv_oeste/src/screens/cliente/cliente_form.dart';
+import 'package:serv_oeste/src/screens/cliente/cliente_form_screen.dart';
 
 class CreateCliente extends StatelessWidget {
   const CreateCliente({super.key});
@@ -13,7 +13,7 @@ class CreateCliente extends StatelessWidget {
     final ClienteBloc bloc = context.read<ClienteBloc>();
     final ClienteForm form = ClienteForm();
 
-    return ClienteFormPage(
+    return ClienteFormScreen(
       title: "Adicionar Cliente",
       submitText: "Adicionar Cliente",
       bloc: bloc,
