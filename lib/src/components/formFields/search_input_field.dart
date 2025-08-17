@@ -1,72 +1,123 @@
-import 'package:animated_custom_dropdown/custom_dropdown.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 abstract class SearchInputField {
+  final String? Function([String?])? validator;
+  final ValueNotifier<String>? valueNotifier;
+  final void Function(String)? onChanged;
+  final List<ValueListenable>? listenTo;
   final bool shouldExpand;
   final bool startNewRow;
+  final bool enabled;
   final String hint;
   final int flex;
 
   const SearchInputField({
+    required this.valueNotifier,
     required this.hint,
     this.shouldExpand = false,
     this.startNewRow = false,
+    this.enabled = true,
     this.flex = 1,
+    this.validator,
+    this.onChanged,
+    this.listenTo,
   });
 }
 
 class TextInputField extends SearchInputField {
   final TextEditingController controller;
   final TextInputType keyboardType;
-  final VoidCallback? onChanged;
 
   TextInputField({
-    super.shouldExpand = false,
-    super.flex = 1,
     required super.hint,
+    super.shouldExpand = false,
+    super.startNewRow = false,
+    super.enabled = true,
+    super.flex = 1,
+    super.valueNotifier,
+    super.validator,
+    super.onChanged,
+    super.listenTo,
     required this.controller,
     required this.keyboardType,
-    this.onChanged,
   });
 }
 
 class TextFormInputField extends SearchInputField {
-  final TextInputType keyboardType;
-  final String label;
-  final int maxLength;
+  final List<TextInputFormatter>? formatter;
   final List<MaskTextInputFormatter>? mask;
-  final ValueNotifier<String> valueNotifier;
-  final String? Function([String?])? validator;
-  final void Function(String?)? onChanged;
+  final TextInputType keyboardType;
+  final int maxLength;
+  final String label;
 
   TextFormInputField({
-    super.shouldExpand = false,
-    super.flex = 1,
+    required super.valueNotifier,
+    required super.validator,
+    required super.onChanged,
     required super.hint,
-    required this.label,
-    required this.maxLength,
+    super.shouldExpand = false,
+    super.startNewRow = false,
+    super.enabled = true,
+    super.flex = 1,
+    super.listenTo,
     required this.keyboardType,
-    required this.valueNotifier,
-    required this.validator,
-    required this.onChanged,
+    required this.maxLength,
+    required this.label,
+    this.formatter,
     this.mask,
   });
 }
 
 class DropdownInputField extends SearchInputField {
-  final SingleSelectController<String> controller;
-  final ValueNotifier<String> valueNotifier;
   final List<String> dropdownValues;
-  final void Function(String)? onChanged;
 
   DropdownInputField({
-    super.shouldExpand = false,
-    super.flex = 1,
+    required super.valueNotifier,
+    required super.onChanged,
     required super.hint,
-    required this.controller,
-    required this.valueNotifier,
+    super.shouldExpand = false,
+    super.startNewRow = false,
+    super.enabled = true,
+    super.flex = 1,
+    super.validator,
+    super.listenTo,
     required this.dropdownValues,
-    required this.onChanged,
+  });
+}
+
+class DropdownSearchInputField extends SearchInputField {
+  final List<String> dropdownValues;
+
+  DropdownSearchInputField({
+    required super.valueNotifier,
+    required super.onChanged,
+    required super.hint,
+    super.shouldExpand = false,
+    super.startNewRow = false,
+    super.enabled = true,
+    super.flex = 1,
+    super.validator,
+    super.listenTo,
+    required this.dropdownValues,
+  });
+}
+
+class DatePickerInputField extends SearchInputField {
+  final List<MaskTextInputFormatter>? mask;
+
+  DatePickerInputField({
+    required super.valueNotifier,
+    required super.onChanged,
+    required super.hint,
+    super.shouldExpand = false,
+    super.startNewRow = false,
+    super.enabled = true,
+    super.flex = 1,
+    super.validator,
+    super.listenTo,
+    this.mask,
   });
 }
