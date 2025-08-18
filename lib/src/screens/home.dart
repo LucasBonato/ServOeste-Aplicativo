@@ -19,10 +19,10 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  void _onNavigateToUpdateScreen(int id) {
+  void _onNavigateToUpdateScreen(int id, int clientId) {
     Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute(
-        builder: (context) => UpdateServico(id: id),
+        builder: (context) => UpdateServico(id: id, clientId: clientId),
       ),
     );
   }
@@ -103,8 +103,7 @@ class _HomeState extends State<Home> {
                       aspectRatio: .9,
                       dataList: stateServico.servicos,
                       buildCard: (dynamic servico) => CardService(
-                        onDoubleTap: () =>
-                            _onNavigateToUpdateScreen(servico.id),
+                        onDoubleTap: () => _onNavigateToUpdateScreen(servico.id, servico.idCliente),
                         cliente: (servico as Servico).nomeCliente,
                         codigo: servico.id,
                         tecnico: servico.nomeTecnico,
