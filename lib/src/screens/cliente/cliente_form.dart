@@ -18,6 +18,8 @@ class ClienteFormWidget extends StatelessWidget {
   final ClienteForm clienteForm;
   final ClienteBloc bloc;
   final bool isUpdate;
+  final bool isClientAndService;
+  final bool isJustShowFields;
   final bool shouldBuildButton;
   final String submitText;
   final ClienteValidator? validator;
@@ -34,6 +36,8 @@ class ClienteFormWidget extends StatelessWidget {
     this.nomeController,
     this.isUpdate = false,
     this.shouldBuildButton = true,
+    this.isClientAndService = false,
+    this.isJustShowFields = false,
     this.formKey,
     this.validator,
   });
@@ -72,25 +76,27 @@ class ClienteFormWidget extends StatelessWidget {
           label: "Nome*",
           clienteBloc: bloc,
           controller: nomeController,
+          listenTo: [clienteForm.nome],
           onChanged: clienteForm.setNome,
           validator: validator.byField(clienteForm, ErrorCodeKey.nomeESobrenome.name),
-          buildSearchEvent: (nome) => ClienteSearchEvent(nome: nome)
+          buildSearchEvent: (nome) => ClienteSearchEvent(nome: nome),
+          enabled: !isJustShowFields,
         ),
-        // if (isClientAndService)
-        //   SizedBox(
-        //     width: MediaQuery.of(context).size.width * 0.6,
-        //     child: Transform.translate(
-        //       offset: Offset(24, 0),
-        //       child: Text(
-        //         "Obs. os nomes que aparecerem já estão cadastrados",
-        //         style: TextStyle(
-        //           fontSize: (MediaQuery.of(context).size.width * 0.04).clamp(9.0, 13.0),
-        //           color: Colors.grey,
-        //           fontStyle: FontStyle.italic,
-        //         ),
-        //       ),
-        //     ),
-        //   ),
+        if (isClientAndService && !isJustShowFields)
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.6,
+            child: Transform.translate(
+              offset: Offset(24, 0),
+              child: Text(
+                "Obs. os nomes que aparecerem já estão cadastrados",
+                style: TextStyle(
+                  fontSize: (MediaQuery.of(context).size.width * 0.04).clamp(9.0, 13.0),
+                  color: Colors.grey,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
+          ),
 
         TextFormInputField(
           shouldExpand: true,
@@ -102,6 +108,7 @@ class ClienteFormWidget extends StatelessWidget {
           valueNotifier: clienteForm.telefoneFixo,
           validator: validator.byField(clienteForm, ErrorCodeKey.telefones.name),
           onChanged: clienteForm.setTelefoneFixo,
+          enabled: !isJustShowFields,
         ),
         TextFormInputField(
           shouldExpand: true,
@@ -113,35 +120,37 @@ class ClienteFormWidget extends StatelessWidget {
           valueNotifier: clienteForm.telefoneCelular,
           validator: validator.byField(clienteForm, ErrorCodeKey.telefones.name),
           onChanged: clienteForm.setTelefoneCelular,
+          enabled: !isJustShowFields,
         ),
 
         Wrap(
           runSpacing: 8,
           children: [
-            BlocListener<EnderecoBloc, EnderecoState>(
-              bloc: enderecoBloc,
-              listener: (context, state) {
-                if (state is EnderecoSuccessState) {
-                  clienteForm.setBairro(state.bairro);
-                  clienteForm.setRua(state.rua);
-                  clienteForm.setMunicipio(state.municipio);
-                  municipioController.text = state.municipio;
-                }
-              },
-              child: CustomTextFormField(
-                hint: "00000-000",
-                label: "CEP",
-                type: TextInputType.number,
-                maxLength: 9,
-                hide: true,
-                leftPadding: 4,
-                rightPadding: 4,
-                masks: InputMasks.cep,
-                valueNotifier: clienteForm.cep,
-                validator: validator.byField(clienteForm, ErrorCodeKey.cep.name),
-                onChanged: fetchInformationAboutCep,
+            if (!isJustShowFields)
+              BlocListener<EnderecoBloc, EnderecoState>(
+                bloc: enderecoBloc,
+                listener: (context, state) {
+                  if (state is EnderecoSuccessState) {
+                    clienteForm.setBairro(state.bairro);
+                    clienteForm.setRua(state.rua);
+                    clienteForm.setMunicipio(state.municipio);
+                    municipioController.text = state.municipio;
+                  }
+                },
+                child: CustomTextFormField(
+                  hint: "00000-000",
+                  label: "CEP",
+                  type: TextInputType.number,
+                  maxLength: 9,
+                  hide: true,
+                  leftPadding: 4,
+                  rightPadding: 4,
+                  masks: InputMasks.cep,
+                  valueNotifier: clienteForm.cep,
+                  validator: validator.byField(clienteForm, ErrorCodeKey.cep.name),
+                  onChanged: fetchInformationAboutCep,
+                ),
               ),
-            ),
             CustomSearchDropDownFormField(
               label: "Município*",
               dropdownValues: Constants.municipios,
@@ -152,6 +161,7 @@ class ClienteFormWidget extends StatelessWidget {
               onChanged: clienteForm.setMunicipio,
               rightPadding: 4,
               leftPadding: 4,
+              enabled: !isJustShowFields,
             ),
           ],
         ),
@@ -164,6 +174,7 @@ class ClienteFormWidget extends StatelessWidget {
           valueNotifier: clienteForm.bairro,
           validator: validator.byField(clienteForm, ErrorCodeKey.bairro.name),
           onChanged: clienteForm.setBairro,
+          enabled: !isJustShowFields,
         ),
 
         TextFormInputField(
@@ -176,6 +187,7 @@ class ClienteFormWidget extends StatelessWidget {
           valueNotifier: clienteForm.rua,
           validator: validator.byField(clienteForm, ErrorCodeKey.rua.name),
           onChanged: clienteForm.setRua,
+          enabled: !isJustShowFields,
         ),
         TextFormInputField(
           shouldExpand: true,
@@ -187,6 +199,7 @@ class ClienteFormWidget extends StatelessWidget {
           valueNotifier: clienteForm.numero,
           validator: validator.byField(clienteForm, ErrorCodeKey.numero.name),
           onChanged: clienteForm.setNumero,
+          enabled: !isJustShowFields,
         ),
 
         TextFormInputField(
@@ -197,6 +210,7 @@ class ClienteFormWidget extends StatelessWidget {
           valueNotifier: clienteForm.complemento,
           validator: validator.byField(clienteForm, ErrorCodeKey.complemento.name),
           onChanged: clienteForm.setComplemento,
+          enabled: !isJustShowFields,
         ),
 
         if (shouldBuildButton)
