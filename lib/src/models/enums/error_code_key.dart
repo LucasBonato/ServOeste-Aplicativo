@@ -21,6 +21,8 @@ enum ErrorCodeKey {
   dataAtendimentoEfetivo,
   dataInicioGarantia,
   dataFinalGarantia,
+  dataPagamentoComissao,
+  dataEncerramento,
   formaPagamento,
   conhecimento,
   rua,
