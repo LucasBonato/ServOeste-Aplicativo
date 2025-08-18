@@ -74,7 +74,7 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
   }
 
   @override
-  Widget getUpdateScreen(int id) => UpdateTecnico(id: id);
+  Widget getUpdateScreen(int id, {int? secondId}) => UpdateTecnico(id: id);
 
   @override
   Widget buildDefaultFloatingActionButton() {

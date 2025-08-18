@@ -44,7 +44,7 @@ class CustomRouter {
         final args = settings.arguments as Map<String, dynamic>?;
         return createRoute((_) => CreateServico(isClientAndService: args?['isClientAndService'] ?? true), servicoBloc);
       case Routes.servicoUpdate:
-        return createRoute((_) => UpdateServico(id: settings.arguments as int), servicoBloc);
+        return createRoute((_) => UpdateServico(id: settings.arguments as int, clientId: settings.arguments as int), servicoBloc);
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

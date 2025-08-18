@@ -56,7 +56,7 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
   }
 
   @override
-  Widget getUpdateScreen(int id) => UpdateCliente(id: id);
+  Widget getUpdateScreen(int id, {int? secondId}) => UpdateCliente(id: id);
 
   @override
   Widget buildDefaultFloatingActionButton() {

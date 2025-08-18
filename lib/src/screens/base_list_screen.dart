@@ -15,7 +15,7 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
 
   void onDisableItems(List<int> selectedIds);
 
-  Widget getUpdateScreen(int id);
+  Widget getUpdateScreen(int id, {int? secondId});
 
   Widget buildDefaultFloatingActionButton();
 
@@ -27,11 +27,11 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
     _debouncer.execute(searchFieldChanged);
   }
 
-  void onNavigateToUpdateScreen(int id, void Function() event) {
+  void onNavigateToUpdateScreen(int id, void Function() event, {int? secondId}) {
     Navigator.of(context, rootNavigator: true)
       .push(
         MaterialPageRoute(
-          builder: (context) => getUpdateScreen(id),
+          builder: (context) => getUpdateScreen(id, secondId: secondId),
         ),
       )
       .then((value) {

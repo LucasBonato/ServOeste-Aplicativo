@@ -59,7 +59,7 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
   }
 
   @override
-  Widget getUpdateScreen(int id) => UpdateServico(id: id);
+  Widget getUpdateScreen(int id, {int? secondId}) => UpdateServico(id: id, clientId: secondId!);
 
   @override
   Widget buildDefaultFloatingActionButton() {
@@ -96,7 +96,7 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
   @override
   Widget buildItemCard(Servico servico, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return CardService(
-      onDoubleTap: () => onNavigateToUpdateScreen(servico.id, onSearchFieldChanged),
+      onDoubleTap: () => onNavigateToUpdateScreen(servico.id, onSearchFieldChanged, secondId: servico.idCliente),
       onLongPress: () => onSelectItemList(servico.id),
       onTap: () {
         if (isSelectMode) {
