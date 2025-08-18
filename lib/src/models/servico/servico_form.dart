@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:serv_oeste/src/shared/extensions.dart';
 import 'package:serv_oeste/src/shared/formatters.dart';
 
 class ServicoForm extends ChangeNotifier {
@@ -31,6 +33,49 @@ class ServicoForm extends ChangeNotifier {
   double valorNumerico = 0.0;
   double valorPecasNumerico = 0.0;
   double valorComissaoNumerico = 0.0;
+
+  void setForm(Servico servico) {
+    id.value = servico.idCliente;
+    idCliente.value = servico.idCliente;
+    nomeCliente.value = servico.nomeCliente;
+    equipamento.value = servico.equipamento;
+    marca.value = servico.marca;
+    nomeTecnico.value = servico.nomeTecnico?? "";
+    idTecnico.value = servico.idTecnico;
+    filial.value = servico.filial;
+    situacao.value = servico.situacao.convertEnumStatusToString();
+    horario.value = servico.horarioPrevisto.convertToHorarioString();
+    if (servico.dataAtendimentoPrevisto != null) {
+      dataAtendimentoPrevisto.value = Formatters.applyDateMask(servico.dataAtendimentoPrevisto!);
+    }
+    if (servico.dataAtendimentoEfetivo != null) {
+      dataAtendimentoEfetivo.value = Formatters.applyDateMask(servico.dataAtendimentoEfetivo!);
+    }
+    if (servico.dataAtendimentoAbertura != null) {
+      dataAtendimentoAbertura.value = Formatters.applyDateMask(servico.dataAtendimentoAbertura!);
+    }
+    valor.value = Formatters.formatToCurrency(servico.valor ?? 0.0);
+    valorPecas.value = Formatters.formatToCurrency(servico.valorPecas ?? 0.0);
+    valorComissao.value = Formatters.formatToCurrency(servico.valorComissao ?? 0.0);
+    formaPagamento.value = servico.formaPagamento?? "";
+    if (servico.dataFechamento != null) {
+      dataFechamento.value = Formatters.applyDateMask(servico.dataFechamento!);
+    }
+    if (servico.dataPagamentoComissao != null) {
+      dataPagamentoComissao.value = Formatters.applyDateMask(servico.dataPagamentoComissao!);
+    }
+    if (servico.dataInicioGarantia != null) {
+      dataInicioGarantia.value = Formatters.applyDateMask(servico.dataInicioGarantia!);
+    }
+    if (servico.dataFimGarantia != null) {
+      dataFinalGarantia.value = Formatters.applyDateMask(servico.dataFimGarantia!);
+    }
+    if (servico.garantia != null) {
+      garantia.value = (servico.garantia!) ? Constants.garantias.first : Constants.garantias.last;
+    }
+    historico.value = servico.descricao?? "";
+    notifyListeners();
+  }
 
   void setId(int? id) {
     this.id.value = id;

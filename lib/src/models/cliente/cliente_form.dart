@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:serv_oeste/src/shared/formatters.dart';
 
 class ClienteForm extends ChangeNotifier {
   int? id;
@@ -22,12 +23,12 @@ class ClienteForm extends ChangeNotifier {
   }
 
   void setTelefoneFixo(String? telefoneFixo) {
-    this.telefoneFixo.value = telefoneFixo ?? "";
+    this.telefoneFixo.value = telefoneFixo == null ? "" : Formatters.applyTelefoneMask(telefoneFixo);
     notifyListeners();
   }
 
   void setTelefoneCelular(String? telefoneCelular) {
-    this.telefoneCelular.value = telefoneCelular ?? "";
+    this.telefoneCelular.value = telefoneCelular == null ? "" : Formatters.applyCelularMask(telefoneCelular);
     notifyListeners();
   }
 
