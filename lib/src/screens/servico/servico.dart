@@ -180,17 +180,7 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
               },
               child: BlocBuilder<ServicoBloc, ServicoState>(
                 builder: (context, stateServico) {
-                  if (stateServico is ServicoInitialState || stateServico is ServicoLoadingState) {
-                    return Skeletonizer(
-                      enableSwitchAnimation: true,
-                      child: buildGridOfCards(
-                        List.generate(8, (_) => Servico.skeleton()),
-                        0.9,
-                        isSkeleton: true,
-                      ),
-                    );
-                  }
-                  else if (stateServico is ServicoSearchSuccessState) {
+                  if (stateServico is ServicoSearchSuccessState) {
                     return Column(
                       children: [
                         Expanded(
@@ -221,7 +211,14 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
                     }
                     return const EntityNotFound(message: "Nenhum serviço encontrado.");
                   }
-                  return const ErrorComponent();
+                  return Skeletonizer(
+                    enableSwitchAnimation: true,
+                    child: buildGridOfCards(
+                      List.generate(8, (_) => Servico.skeleton()),
+                      0.9,
+                      isSkeleton: true,
+                    ),
+                  );
                 },
               ),
             ),
