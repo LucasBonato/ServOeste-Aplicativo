@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/components/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/field_labels.dart';
+import 'package:serv_oeste/src/components/screen/cards/card_builder_form.dart';
 import 'package:serv_oeste/src/components/screen/filtered_clients_table.dart';
 import 'package:serv_oeste/src/components/screen/table_technical.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
@@ -191,15 +192,12 @@ class _CreateServicoState extends State<CreateServico> {
         }
         else if (state is ServicoErrorState) {
           ErrorEntity error = state.error;
-          if (isClientAndService) {
-            _clienteValidator.applyBackendError(error);
-            _clienteFormKey.currentState?.validate();
-          }
-
           _servicoValidator.applyBackendError(error);
           _servicoFormKey.currentState?.validate();
 
           if (isClientAndService) {
+            _clienteValidator.applyBackendError(error);
+            _clienteFormKey.currentState?.validate();
             _clienteValidator.cleanExternalErrors();
           }
           _servicoValidator.cleanExternalErrors();
@@ -255,17 +253,17 @@ class _CreateServicoState extends State<CreateServico> {
   Widget _buildMainFormLayout(bool isMobile) {
     final Widget clienteSection = Column(
       children: [
-        _buildFormBox(_buildClientForm(), 'Cliente'),
+        CardBuilderForm(title: "Client", child: _buildClientForm()),
         if (!isClientAndService)
           Padding(
             padding: const EdgeInsets.only(top: 12),
-            child: _buildFormBox(_buildFilteredClientsTable(), 'Selecione um Cliente'),
+            child: CardBuilderForm(title: "Selecione um Cliente", child: _buildFilteredClientsTable()),
           ),
         const SizedBox(height: 8),
         BuildFieldLabels(isClientAndService: isClientAndService),
       ],
     );
-    final Widget servicoSection = _buildFormBox(_buildServiceForm(), 'Serviço');
+    final Widget servicoSection = CardBuilderForm(title: "Serviço", child: _buildServiceForm());
 
     if (isMobile) {
       return Column(
@@ -283,36 +281,6 @@ class _CreateServicoState extends State<CreateServico> {
         const SizedBox(width: 16),
         Expanded(child: servicoSection),
       ],
-    );
-  }
-
-  Widget _buildFormBox(Widget child, String title) {
-    return Align(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: const Color(0xFFEAE6E5),
-            width: 1,
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-            child,
-          ],
-        ),
-      ),
     );
   }
 
@@ -344,11 +312,11 @@ class _CreateServicoState extends State<CreateServico> {
           _clientes = state.clientes;
           filteredClients = state.clientes
               .map((cliente) =>
-          {
-            'id': cliente.id.toString(),
-            'nome': cliente.nome ?? '',
-            'endereco': '${cliente.municipio ?? ''} - ${cliente.bairro ?? ''} - ${cliente.endereco ?? ''}',
-          })
+              {
+                'id': cliente.id.toString(),
+                'nome': cliente.nome ?? '',
+                'endereco': '${cliente.municipio ?? ''} - ${cliente.bairro ?? ''} - ${cliente.endereco ?? ''}',
+              })
               .toList();
           _isDataLoaded = true;
         }
@@ -374,13 +342,14 @@ class _CreateServicoState extends State<CreateServico> {
   Widget _buildClientForm() {
     if (isClientAndService) {
       return ClienteFormWidget(
-          bloc: _clienteBloc,
-          clienteForm: _clienteForm,
-          validator: _clienteValidator,
-          formKey: _clienteFormKey,
-          shouldBuildButton: false,
-          submitText: "",
-          onSubmit: () {}
+        bloc: _clienteBloc,
+        clienteForm: _clienteForm,
+        validator: _clienteValidator,
+        formKey: _clienteFormKey,
+        isClientAndService: isClientAndService,
+        shouldBuildButton: false,
+        submitText: "",
+        onSubmit: () {}
       );
     }
     return Column(
@@ -400,15 +369,15 @@ class _CreateServicoState extends State<CreateServico> {
 
   Widget _buildServiceForm() {
     return ServicoFormWidget(
-        bloc: _servicoBloc,
-        form: _servicoForm,
-        formKey: _servicoFormKey,
-        validator: _servicoValidator,
-        tecnicoBloc: _tecnicoBloc,
-        nameTecnicoController: _nomeTecnicoController,
-        submitText: "",
-        isClientAndService: isClientAndService,
-        onSubmit: () {}
+      bloc: _servicoBloc,
+      form: _servicoForm,
+      formKey: _servicoFormKey,
+      validator: _servicoValidator,
+      tecnicoBloc: _tecnicoBloc,
+      nameTecnicoController: _nomeTecnicoController,
+      submitText: "",
+      isClientAndService: isClientAndService,
+      onSubmit: () {}
     );
   }
 
