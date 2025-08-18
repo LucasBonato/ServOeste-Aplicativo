@@ -24,7 +24,6 @@ class ServicoFormWidget extends StatelessWidget {
   final void Function() onSubmit;
   final ServicoForm form;
   final TextEditingController nameTecnicoController;
-  final SingleSelectController<String>? horarioController;
 
   const ServicoFormWidget({
     super.key,
@@ -36,7 +35,6 @@ class ServicoFormWidget extends StatelessWidget {
     required this.onSubmit,
     required this.bloc,
     required this.form,
-    this.horarioController,
     this.validator,
     this.formKey,
   });
