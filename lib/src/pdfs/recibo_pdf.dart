@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -8,8 +7,7 @@ import 'package:serv_oeste/src/shared/formatters.dart';
 
 Future<void> generateReciboPDF({
   required Servico servico,
-  required Cliente cliente,
-  required BuildContext context,
+  required Cliente cliente
 }) async {
   final pdf = pw.Document();
   final logo = await imageFromAssetBundle('assets/servOeste.png');

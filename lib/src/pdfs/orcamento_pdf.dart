@@ -8,8 +8,7 @@ import 'package:serv_oeste/src/shared/formatters.dart';
 
 Future<void> generateOrcamentoPDF({
   required Servico servico,
-  required Cliente cliente,
-  required BuildContext context,
+  required Cliente cliente
 }) async {
   final pdf = pw.Document();
   final logo = await imageFromAssetBundle('assets/servOeste.png');
