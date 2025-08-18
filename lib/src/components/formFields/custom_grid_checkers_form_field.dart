@@ -6,13 +6,12 @@ class CustomGridCheckersFormField extends StatelessWidget {
   final Function(bool)? onOutrosSelected;
   final String? title;
 
-  const CustomGridCheckersFormField({
-    super.key,
-    required this.validator,
-    required this.checkersMap,
-    this.onOutrosSelected,
-    this.title
-  });
+  const CustomGridCheckersFormField(
+      {super.key,
+      required this.validator,
+      required this.checkersMap,
+      this.onOutrosSelected,
+      this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +23,7 @@ class CustomGridCheckersFormField extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(left: 0),
             child: Text(
-              title?? "",
+              title ?? "",
               style: TextStyle(
                 fontSize: 16,
               ),
@@ -44,27 +43,37 @@ class CustomGridCheckersFormField extends StatelessWidget {
               childAspectRatio: 6,
               physics: const NeverScrollableScrollPhysics(),
               children: checkersMap.keys.map((label) {
-                return Row(
-                  children: [
-                    Checkbox(
-                      value: checkersMap[label] ?? false,
-                      activeColor: Colors.blue,
-                      onChanged: (value) {
-                        checkersMap[label] = value ?? false;
-                        if (label == "Outros" && onOutrosSelected != null) {
-                          onOutrosSelected!(value ?? false);
-                        }
-                        field.reset();
-                      },
-                    ),
-                    Text(
-                      label,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                return InkWell(
+                  onTap: () {
+                    final newValue = !(checkersMap[label] ?? false);
+                    checkersMap[label] = newValue;
+                    if (label == "Outros" && onOutrosSelected != null) {
+                      onOutrosSelected!(newValue);
+                    }
+                    field.reset();
+                  },
+                  child: Row(
+                    children: [
+                      Checkbox(
+                        value: checkersMap[label] ?? false,
+                        activeColor: Colors.blue,
+                        onChanged: (value) {
+                          checkersMap[label] = value ?? false;
+                          if (label == "Outros" && onOutrosSelected != null) {
+                            onOutrosSelected!(value ?? false);
+                          }
+                          field.reset();
+                        },
                       ),
-                    ),
-                  ],
+                      Text(
+                        label,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
                 );
               }).toList(),
             ),
