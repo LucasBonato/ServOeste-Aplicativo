@@ -177,7 +177,15 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
       if (field.listenTo != null && field.listenTo!.isNotEmpty) {
         // This AnimatedBuilder is a way to use the `Listenable.merge` without problem,
         // if u know a better way to do this please refactor this piece of code
-        formField = AnimatedBuilder(animation: Listenable.merge(field.listenTo!), builder: (context, child) => formField);
+        formField = AnimatedBuilder(
+          animation: Listenable.merge(field.listenTo!),
+          builder: (context, child) => child!,
+          child: formField
+        );
+      }
+
+      if (field.startNewRow && currentRow.isNotEmpty) {
+        flushRow();
       }
 
       if (field.shouldExpand) {
