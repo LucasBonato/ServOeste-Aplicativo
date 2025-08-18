@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/src/models/enums/service_status.dart';
+import 'package:serv_oeste/src/shared/extensions.dart';
 import 'package:serv_oeste/src/shared/formatters.dart';
 
 class CardService extends StatelessWidget {
@@ -73,24 +74,6 @@ class CardService extends StatelessWidget {
       case ServiceStatus.semDefeito:
         return Colors.blueAccent;
     }
-  }
-
-  String _convertEnumStatusToString(String status) {
-    final specialCases = {
-      'NAO_RETIRA_3_MESES': 'Não retira há 3 meses',
-      'AGUARDANDO_APROVACAO': 'Aguardando aprovação do cliente',
-      'AGUARDANDO_ORCAMENTO': 'Aguardando orçamento',
-      'ORCAMENTO_APROVADO': 'Orçamento aprovado',
-      'NAO_APROVADO': 'Não aprovado pelo cliente',
-    };
-
-    if (specialCases.containsKey(status)) {
-      return specialCases[status]!;
-    }
-
-    String convertedStatus =
-        "${status[0]}${status.substring(1).replaceAll("_", " ").toLowerCase()}";
-    return convertedStatus;
   }
 
   @override
@@ -280,7 +263,7 @@ class CardService extends StatelessWidget {
                             child: SizedBox(
                               width: constraints.maxWidth * 0.45,
                               child: Text(
-                                _convertEnumStatusToString(status),
+                                status.convertEnumStatusToString(),
                                 style: TextStyle(
                                   fontSize: constraints.maxWidth * 0.05,
                                   fontWeight: FontWeight.bold,
