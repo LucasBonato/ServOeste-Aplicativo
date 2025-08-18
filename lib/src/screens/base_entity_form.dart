@@ -87,6 +87,7 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
         hint: field.hint,
         label: field.label,
         masks: field.mask,
+        inputFormatters: field.formatter,
         minLines: field.keyboardType == TextInputType.multiline ? 1 : null,
         maxLines: field.keyboardType == TextInputType.multiline ? 3 : null,
         valueNotifier: field.valueNotifier!,
@@ -102,6 +103,7 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
         label: field.hint,
         dropdownValues: field.dropdownValues,
         valueNotifier: field.valueNotifier!,
+        validator: field.validator,
         enabled: field.enabled,
         onChanged: (value) {
           field.valueNotifier!.value = value;
