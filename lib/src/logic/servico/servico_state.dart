@@ -7,6 +7,8 @@ final class ServicoInitialState extends ServicoState {}
 
 final class ServicoLoadingState extends ServicoState {}
 
+final class ServicoSearchOneLoadingState extends ServicoState {}
+
 final class ServicoSearchOneSuccessState extends ServicoState {
   final Servico servico;
 

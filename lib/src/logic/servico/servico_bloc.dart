@@ -106,6 +106,7 @@ class ServicoBloc extends BaseEntityBloc<ServicoEvent, ServicoState> {
   Future<void> _fetchOneService(ServicoSearchOneEvent event, Emitter<ServicoState> emit) async {
     await handleRequest<PageContent<Servico>>(
       emit: emit,
+      loading: ServicoSearchOneLoadingState(),
       request: () => _servicoClient.getServicosByFilter(ServicoFilterRequest(id: event.id)),
       onSuccess: (PageContent<Servico> page) => emit(ServicoSearchOneSuccessState(servico: page.content[0])),
     );
