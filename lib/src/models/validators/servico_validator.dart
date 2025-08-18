@@ -37,23 +37,23 @@ class ServicoValidator extends LucidValidator<ServicoForm> with BackendErrorsVal
         .customValidExternalErrors(externalErrors, ErrorCodeKey.descricao.name);
 
     ruleFor((servico) => servico.valor.value, key: ErrorCodeKey.valor.name)
-        .isEmptyOrNull(message: "Valor do serviço é obrigatório", code: ErrorCodeKey.valor.name)
+        .must((valor) => valor != "", "Valor do serviço é obrigatório", ErrorCodeKey.valor.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.valor.name);
 
     ruleFor((servico) => servico.valorPecas.value, key: ErrorCodeKey.valorPecas.name)
-        .isEmptyOrNull(message: "Valor das peças é obrigatório", code: ErrorCodeKey.valorPecas.name)
+        .must((valorPecas) => valorPecas != "", "Valor das peças é obrigatório", ErrorCodeKey.valorPecas.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.valorPecas.name);
 
     ruleFor((servico) => servico.dataAtendimentoEfetivo.value, key: ErrorCodeKey.dataAtendimentoEfetivo.name)
-        .isEmptyOrNull(message: "Data efetiva é obrigatória", code: ErrorCodeKey.dataAtendimentoEfetivo.name)
+        .must((dataAtendimentoEfetivo) => dataAtendimentoEfetivo != "", "Data efetiva é obrigatória", ErrorCodeKey.dataAtendimentoEfetivo.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.dataAtendimentoEfetivo.name);
 
     ruleFor((servico) => servico.dataInicioGarantia.value, key: ErrorCodeKey.dataInicioGarantia.name)
-        .isEmptyOrNull(message: "Data início da garantia é obrigatória", code: ErrorCodeKey.dataInicioGarantia.name)
+        .must((dataInicioGarantia) => dataInicioGarantia != "", "Data início da garantia é obrigatória", ErrorCodeKey.dataInicioGarantia.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.dataInicioGarantia.name);
 
     ruleFor((servico) => servico.dataFinalGarantia.value, key: ErrorCodeKey.dataFinalGarantia.name)
-        .isEmptyOrNull(message: "Data final da garantia é obrigatória", code: ErrorCodeKey.dataFinalGarantia.name)
+        .must((dataFinalGarantia) => dataFinalGarantia != "", "Data final da garantia é obrigatória", ErrorCodeKey.dataFinalGarantia.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.dataFinalGarantia.name);
 
     ruleFor((servico) => servico.horario.value, key: ErrorCodeKey.horario.name)
@@ -63,7 +63,7 @@ class ServicoValidator extends LucidValidator<ServicoForm> with BackendErrorsVal
 
     ruleFor((servico) => servico.formaPagamento.value, key: ErrorCodeKey.formaPagamento.name)
         .when((servico) => !situacoesOpcionais.contains(servico.situacao.value))
-        .isEmptyOrNull(message: "Forma de pagamento é obrigatória", code: ErrorCodeKey.formaPagamento.name)
+        .must((formaPagamento) => formaPagamento != "", "Forma de pagamento é obrigatória", ErrorCodeKey.formaPagamento.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.formaPagamento.name);
   }
 }
