@@ -42,39 +42,76 @@ class CustomSearchDropDownFormField extends StatefulWidget {
 }
 
 class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
-  late final TextEditingController _customSearchController;
+  late final TextEditingController _effectiveController;
   late Color labelColor;
   bool _isDisposed = false;
 
   @override
   void initState() {
-    _customSearchController = widget.controller ?? TextEditingController();
+    super.initState();
+    _effectiveController = widget.controller ?? TextEditingController();
     labelColor = const Color(0xFF948F8F);
 
-    if (widget.valueNotifier?.value != null) {
-      _customSearchController.text = widget.valueNotifier!.value!;
-    }
+    _synchronizeControllerWithValueNotifier();
 
-    _customSearchController.addListener(_onTextChanged);
-    super.initState();
+    _effectiveController.addListener(_onInternalControllerTextChanged);
+
+    widget.valueNotifier?.addListener(_onExternalNotifierChanged);
   }
 
-  void _onTextChanged() {
+  void _onExternalNotifierChanged() {
     if (_isDisposed || !mounted) return;
+    _synchronizeControllerWithValueNotifier();
+  }
 
-    setState(() {
-      labelColor = _customSearchController.text.isNotEmpty
-          ? const Color(0xFF948F8F)
-          : const Color(0xFF000000);
-    });
+  void _synchronizeControllerWithValueNotifier() {
+    if (widget.valueNotifier != null) {
+      final String notifierText = widget.valueNotifier!.value ?? "";
+      if (_effectiveController.text != notifierText) {
+        _effectiveController.text = notifierText;
+      }
+    }
+  }
+
+  void _onInternalControllerTextChanged() {
+    if (_isDisposed || !mounted) return;
+    if (mounted) {
+      setState(() {
+        labelColor = _effectiveController.text.isNotEmpty
+            ? const Color(0xFF948F8F)
+            : const Color(0xFF000000);
+      });
+    }
+  }
+
+  @override
+  void didUpdateWidget(CustomSearchDropDownFormField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.controller != oldWidget.controller) {
+      _effectiveController.removeListener(_onInternalControllerTextChanged);
+      _effectiveController = widget.controller ?? (_effectiveController);
+      _effectiveController.addListener(_onInternalControllerTextChanged);
+      _synchronizeControllerWithValueNotifier();
+    }
+
+    if (widget.valueNotifier != oldWidget.valueNotifier) {
+      oldWidget.valueNotifier?.removeListener(_onExternalNotifierChanged);
+      widget.valueNotifier?.addListener(_onExternalNotifierChanged);
+      _synchronizeControllerWithValueNotifier();
+    }
+    else {
+      _synchronizeControllerWithValueNotifier();
+    }
   }
 
   @override
   void dispose() {
     _isDisposed = true;
-    _customSearchController.removeListener(_onTextChanged);
+    _effectiveController.removeListener(_onInternalControllerTextChanged);
+    widget.valueNotifier?.removeListener(_onExternalNotifierChanged);
     if (widget.controller == null) {
-      _customSearchController.dispose();
+      _effectiveController.dispose();
     }
     super.dispose();
   }
@@ -95,7 +132,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
         textFieldConfiguration: TextFieldConfiguration(
           enabled: widget.enabled,
           maxLength: widget.maxLength,
-          controller: _customSearchController,
+          controller: _effectiveController,
           onChanged: (value) {
             widget.onChanged!(value);
             widget.valueNotifier?.value = value;
@@ -151,7 +188,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
         onSuggestionSelected: (String? suggestion) {
           if (suggestion != null && suggestion.isNotEmpty && !_isDisposed) {
             setState(() {
-              _customSearchController.text = suggestion;
+              _effectiveController.text = suggestion;
               widget.onChanged!(suggestion);
               widget.valueNotifier?.value = suggestion;
               widget.onSelected?.call(suggestion);
