@@ -18,6 +18,7 @@ class CustomDatePickerFormField extends StatefulWidget {
   final String? Function([String?])? validator;
   final ValueNotifier<String> valueNotifier;
   final bool hide;
+  final bool allowPastDates;
 
   const CustomDatePickerFormField({
     super.key,
@@ -35,23 +36,34 @@ class CustomDatePickerFormField extends StatefulWidget {
     required this.maxLength,
     required this.type,
     required this.valueNotifier,
+    this.allowPastDates = false,
   });
 
   @override
-  State<CustomDatePickerFormField> createState() => _CustomDatePickerFormFieldState();
+  State<CustomDatePickerFormField> createState() =>
+      _CustomDatePickerFormFieldState();
 }
 
-class _CustomDatePickerFormFieldState extends State<CustomDatePickerFormField> with RestorationMixin {
+class _CustomDatePickerFormFieldState extends State<CustomDatePickerFormField>
+    with RestorationMixin {
   @override
   String? get restorationId => widget.restorationId;
 
   String _dateSelected = "";
 
   final RestorableDateTime _selectedDate = RestorableDateTime(DateTime.now());
-
-  late final RestorableRouteFuture<DateTime?> _restorableDatePickerRouteFuture = RestorableRouteFuture<DateTime?>(
+  late final RestorableRouteFuture<DateTime?> _restorableDatePickerRouteFuture =
+      RestorableRouteFuture<DateTime?>(
     onComplete: _selectDate,
-    onPresent: (NavigatorState navigator, Object? arguments) => navigator.restorablePush(_datePickerRoute, arguments: _selectedDate.value.millisecondsSinceEpoch),
+    onPresent: (NavigatorState navigator, Object? arguments) {
+      return navigator.restorablePush(
+        _datePickerRoute,
+        arguments: {
+          'allowPastDates': widget.allowPastDates,
+          'initialDate': _selectedDate.value.millisecondsSinceEpoch,
+        },
+      );
+    },
   );
 
   final TextEditingController _controller = TextEditingController();
@@ -61,21 +73,33 @@ class _CustomDatePickerFormFieldState extends State<CustomDatePickerFormField> w
     BuildContext context,
     Object? arguments,
   ) {
+    final Map<String, dynamic> args = arguments as Map<String, dynamic>;
+    final bool allowPastDates = args['allowPastDates'] as bool;
+    final int initialDateMillis = args['initialDate'] as int;
+
+    bool isSunday = (DateTime.now().weekday == DateTime.sunday);
+    DateTime today = DateTime.now();
+    DateTime tomorrow = today.add(const Duration(days: 1));
+
+    DateTime firstDate =
+        allowPastDates ? DateTime(1900) : (isSunday ? tomorrow : today);
+
+    DateTime lastDate = DateTime(DateTime.now().year + 10, 12, 31);
+
     return DialogRoute<DateTime>(
       context: context,
       builder: (BuildContext context) {
-        bool isSunday = (DateTime.now().weekday == DateTime.sunday);
-        DateTime today = DateTime.now();
-        DateTime tomorrow = today.add(const Duration(days: 1));
         return DatePickerDialog(
           restorationId: 'date_picker_dialog',
           initialEntryMode: DatePickerEntryMode.calendarOnly,
-          initialDate: (isSunday) ? tomorrow : today,
-          firstDate: (isSunday) ? tomorrow : today,
-          lastDate: DateTime(2030),
-          selectableDayPredicate: (DateTime day) {
-            return day.weekday != DateTime.sunday;
-          },
+          initialDate: DateTime.fromMillisecondsSinceEpoch(initialDateMillis),
+          firstDate: firstDate,
+          lastDate: lastDate,
+          selectableDayPredicate: allowPastDates
+              ? null
+              : (DateTime day) {
+                  return day.weekday != DateTime.sunday;
+                },
         );
       },
     );
@@ -84,7 +108,8 @@ class _CustomDatePickerFormFieldState extends State<CustomDatePickerFormField> w
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
     registerForRestoration(_selectedDate, 'selected_date');
-    registerForRestoration(_restorableDatePickerRouteFuture, 'date_picker_route_future');
+    registerForRestoration(
+        _restorableDatePickerRouteFuture, 'date_picker_route_future');
   }
 
   void _selectDate(DateTime? newSelectedDate) {
@@ -92,9 +117,7 @@ class _CustomDatePickerFormFieldState extends State<CustomDatePickerFormField> w
       setState(() {
         _selectedDate.value = newSelectedDate;
         _dateSelected = DateFormat('dd/MM/yyyy').format(_selectedDate.value);
-
         widget.valueNotifier.value = _dateSelected;
-
         widget.onChanged?.call(_dateSelected);
       });
     }

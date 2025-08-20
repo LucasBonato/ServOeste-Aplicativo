@@ -235,6 +235,7 @@ class FilterService extends StatelessWidget {
                                     provider.updateFilter(dataPrevista: null);
                                   }
                                 },
+                                allowPastDates: true,
                               ),
                               const SizedBox(height: 8),
                               CustomDatePickerFormField(
@@ -263,6 +264,7 @@ class FilterService extends StatelessWidget {
                                     provider.updateFilter(dataEfetiva: null);
                                   }
                                 },
+                                allowPastDates: true,
                               ),
                             ],
                           );
@@ -298,6 +300,7 @@ class FilterService extends StatelessWidget {
                                       provider.updateFilter(dataPrevista: null);
                                     }
                                   },
+                                  allowPastDates: true,
                                 ),
                               ),
                               Expanded(
@@ -329,6 +332,7 @@ class FilterService extends StatelessWidget {
                                       provider.updateFilter(dataEfetiva: null);
                                     }
                                   },
+                                  allowPastDates: true,
                                 ),
                               ),
                             ],
@@ -368,6 +372,7 @@ class FilterService extends StatelessWidget {
                                     provider.updateFilter(dataAbertura: null);
                                   }
                                 },
+                                allowPastDates: true,
                               ),
                               const SizedBox(height: 8),
                               CustomDropdownFormField(
@@ -416,6 +421,7 @@ class FilterService extends StatelessWidget {
                                       provider.updateFilter(dataAbertura: null);
                                     }
                                   },
+                                  allowPastDates: true,
                                 ),
                               ),
                               Expanded(

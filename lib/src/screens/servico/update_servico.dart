@@ -24,11 +24,7 @@ class UpdateServico extends StatefulWidget {
   final int id;
   final int clientId;
 
-  const UpdateServico({
-    super.key,
-    required this.id,
-    required this.clientId
-  });
+  const UpdateServico({super.key, required this.id, required this.clientId});
 
   @override
   State<UpdateServico> createState() => _UpdateServicoState();
@@ -45,7 +41,8 @@ class _UpdateServicoState extends State<UpdateServico> {
 
   final ServicoForm _servicoUpdateForm = ServicoForm();
   final ClienteForm _clienteUpdateForm = ClienteForm();
-  final ServicoValidator _servicoUpdateValidator = ServicoValidator(isUpdate: true);
+  final ServicoValidator _servicoUpdateValidator =
+      ServicoValidator(isUpdate: true);
   final GlobalKey<FormState> _servicoFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _clienteFormKey = GlobalKey<FormState>();
   bool deactivateClientFields = false;
@@ -77,9 +74,13 @@ class _UpdateServicoState extends State<UpdateServico> {
 
     List<String> enderecoParts = cliente.endereco?.split(',') ?? [];
 
-    _clienteUpdateForm.setRua(enderecoParts.isNotEmpty ? enderecoParts.first.trim() : '');
-    _clienteUpdateForm.setNumero(enderecoParts.length > 1 ? enderecoParts[1].trim() : '');
-    _clienteUpdateForm.setComplemento(enderecoParts.length > 2 ? enderecoParts.sublist(2).join(',').trim() : '');
+    _clienteUpdateForm
+        .setRua(enderecoParts.isNotEmpty ? enderecoParts.first.trim() : '');
+    _clienteUpdateForm
+        .setNumero(enderecoParts.length > 1 ? enderecoParts[1].trim() : '');
+    _clienteUpdateForm.setComplemento(enderecoParts.length > 2
+        ? enderecoParts.sublist(2).join(',').trim()
+        : '');
 
     _servicoUpdateForm.setIdCliente(cliente.id);
     _servicoUpdateForm.setNomeCliente(cliente.nome ?? '');
@@ -87,14 +88,15 @@ class _UpdateServicoState extends State<UpdateServico> {
   }
 
   void _populateServicoFormWithState(Servico servico) {
-    _nomeTecnicoController.text = servico.nomeTecnico?? "";
+    _nomeTecnicoController.text = servico.nomeTecnico ?? "";
     _servicoUpdateForm.setForm(servico);
   }
 
   bool _isValidForm() {
     _clienteFormKey.currentState?.validate();
     _servicoFormKey.currentState?.validate();
-    final ValidationResult response = _servicoUpdateValidator.validate(_servicoUpdateForm);
+    final ValidationResult response =
+        _servicoUpdateValidator.validate(_servicoUpdateForm);
     return response.isValid;
   }
 
@@ -105,10 +107,6 @@ class _UpdateServicoState extends State<UpdateServico> {
 
     Servico servico = Servico.fromForm(_servicoUpdateForm);
     _servicoBloc.add(ServicoUpdateEvent(servico: servico));
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Serviço atualizado com sucesso! (Caso ele não esteja atualizado, recarregue a página)')),
-    );
   }
 
   void _handleError(ServicoErrorState state) {
@@ -148,9 +146,9 @@ class _UpdateServicoState extends State<UpdateServico> {
       nomeController: _nomeClienteController,
       isJustShowFields: deactivateClientFields,
       bloc: _clienteBloc,
-      submitText: '',
       shouldBuildButton: false,
-      onSubmit: () {  },
+      onSubmit: () {},
+      submitText: '',
     );
   }
 
@@ -164,17 +162,22 @@ class _UpdateServicoState extends State<UpdateServico> {
       nameTecnicoController: _nomeTecnicoController,
       submitText: "",
       onSubmit: () {},
+      successMessage:
+          'Serviço atualizado com sucesso! (Caso ele não esteja atualizado, recarregue a página)',
       isUpdate: true,
     );
   }
 
   Widget _buildMainFormLayout(bool isMobile) {
-    final Widget serviceForm = CardBuilderForm(title: "Serviço", child: _buildServiceForm());
+    final Widget serviceForm =
+        CardBuilderForm(title: "Serviço", child: _buildServiceForm());
 
     final List<Widget> children = [
       CardBuilderForm(title: "Cliente", child: _buildClientForm()),
       const SizedBox(height: 12),
-      ElevatedFormButton(text: "Alterar Cliente", onPressed: () => _showClientSelectionModal(context)),
+      ElevatedFormButton(
+          text: "Alterar Cliente",
+          onPressed: () => _showClientSelectionModal(context)),
       if (isMobile) ...[
         const SizedBox(height: 12),
         serviceForm,
@@ -243,16 +246,16 @@ class _UpdateServicoState extends State<UpdateServico> {
                     children: _servicoUpdateForm.historico.value
                         .split('\n')
                         .expand((texto) => [
-                      Text(
-                        texto,
-                        textAlign: TextAlign.left,
-                      ),
-                      const Divider(
-                        color: Colors.black,
-                        thickness: 1,
-                        height: 10,
-                      ),
-                    ])
+                              Text(
+                                texto,
+                                textAlign: TextAlign.left,
+                              ),
+                              const Divider(
+                                color: Colors.black,
+                                thickness: 1,
+                                height: 10,
+                              ),
+                            ])
                         .toList()
                       ..removeLast(),
                   ),
@@ -290,7 +293,10 @@ class _UpdateServicoState extends State<UpdateServico> {
     return MultiBlocListener(
       listeners: [
         BlocListener<ServicoBloc, ServicoState>(
-          listenWhen: (previous, current) => current is ServicoSearchOneSuccessState || current is ServicoUpdateSuccessState || current is ServicoErrorState,
+          listenWhen: (previous, current) =>
+              current is ServicoSearchOneSuccessState ||
+              current is ServicoUpdateSuccessState ||
+              current is ServicoErrorState,
           listener: (context, state) {
             if (state is ServicoUpdateSuccessState) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -298,11 +304,9 @@ class _UpdateServicoState extends State<UpdateServico> {
                   Navigator.pop(context, true);
                 }
               });
-            }
-            else if (state is ServicoSearchOneSuccessState) {
+            } else if (state is ServicoSearchOneSuccessState) {
               _populateServicoFormWithState(state.servico);
-            }
-            else if (state is ServicoErrorState) {
+            } else if (state is ServicoErrorState) {
               _handleError(state);
             }
           },
@@ -316,49 +320,48 @@ class _UpdateServicoState extends State<UpdateServico> {
         ),
       ],
       child: BlocBuilder<ServicoBloc, ServicoState>(
-        buildWhen: (previous, current) => current is ServicoSearchOneSuccessState || current is ServicoSearchOneLoadingState,
+        buildWhen: (previous, current) =>
+            current is ServicoSearchOneSuccessState ||
+            current is ServicoSearchOneLoadingState,
         builder: (context, state) {
           return BaseFormScreen(
-            shouldActivateEvent: true,
-            sizeMultiplier: 2,
-            title: "Consultar/Atualizar Serviço",
-            actions: [
-              ReportMenuActionButton(
-                servicoBloc: _servicoBloc,
-                clienteBloc: _clienteBloc
-              ),
-            ],
-            child: Skeletonizer(
-              enabled: state is ServicoSearchOneLoadingState,
-              child: Column(
-                children: [
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      final bool isMobile = constraints.maxWidth < 950;
-                      return _buildMainFormLayout(isMobile);
-                    },
-                  ),
-                  const SizedBox(height: 24),
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 750),
-                    child: Column(
-                      children: [
-                        ElevatedFormButton(
-                          text: "Ver Histórico de Atendimento",
-                          onPressed: () => buildDescriptionHistoryDialog(context),
+              shouldActivateEvent: true,
+              sizeMultiplier: 2,
+              title: "Consultar/Atualizar Serviço",
+              actions: [
+                ReportMenuActionButton(
+                    servicoBloc: _servicoBloc, clienteBloc: _clienteBloc),
+              ],
+              child: Skeletonizer(
+                  enabled: state is ServicoSearchOneLoadingState,
+                  child: Column(
+                    children: [
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final bool isMobile = constraints.maxWidth < 950;
+                          return _buildMainFormLayout(isMobile);
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 750),
+                        child: Column(
+                          children: [
+                            ElevatedFormButton(
+                              text: "Ver Histórico de Atendimento",
+                              onPressed: () =>
+                                  buildDescriptionHistoryDialog(context),
+                            ),
+                            const SizedBox(height: 16),
+                            ElevatedFormButton(
+                              text: "Atualizar Serviço",
+                              onPressed: _updateServico,
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 16),
-                        ElevatedFormButton(
-                          text: "Atualizar Serviço",
-                          onPressed: _updateServico,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              )
-            )
-          );
+                      ),
+                    ],
+                  )));
         },
       ),
     );

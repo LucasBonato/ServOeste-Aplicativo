@@ -49,25 +49,27 @@ class TextInputField extends SearchInputField {
 class TextFormInputField extends SearchInputField {
   final List<TextInputFormatter>? formatter;
   final List<MaskTextInputFormatter>? mask;
-  final TextInputType keyboardType;
   final int maxLength;
   final String label;
+  final TextInputType keyboardType;
+  final TextEditingController? controller;
 
   TextFormInputField({
     required super.valueNotifier,
     required super.validator,
     required super.onChanged,
     required super.hint,
+    required this.keyboardType,
+    required this.label,
+    super.listenTo,
     super.shouldExpand = false,
     super.startNewRow = false,
     super.enabled = true,
     super.flex = 1,
-    super.listenTo,
-    required this.keyboardType,
-    required this.maxLength,
-    required this.label,
+    this.maxLength = 255,
     this.formatter,
     this.mask,
+    this.controller,
   });
 }
 

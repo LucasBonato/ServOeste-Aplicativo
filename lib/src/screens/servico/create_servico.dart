@@ -74,7 +74,7 @@ class _CreateServicoState extends State<CreateServico> {
 
   void _getClienteById(String id) {
     final clienteSelecionado = _clientes.firstWhere(
-          (cliente) => cliente.id.toString() == id,
+      (cliente) => cliente.id.toString() == id,
       orElse: () => Cliente(),
     );
 
@@ -86,8 +86,7 @@ class _CreateServicoState extends State<CreateServico> {
       setState(() {
         isClientAndService = false;
       });
-    }
-    else {
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Cliente não encontrado.'),
@@ -99,8 +98,7 @@ class _CreateServicoState extends State<CreateServico> {
   void _onSearchFieldChanged() {
     _isDataLoaded = false;
 
-    _debouncer.execute(() =>
-        _clienteBloc.add(
+    _debouncer.execute(() => _clienteBloc.add(
           ClienteSearchEvent(
             nome: _nomeClienteController.text,
             endereco: _enderecoController.text,
@@ -126,7 +124,8 @@ class _CreateServicoState extends State<CreateServico> {
     );
   }
 
-  void _setTableValues(String nomeTecnico, String data, String periodo, int idTecnico) {
+  void _setTableValues(
+      String nomeTecnico, String data, String periodo, int idTecnico) {
     _nomeTecnicoController.text = nomeTecnico;
     _servicoForm.setNomeTecnico(nomeTecnico);
     _servicoForm.setDataAtendimentoPrevisto(data);
@@ -163,7 +162,8 @@ class _CreateServicoState extends State<CreateServico> {
       _servicoBloc.add(
         ServicoRegisterPlusClientEvent(
           servico: ServicoRequest.fromServicoForm(servico: _servicoForm),
-          cliente: ClienteRequest.fromClienteForm(cliente: _clienteForm, sobrenome: sobrenomeCliente),
+          cliente: ClienteRequest.fromClienteForm(
+              cliente: _clienteForm, sobrenome: sobrenomeCliente),
         ),
       );
 
@@ -181,7 +181,9 @@ class _CreateServicoState extends State<CreateServico> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<ServicoBloc, ServicoState>(
-      listenWhen: (previous, current) => current is ServicoRegisterSuccessState || current is ServicoErrorState,
+      listenWhen: (previous, current) =>
+          current is ServicoRegisterSuccessState ||
+          current is ServicoErrorState,
       listener: (context, state) {
         if (state is TecnicoRegisterSuccessState) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -189,8 +191,7 @@ class _CreateServicoState extends State<CreateServico> {
               Navigator.pop(context, true);
             }
           });
-        }
-        else if (state is ServicoErrorState) {
+        } else if (state is ServicoErrorState) {
           ErrorEntity error = state.error;
           _servicoValidator.applyBackendError(error);
           _servicoFormKey.currentState?.validate();
@@ -213,39 +214,44 @@ class _CreateServicoState extends State<CreateServico> {
         }
       },
       child: BaseFormScreen(
-        title: isClientAndService ? "Adicionar Cliente/Serviço" : "Adicionar Serviço",
+        title: isClientAndService
+            ? "Adicionar Cliente/Serviço"
+            : "Adicionar Serviço",
         shouldActivateEvent: false,
         sizeMultiplier: 2,
         child: Skeletonizer(
-          enabled: false,
-          child: Column(
-            children: [
-              LayoutBuilder(
-                builder: (context, constraints) {
+            enabled: false,
+            child: Column(
+              children: [
+                LayoutBuilder(builder: (context, constraints) {
                   bool isMobile = constraints.maxWidth < 950;
                   return _buildMainFormLayout(isMobile);
-                }
-              ),
-              const SizedBox(height: 48),
-              ValueListenableBuilder<String>(
-                valueListenable: _servicoForm.equipamento,
-                builder: (context, equipamentoSelecionado, child) {
-                  return _buildButton(
-                    'Verificar disponibilidade',
-                    equipamentoSelecionado.isNotEmpty ? Colors.blue : Colors.grey.withValues(alpha: 0.5),
-                    equipamentoSelecionado.isNotEmpty ? _onShowAvailabilityTechnicianTable : () {},
-                  );
-                },
-              ),
-              const SizedBox(height: 16),
-              _buildButton(
-                isClientAndService ? 'Adicionar Cliente/Serviço' : 'Adicionar Serviço',
-                Colors.blue,
-                _onAddService,
-              ),
-            ],
-          )
-        ),
+                }),
+                const SizedBox(height: 48),
+                ValueListenableBuilder<String>(
+                  valueListenable: _servicoForm.equipamento,
+                  builder: (context, equipamentoSelecionado, child) {
+                    return _buildButton(
+                      'Verificar disponibilidade',
+                      equipamentoSelecionado.isNotEmpty
+                          ? Colors.blue
+                          : Colors.grey.withValues(alpha: 0.5),
+                      equipamentoSelecionado.isNotEmpty
+                          ? _onShowAvailabilityTechnicianTable
+                          : () {},
+                    );
+                  },
+                ),
+                const SizedBox(height: 16),
+                _buildButton(
+                  isClientAndService
+                      ? 'Adicionar Cliente/Serviço'
+                      : 'Adicionar Serviço',
+                  Colors.blue,
+                  _onAddService,
+                ),
+              ],
+            )),
       ),
     );
   }
@@ -257,13 +263,16 @@ class _CreateServicoState extends State<CreateServico> {
         if (!isClientAndService)
           Padding(
             padding: const EdgeInsets.only(top: 12),
-            child: CardBuilderForm(title: "Selecione um Cliente", child: _buildFilteredClientsTable()),
+            child: CardBuilderForm(
+                title: "Selecione um Cliente",
+                child: _buildFilteredClientsTable()),
           ),
         const SizedBox(height: 8),
         BuildFieldLabels(isClientAndService: isClientAndService),
       ],
     );
-    final Widget servicoSection = CardBuilderForm(title: "Serviço", child: _buildServiceForm());
+    final Widget servicoSection =
+        CardBuilderForm(title: "Serviço", child: _buildServiceForm());
 
     if (isMobile) {
       return Column(
@@ -311,12 +320,12 @@ class _CreateServicoState extends State<CreateServico> {
         if (state is ClienteSearchSuccessState && !_isDataLoaded) {
           _clientes = state.clientes;
           filteredClients = state.clientes
-              .map((cliente) =>
-              {
-                'id': cliente.id.toString(),
-                'nome': cliente.nome ?? '',
-                'endereco': '${cliente.municipio ?? ''} - ${cliente.bairro ?? ''} - ${cliente.endereco ?? ''}',
-              })
+              .map((cliente) => {
+                    'id': cliente.id.toString(),
+                    'nome': cliente.nome ?? '',
+                    'endereco':
+                        '${cliente.municipio ?? ''} - ${cliente.bairro ?? ''} - ${cliente.endereco ?? ''}',
+                  })
               .toList();
           _isDataLoaded = true;
         }
@@ -329,7 +338,10 @@ class _CreateServicoState extends State<CreateServico> {
     );
   }
 
-  Widget buildSearchField({required String hint, TextEditingController? controller, TextInputType? keyboardType}) =>
+  Widget buildSearchField(
+          {required String hint,
+          TextEditingController? controller,
+          TextInputType? keyboardType}) =>
       CustomSearchTextFormField(
         hint: hint,
         leftPadding: 4,
@@ -347,9 +359,10 @@ class _CreateServicoState extends State<CreateServico> {
         validator: _clienteValidator,
         formKey: _clienteFormKey,
         isClientAndService: isClientAndService,
+        isCreateCliente: true,
         shouldBuildButton: false,
+        onSubmit: () {},
         submitText: "",
-        onSubmit: () {}
       );
     }
     return Column(
@@ -375,9 +388,11 @@ class _CreateServicoState extends State<CreateServico> {
       validator: _servicoValidator,
       tecnicoBloc: _tecnicoBloc,
       nameTecnicoController: _nomeTecnicoController,
-      submitText: "",
       isClientAndService: isClientAndService,
-      onSubmit: () {}
+      onSubmit: () {},
+      submitText: "",
+      successMessage:
+          'Serviço registrado com sucesso! (Caso ele não esteja aparecendo, recarregue a página)',
     );
   }
 

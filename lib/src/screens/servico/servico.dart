@@ -6,7 +6,6 @@ import 'package:serv_oeste/src/components/layout/pagination_widget.dart';
 import 'package:serv_oeste/src/components/layout/responsive_search_inputs.dart';
 import 'package:serv_oeste/src/components/screen/cards/card_service.dart';
 import 'package:serv_oeste/src/components/screen/entity_not_found.dart';
-import 'package:serv_oeste/src/components/screen/error_component.dart';
 import 'package:serv_oeste/src/components/screen/expandable_fab_items.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
@@ -31,8 +30,10 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
 
   void _setFilterValues() {
     if (_servicoBloc.filterRequest != null) {
-      _nomeClienteController.text = _servicoBloc.filterRequest!.clienteNome ?? "";
-      _nomeTecnicoController.text = _servicoBloc.filterRequest!.tecnicoNome ?? "";
+      _nomeClienteController.text =
+          _servicoBloc.filterRequest!.clienteNome ?? "";
+      _nomeTecnicoController.text =
+          _servicoBloc.filterRequest!.tecnicoNome ?? "";
     }
   }
 
@@ -43,23 +44,21 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
         TextInputField(
             hint: "Nome do Cliente...",
             controller: _nomeClienteController,
-            keyboardType: TextInputType.text
-        ),
+            keyboardType: TextInputType.text),
         TextInputField(
             hint: "Nome do Técnico...",
             controller: _nomeTecnicoController,
-            keyboardType: TextInputType.text
-        ),
+            keyboardType: TextInputType.text),
       ],
-      onFilterTap: () =>
-          Navigator.of(context, rootNavigator: true)
-              .push(MaterialPageRoute(builder: (context) => FilterService()))
-              .then((_) => onSearchFieldChanged()),
+      onFilterTap: () => Navigator.of(context, rootNavigator: true)
+          .push(MaterialPageRoute(builder: (context) => FilterService()))
+          .then((_) => onSearchFieldChanged()),
     );
   }
 
   @override
-  Widget getUpdateScreen(int id, {int? secondId}) => UpdateServico(id: id, clientId: secondId!);
+  Widget getUpdateScreen(int id, {int? secondId}) =>
+      UpdateServico(id: id, clientId: secondId!);
 
   @override
   Widget buildDefaultFloatingActionButton() {
@@ -89,47 +88,45 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
   Widget buildSelectionFloatingActionButton(List<int> selectedIds) {
     return FloatingActionButtonRemove(
         removeMethod: () => disableSelectedItems(context, selectedIds),
-        tooltip: "Excluir serviços selecionados"
-    );
+        tooltip: "Excluir serviços selecionados");
   }
 
   @override
-  Widget buildItemCard(Servico servico, bool isSelected, bool isSelectMode, bool isSkeleton) {
+  Widget buildItemCard(
+      Servico servico, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return CardService(
-      onDoubleTap: () => onNavigateToUpdateScreen(servico.id, onSearchFieldChanged, secondId: servico.idCliente),
-      onLongPress: () => onSelectItemList(servico.id),
-      onTap: () {
-        if (isSelectMode) {
-          onSelectItemList(servico.id);
-        }
-      },
-      codigo: servico.id,
-      cliente: servico.nomeCliente,
-      tecnico: servico.nomeTecnico,
-      equipamento: servico.equipamento,
-      marca: servico.marca,
-      filial: servico.filial,
-      horario: servico.horarioPrevisto,
-      dataPrevista: servico.dataAtendimentoPrevisto,
-      dataEfetiva: servico.dataAtendimentoEfetivo,
-      dataFechamento: servico.dataFechamento,
-      dataFinalGarantia: servico.dataFimGarantia,
-      status: servico.situacao,
-      isSelected: isSelected,
-      isSkeleton: isSkeleton
-    );
+        onDoubleTap: () => onNavigateToUpdateScreen(
+            servico.id, onSearchFieldChanged,
+            secondId: servico.idCliente),
+        onLongPress: () => onSelectItemList(servico.id),
+        onTap: () {
+          if (isSelectMode) {
+            onSelectItemList(servico.id);
+          }
+        },
+        codigo: servico.id,
+        cliente: servico.nomeCliente,
+        tecnico: servico.nomeTecnico,
+        equipamento: servico.equipamento,
+        marca: servico.marca,
+        filial: servico.filial,
+        horario: servico.horarioPrevisto,
+        dataPrevista: servico.dataAtendimentoPrevisto,
+        dataEfetiva: servico.dataAtendimentoEfetivo,
+        dataFechamento: servico.dataFechamento,
+        dataFinalGarantia: servico.dataFimGarantia,
+        status: servico.situacao,
+        isSelected: isSelected,
+        isSkeleton: isSkeleton);
   }
 
   @override
   void searchFieldChanged() {
-    _servicoBloc.add(
-      ServicoLoadingEvent(
+    _servicoBloc.add(ServicoLoadingEvent(
         filterRequest: ServicoFilterRequest(
-          clienteNome: _nomeClienteController.text,
-          tecnicoNome: _nomeTecnicoController.text,
-        )
-      )
-    );
+      clienteNome: _nomeClienteController.text,
+      tecnicoNome: _nomeTecnicoController.text,
+    )));
   }
 
   @override
@@ -139,7 +136,7 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text(
-          'Serviço deletado com sucesso! (Caso ele continue aparecendo, recarregue a página)',
+          'Serviço deletado com sucesso! (Caso ele não esteja deletado, recarregue a página)',
         ),
       ),
     );
@@ -186,7 +183,8 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
                         Expanded(
                           child: stateServico.servicos.isNotEmpty
                               ? buildGridOfCards(stateServico.servicos, 0.9)
-                              : const EntityNotFound(message: "Nenhum serviço encontrado."),
+                              : const EntityNotFound(
+                                  message: "Nenhum serviço encontrado."),
                         ),
                         if (stateServico.totalPages > 1)
                           PaginationWidget(
@@ -204,12 +202,12 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
                         const SizedBox(height: 16),
                       ],
                     );
-                  }
-                  else if (stateServico is ServicoSearchSuccessState) {
+                  } else if (stateServico is ServicoSearchSuccessState) {
                     if (stateServico.servicos.isNotEmpty) {
                       return buildGridOfCards(stateServico.servicos, 0.9);
                     }
-                    return const EntityNotFound(message: "Nenhum serviço encontrado.");
+                    return const EntityNotFound(
+                        message: "Nenhum serviço encontrado.");
                   }
                   return Skeletonizer(
                     enableSwitchAnimation: true,

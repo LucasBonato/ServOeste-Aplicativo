@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -6,10 +5,8 @@ import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/shared/formatters.dart';
 
-Future<void> generateOrcamentoPDF({
-  required Servico servico,
-  required Cliente cliente
-}) async {
+Future<void> generateOrcamentoPDF(
+    {required Servico servico, required Cliente cliente}) async {
   final pdf = pw.Document();
   final logo = await imageFromAssetBundle('assets/servOeste.png');
   final outputFileName = 'orcamento_${servico.id}.pdf';

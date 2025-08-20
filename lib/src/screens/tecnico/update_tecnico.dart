@@ -22,7 +22,8 @@ class UpdateTecnico extends StatefulWidget {
 class _UpdateTecnicoState extends State<UpdateTecnico> {
   late final TecnicoBloc bloc;
   final TecnicoForm form = TecnicoForm();
-  final ValueNotifier<String> dropDownSituacaoValue = ValueNotifier<String>(Constants.situationTecnicoList.first);
+  final ValueNotifier<String> dropDownSituacaoValue =
+      ValueNotifier<String>(Constants.situationTecnicoList.first);
   final TextEditingController nomeController = TextEditingController();
   final Map<String, String> situationMap = {
     'ATIVO': 'Ativo',
@@ -47,13 +48,18 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
   void _fillForm(Tecnico tecnico) {
     form.setId(widget.id);
     form.setNome("${tecnico.nome} ${tecnico.sobrenome}");
-    form.setTelefoneFixo(tecnico.telefoneFixo!.isEmpty ? "" : Formatters.applyTelefoneMask(tecnico.telefoneFixo!));
-    form.setTelefoneCelular(tecnico.telefoneCelular!.isEmpty ? "" : Formatters.applyCelularMask(tecnico.telefoneCelular!));
+    form.setTelefoneFixo(tecnico.telefoneFixo!.isEmpty
+        ? ""
+        : Formatters.applyTelefoneMask(tecnico.telefoneFixo!));
+    form.setTelefoneCelular(tecnico.telefoneCelular!.isEmpty
+        ? ""
+        : Formatters.applyCelularMask(tecnico.telefoneCelular!));
 
     nomeController.text = form.nome.value;
 
     final String tecnicoSituacao = tecnico.situacao ?? '';
-    final String mappedSituacao = situationMap[tecnicoSituacao] ?? 'Situação...';
+    final String mappedSituacao =
+        situationMap[tecnicoSituacao] ?? 'Situação...';
 
     dropDownSituacaoValue.value = mappedSituacao;
     form.setSituacao(mappedSituacao);
@@ -78,7 +84,9 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<TecnicoBloc, TecnicoState>(
-      listenWhen: (previous, current) => current is TecnicoUpdateSuccessState || current is TecnicoSearchOneSuccessState,
+      listenWhen: (previous, current) =>
+          current is TecnicoUpdateSuccessState ||
+          current is TecnicoSearchOneSuccessState,
       listener: (context, state) {
         if (state is TecnicoUpdateSuccessState) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -86,14 +94,15 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
               Navigator.pop(context, true);
             }
           });
-        }
-        else if (state is TecnicoSearchOneSuccessState) {
+        } else if (state is TecnicoSearchOneSuccessState) {
           _fillForm(state.tecnico);
         }
       },
       child: BlocBuilder<TecnicoBloc, TecnicoState>(
         bloc: bloc,
-        buildWhen: (previous, current) => current is TecnicoSearchOneSuccessState || current is TecnicoSearchOneLoadingState,
+        buildWhen: (previous, current) =>
+            current is TecnicoSearchOneSuccessState ||
+            current is TecnicoSearchOneLoadingState,
         builder: (context, state) {
           return TecnicoFormPage(
             isSkeleton: state is TecnicoSearchOneLoadingState,
@@ -103,6 +112,8 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
             tecnicoForm: form,
             nomeController: nomeController,
             isUpdate: true,
+            successMessage:
+                'Técnico atualizado com sucesso! (Caso ele não esteja atualizado, recarregue a página)',
             checkersMap: checkersMap,
             situationMap: situationMap,
             onSubmit: () {
@@ -113,9 +124,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
               form.setNome(nome);
 
               bloc.add(TecnicoUpdateEvent(
-                tecnico: Tecnico.fromForm(form),
-                sobrenome: sobrenome
-              ));
+                  tecnico: Tecnico.fromForm(form), sobrenome: sobrenome));
 
               form.setNome("$nome $sobrenome");
             },

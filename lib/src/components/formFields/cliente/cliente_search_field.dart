@@ -1,4 +1,3 @@
-
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -61,9 +60,8 @@ class _ClienteSearchFieldState extends State<ClienteSearchField> {
   }
 
   void _handleSelected(String name) {
-    final Cliente? match = _clientes.firstWhereOrNull(
-      (cliente) => cliente.nome == name
-    );
+    final Cliente? match =
+        _clientes.firstWhereOrNull((cliente) => cliente.nome == name);
     if (match != null) {
       widget.onSelected?.call(match);
     }
@@ -75,10 +73,8 @@ class _ClienteSearchFieldState extends State<ClienteSearchField> {
       listener: (context, state) {
         if (state is ClienteSearchSuccessState) {
           _clientes = state.clientes;
-          final names = state.clientes
-              .take(5)
-              .map((cliente) => cliente.nome!)
-              .toList();
+          final names =
+              state.clientes.take(5).map((cliente) => cliente.nome!).toList();
           _names.value = names;
         }
       },
@@ -102,12 +98,12 @@ class _ClienteSearchFieldState extends State<ClienteSearchField> {
       ),
     );
 
-    return (widget.tooltipMessage?.isNotEmpty?? false)
+    return (widget.tooltipMessage?.isNotEmpty ?? false)
         ? Tooltip(
-          message: (enabled) ? "" : widget.tooltipMessage!,
-          textAlign: TextAlign.center,
-          child: field,
-        )
+            message: (enabled) ? "" : widget.tooltipMessage!,
+            textAlign: TextAlign.center,
+            child: field,
+          )
         : field;
   }
 

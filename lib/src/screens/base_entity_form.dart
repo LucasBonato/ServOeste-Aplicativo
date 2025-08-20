@@ -13,6 +13,7 @@ class BaseEntityForm<B extends StateStreamable<S>, S> extends StatefulWidget {
   final GlobalKey<FormState> formKey;
   final BuildFormFields buildFields;
   final Future<void> Function() onSubmit;
+  final String Function(S state)? getSuccessMessage;
   final B bloc;
   final String submitText;
   final double space;
@@ -23,56 +24,57 @@ class BaseEntityForm<B extends StateStreamable<S>, S> extends StatefulWidget {
   final String Function(S state)? getErrorMessage;
   final VoidCallback? onSuccess;
 
-  const BaseEntityForm({
-    super.key,
-    required this.formKey,
-    required this.buildFields,
-    required this.onSubmit,
-    required this.bloc,
-    required this.submitText,
-    required this.isLoading,
-    required this.isSuccess,
-    required this.isError,
-    this.getErrorMessage,
-    this.onSuccess,
-    this.space = 8,
-    this.shouldBuildButton = true
-  });
+  const BaseEntityForm(
+      {super.key,
+      required this.formKey,
+      required this.buildFields,
+      required this.onSubmit,
+      required this.getSuccessMessage,
+      required this.bloc,
+      required this.submitText,
+      required this.isLoading,
+      required this.isSuccess,
+      required this.isError,
+      this.getErrorMessage,
+      this.onSuccess,
+      this.space = 8,
+      this.shouldBuildButton = true});
 
   @override
   State<BaseEntityForm<B, S>> createState() => _BaseEntityFormState<B, S>();
 }
 
-class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEntityForm<B, S>> {
-  Widget _buildFormContent(BuildContext context, bool isLargeScreen, List<Object> currentFields) {
+class _BaseEntityFormState<B extends StateStreamable<S>, S>
+    extends State<BaseEntityForm<B, S>> {
+  Widget _buildFormContent(
+      BuildContext context, bool isLargeScreen, List<Object> currentFields) {
     final fields = isLargeScreen
         ? _buildLargeScreenFormFields(currentFields)
         : _buildSmallScreenFormFields(currentFields);
 
     final button = widget.shouldBuildButton
-      ? [
-          SizedBox(height: 24),
-          BlocBuilder<B, S>(
-            builder: (context, state) {
-              return ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 650),
-                child: ElevatedFormButton(
-                  text: widget.submitText,
-                  onPressed: widget.isLoading(context.read<B>().state) ? null : widget.onSubmit,
-                ),
-              );
-            },
-          ),
-        ]
-      : [];
+        ? [
+            SizedBox(height: 24),
+            BlocBuilder<B, S>(
+              builder: (context, state) {
+                return ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 650),
+                  child: ElevatedFormButton(
+                    text: widget.submitText,
+                    onPressed: widget.isLoading(context.read<B>().state)
+                        ? null
+                        : widget.onSubmit,
+                  ),
+                );
+              },
+            ),
+          ]
+        : [];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        ...fields,
-        ...button
-      ],
+      children: [...fields, ...button],
     );
   }
 
@@ -95,8 +97,7 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
         onChanged: field.onChanged,
         enabled: field.enabled,
       );
-    }
-    else if (field is DropdownInputField) {
+    } else if (field is DropdownInputField) {
       return CustomDropdownFormField(
         leftPadding: 4,
         rightPadding: 4,
@@ -110,8 +111,7 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
           field.onChanged?.call(value);
         },
       );
-    }
-    else if (field is DropdownSearchInputField) {
+    } else if (field is DropdownSearchInputField) {
       return CustomSearchDropDownFormField(
         leftPadding: 4,
         rightPadding: 4,
@@ -122,8 +122,7 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
         onChanged: field.onChanged,
         enabled: field.enabled,
       );
-    }
-    else if (field is DatePickerInputField) {
+    } else if (field is DatePickerInputField) {
       return CustomDatePickerFormField(
         label: field.hint,
         hint: "dd/mm/aaaa",
@@ -162,9 +161,8 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
           flushRow();
         }
         if (field is Wrap && field.children.length > 1) {
-          currentRow = field.children
-              .map((input) => Expanded(child: input))
-              .toList();
+          currentRow =
+              field.children.map((input) => Expanded(child: input)).toList();
           flushRow();
           continue;
         }
@@ -177,13 +175,10 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
       Widget formField = _buildFormField(field);
 
       if (field.listenTo != null && field.listenTo!.isNotEmpty) {
-        // This AnimatedBuilder is a way to use the `Listenable.merge` without problem,
-        // if u know a better way to do this please refactor this piece of code
         formField = AnimatedBuilder(
-          animation: Listenable.merge(field.listenTo!),
-          builder: (context, child) => child!,
-          child: formField
-        );
+            animation: Listenable.merge(field.listenTo!),
+            builder: (context, child) => child!,
+            child: formField);
       }
 
       if (field.startNewRow && currentRow.isNotEmpty) {
@@ -193,8 +188,7 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
       if (field.shouldExpand) {
         formField = Expanded(flex: field.flex, child: formField);
         currentRow.add(formField);
-      }
-      else {
+      } else {
         if (currentRow.isNotEmpty) {
           flushRow();
         }
@@ -230,17 +224,17 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
 
   List<Widget> _buildSmallScreenFormFields(List<Object> fields) {
     return fields
-      .map((field) {
-        if (field is Widget) {
-          return field;
-        }
-        if (field is SearchInputField) {
-          return _buildFormField(field);
-        }
-        return const SizedBox.shrink();
-      })
-      .expand((element) => [element, SizedBox(height: widget.space)])
-      .toList()
+        .map((field) {
+          if (field is Widget) {
+            return field;
+          }
+          if (field is SearchInputField) {
+            return _buildFormField(field);
+          }
+          return const SizedBox.shrink();
+        })
+        .expand((element) => [element, SizedBox(height: widget.space)])
+        .toList()
       ..removeLast();
   }
 
@@ -252,12 +246,16 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
         if (widget.isSuccess(state)) {
           widget.onSuccess?.call();
           Navigator.pop(context, true);
+
+          final successMessage = widget.getSuccessMessage?.call(state) ??
+              'Operação realizada com sucesso!';
+
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Registro adicionado com sucesso!')),
+            SnackBar(content: Text(successMessage)),
           );
-        }
-        else if (widget.isError(state)) {
-          final errorMessage = widget.getErrorMessage?.call(state) ?? "Erro ao salvar registro";
+        } else if (widget.isError(state)) {
+          final errorMessage = widget.getErrorMessage?.call(state) ??
+              "Erro ao realizar operação";
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(errorMessage)),
           );

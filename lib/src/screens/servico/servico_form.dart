@@ -15,6 +15,7 @@ import 'package:serv_oeste/src/shared/input_masks.dart';
 
 class ServicoFormWidget extends StatelessWidget {
   final String submitText;
+  final String successMessage;
   final bool isUpdate;
   final bool isClientAndService;
   final ServicoBloc bloc;
@@ -31,8 +32,9 @@ class ServicoFormWidget extends StatelessWidget {
     this.isClientAndService = false,
     required this.nameTecnicoController,
     required this.tecnicoBloc,
-    required this.submitText,
     required this.onSubmit,
+    required this.submitText,
+    required this.successMessage,
     required this.bloc,
     required this.form,
     this.validator,
@@ -41,9 +43,10 @@ class ServicoFormWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<FormState> formKey = this.formKey?? GlobalKey<FormState>();
-    final ServicoValidator validator = this.validator?? ServicoValidator();
-    final TextEditingController nameTecnicoController = this.nameTecnicoController;
+    final GlobalKey<FormState> formKey = this.formKey ?? GlobalKey<FormState>();
+    final ServicoValidator validator = this.validator ?? ServicoValidator();
+    final TextEditingController nameTecnicoController =
+        this.nameTecnicoController;
     final Map<String, List<String>> disabledSituationsByField = {
       "nomeTecnico": [
         'Aguardando agendamento',
@@ -143,7 +146,8 @@ class ServicoFormWidget extends StatelessWidget {
       "dataInicioGarantia": ValueNotifier(false),
       "dataFinalGarantia": ValueNotifier(false),
     };
-    bool isInputEnabled() => (isClientAndService || form.idCliente.value != null);
+    bool isInputEnabled() =>
+        (isClientAndService || form.idCliente.value != null);
     bool enabled = isInputEnabled();
 
     void updateEnabledFields() {
@@ -170,7 +174,8 @@ class ServicoFormWidget extends StatelessWidget {
     }
 
     void updateServiceSituation(String value) {
-      Logger().w("Atualizando situação para: $value (Nível: ${getServiceLevel(value)})");
+      Logger().w(
+          "Atualizando situação para: $value (Nível: ${getServiceLevel(value)})");
 
       form.situacao.value = value;
       form.setSituacao(value);
@@ -178,11 +183,13 @@ class ServicoFormWidget extends StatelessWidget {
     }
 
     void handleSituationChange(String value) {
-      final String previousValue = form.situacao.value.convertEnumStatusToString();
+      final String previousValue =
+          form.situacao.value.convertEnumStatusToString();
       final int currentLevel = getServiceLevel(previousValue);
       final int newLevel = getServiceLevel(value);
 
-      Logger().w("Mudando de $previousValue (Nível: $currentLevel) para $value (Nível: $newLevel)");
+      Logger().w(
+          "Mudando de $previousValue (Nível: $currentLevel) para $value (Nível: $newLevel)");
 
       if (currentLevel > newLevel) {
         WidgetsBinding.instance.addPostFrameCallback(
@@ -196,9 +203,11 @@ class ServicoFormWidget extends StatelessWidget {
                   ),
                   title: Row(
                     children: [
-                      Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 28),
+                      Icon(Icons.warning_amber_rounded,
+                          color: Colors.orange, size: 28),
                       SizedBox(width: 8),
-                      Text("Aviso!", style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text("Aviso!",
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                     ],
                   ),
                   content: Text(
@@ -219,7 +228,9 @@ class ServicoFormWidget extends StatelessWidget {
                         form.situacao.value = previousValue;
                         form.setSituacao(previousValue);
                       },
-                      child: Text("Cancelar", style: TextStyle(color: Colors.grey[700], fontSize: 16)),
+                      child: Text("Cancelar",
+                          style:
+                              TextStyle(color: Colors.grey[700], fontSize: 16)),
                     ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -232,7 +243,8 @@ class ServicoFormWidget extends StatelessWidget {
                         Navigator.pop(context);
                         updateServiceSituation(value);
                       },
-                      child: Text("Confirmar", style: TextStyle(color: Colors.white, fontSize: 14)),
+                      child: Text("Confirmar",
+                          style: TextStyle(color: Colors.white, fontSize: 14)),
                     ),
                   ],
                 );
@@ -243,8 +255,7 @@ class ServicoFormWidget extends StatelessWidget {
             }
           },
         );
-      }
-      else {
+      } else {
         updateServiceSituation(value);
       }
     }
@@ -260,7 +271,12 @@ class ServicoFormWidget extends StatelessWidget {
         formKey: formKey,
         submitText: submitText,
         isLoading: (state) => state is ServicoLoadingState,
-        isSuccess: (state) => isUpdate ? state is ServicoUpdateSuccessState : state is ServicoRegisterSuccessState,
+        isSuccess: (state) => isUpdate
+            ? state is ServicoUpdateSuccessState
+            : state is ServicoRegisterSuccessState,
+        getSuccessMessage: (state) {
+          return successMessage;
+        },
         isError: (state) => state is ServicoErrorState,
         shouldBuildButton: false,
         onSubmit: () async {
@@ -302,8 +318,7 @@ class ServicoFormWidget extends StatelessWidget {
             listenTo: [
               form.equipamento,
               form.idCliente,
-              if (isUpdate)
-                fieldEnabledNotifiers["nomeTecnico"]!
+              if (isUpdate) fieldEnabledNotifiers["nomeTecnico"]!
             ],
             enabledCalculator: () {
               bool isEquipamentoNotEmpty = form.equipamento.value.isNotEmpty;
@@ -314,8 +329,10 @@ class ServicoFormWidget extends StatelessWidget {
               bool isFieldEnabled = isUpdate
                   ? (isEnabled && (isEquipamentoNotEmpty || hasCliente))
                   : (isClientAndService)
-                      ? (isEquipamentoNotEmpty || (!isClientAndService || hasCliente))
-                      : (isEquipamentoNotEmpty && (isClientAndService || hasCliente));
+                      ? (isEquipamentoNotEmpty ||
+                          (!isClientAndService || hasCliente))
+                      : (isEquipamentoNotEmpty &&
+                          (isClientAndService || hasCliente));
 
               return isFieldEnabled;
             },
@@ -324,66 +341,67 @@ class ServicoFormWidget extends StatelessWidget {
               form.setIdTecnico(tecnico.id);
             },
             buildSearchEvent: (name) => TecnicoSearchEvent(
-              nome: name,
-              equipamento: form.equipamento.value,
-              situacao: TechnicalStatus.ativo.status
-            ),
+                nome: name,
+                equipamento: form.equipamento.value,
+                situacao: TechnicalStatus.ativo.status),
           ), // Técnico
 
           DropdownInputField(
-            hint: "Horário*",
-            dropdownValues: Constants.dataAtendimento,
-            valueNotifier: form.horario,
-            validator: validator.byField(form, ErrorCodeKey.horario.name),
-            onChanged: form.setHorario,
-            enabled: enabled,
-            listenTo: isUpdate ? [fieldEnabledNotifiers["horario"]!] : null,
-            shouldExpand: true
-          ), // Horário
+              hint: "Horário*",
+              dropdownValues: Constants.dataAtendimento,
+              valueNotifier: form.horario,
+              validator: validator.byField(form, ErrorCodeKey.horario.name),
+              onChanged: form.setHorario,
+              enabled: enabled,
+              listenTo: isUpdate ? [fieldEnabledNotifiers["horario"]!] : null,
+              shouldExpand: true), // Horário
           DropdownInputField(
-            hint: "Filial*",
-            dropdownValues: Constants.filiais,
-            valueNotifier: form.filial,
-            validator: validator.byField(form, ErrorCodeKey.filial.name),
-            onChanged: form.setFilial,
-            enabled: enabled,
-            shouldExpand: true
-          ), // Filial
+              hint: "Filial*",
+              dropdownValues: Constants.filiais,
+              valueNotifier: form.filial,
+              validator: validator.byField(form, ErrorCodeKey.filial.name),
+              onChanged: form.setFilial,
+              enabled: enabled,
+              shouldExpand: true), // Filial
 
           DatePickerInputField(
-            startNewRow: true,
-            shouldExpand: isUpdate,
-            hint: "Data Prevista",
-            valueNotifier: form.dataAtendimentoPrevisto,
-            validator: validator.byField(form, ErrorCodeKey.dataAtendimentoPrevisto.name),
-            onChanged: form.setDataAtendimentoPrevisto,
-            listenTo: isUpdate ? [fieldEnabledNotifiers["dataAtendimentoPrevisto"]!] : null,
-            enabled: enabled
-          ), // Data Atendimento Prevista
+              startNewRow: true,
+              shouldExpand: isUpdate,
+              hint: "Data Prevista",
+              valueNotifier: form.dataAtendimentoPrevisto,
+              validator: validator.byField(
+                  form, ErrorCodeKey.dataAtendimentoPrevisto.name),
+              onChanged: form.setDataAtendimentoPrevisto,
+              listenTo: isUpdate
+                  ? [fieldEnabledNotifiers["dataAtendimentoPrevisto"]!]
+                  : null,
+              enabled: enabled), // Data Atendimento Prevista
           if (isUpdate) ...[
             DatePickerInputField(
-              shouldExpand: true,
-              hint: "Data Efetiva*",
-              valueNotifier: form.dataAtendimentoEfetivo,
-              validator: validator.byField(form, ErrorCodeKey.dataAtendimentoEfetivo.name),
-              onChanged: form.setDataAtendimentoEfetivo,
-              listenTo: isUpdate ? [fieldEnabledNotifiers["dataAtendimentoEfetivo"]!] : null,
-              enabled: enabled
-            ), // Data Atendimento Efetiva
+                shouldExpand: true,
+                hint: "Data Efetiva*",
+                valueNotifier: form.dataAtendimentoEfetivo,
+                validator: validator.byField(
+                    form, ErrorCodeKey.dataAtendimentoEfetivo.name),
+                onChanged: form.setDataAtendimentoEfetivo,
+                listenTo: isUpdate
+                    ? [fieldEnabledNotifiers["dataAtendimentoEfetivo"]!]
+                    : null,
+                enabled: enabled), // Data Atendimento Efetiva
 
             TextFormInputField(
-              hint: "9.999,99",
-              label: "Valor Serviço*",
-              maxLength: 13,
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-              valueNotifier: form.valor,
-              onChanged: form.setValorServico,
-              validator: validator.byField(form, ErrorCodeKey.valor.name),
-              shouldExpand: true,
-              formatter: InputMasks.currency,
-              listenTo: isUpdate ? [fieldEnabledNotifiers["valorServico"]!] : null,
-              startNewRow: true
-            ), // Valor Serviço
+                hint: "9.999,99",
+                label: "Valor Serviço*",
+                maxLength: 13,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                valueNotifier: form.valor,
+                onChanged: form.setValorServico,
+                validator: validator.byField(form, ErrorCodeKey.valor.name),
+                shouldExpand: true,
+                formatter: InputMasks.currency,
+                listenTo:
+                    isUpdate ? [fieldEnabledNotifiers["valorServico"]!] : null,
+                startNewRow: true), // Valor Serviço
             TextFormInputField(
               hint: "9.999,99",
               label: "Valor Peças*",
@@ -393,7 +411,8 @@ class ServicoFormWidget extends StatelessWidget {
               onChanged: form.setValorPecas,
               validator: validator.byField(form, ErrorCodeKey.valorPecas.name),
               shouldExpand: true,
-              listenTo: isUpdate ? [fieldEnabledNotifiers["valorPecas"]!] : null,
+              listenTo:
+                  isUpdate ? [fieldEnabledNotifiers["valorPecas"]!] : null,
               formatter: InputMasks.currency,
             ), // Valor Peças
 
@@ -404,29 +423,33 @@ class ServicoFormWidget extends StatelessWidget {
               keyboardType: TextInputType.numberWithOptions(decimal: true),
               valueNotifier: form.valorComissao,
               onChanged: form.setValorComissao,
-              validator: validator.byField(form, ErrorCodeKey.valorComissao.name),
+              validator:
+                  validator.byField(form, ErrorCodeKey.valorComissao.name),
               shouldExpand: true,
               startNewRow: true,
               formatter: InputMasks.currency,
               enabled: false,
             ), // Valor Comissão
             DropdownInputField(
-              hint: "Forma de Pagamento*",
-              dropdownValues: Constants.formasPagamento,
-              valueNotifier: form.formaPagamento,
-              validator: validator.byField(form, ErrorCodeKey.formaPagamento.name),
-              onChanged: form.setFormaPagamento,
-              enabled: enabled,
-              listenTo: isUpdate ? [fieldEnabledNotifiers["formaPagamento"]!] : null,
-              shouldExpand: true
-            ), // Forma Pagamento
+                hint: "Forma de Pagamento*",
+                dropdownValues: Constants.formasPagamento,
+                valueNotifier: form.formaPagamento,
+                validator:
+                    validator.byField(form, ErrorCodeKey.formaPagamento.name),
+                onChanged: form.setFormaPagamento,
+                enabled: enabled,
+                listenTo: isUpdate
+                    ? [fieldEnabledNotifiers["formaPagamento"]!]
+                    : null,
+                shouldExpand: true), // Forma Pagamento
 
             DatePickerInputField(
               startNewRow: true,
               shouldExpand: true,
               valueNotifier: form.dataPagamentoComissao,
               onChanged: form.setDataPagamentoComissao,
-              validator: validator.byField(form, ErrorCodeKey.dataPagamentoComissao.name),
+              validator: validator.byField(
+                  form, ErrorCodeKey.dataPagamentoComissao.name),
               hint: "Data Pgto. comissão",
               listenTo: [fieldEnabledNotifiers["dataPagamentoComissao"]!],
               enabled: enabled,
@@ -435,7 +458,8 @@ class ServicoFormWidget extends StatelessWidget {
               shouldExpand: true,
               valueNotifier: form.dataFechamento,
               onChanged: form.setDataFechamento,
-              validator: validator.byField(form, ErrorCodeKey.dataEncerramento.name),
+              validator:
+                  validator.byField(form, ErrorCodeKey.dataEncerramento.name),
               hint: "Data Encerramento*",
               listenTo: [fieldEnabledNotifiers["dataFechamento"]!],
               enabled: enabled,
@@ -451,36 +475,35 @@ class ServicoFormWidget extends StatelessWidget {
             ), // Situação
 
             DatePickerInputField(
-              startNewRow: true,
-              shouldExpand: true,
-              hint: "Data Início da Garantia*",
-              valueNotifier: form.dataInicioGarantia,
-              validator: validator.byField(form, ErrorCodeKey.dataInicioGarantia.name),
-              onChanged: form.setDataInicioGarantia,
-              listenTo: [fieldEnabledNotifiers["dataInicioGarantia"]!],
-              enabled: enabled
-            ), // Data Inicio Garantia
+                startNewRow: true,
+                shouldExpand: true,
+                hint: "Data Início da Garantia*",
+                valueNotifier: form.dataInicioGarantia,
+                validator: validator.byField(
+                    form, ErrorCodeKey.dataInicioGarantia.name),
+                onChanged: form.setDataInicioGarantia,
+                listenTo: [fieldEnabledNotifiers["dataInicioGarantia"]!],
+                enabled: enabled), // Data Inicio Garantia
             DatePickerInputField(
-              shouldExpand: true,
-              hint: "Data Final da Garantia*",
-              valueNotifier: form.dataFinalGarantia,
-              validator: validator.byField(form, ErrorCodeKey.dataFinalGarantia.name),
-              onChanged: form.setDataFinalGarantia,
-              listenTo: [fieldEnabledNotifiers["dataFinalGarantia"]!],
-              enabled: enabled
-            ), // Data Final Garantia
+                shouldExpand: true,
+                hint: "Data Final da Garantia*",
+                valueNotifier: form.dataFinalGarantia,
+                validator: validator.byField(
+                    form, ErrorCodeKey.dataFinalGarantia.name),
+                onChanged: form.setDataFinalGarantia,
+                listenTo: [fieldEnabledNotifiers["dataFinalGarantia"]!],
+                enabled: enabled), // Data Final Garantia
           ],
 
           TextFormInputField(
-            hint: "Descrição/Observação...",
-            label: "Descrição/Observação*",
-            maxLength: 255,
-            keyboardType: TextInputType.multiline,
-            valueNotifier: form.descricao,
-            validator: validator.byField(form, ErrorCodeKey.descricao.name),
-            onChanged: form.setDescricao,
-            enabled: enabled
-          ), // Descrição
+              hint: "Descrição/Observação...",
+              label: "Descrição/Observação*",
+              maxLength: 255,
+              keyboardType: TextInputType.multiline,
+              valueNotifier: form.descricao,
+              validator: validator.byField(form, ErrorCodeKey.descricao.name),
+              onChanged: form.setDescricao,
+              enabled: enabled), // Descrição
         ],
       ),
     );

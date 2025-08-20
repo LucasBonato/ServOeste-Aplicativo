@@ -8,6 +8,7 @@ import 'package:skeletonizer/skeletonizer.dart';
 class ClienteFormScreen extends StatelessWidget {
   final String title;
   final String submitText;
+  final String successMessage;
   final ClienteBloc bloc;
   final ClienteForm clienteForm;
   final void Function() onSubmit;
@@ -15,17 +16,17 @@ class ClienteFormScreen extends StatelessWidget {
   final bool isUpdate;
   final bool isSkeleton;
 
-  const ClienteFormScreen({
-    super.key,
-    required this.title,
-    required this.submitText,
-    required this.bloc,
-    required this.clienteForm,
-    required this.onSubmit,
-    this.nomeController,
-    this.isUpdate = false,
-    this.isSkeleton = false
-  });
+  const ClienteFormScreen(
+      {super.key,
+      required this.title,
+      required this.submitText,
+      required this.successMessage,
+      required this.bloc,
+      required this.clienteForm,
+      required this.onSubmit,
+      this.nomeController,
+      this.isUpdate = false,
+      this.isSkeleton = false});
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +39,12 @@ class ClienteFormScreen extends StatelessWidget {
           clienteForm: clienteForm,
           bloc: bloc,
           isUpdate: isUpdate,
-          submitText: submitText,
+          getSuccessMessage: (state) {
+            return successMessage;
+          },
+          isCreateCliente: true,
           onSubmit: onSubmit,
+          submitText: submitText,
           nomeController: nomeController,
         ),
       ),

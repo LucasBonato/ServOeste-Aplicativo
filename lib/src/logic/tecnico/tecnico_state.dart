@@ -39,6 +39,8 @@ final class TecnicoRegisterSuccessState extends TecnicoState {}
 
 final class TecnicoUpdateSuccessState extends TecnicoState {}
 
+final class TecnicoDisabledSuccessState extends TecnicoState {}
+
 final class TecnicoErrorState extends TecnicoState {
   final ErrorEntity error;
 
