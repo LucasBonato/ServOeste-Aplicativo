@@ -15,21 +15,17 @@ abstract class BaseEntityBloc<Event, State> extends Bloc<Event, State> {
     void Function(ErrorEntity error)? onError,
     State? loading,
   }) async {
-    emit(loading?? loadingState());
+    emit(loading ?? loadingState());
     final Either<ErrorEntity, T> result = await request();
 
-    result.fold(
-      (ErrorEntity error) {
-        if (onError != null) {
-          onError(error);
-        }
-        else {
-          emit(errorState(error));
-        }
-      },
-      (T success) {
-        onSuccess(success);
+    result.fold((ErrorEntity error) {
+      if (onError != null) {
+        onError(error);
+      } else {
+        emit(errorState(error));
       }
-    );
+    }, (T success) {
+      onSuccess(success);
+    });
   }
 }

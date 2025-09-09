@@ -7,11 +7,14 @@ import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/logic/filtro_servico/filtro_servico_provider.dart';
 import 'package:serv_oeste/src/shared/custom_router.dart';
+import 'package:serv_oeste/src/logic/auth/auth_bloc.dart';
+import 'package:serv_oeste/src/screens/auth/login.dart';
 
 void main() {
   runApp(
     MultiBlocProvider(
       providers: [
+        BlocProvider<AuthBloc>(create: (_) => AuthBloc()),
         BlocProvider<TecnicoBloc>(create: (_) => TecnicoBloc()),
         BlocProvider<ClienteBloc>(create: (_) => ClienteBloc()),
         BlocProvider<ServicoBloc>(create: (_) => ServicoBloc()),
@@ -38,7 +41,24 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
         useMaterial3: true,
       ),
-      home: const BaseLayout(),
+      home: BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, state) {
+          if (state is AuthLoadingState || state is AuthInitialState) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          } else if (state is AuthenticatedState ||
+              state is AuthLoginSuccessState) {
+            return const BaseLayout();
+          } else if (state is UnauthenticatedState ||
+              state is AuthErrorState ||
+              state is AuthLogoutSuccessState) {
+            return const LoginScreen();
+          } else {
+            return const LoginScreen();
+          }
+        },
+      ),
       onGenerateRoute: (settings) =>
           CustomRouter.onGenerateRoute(settings, context),
     );

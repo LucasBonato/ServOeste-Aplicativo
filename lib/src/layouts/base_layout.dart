@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/layout/bottom_nav_bar.dart';
@@ -12,6 +14,7 @@ import 'package:serv_oeste/src/screens/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/home.dart';
 import 'package:serv_oeste/src/screens/servico/servico.dart';
 import 'package:serv_oeste/src/screens/tecnico/tecnico.dart';
+import 'package:serv_oeste/src/logic/auth/auth_bloc.dart';
 
 class BaseLayout extends StatefulWidget {
   final int? initialIndex;
@@ -33,6 +36,7 @@ class BaseLayoutState extends State<BaseLayout> {
   late final ServicoBloc _servicoBloc;
   late final TecnicoBloc _tecnicoBloc;
   late final ClienteBloc _clienteBloc;
+  Timer? _authTimer;
 
   @override
   void initState() {
@@ -45,6 +49,26 @@ class BaseLayoutState extends State<BaseLayout> {
     _navigatorKeys = List.generate(4, (_) => GlobalKey<NavigatorState>());
     _screens = List.filled(4, null);
     _loadTab(_currentIndex);
+
+    _startAuthTimer();
+  }
+
+  @override
+  void dispose() {
+    _authTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startAuthTimer() {
+    _authTimer = Timer.periodic(const Duration(minutes: 5), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+
+      final authBloc = context.read<AuthBloc>();
+      authBloc.add(AuthCheckStatusEvent());
+    });
   }
 
   Widget _getScreen(int index) {
@@ -130,44 +154,53 @@ class BaseLayoutState extends State<BaseLayout> {
     final screenWidth = MediaQuery.of(context).size.width;
     final bool isLargeScreen = screenWidth >= 800;
 
-    return Scaffold(
-      body: Row(
-        children: [
-          if (isLargeScreen)
-            SidebarNavigation(
-              currentIndex: _currentIndex,
-              onSelect: _selectTab,
-            ),
-          Expanded(
-            child: Column(
-              children: [
-                const HeaderComponent(),
-                Expanded(
-                  child: Stack(
-                    children: List.generate(4, (index) {
-                      return Offstage(
-                        offstage: _currentIndex != index,
-                        child: Navigator(
-                          key: _navigatorKeys[index],
-                          onGenerateRoute: (_) => MaterialPageRoute(
-                            builder: (context) => _getScreen(index),
-                          ),
-                        ),
-                      );
-                    }),
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is UnauthenticatedState) {}
+      },
+      child: Scaffold(
+        body: Row(
+          children: [
+            if (isLargeScreen)
+              SidebarNavigation(
+                currentIndex: _currentIndex,
+                onSelect: _selectTab,
+              ),
+            Expanded(
+              child: Column(
+                children: [
+                  HeaderComponent(
+                    onLogout: () {
+                      context.read<AuthBloc>().add(AuthLogoutEvent());
+                    },
                   ),
-                ),
-              ],
+                  Expanded(
+                    child: Stack(
+                      children: List.generate(4, (index) {
+                        return Offstage(
+                          offstage: _currentIndex != index,
+                          child: Navigator(
+                            key: _navigatorKeys[index],
+                            onGenerateRoute: (_) => MaterialPageRoute(
+                              builder: (context) => _getScreen(index),
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
+        bottomNavigationBar: isLargeScreen
+            ? null
+            : BottomNavBar(
+                currentIndex: _currentIndex,
+                onTap: _selectTab,
+              ),
       ),
-      bottomNavigationBar: isLargeScreen
-          ? null
-          : BottomNavBar(
-              currentIndex: _currentIndex,
-              onTap: _selectTab,
-            ),
     );
   }
 }

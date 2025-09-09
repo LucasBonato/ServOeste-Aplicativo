@@ -1,26 +1,33 @@
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
+import 'package:serv_oeste/src/services/secure_storage_service.dart';
 
 class DioInterceptor extends Interceptor {
   final Logger _logger = Logger(printer: PrettyPrinter(printEmojis: false));
   final JsonEncoder jsonEncoder = const JsonEncoder.withIndent("  ");
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+  Future<void> onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
+    final token = await SecureStorageService.getAccessToken();
+    if (token != null && token.isNotEmpty) {
+      options.headers['Authorization'] = 'Bearer $token';
+    }
+
     String logMessage = "";
     logMessage += "TimeStamp: ${DateTime.now()}\n";
     logMessage += "FullUri: ${options.uri}\n";
     logMessage += "BaseUri: ${options.baseUrl}\n";
     logMessage += "Endpoint: ${options.path}\n";
     logMessage += "Method: ${options.method}\n";
+    logMessage += "Headers: ${options.headers}\n";
     if (options.data != null) {
       logMessage += "Body: ${jsonEncoder.convert(options.data)}\n";
     }
 
     _logger.i(logMessage);
-    super.onRequest(options, handler);
+    handler.next(options);
   }
 
   @override
@@ -34,7 +41,7 @@ class DioInterceptor extends Interceptor {
     }
 
     _logger.i(logMessage);
-    super.onResponse(response, handler);
+    handler.next(response);
   }
 
   @override
@@ -49,6 +56,6 @@ class DioInterceptor extends Interceptor {
     }
 
     _logger.e(logMessage);
-    super.onError(err, handler);
+    handler.next(err);
   }
 }

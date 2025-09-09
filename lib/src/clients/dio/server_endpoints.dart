@@ -1,5 +1,11 @@
 class ServerEndpoints {
-  static const String baseUrl = "http://localhost:8080/api/v1/";
+  static const String baseUrl = "http://localhost:8080/api/";
+
+  static const String authEndpoint = "auth";
+  static const String loginEndpoint = "auth/login";
+  static const String registerEndpoint = "auth/register";
+  static const String refreshEndpoint = "auth/refresh";
+  static const String logoutEndpoint = "auth/logout";
 
   static const String tecnicoEndpoint = "tecnico";
   static const String tecnicoFindEndpoint = "tecnico/find";
