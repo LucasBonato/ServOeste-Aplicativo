@@ -12,7 +12,7 @@ import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/base_list_screen.dart';
 import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
-import 'package:serv_oeste/src/shared/routes.dart';
+import 'package:serv_oeste/src/shared/routing/routes.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class ClienteScreen extends BaseListScreen<Cliente> {
@@ -24,7 +24,9 @@ class ClienteScreen extends BaseListScreen<Cliente> {
 
 class _ClienteScreenState extends BaseListScreenState<Cliente> {
   late final ClienteBloc _clienteBloc;
-  late final TextEditingController _nomeController, _telefoneController, _enderecoController;
+  late final TextEditingController _nomeController,
+      _telefoneController,
+      _enderecoController;
 
   void _setFilterValues() {
     _nomeController.text = _clienteBloc.nomeMenu ?? "";
@@ -76,9 +78,11 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
   }
 
   @override
-  Widget buildItemCard(Cliente cliente, bool isSelected, bool isSelectMode, bool isSkeleton) {
+  Widget buildItemCard(
+      Cliente cliente, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return CardClient(
-      onDoubleTap: () => onNavigateToUpdateScreen(cliente.id!, () => _clienteBloc.add(ClienteSearchMenuEvent())),
+      onDoubleTap: () => onNavigateToUpdateScreen(
+          cliente.id!, () => _clienteBloc.add(ClienteSearchMenuEvent())),
       onLongPress: () => onSelectItemList(cliente.id!),
       onTap: () {
         if (isSelectMode) {
@@ -147,23 +151,25 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
               },
               child: BlocBuilder<ClienteBloc, ClienteState>(
                 builder: (context, stateCliente) {
-                  if (stateCliente is ClienteInitialState || stateCliente is ClienteLoadingState) {
+                  if (stateCliente is ClienteInitialState ||
+                      stateCliente is ClienteLoadingState) {
                     return Skeletonizer(
                       enableSwitchAnimation: true,
                       child: buildGridOfCards(
-                        List.generate(16, (_) => Cliente()..applySkeletonData()),
+                        List.generate(
+                            16, (_) => Cliente()..applySkeletonData()),
                         1.65,
                         isSkeleton: true,
                       ),
                     );
-                  }
-                  else if (stateCliente is ClienteSearchSuccessState) {
+                  } else if (stateCliente is ClienteSearchSuccessState) {
                     return Column(
                       children: [
                         Expanded(
                           child: stateCliente.clientes.isNotEmpty
                               ? buildGridOfCards(stateCliente.clientes, 1.65)
-                              : const EntityNotFound(message: "Nenhum técnico encontrado."),
+                              : const EntityNotFound(
+                                  message: "Nenhum técnico encontrado."),
                         ),
                         if (stateCliente.totalPages > 1)
                           Padding(

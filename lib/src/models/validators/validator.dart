@@ -65,6 +65,12 @@ mixin BackendErrorsValidator {
       case 18:
         addError(ErrorCodeKey.servico.name, errorEntity.errorMessage);
         break;
+      case 19:
+        addError(ErrorCodeKey.user.name, errorEntity.errorMessage);
+        break;
+      case 20:
+        addError(ErrorCodeKey.auth.name, errorEntity.errorMessage);
+        break;
       default:
         addError(ErrorCodeKey.global.name, errorEntity.errorMessage);
     }

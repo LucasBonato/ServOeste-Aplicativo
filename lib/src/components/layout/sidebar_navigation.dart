@@ -42,25 +42,25 @@ class SidebarNavigation extends StatelessWidget {
               children: [
                 _buildMenuItem(
                   index: 0,
-                  icon: Icons.home,
+                  icon: Icons.home_outlined,
                   label: 'Home',
                 ),
                 const Divider(color: Colors.black),
                 _buildMenuItem(
                   index: 1,
-                  icon: Icons.build,
+                  icon: Icons.build_outlined,
                   label: 'Técnicos',
                 ),
                 const Divider(color: Colors.black),
                 _buildMenuItem(
                   index: 2,
-                  icon: Icons.people,
+                  icon: Icons.people_outlined,
                   label: 'Clientes',
                 ),
                 const Divider(color: Colors.black),
                 _buildMenuItem(
                   index: 3,
-                  icon: Icons.paste,
+                  icon: Icons.paste_outlined,
                   label: 'Serviços',
                 ),
               ],

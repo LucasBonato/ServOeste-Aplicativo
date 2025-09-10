@@ -13,8 +13,8 @@ import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
 import 'package:serv_oeste/src/screens/base_list_screen.dart';
 import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
-import 'package:serv_oeste/src/shared/constants.dart';
-import 'package:serv_oeste/src/shared/routes.dart';
+import 'package:serv_oeste/src/shared/constants/constants.dart';
+import 'package:serv_oeste/src/shared/routing/routes.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class TecnicoScreen extends BaseListScreen<TecnicoResponse> {

@@ -10,9 +10,9 @@ import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.
 import 'package:serv_oeste/src/components/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
-import 'package:serv_oeste/src/shared/constants.dart';
-import 'package:serv_oeste/src/shared/formatters.dart';
-import 'package:serv_oeste/src/shared/input_masks.dart';
+import 'package:serv_oeste/src/shared/constants/constants.dart';
+import 'package:serv_oeste/src/utils/formatters/formatters.dart';
+import 'package:serv_oeste/src/utils/formatters/input_masks.dart';
 
 class FilterService extends StatelessWidget {
   const FilterService({super.key});

@@ -11,7 +11,7 @@ import 'package:serv_oeste/src/models/page_content.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/models/servico/servico_request.dart';
-import 'package:serv_oeste/src/shared/formatters.dart';
+import 'package:serv_oeste/src/utils/formatters/formatters.dart';
 
 class ServicoClient extends DioService {
   Future<Either<ErrorEntity, PageContent<Servico>>> getServicosByFilter(
@@ -53,7 +53,6 @@ class ServicoClient extends DioService {
             response.data, (json) => Servico.fromJson(json)));
       }
     } on DioException catch (e) {
-      Logger().e('Erro na requisição: ${onRequestError(e)}');
       return Left(onRequestError(e));
     } catch (e) {
       Logger().e('Erro inesperado: $e');

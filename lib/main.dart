@@ -6,7 +6,7 @@ import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/logic/filtro_servico/filtro_servico_provider.dart';
-import 'package:serv_oeste/src/shared/custom_router.dart';
+import 'package:serv_oeste/src/shared/routing/custom_router.dart';
 import 'package:serv_oeste/src/logic/auth/auth_bloc.dart';
 import 'package:serv_oeste/src/screens/auth/login.dart';
 
@@ -29,8 +29,15 @@ void main() {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
@@ -41,26 +48,42 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
         useMaterial3: true,
       ),
-      home: BlocBuilder<AuthBloc, AuthState>(
-        builder: (context, state) {
-          if (state is AuthLoadingState || state is AuthInitialState) {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          } else if (state is AuthenticatedState ||
-              state is AuthLoginSuccessState) {
-            return const BaseLayout();
-          } else if (state is UnauthenticatedState ||
-              state is AuthErrorState ||
-              state is AuthLogoutSuccessState) {
-            return const LoginScreen();
-          } else {
-            return const LoginScreen();
-          }
-        },
-      ),
+      navigatorKey: _navigatorKey,
+      home: const LoginScreen(),
       onGenerateRoute: (settings) =>
           CustomRouter.onGenerateRoute(settings, context),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AuthBloc>().add(AuthCheckStatusEvent());
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _setupAuthListener();
+  }
+
+  void _setupAuthListener() {
+    final authBloc = context.read<AuthBloc>();
+    authBloc.stream.listen((state) {
+      if (state is AuthenticatedState || state is AuthLoginSuccessState) {
+        _navigatorKey.currentState?.pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const BaseLayout()),
+          (route) => false,
+        );
+      } else if (state is AuthLogoutSuccessState ||
+          state is UnauthenticatedState) {
+        _navigatorKey.currentState?.pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+          (route) => false,
+        );
+      }
+    });
   }
 }

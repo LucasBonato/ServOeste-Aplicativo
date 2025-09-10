@@ -1,6 +1,18 @@
 class Constants {
   static const bool isDev = true;
 
+  static const Map<String, String> roleUserMap = {
+    'Administrador': 'ADMIN',
+    'Funcionário': 'EMPLOYEE',
+    'Técnico': 'TECHNICIAN',
+  };
+
+  static const List<String> roleUserDisplayList = [
+    'Administrador',
+    'Funcionário',
+    'Técnico',
+  ];
+
   static const List<String> situationTecnicoList = [
     "Ativo",
     "Licença",

@@ -9,7 +9,10 @@ import 'package:serv_oeste/src/components/screen/loading.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
+import 'package:serv_oeste/src/screens/auth/create_user.dart';
 import 'package:serv_oeste/src/screens/servico/update_servico.dart';
+import 'package:serv_oeste/src/utils/jwt_utils.dart';
+import 'package:serv_oeste/src/services/secure_storage_service.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -19,6 +22,37 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  String? _userRole;
+  String? _userName;
+
+  @override
+  void initState() {
+    super.initState();
+    _extractUserInfo();
+  }
+
+  void _extractUserInfo() async {
+    final token = await SecureStorageService.getAccessToken();
+
+    if (token != null && token.isNotEmpty) {
+      final decodedToken = decodeJwt(token);
+      if (decodedToken != null) {
+        setState(() {
+          _userRole = decodedToken['role'] as String?;
+          _userName = decodedToken['sub'] as String?;
+        });
+      }
+    }
+  }
+
+  void _onCreateUser() {
+    Navigator.of(context, rootNavigator: true).push(
+      MaterialPageRoute(
+        builder: (context) => CreateUserScreen(),
+      ),
+    );
+  }
+
   void _onNavigateToUpdateScreen(int id, int clientId) {
     Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute(
@@ -33,31 +67,59 @@ class _HomeState extends State<Home> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 20),
-          Stack(
-            children: [
-              ConstrainedBox(
-                constraints: const BoxConstraints(
-                  maxHeight: 300,
+          if (_userRole == 'ROLE_ADMIN')
+            Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.asset(
-                    'assets/heroImage.png',
-                    width: double.infinity,
-                    fit: BoxFit.contain,
-                    alignment: Alignment.topCenter,
-                    errorBuilder: (context, error, stackTrace) => const Icon(
-                      Icons.image_not_supported,
-                      size: 100,
-                      color: Colors.grey,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Olá, ${_userName ?? "Admin"}! ',
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
+                    ElevatedButton(
+                      onPressed: _onCreateUser,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                      child: const Text(
+                        'Adicionar novo usuário',
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Positioned.fill(
-                child: Container(
+            ),
+          Container(
+            height: 300,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              image: DecorationImage(
+                image: AssetImage('assets/heroImage.png'),
+                fit: BoxFit.cover,
+                alignment: Alignment.topCenter,
+              ),
+            ),
+            child: Stack(
+              children: [
+                Container(
                   decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
@@ -68,8 +130,8 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(height: 20),
           Padding(
@@ -103,7 +165,8 @@ class _HomeState extends State<Home> {
                       aspectRatio: .9,
                       dataList: stateServico.servicos,
                       buildCard: (dynamic servico) => CardService(
-                        onDoubleTap: () => _onNavigateToUpdateScreen(servico.id, servico.idCliente),
+                        onDoubleTap: () => _onNavigateToUpdateScreen(
+                            servico.id, servico.idCliente),
                         cliente: (servico as Servico).nomeCliente,
                         codigo: servico.id,
                         tecnico: servico.nomeTecnico,

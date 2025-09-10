@@ -72,7 +72,8 @@ class AuthBloc extends BaseEntityBloc<AuthEvent, AuthState> {
         emit(errorState(error));
       } else {
         final authResponse = result.fold((l) => null, (r) => r)!;
-        await SecureStorageService.saveTokens(authResponse.accessToken);
+        await SecureStorageService.saveTokens(
+            authResponse.accessToken, authResponse.refreshToken);
         emit(AuthLoginSuccessState(authResponse: authResponse));
       }
     } catch (e) {
@@ -101,7 +102,8 @@ class AuthBloc extends BaseEntityBloc<AuthEvent, AuthState> {
         emit(errorState(error));
       } else {
         final authResponse = result.fold((l) => null, (r) => r)!;
-        await SecureStorageService.saveTokens(authResponse.accessToken);
+        await SecureStorageService.saveTokens(
+            authResponse.accessToken, authResponse.refreshToken);
         emit(AuthRegisterSuccessState(authResponse: authResponse));
       }
     } catch (e) {
@@ -119,9 +121,11 @@ class AuthBloc extends BaseEntityBloc<AuthEvent, AuthState> {
     emit(AuthLoadingState());
 
     try {
-      final token = await SecureStorageService.getAccessToken();
-      if (token != null) {
-        await _authClient.logout(accessToken: token);
+      final accessToken = await SecureStorageService.getAccessToken();
+      final refreshToken = await SecureStorageService.getRefreshToken();
+      if (accessToken != null && refreshToken != null) {
+        await _authClient.logout(
+            accessToken: accessToken, refreshToken: refreshToken);
       }
 
       await SecureStorageService.deleteTokens();

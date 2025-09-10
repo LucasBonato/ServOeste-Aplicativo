@@ -1,5 +1,5 @@
-import 'package:serv_oeste/src/shared/skeleton/skeleton_generator.dart';
-import 'package:serv_oeste/src/shared/skeleton/skeletonizable.dart';
+import 'package:serv_oeste/src/utils/skeleton/skeleton_generator.dart';
+import 'package:serv_oeste/src/utils/skeleton/skeletonizable.dart';
 
 class TecnicoResponse implements Skeletonizable {
   int? id;
@@ -18,14 +18,15 @@ class TecnicoResponse implements Skeletonizable {
     this.situacao,
   });
 
-  factory TecnicoResponse.fromJson(Map<String, dynamic> json) => TecnicoResponse(
-    id: json["id"],
-    nome: json["nome"],
-    sobrenome: json["sobrenome"],
-    telefoneFixo: json["telefoneFixo"],
-    telefoneCelular: json["telefoneCelular"],
-    situacao: json["situacao"],
-  );
+  factory TecnicoResponse.fromJson(Map<String, dynamic> json) =>
+      TecnicoResponse(
+        id: json["id"],
+        nome: json["nome"],
+        sobrenome: json["sobrenome"],
+        telefoneFixo: json["telefoneFixo"],
+        telefoneCelular: json["telefoneCelular"],
+        situacao: json["situacao"],
+      );
 
   @override
   void applySkeletonData() {

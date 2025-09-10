@@ -11,8 +11,8 @@ import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/validators/cliente_validator.dart';
 import 'package:serv_oeste/src/screens/base_entity_form.dart';
-import 'package:serv_oeste/src/shared/constants.dart';
-import 'package:serv_oeste/src/shared/input_masks.dart';
+import 'package:serv_oeste/src/shared/constants/constants.dart';
+import 'package:serv_oeste/src/utils/formatters/input_masks.dart';
 
 class ClienteFormWidget extends StatelessWidget {
   final ClienteForm clienteForm;
@@ -72,6 +72,14 @@ class ClienteFormWidget extends StatelessWidget {
       getErrorMessage: (state) => state is ClienteErrorState
           ? state.error.errorMessage
           : "Erro desconhecido",
+      onError: (state) {
+        if (state is ClienteErrorState) {
+          validator.applyBackendError(state.error);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            formKey.currentState?.validate();
+          });
+        }
+      },
       shouldBuildButton: shouldBuildButton,
       onSubmit: () async {
         formKey.currentState?.validate();

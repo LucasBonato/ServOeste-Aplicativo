@@ -9,7 +9,7 @@ import 'package:serv_oeste/src/models/servico/tecnico_disponivel.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
 import 'package:serv_oeste/src/clients/tecnico_client.dart';
-import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:serv_oeste/src/shared/constants/constants.dart';
 
 part 'tecnico_event.dart';
 

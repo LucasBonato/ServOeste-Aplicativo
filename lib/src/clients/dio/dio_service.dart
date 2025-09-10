@@ -5,7 +5,7 @@ import 'package:logger/logger.dart';
 import 'package:serv_oeste/src/clients/dio/dio_interceptor.dart';
 import 'package:serv_oeste/src/clients/dio/server_endpoints.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
-import 'package:serv_oeste/src/shared/constants.dart';
+import 'package:serv_oeste/src/shared/constants/constants.dart';
 
 class DioService {
   final Dio _dio = Dio(BaseOptions(
@@ -29,7 +29,8 @@ class DioService {
     }
 
     if (e.response?.data is Map<String, dynamic>) {
-      Map<String, dynamic> data = (e.response!.data as Map<String, dynamic>)["error"];
+      Map<String, dynamic> data =
+          (e.response!.data as Map<String, dynamic>)["error"];
       return ErrorEntity.fromJson(data);
     }
 

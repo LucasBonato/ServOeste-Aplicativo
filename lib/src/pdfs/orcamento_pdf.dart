@@ -3,7 +3,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
-import 'package:serv_oeste/src/shared/formatters.dart';
+import 'package:serv_oeste/src/utils/formatters/formatters.dart';
 
 Future<void> generateOrcamentoPDF(
     {required Servico servico, required Cliente cliente}) async {

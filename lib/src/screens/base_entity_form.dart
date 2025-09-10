@@ -22,6 +22,7 @@ class BaseEntityForm<B extends StateStreamable<S>, S> extends StatefulWidget {
   final bool Function(S state) isError;
   final bool shouldBuildButton;
   final String Function(S state)? getErrorMessage;
+  final void Function(S state)? onError;
   final VoidCallback? onSuccess;
 
   const BaseEntityForm(
@@ -36,6 +37,7 @@ class BaseEntityForm<B extends StateStreamable<S>, S> extends StatefulWidget {
       required this.isSuccess,
       required this.isError,
       this.getErrorMessage,
+      this.onError,
       this.onSuccess,
       this.space = 8,
       this.shouldBuildButton = true});
@@ -254,6 +256,8 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
             SnackBar(content: Text(successMessage)),
           );
         } else if (widget.isError(state)) {
+          widget.onError?.call(state);
+
           final errorMessage = widget.getErrorMessage?.call(state) ??
               "Erro ao realizar operação";
           ScaffoldMessenger.of(context).showSnackBar(

@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:serv_oeste/src/shared/currency_input_formatter.dart';
+import 'package:serv_oeste/src/utils/formatters/currency_input_formatter.dart';
 
 class InputMasks {
   static final List<MaskTextInputFormatter> cep = [
@@ -30,7 +30,5 @@ class InputMasks {
   static final List<TextInputFormatter> alphanumericLetters = [
     FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$'))
   ];
-  static final List<TextInputFormatter> currency = [
-    CurrencyInputFormatter()
-  ];
+  static final List<TextInputFormatter> currency = [CurrencyInputFormatter()];
 }

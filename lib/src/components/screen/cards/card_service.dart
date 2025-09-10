@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/src/models/enums/service_status.dart';
-import 'package:serv_oeste/src/shared/extensions.dart';
-import 'package:serv_oeste/src/shared/formatters.dart';
+import 'package:serv_oeste/src/utils/extensions/string_extensions.dart';
+import 'package:serv_oeste/src/utils/formatters/formatters.dart';
 
 class CardService extends StatelessWidget {
   final int codigo;

@@ -1,5 +1,5 @@
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
-import 'package:serv_oeste/src/shared/formatters.dart';
+import 'package:serv_oeste/src/utils/formatters/formatters.dart';
 
 class ClienteRequest {
   late String nome;

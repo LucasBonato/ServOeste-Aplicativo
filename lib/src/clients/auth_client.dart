@@ -24,9 +24,18 @@ class AuthClient extends DioService {
         data: request.toJson(),
       );
 
-      if (response.data != null && response.data is Map<String, dynamic>) {
-        return Right(
-            AuthResponse.fromJson(response.data as Map<String, dynamic>));
+      if (response.statusCode == 401 || response.statusCode == 403) {
+        return Left(ErrorEntity(
+          id: 20,
+          errorMessage: 'Credenciais inválidas',
+        ));
+      }
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (response.data != null && response.data is Map<String, dynamic>) {
+          return Right(
+              AuthResponse.fromJson(response.data as Map<String, dynamic>));
+        }
       }
 
       return Left(ErrorEntity(
@@ -55,15 +64,8 @@ class AuthClient extends DioService {
         data: request.toJson(),
       );
 
-      if (response.data != null && response.data is Map<String, dynamic>) {
-        return Right(
-            AuthResponse.fromJson(response.data as Map<String, dynamic>));
-      }
-
-      return Left(ErrorEntity(
-        id: response.statusCode ?? 500,
-        errorMessage: 'Resposta inválida do servidor',
-      ));
+      return Right(
+          AuthResponse.fromJson(response.data as Map<String, dynamic>));
     } on DioException catch (e) {
       return Left(onRequestError(e));
     }
@@ -82,15 +84,8 @@ class AuthClient extends DioService {
         data: request.toJson(),
       );
 
-      if (response.data != null && response.data is Map<String, dynamic>) {
-        return Right(
-            AuthResponse.fromJson(response.data as Map<String, dynamic>));
-      }
-
-      return Left(ErrorEntity(
-        id: response.statusCode ?? 500,
-        errorMessage: 'Resposta inválida do servidor',
-      ));
+      return Right(
+          AuthResponse.fromJson(response.data as Map<String, dynamic>));
     } on DioException catch (e) {
       return Left(onRequestError(e));
     }
@@ -98,6 +93,7 @@ class AuthClient extends DioService {
 
   Future<Either<ErrorEntity, void>> logout({
     required String accessToken,
+    required String refreshToken,
   }) async {
     try {
       await dio.post(

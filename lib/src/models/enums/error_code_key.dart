@@ -31,5 +31,7 @@ enum ErrorCodeKey {
   valor,
   valorPecas,
   valorComissao,
-  servico
+  servico,
+  user,
+  auth
 }

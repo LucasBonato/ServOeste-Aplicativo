@@ -63,7 +63,7 @@ class ClienteClient extends DioService {
         "municipio": cliente.municipio,
       });
     } on DioException catch (e) {
-      Left(onRequestError(e));
+      return Left(onRequestError(e));
     }
     return Right(null);
   }
@@ -83,7 +83,7 @@ class ClienteClient extends DioService {
         "municipio": cliente.municipio,
       });
     } on DioException catch (e) {
-      Left(onRequestError(e));
+      return Left(onRequestError(e));
     }
     return Right(null);
   }
@@ -94,7 +94,7 @@ class ClienteClient extends DioService {
       await dio.delete(ServerEndpoints.clienteEndpoint,
           data: jsonEncode(idClientes));
     } on DioException catch (e) {
-      Left(onRequestError(e));
+      return Left(onRequestError(e));
     }
     return Right(null);
   }

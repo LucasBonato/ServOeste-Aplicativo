@@ -9,8 +9,8 @@ import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
 import 'package:serv_oeste/src/models/validators/tecnico_validator.dart';
 import 'package:serv_oeste/src/screens/base_entity_form.dart';
 import 'package:serv_oeste/src/screens/base_form_screen.dart';
-import 'package:serv_oeste/src/shared/constants.dart';
-import 'package:serv_oeste/src/shared/input_masks.dart';
+import 'package:serv_oeste/src/shared/constants/constants.dart';
+import 'package:serv_oeste/src/utils/formatters/input_masks.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class TecnicoFormPage extends StatelessWidget {
@@ -68,6 +68,14 @@ class TecnicoFormPage extends StatelessWidget {
           getErrorMessage: (state) => state is TecnicoErrorState
               ? state.error.errorMessage
               : "Erro desconhecido",
+          onError: (state) {
+            if (state is TecnicoErrorState) {
+              validator.applyBackendError(state.error);
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                formKey.currentState?.validate();
+              });
+            }
+          },
           onSubmit: () async {
             checkersMap.forEach((label, isChecked) {
               int idConhecimento =

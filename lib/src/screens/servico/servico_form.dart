@@ -9,9 +9,9 @@ import 'package:serv_oeste/src/models/enums/technical_status.dart';
 import 'package:serv_oeste/src/models/servico/servico_form.dart';
 import 'package:serv_oeste/src/models/validators/servico_validator.dart';
 import 'package:serv_oeste/src/screens/base_entity_form.dart';
-import 'package:serv_oeste/src/shared/constants.dart';
-import 'package:serv_oeste/src/shared/extensions.dart';
-import 'package:serv_oeste/src/shared/input_masks.dart';
+import 'package:serv_oeste/src/shared/constants/constants.dart';
+import 'package:serv_oeste/src/utils/extensions/string_extensions.dart';
+import 'package:serv_oeste/src/utils/formatters/input_masks.dart';
 
 class ServicoFormWidget extends StatelessWidget {
   final String submitText;
@@ -278,6 +278,14 @@ class ServicoFormWidget extends StatelessWidget {
           return successMessage;
         },
         isError: (state) => state is ServicoErrorState,
+        onError: (state) {
+          if (state is ServicoErrorState) {
+            validator.applyBackendError(state.error);
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              formKey.currentState?.validate();
+            });
+          }
+        },
         shouldBuildButton: false,
         onSubmit: () async {
           formKey.currentState?.validate();

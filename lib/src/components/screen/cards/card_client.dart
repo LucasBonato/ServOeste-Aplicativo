@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/src/shared/formatters.dart';
+import 'package:serv_oeste/src/utils/formatters/formatters.dart';
 
 class CardClient extends StatelessWidget {
   final String name;

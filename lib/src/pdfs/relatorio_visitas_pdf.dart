@@ -3,13 +3,12 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
-import 'package:serv_oeste/src/shared/formatters.dart';
+import 'package:serv_oeste/src/utils/formatters/formatters.dart';
 
-Future<void> generateChamadoTecnicoPDF({
-  required Servico servico,
-  required Cliente cliente,
-  required List<Servico> historicoEquipamento
-}) async {
+Future<void> generateChamadoTecnicoPDF(
+    {required Servico servico,
+    required Cliente cliente,
+    required List<Servico> historicoEquipamento}) async {
   final pdf = pw.Document();
   final logo = await imageFromAssetBundle('assets/servOeste.png');
   final outputFileName = 'relatorioVisitas_${servico.id}.pdf';

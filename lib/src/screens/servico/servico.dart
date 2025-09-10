@@ -13,7 +13,7 @@ import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/screens/base_list_screen.dart';
 import 'package:serv_oeste/src/screens/servico/filter_servico.dart';
 import 'package:serv_oeste/src/screens/servico/update_servico.dart';
-import 'package:serv_oeste/src/shared/routes.dart';
+import 'package:serv_oeste/src/shared/routing/routes.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class ServicoScreen extends BaseListScreen<Servico> {
