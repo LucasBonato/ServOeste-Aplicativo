@@ -10,34 +10,35 @@ part 'endereco_event.dart';
 part 'endereco_state.dart';
 
 class EnderecoBloc extends BaseEntityBloc<EnderecoEvent, EnderecoState> {
-  final EnderecoClient _enderecoClient = EnderecoClient();
+  final EnderecoClient _enderecoClient;
 
   @override
-  EnderecoState errorState(ErrorEntity error) => EnderecoErrorState(errorMessage: error.errorMessage);
+  EnderecoState errorState(ErrorEntity error) =>
+      EnderecoErrorState(errorMessage: error.errorMessage);
 
   @override
   EnderecoState loadingState() => EnderecoLoadingState();
 
-  EnderecoBloc() : super(EnderecoInitialState()) {
+  EnderecoBloc(this._enderecoClient) : super(EnderecoInitialState()) {
     on<EnderecoSearchCepEvent>(_fetchEnderecoByCep);
   }
 
-  Future<void> _fetchEnderecoByCep(EnderecoSearchCepEvent event, Emitter<EnderecoState> emit) async {
+  Future<void> _fetchEnderecoByCep(
+      EnderecoSearchCepEvent event, Emitter<EnderecoState> emit) async {
     await handleRequest<Endereco?>(
-      emit: emit,
-      request: () => _enderecoClient.getEndereco(event.cep),
-      onSuccess: (Endereco? endereco) {
-        if (endereco != null && endereco.logradouro != null) {
-          emit(EnderecoSuccessState(
-              rua: endereco.logradouro?? "",
-              numero: "",
-              complemento: "",
-              bairro: endereco.bairro?? "",
-              municipio: endereco.municipio?? ""
-          ));
-        }
-      },
-      onError: (error) => emit(EnderecoErrorState(errorMessage: "Endereço não encontrado!"))
-    );
+        emit: emit,
+        request: () => _enderecoClient.getEndereco(event.cep),
+        onSuccess: (Endereco? endereco) {
+          if (endereco != null && endereco.logradouro != null) {
+            emit(EnderecoSuccessState(
+                rua: endereco.logradouro ?? "",
+                numero: "",
+                complemento: "",
+                bairro: endereco.bairro ?? "",
+                municipio: endereco.municipio ?? ""));
+          }
+        },
+        onError: (error) =>
+            emit(EnderecoErrorState(errorMessage: "Endereço não encontrado!")));
   }
 }

@@ -16,7 +16,7 @@ part 'tecnico_event.dart';
 part 'tecnico_state.dart';
 
 class TecnicoBloc extends BaseEntityBloc<TecnicoEvent, TecnicoState> {
-  final TecnicoClient _tecnicoClient = TecnicoClient();
+  final TecnicoClient _tecnicoClient;
   bool isFirstRequest = true;
   String? _nome, _situacao, nomeMenu, situacaoMenu;
   int? _id, idMenu;
@@ -27,7 +27,7 @@ class TecnicoBloc extends BaseEntityBloc<TecnicoEvent, TecnicoState> {
   @override
   TecnicoState errorState(ErrorEntity error) => TecnicoErrorState(error: error);
 
-  TecnicoBloc() : super(TecnicoInitialState()) {
+  TecnicoBloc(this._tecnicoClient) : super(TecnicoInitialState()) {
     on<TecnicoLoadingEvent>(_fetchAllTecnicos);
     on<TecnicoSearchOneEvent>(_fetchOneTecnico);
     on<TecnicoAvailabilitySearchEvent>(_fetchAvailability);

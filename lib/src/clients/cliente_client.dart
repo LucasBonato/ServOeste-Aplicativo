@@ -1,14 +1,18 @@
-import 'package:dartz/dartz.dart';
-import 'package:serv_oeste/src/clients/dio/server_endpoints.dart';
-import 'package:serv_oeste/src/clients/dio/dio_service.dart';
-import 'package:serv_oeste/src/models/cliente/cliente.dart';
-import 'package:dio/dio.dart';
 import 'dart:convert';
 
+import 'package:dartz/dartz.dart';
+import 'package:serv_oeste/src/clients/dio/server_endpoints.dart';
+import 'package:serv_oeste/src/models/cliente/cliente.dart';
+import 'package:dio/dio.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/page_content.dart';
+import 'package:serv_oeste/src/utils/error_handler.dart';
 
-class ClienteClient extends DioService {
+class ClienteClient {
+  final Dio dio;
+
+  ClienteClient(this.dio);
+
   Future<Either<ErrorEntity, PageContent<Cliente>>> fetchListByFilter({
     String? nome,
     String? telefone,
@@ -32,7 +36,7 @@ class ClienteClient extends DioService {
             response.data, (json) => Cliente.fromJson(json)));
       }
     } on DioException catch (e) {
-      return Left(onRequestError(e));
+      return Left(ErrorHandler.onRequestError(e));
     }
     return Right(PageContent.empty());
   }
@@ -45,7 +49,7 @@ class ClienteClient extends DioService {
         return Right(Cliente.fromJson(response.data as Map<String, dynamic>));
       }
     } on DioException catch (e) {
-      return Left(onRequestError(e));
+      return Left(ErrorHandler.onRequestError(e));
     }
     return Right(null);
   }
@@ -63,7 +67,7 @@ class ClienteClient extends DioService {
         "municipio": cliente.municipio,
       });
     } on DioException catch (e) {
-      return Left(onRequestError(e));
+      return Left(ErrorHandler.onRequestError(e));
     }
     return Right(null);
   }
@@ -83,7 +87,7 @@ class ClienteClient extends DioService {
         "municipio": cliente.municipio,
       });
     } on DioException catch (e) {
-      return Left(onRequestError(e));
+      return Left(ErrorHandler.onRequestError(e));
     }
     return Right(null);
   }
@@ -94,7 +98,7 @@ class ClienteClient extends DioService {
       await dio.delete(ServerEndpoints.clienteEndpoint,
           data: jsonEncode(idClientes));
     } on DioException catch (e) {
-      return Left(onRequestError(e));
+      return Left(ErrorHandler.onRequestError(e));
     }
     return Right(null);
   }

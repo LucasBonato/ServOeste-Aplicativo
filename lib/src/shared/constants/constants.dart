@@ -8,7 +8,6 @@ class Constants {
   };
 
   static const List<String> roleUserDisplayList = [
-    'Administrador',
     'Funcionário',
     'Técnico',
   ];

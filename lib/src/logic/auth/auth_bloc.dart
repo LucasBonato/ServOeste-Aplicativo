@@ -10,7 +10,7 @@ part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends BaseEntityBloc<AuthEvent, AuthState> {
-  final AuthClient _authClient = AuthClient();
+  final AuthClient _authClient;
   bool _hasCheckedInitialStatus = false;
 
   @override
@@ -19,7 +19,7 @@ class AuthBloc extends BaseEntityBloc<AuthEvent, AuthState> {
   @override
   AuthState errorState(ErrorEntity error) => AuthErrorState(error: error);
 
-  AuthBloc() : super(AuthInitialState()) {
+  AuthBloc(this._authClient) : super(AuthInitialState()) {
     on<AuthCheckStatusEvent>(_checkStatus);
     on<AuthLoginEvent>(_login);
     on<AuthRegisterEvent>(_register);

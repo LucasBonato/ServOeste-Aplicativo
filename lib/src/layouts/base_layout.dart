@@ -10,6 +10,7 @@ import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
+import 'package:serv_oeste/src/screens/auth/login.dart';
 import 'package:serv_oeste/src/screens/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/home.dart';
 import 'package:serv_oeste/src/screens/servico/servico.dart';
@@ -156,7 +157,12 @@ class BaseLayoutState extends State<BaseLayout> {
 
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is UnauthenticatedState) {}
+        if (state is UnauthenticatedState || state is AuthLogoutSuccessState) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
+            (route) => false,
+          );
+        }
       },
       child: Scaffold(
         body: Row(

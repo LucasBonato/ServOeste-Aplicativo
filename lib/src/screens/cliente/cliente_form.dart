@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/src/clients/dio/dio_service.dart';
+import 'package:serv_oeste/src/clients/endereco_client.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
@@ -49,9 +51,11 @@ class ClienteFormWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final GlobalKey<FormState> formKey = this.formKey ?? GlobalKey<FormState>();
-    final EnderecoBloc enderecoBloc = EnderecoBloc();
     final ClienteValidator validator = this.validator ?? ClienteValidator();
     final TextEditingController municipioController = TextEditingController();
+    final dioService = DioService();
+    final enderecoClient = EnderecoClient(dioService.dio);
+    final enderecoBloc = EnderecoBloc(enderecoClient);
 
     void fetchInformationAboutCep(String? cep) async {
       if (cep?.length != 9) return;

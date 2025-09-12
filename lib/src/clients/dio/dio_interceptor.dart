@@ -10,7 +10,8 @@ class DioInterceptor extends Interceptor {
   @override
   Future<void> onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
-    final isAuthRoute = options.path.contains('/auth/login');
+    final isAuthRoute = options.path.contains('/auth/login') ||
+        options.path.contains('/auth/refresh');
 
     if (!isAuthRoute) {
       final token = await SecureStorageService.getAccessToken();

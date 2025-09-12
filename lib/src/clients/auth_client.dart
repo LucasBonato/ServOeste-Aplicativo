@@ -1,14 +1,20 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:cookie_jar/cookie_jar.dart';
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:serv_oeste/src/clients/dio/server_endpoints.dart';
-import 'package:serv_oeste/src/clients/dio/dio_service.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/auth/auth_request.dart';
 import 'package:serv_oeste/src/models/auth/register_request.dart';
 import 'package:serv_oeste/src/models/auth/auth.dart';
-import 'package:serv_oeste/src/models/auth/refresh_token_request.dart';
+import 'package:serv_oeste/src/utils/error_handler.dart';
 
-class AuthClient extends DioService {
+class AuthClient {
+  final Dio dio;
+  final CookieJar cookieJar;
+
+  AuthClient(this.dio, this.cookieJar);
+
   Future<Either<ErrorEntity, AuthResponse>> login({
     required String username,
     required String password,
@@ -19,31 +25,22 @@ class AuthClient extends DioService {
         password: password,
       );
 
-      final Response<dynamic> response = await dio.post(
+      final Response<Map<String, dynamic>> response =
+          await dio.post<Map<String, dynamic>>(
         ServerEndpoints.loginEndpoint,
         data: request.toJson(),
       );
 
-      if (response.statusCode == 401 || response.statusCode == 403) {
+      return Right(AuthResponse.fromJson(response.data!));
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
         return Left(ErrorEntity(
           id: 20,
           errorMessage: 'Credenciais inválidas',
         ));
       }
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        if (response.data != null && response.data is Map<String, dynamic>) {
-          return Right(
-              AuthResponse.fromJson(response.data as Map<String, dynamic>));
-        }
-      }
-
-      return Left(ErrorEntity(
-        id: response.statusCode ?? 500,
-        errorMessage: 'Resposta inválida do servidor',
-      ));
-    } on DioException catch (e) {
-      return Left(onRequestError(e));
+      return Left(ErrorHandler.onRequestError(e));
     }
   }
 
@@ -67,27 +64,39 @@ class AuthClient extends DioService {
       return Right(
           AuthResponse.fromJson(response.data as Map<String, dynamic>));
     } on DioException catch (e) {
-      return Left(onRequestError(e));
+      return Left(ErrorHandler.onRequestError(e));
     }
   }
 
-  Future<Either<ErrorEntity, AuthResponse>> refreshToken({
-    required String refreshToken,
-  }) async {
+  Future<Either<ErrorEntity, AuthResponse>> refreshToken() async {
     try {
-      final RefreshTokenRequest request = RefreshTokenRequest(
-        refreshToken: refreshToken,
-      );
+      final refreshDio = Dio(BaseOptions(
+        baseUrl: ServerEndpoints.baseUrl,
+        contentType: Headers.jsonContentType,
+        responseType: ResponseType.json,
+      ));
 
-      final Response<dynamic> response = await dio.post(
+      refreshDio.interceptors.add(CookieManager(cookieJar));
+
+      final Response<Map<String, dynamic>> response =
+          await refreshDio.post<Map<String, dynamic>>(
         ServerEndpoints.refreshEndpoint,
-        data: request.toJson(),
+        options: Options(
+          headers: {
+            'content-type': 'application/json',
+          },
+        ),
       );
 
-      return Right(
-          AuthResponse.fromJson(response.data as Map<String, dynamic>));
+      return Right(AuthResponse.fromJson(response.data!));
     } on DioException catch (e) {
-      return Left(onRequestError(e));
+      if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+        return Left(ErrorEntity(
+          id: 20,
+          errorMessage: 'Sessão expirada. Faça login novamente.',
+        ));
+      }
+      return Left(ErrorHandler.onRequestError(e));
     }
   }
 
@@ -107,7 +116,7 @@ class AuthClient extends DioService {
 
       return Right(null);
     } on DioException catch (e) {
-      return Left(onRequestError(e));
+      return Left(ErrorHandler.onRequestError(e));
     }
   }
 
@@ -126,7 +135,14 @@ class AuthClient extends DioService {
 
       return Right(response.statusCode == 200);
     } on DioException catch (e) {
-      return Left(onRequestError(e));
+      if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+        return Left(ErrorEntity(
+          id: 20,
+          errorMessage: 'Sessão expirada. Faça login novamente.',
+        ));
+      }
+
+      return Left(ErrorHandler.onRequestError(e));
     }
   }
 }

@@ -6,12 +6,16 @@ import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/page_content.dart';
 import 'package:serv_oeste/src/models/servico/tecnico_disponivel.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
-import 'package:serv_oeste/src/clients/dio/dio_service.dart';
 import 'package:serv_oeste/src/clients/dio/server_endpoints.dart';
+import 'package:serv_oeste/src/utils/error_handler.dart';
 
 import '../models/tecnico/tecnico.dart';
 
-class TecnicoClient extends DioService {
+class TecnicoClient {
+  final Dio dio;
+
+  TecnicoClient(this.dio);
+
   Future<Either<ErrorEntity, PageContent<TecnicoResponse>>> fetchListByFilter({
     int? id,
     String? nome,
@@ -43,7 +47,7 @@ class TecnicoClient extends DioService {
         ));
       }
     } on DioException catch (e) {
-      return Left(onRequestError(e));
+      return Left(ErrorHandler.onRequestError(e));
     }
     return Right(PageContent.empty());
   }
@@ -61,7 +65,7 @@ class TecnicoClient extends DioService {
             .toList());
       }
     } on DioException catch (e) {
-      return Left(onRequestError(e));
+      return Left(ErrorHandler.onRequestError(e));
     }
     return Right([]);
   }
@@ -74,7 +78,7 @@ class TecnicoClient extends DioService {
         return Right(Tecnico.fromJson(response.data as Map<String, dynamic>));
       }
     } on DioException catch (e) {
-      return Left(onRequestError(e));
+      return Left(ErrorHandler.onRequestError(e));
     }
     return Right(null);
   }
@@ -89,7 +93,7 @@ class TecnicoClient extends DioService {
         "especialidades_Ids": tecnico.especialidadesIds
       });
     } on DioException catch (e) {
-      return Left(onRequestError(e));
+      return Left(ErrorHandler.onRequestError(e));
     }
     return Right(null);
   }
@@ -105,7 +109,7 @@ class TecnicoClient extends DioService {
         "especialidades_Ids": tecnico.especialidadesIds,
       });
     } on DioException catch (e) {
-      return Left(onRequestError(e));
+      return Left(ErrorHandler.onRequestError(e));
     }
     return Right(null);
   }
@@ -116,7 +120,7 @@ class TecnicoClient extends DioService {
       await dio.delete(ServerEndpoints.tecnicoEndpoint,
           data: jsonEncode(selectedItems));
     } on DioException catch (e) {
-      return Left(onRequestError(e));
+      return Left(ErrorHandler.onRequestError(e));
     }
     return Right(null);
   }

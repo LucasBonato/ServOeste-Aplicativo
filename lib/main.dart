@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:serv_oeste/src/clients/auth_client.dart';
+import 'package:serv_oeste/src/clients/cliente_client.dart';
+import 'package:serv_oeste/src/clients/dio/dio_service.dart';
+import 'package:serv_oeste/src/clients/servico_client.dart';
+import 'package:serv_oeste/src/clients/tecnico_client.dart';
 import 'package:serv_oeste/src/layouts/base_layout.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
@@ -11,33 +16,69 @@ import 'package:serv_oeste/src/logic/auth/auth_bloc.dart';
 import 'package:serv_oeste/src/screens/auth/login.dart';
 
 void main() {
+  final dioService = DioService();
+  final authClient = AuthClient(dioService.dio, dioService.cookieJar);
+  final tecnicoClient = TecnicoClient(dioService.dio);
+  final clienteClient = ClienteClient(dioService.dio);
+  final servicoClient = ServicoClient(dioService.dio);
+
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
   runApp(
     MultiBlocProvider(
       providers: [
-        BlocProvider<AuthBloc>(create: (_) => AuthBloc()),
-        BlocProvider<TecnicoBloc>(create: (_) => TecnicoBloc()),
-        BlocProvider<ClienteBloc>(create: (_) => ClienteBloc()),
-        BlocProvider<ServicoBloc>(create: (_) => ServicoBloc()),
+        BlocProvider<AuthBloc>(create: (_) => AuthBloc(authClient)),
+        BlocProvider<TecnicoBloc>(create: (_) => TecnicoBloc(tecnicoClient)),
+        BlocProvider<ClienteBloc>(create: (_) => ClienteBloc(clienteClient)),
+        BlocProvider<ServicoBloc>(create: (_) => ServicoBloc(servicoClient)),
       ],
       child: MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => FiltroServicoProvider()),
         ],
-        child: const MyApp(),
+        child: MyApp(
+          navigatorKey: navigatorKey,
+          dioService: dioService,
+          authClient: authClient,
+        ),
       ),
     ),
   );
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final GlobalKey<NavigatorState> navigatorKey;
+  final DioService dioService;
+  final AuthClient authClient;
+
+  const MyApp({
+    super.key,
+    required this.navigatorKey,
+    required this.dioService,
+    required this.authClient,
+  });
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  @override
+  void initState() {
+    super.initState();
+
+    widget.dioService.addRefreshInterceptor(
+      widget.authClient,
+      onTokenRefreshFailed: _redirectToLogin,
+    );
+  }
+
+  void _redirectToLogin() {
+    widget.navigatorKey.currentState?.pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+      (route) => false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,19 +89,11 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
         useMaterial3: true,
       ),
-      navigatorKey: _navigatorKey,
+      navigatorKey: widget.navigatorKey,
       home: const LoginScreen(),
       onGenerateRoute: (settings) =>
           CustomRouter.onGenerateRoute(settings, context),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AuthBloc>().add(AuthCheckStatusEvent());
-    });
   }
 
   @override
@@ -73,13 +106,13 @@ class _MyAppState extends State<MyApp> {
     final authBloc = context.read<AuthBloc>();
     authBloc.stream.listen((state) {
       if (state is AuthenticatedState || state is AuthLoginSuccessState) {
-        _navigatorKey.currentState?.pushAndRemoveUntil(
+        widget.navigatorKey.currentState?.pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const BaseLayout()),
           (route) => false,
         );
       } else if (state is AuthLogoutSuccessState ||
           state is UnauthenticatedState) {
-        _navigatorKey.currentState?.pushAndRemoveUntil(
+        widget.navigatorKey.currentState?.pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const LoginScreen()),
           (route) => false,
         );

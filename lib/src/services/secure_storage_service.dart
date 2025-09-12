@@ -8,10 +8,11 @@ class SecureStorageService {
 
   static Future<void> saveTokens(
       String accessToken, String refreshToken) async {
-    await _storage.write(key: _keyAccessToken, value: accessToken);
-    if (refreshToken.isNotEmpty) {
-      await _storage.write(key: _keyRefreshToken, value: refreshToken);
-    }
+    await Future.wait([
+      _storage.write(key: _keyAccessToken, value: accessToken),
+      if (refreshToken.isNotEmpty)
+        _storage.write(key: _keyRefreshToken, value: refreshToken),
+    ]);
   }
 
   static Future<String?> getAccessToken() async {
@@ -23,12 +24,23 @@ class SecureStorageService {
   }
 
   static Future<void> deleteTokens() async {
-    await _storage.delete(key: _keyAccessToken);
-    await _storage.delete(key: _keyRefreshToken);
+    await Future.wait([
+      _storage.delete(key: _keyAccessToken),
+      _storage.delete(key: _keyRefreshToken),
+    ]);
   }
 
   static Future<bool> hasToken() async {
     final token = await getAccessToken();
+    return token != null && token.isNotEmpty;
+  }
+
+  static Future<void> updateAccessToken(String accessToken) async {
+    await _storage.write(key: _keyAccessToken, value: accessToken);
+  }
+
+  static Future<bool> hasRefreshToken() async {
+    final token = await getRefreshToken();
     return token != null && token.isNotEmpty;
   }
 }

@@ -175,7 +175,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                   ),
                                   validator: (value) => _validator.byField(
-                                      _authForm, ErrorCodeKey.user.name)(value),
+                                      _authForm,
+                                      ErrorCodeKey.username.name)(value),
                                 );
                               },
                             ),
@@ -207,7 +208,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                   ),
                                   validator: (value) => _validator.byField(
-                                      _authForm, ErrorCodeKey.user.name)(value),
+                                      _authForm,
+                                      ErrorCodeKey.password.name)(value),
                                 );
                               },
                             ),
