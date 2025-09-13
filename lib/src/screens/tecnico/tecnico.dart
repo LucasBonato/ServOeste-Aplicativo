@@ -134,8 +134,10 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
     _tecnicoBloc.add(TecnicoDisableListEvent(selectedList: selectedIds));
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-          content: Text(
-              'Técnico desativado com sucesso! (Caso ele não esteja desativado, recarregue a página)')),
+        content: Text(
+            'Técnico desativado com sucesso! (Caso ele não esteja desativado, recarregue a página)'),
+        backgroundColor: Colors.green,
+      ),
     );
   }
 

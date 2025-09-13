@@ -44,7 +44,7 @@ class AuthClient {
     }
   }
 
-  Future<Either<ErrorEntity, AuthResponse>> register({
+  Future<Either<ErrorEntity, void>> register({
     required String username,
     required String password,
     required String role,
@@ -56,13 +56,12 @@ class AuthClient {
         role: role,
       );
 
-      final Response<dynamic> response = await dio.post(
+      await dio.post(
         ServerEndpoints.registerEndpoint,
         data: request.toJson(),
       );
 
-      return Right(
-          AuthResponse.fromJson(response.data as Map<String, dynamic>));
+      return Right(null);
     } on DioException catch (e) {
       return Left(ErrorHandler.onRequestError(e));
     }

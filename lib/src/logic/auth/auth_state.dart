@@ -16,9 +16,7 @@ final class AuthLoginSuccessState extends AuthState {
 }
 
 final class AuthRegisterSuccessState extends AuthState {
-  final AuthResponse authResponse;
-
-  AuthRegisterSuccessState({required this.authResponse});
+  AuthRegisterSuccessState();
 }
 
 final class UnauthenticatedState extends AuthState {}

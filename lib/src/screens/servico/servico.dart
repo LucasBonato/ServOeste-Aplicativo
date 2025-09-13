@@ -138,6 +138,7 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
         content: Text(
           'Serviço deletado com sucesso! (Caso ele não esteja deletado, recarregue a página)',
         ),
+        backgroundColor: Colors.green,
       ),
     );
   }

@@ -101,10 +101,7 @@ class AuthBloc extends BaseEntityBloc<AuthEvent, AuthState> {
         final error = result.fold((l) => l, (r) => null)!;
         emit(errorState(error));
       } else {
-        final authResponse = result.fold((l) => null, (r) => r)!;
-        await SecureStorageService.saveTokens(
-            authResponse.accessToken, authResponse.refreshToken);
-        emit(AuthRegisterSuccessState(authResponse: authResponse));
+        emit(AuthRegisterSuccessState());
       }
     } catch (e) {
       emit(errorState(ErrorEntity(

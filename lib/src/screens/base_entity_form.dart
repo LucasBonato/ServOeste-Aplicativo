@@ -253,7 +253,10 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
               'Operação realizada com sucesso!';
 
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(successMessage)),
+            SnackBar(
+              content: Text(successMessage),
+              backgroundColor: Colors.green,
+            ),
           );
         } else if (widget.isError(state)) {
           widget.onError?.call(state);
@@ -261,7 +264,10 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
           final errorMessage = widget.getErrorMessage?.call(state) ??
               "Erro ao realizar operação";
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(errorMessage)),
+            SnackBar(
+              content: Text(errorMessage),
+              backgroundColor: Colors.red,
+            ),
           );
         }
       },
