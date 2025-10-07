@@ -21,7 +21,8 @@ class CustomSearchTextFormField extends StatefulWidget {
   });
 
   @override
-  State<CustomSearchTextFormField> createState() => _CustomSearchTextFormFieldState();
+  State<CustomSearchTextFormField> createState() =>
+      _CustomSearchTextFormFieldState();
 }
 
 class _CustomSearchTextFormFieldState extends State<CustomSearchTextFormField> {
@@ -72,7 +73,6 @@ class _CustomSearchTextFormFieldState extends State<CustomSearchTextFormField> {
                         setState(() {
                           _internalController.clear();
                           widget.controller?.clear();
-
                         });
                         widget.onSuffixAction?.call("");
                       },

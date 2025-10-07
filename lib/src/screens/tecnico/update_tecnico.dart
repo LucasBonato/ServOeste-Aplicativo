@@ -50,10 +50,10 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
     form.setNome("${tecnico.nome} ${tecnico.sobrenome}");
     form.setTelefoneFixo(tecnico.telefoneFixo!.isEmpty
         ? ""
-        : Formatters.applyTelefoneMask(tecnico.telefoneFixo!));
+        : Formatters.applyPhoneMask(tecnico.telefoneFixo!));
     form.setTelefoneCelular(tecnico.telefoneCelular!.isEmpty
         ? ""
-        : Formatters.applyCelularMask(tecnico.telefoneCelular!));
+        : Formatters.applyCellPhoneMask(tecnico.telefoneCelular!));
 
     nomeController.text = form.nome.value;
 

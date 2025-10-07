@@ -23,9 +23,9 @@ class ClienteRequest {
   ClienteRequest.fromClienteForm(
       {required ClienteForm cliente, required this.sobrenome}) {
     nome = cliente.nome.value;
-    telefoneFixo = Formatters.transformTelefoneMask(cliente.telefoneFixo.value);
+    telefoneFixo = Formatters.transformPhoneMask(cliente.telefoneFixo.value);
     telefoneCelular =
-        Formatters.transformTelefoneMask(cliente.telefoneCelular.value);
+        Formatters.transformPhoneMask(cliente.telefoneCelular.value);
     endereco =
         "${cliente.rua.value}, ${cliente.numero.value}${(cliente.complemento.value.isNotEmpty) ? ", ${cliente.complemento.value}" : ""}";
     bairro = cliente.bairro.value;

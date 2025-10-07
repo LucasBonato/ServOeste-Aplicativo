@@ -7,6 +7,7 @@ import 'package:serv_oeste/src/utils/formatters/formatters.dart';
 
 class ServicoForm extends ChangeNotifier {
   ValueNotifier<int?> id = ValueNotifier(null);
+
   ValueNotifier<int?> idCliente = ValueNotifier(null);
   ValueNotifier<int?> idTecnico = ValueNotifier(null);
   ValueNotifier<String> equipamento = ValueNotifier<String>("");
@@ -142,13 +143,11 @@ class ServicoForm extends ChangeNotifier {
   }
 
   void setSituacao(String? situacao) {
-    Logger().w('Situação: $situacao');
     if (situacao != null && situacao != this.situacao.value) {
       this.situacao.value =
           Formatters.mapStringStatusToEnumStatus(situacao).getSituacao();
       Logger()
           .w(Formatters.mapStringStatusToEnumStatus(situacao).getSituacao());
-      Logger().w(this.situacao.value);
       notifyListeners();
     }
   }

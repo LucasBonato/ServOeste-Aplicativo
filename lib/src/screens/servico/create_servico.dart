@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/src/components/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/field_labels.dart';
 import 'package:serv_oeste/src/components/screen/cards/card_builder_form.dart';
@@ -133,30 +132,10 @@ class _CreateServicoState extends State<CreateServico> {
     _servicoForm.setIdTecnico(idTecnico);
   }
 
-  bool _isServiceFormValid() {
-    _servicoFormKey.currentState?.validate();
-    final ValidationResult response = _servicoValidator.validate(_servicoForm);
-    return response.isValid;
-  }
-
-  bool _isClientFormValid() {
-    _clienteFormKey.currentState?.validate();
-    final ValidationResult response = _clienteValidator.validate(_clienteForm);
-    return response.isValid;
-  }
-
   void _onAddService() {
-    bool isClientNotValid = !_isClientFormValid();
-    bool isServiceNotValid = !_isServiceFormValid();
-
-    if ((isClientNotValid || !isClientAndService) && isServiceNotValid) {
-      return;
-    }
-
     if (isClientAndService) {
       List<String> nomes = _clienteForm.nome.value.split(" ");
       _clienteForm.setNome(nomes.first);
-
       String sobrenomeCliente = nomes.sublist(1).join(" ").trim();
 
       _servicoBloc.add(
@@ -166,16 +145,14 @@ class _CreateServicoState extends State<CreateServico> {
               cliente: _clienteForm, sobrenome: sobrenomeCliente),
         ),
       );
-
       _clienteForm.setNome("${nomes.first} $sobrenomeCliente");
-      return;
+    } else {
+      _servicoBloc.add(
+        ServicoRegisterEvent(
+          servico: ServicoRequest.fromServicoForm(servico: _servicoForm),
+        ),
+      );
     }
-
-    _servicoBloc.add(
-      ServicoRegisterEvent(
-        servico: ServicoRequest.fromServicoForm(servico: _servicoForm),
-      ),
-    );
   }
 
   @override
@@ -185,6 +162,14 @@ class _CreateServicoState extends State<CreateServico> {
           current is ServicoRegisterSuccessState ||
           current is ServicoErrorState,
       listener: (context, state) {
+        if (state is ServicoRegisterSuccessState) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted && Navigator.of(context).canPop()) {
+              Navigator.of(context).pop(true);
+            }
+          });
+        }
+
         if (state is TecnicoRegisterSuccessState) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (Navigator.canPop(context)) {
@@ -202,15 +187,6 @@ class _CreateServicoState extends State<CreateServico> {
             _clienteValidator.cleanExternalErrors();
           }
           _servicoValidator.cleanExternalErrors();
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Colors.red,
-              content: Text(
-                "[ERRO] Informação(ões) inválida(s) ao registrar o Serviço: ${error.errorMessage}",
-              ),
-            ),
-          );
         }
       },
       child: BaseFormScreen(
@@ -234,7 +210,7 @@ class _CreateServicoState extends State<CreateServico> {
                     return _buildButton(
                       'Verificar disponibilidade',
                       equipamentoSelecionado.isNotEmpty
-                          ? Colors.blue
+                          ? Color(0xFF007BFF)
                           : Colors.grey.withValues(alpha: 0.5),
                       equipamentoSelecionado.isNotEmpty
                           ? _onShowAvailabilityTechnicianTable
@@ -247,7 +223,7 @@ class _CreateServicoState extends State<CreateServico> {
                   isClientAndService
                       ? 'Adicionar Cliente/Serviço'
                       : 'Adicionar Serviço',
-                  Colors.blue,
+                  Color(0xFF007BFF),
                   _onAddService,
                 ),
               ],
@@ -259,7 +235,8 @@ class _CreateServicoState extends State<CreateServico> {
   Widget _buildMainFormLayout(bool isMobile) {
     final Widget clienteSection = Column(
       children: [
-        CardBuilderForm(title: "Client", child: _buildClientForm()),
+        CardBuilderForm(
+            title: "Pesquise um Cliente", child: _buildClientForm()),
         if (!isClientAndService)
           Padding(
             padding: const EdgeInsets.only(top: 12),

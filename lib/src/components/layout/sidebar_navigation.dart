@@ -91,13 +91,13 @@ class SidebarNavigation extends StatelessWidget {
     return ListTile(
       leading: Icon(
         icon,
-        color: isSelected ? Colors.blue : Colors.black,
+        color: isSelected ? Color(0xFF007BFF) : Colors.black,
         size: isSelected ? 30 : 24,
       ),
       title: Text(
         label,
         style: TextStyle(
-          color: isSelected ? Colors.blue : Colors.black,
+          color: isSelected ? Color(0xFF007BFF) : Colors.black,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
       ),

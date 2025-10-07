@@ -75,14 +75,14 @@ class BottomNavBar extends StatelessWidget {
             child: Icon(
               icon,
               key: ValueKey<int>(index),
-              color: isSelected ? Colors.blue : Colors.black,
+              color: isSelected ? Color(0xFF007BFF) : Colors.black,
               size: 30,
             ),
           ),
           Text(
             label,
             style: TextStyle(
-              color: isSelected ? Colors.blue : Colors.black,
+              color: isSelected ? Color(0xFF007BFF) : Colors.black,
               fontSize: 16,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),

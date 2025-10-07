@@ -16,17 +16,17 @@ class FloatingActionButtonAdd extends StatelessWidget {
   Widget build(BuildContext context) {
     return FloatingActionButton(
       heroTag: "Add_$route",
-      backgroundColor: Colors.blue,
+      backgroundColor: Color(0xFF007BFF),
       shape: const CircleBorder(eccentricity: 0),
       elevation: 8,
       tooltip: tooltip,
       onPressed: () => Navigator.of(context, rootNavigator: true)
           .pushNamed(route)
           .then((value) {
-            if (value == true) {
-              event();
-            }
-          }),
+        if (value == true) {
+          event();
+        }
+      }),
       child: const Icon(Icons.add, color: Colors.white, size: 36),
     );
   }

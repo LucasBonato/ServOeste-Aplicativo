@@ -21,24 +21,28 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
 
   Widget buildSelectionFloatingActionButton(List<int> selectedIds);
 
-  Widget buildItemCard(T item, bool isSelected, bool isSelectMode, bool isSkeleton);
+  Widget buildItemCard(
+      T item, bool isSelected, bool isSelectMode, bool isSkeleton);
 
   void onSearchFieldChanged() {
     _debouncer.execute(searchFieldChanged);
   }
 
-  void onNavigateToUpdateScreen(int id, void Function() event, {int? secondId}) {
+  void onNavigateToUpdateScreen(
+      int id, VoidCallback onSuccess, void Function() event,
+      {int? secondId}) {
     Navigator.of(context, rootNavigator: true)
-      .push(
-        MaterialPageRoute(
-          builder: (context) => getUpdateScreen(id, secondId: secondId),
-        ),
-      )
-      .then((value) {
-        if (value == true && mounted) {
-          event();
-        }
-      });
+        .push(
+      MaterialPageRoute(
+        builder: (context) => getUpdateScreen(id, secondId: secondId),
+      ),
+    )
+        .then((value) {
+      onSuccess();
+      if (value == true && mounted) {
+        event();
+      }
+    });
     context.read<ListaBloc>().add(ListaClearSelectionEvent());
   }
 
@@ -65,25 +69,29 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
 
   Widget buildFloatingActionButton() {
     return BlocBuilder<ListaBloc, ListaState>(
-        builder: (context, state) {
-          final bool hasSelection = state is ListaSelectState && state.selectedIds.isNotEmpty;
+      builder: (context, state) {
+        final bool hasSelection =
+            state is ListaSelectState && state.selectedIds.isNotEmpty;
 
-          return !hasSelection
-              ? buildDefaultFloatingActionButton()
-              : buildSelectionFloatingActionButton(state.selectedIds);
-        },
+        return !hasSelection
+            ? buildDefaultFloatingActionButton()
+            : buildSelectionFloatingActionButton(state.selectedIds);
+      },
     );
   }
 
-  Widget buildGridOfCards(List<T> items, double aspectRatio, {bool isSkeleton = false}) {
+  Widget buildGridOfCards(List<T> items, double aspectRatio,
+      {bool isSkeleton = false}) {
     return SingleChildScrollView(
       child: GridListView(
         aspectRatio: aspectRatio,
         dataList: items,
         buildCard: (item) => BlocBuilder<ListaBloc, ListaState>(
           builder: (context, stateLista) {
-            final bool isSelected = isSkeleton ? false : isItemSelected(item.id, stateLista);
-            final bool isSelectMode = isSkeleton ? false : isSelectionMode(stateLista);
+            final bool isSelected =
+                isSkeleton ? false : isItemSelected(item.id, stateLista);
+            final bool isSelectMode =
+                isSkeleton ? false : isSelectionMode(stateLista);
 
             return buildItemCard(item, isSelected, isSelectMode, isSkeleton);
           },

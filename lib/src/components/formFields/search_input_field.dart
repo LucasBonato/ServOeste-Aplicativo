@@ -53,6 +53,7 @@ class TextFormInputField extends SearchInputField {
   final String label;
   final TextInputType keyboardType;
   final TextEditingController? controller;
+  final bool enableValueNotifierSync;
 
   TextFormInputField({
     required super.valueNotifier,
@@ -70,6 +71,7 @@ class TextFormInputField extends SearchInputField {
     this.formatter,
     this.mask,
     this.controller,
+    this.enableValueNotifierSync = true,
   });
 }
 

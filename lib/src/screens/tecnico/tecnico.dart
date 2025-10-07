@@ -1,6 +1,7 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
 import 'package:serv_oeste/src/components/layout/fab_add.dart';
 import 'package:serv_oeste/src/components/layout/fab_remove.dart';
@@ -98,7 +99,9 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
       bool isSelectMode, bool isSkeleton) {
     return CardTechnician(
         onDoubleTap: () => onNavigateToUpdateScreen(
-            tecnico.id!, () => _tecnicoBloc.add(TecnicoSearchMenuEvent())),
+            tecnico.id!,
+            () => _tecnicoBloc.add(TecnicoSearchMenuEvent()),
+            () => _tecnicoBloc.add(TecnicoSearchMenuEvent())),
         onLongPress: () => onSelectItemList(tecnico.id!),
         onTap: () {
           if (isSelectMode) {
@@ -169,13 +172,9 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
               listener: (context, state) {
                 if (state is TecnicoErrorState) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(state.error.errorMessage),
-                        duration: const Duration(seconds: 3),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      Logger().e(state.error.errorMessage);
+                    });
                   });
                 }
               },

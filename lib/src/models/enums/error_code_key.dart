@@ -22,7 +22,7 @@ enum ErrorCodeKey {
   dataInicioGarantia,
   dataFinalGarantia,
   dataPagamentoComissao,
-  dataEncerramento,
+  dataFechamento,
   formaPagamento,
   conhecimento,
   rua,

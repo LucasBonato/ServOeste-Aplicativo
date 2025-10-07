@@ -133,7 +133,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                           child: ElevatedButton(
                             onPressed: _submitForm,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
+                              backgroundColor: Color(0xFF007BFF),
                               foregroundColor: Colors.white,
                               minimumSize: const Size(double.infinity, 50),
                               shape: RoundedRectangleBorder(

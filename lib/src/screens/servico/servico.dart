@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
 import 'package:serv_oeste/src/components/layout/fab_remove.dart';
 import 'package:serv_oeste/src/components/layout/pagination_widget.dart';
@@ -96,7 +97,7 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
       Servico servico, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return CardService(
         onDoubleTap: () => onNavigateToUpdateScreen(
-            servico.id, onSearchFieldChanged,
+            servico.id, onSearchFieldChanged, onSearchFieldChanged,
             secondId: servico.idCliente),
         onLongPress: () => onSelectItemList(servico.id),
         onTap: () {
@@ -166,13 +167,7 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
               listener: (context, state) {
                 if (state is ServicoErrorState) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(state.error.errorMessage),
-                        duration: const Duration(seconds: 3),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
+                    Logger().e(state.error.errorMessage);
                   });
                 }
               },

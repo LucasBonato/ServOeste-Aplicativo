@@ -54,11 +54,34 @@ class _HomeState extends State<Home> {
   }
 
   void _onNavigateToUpdateScreen(int id, int clientId) {
-    Navigator.of(context, rootNavigator: true).push(
+    Navigator.of(context, rootNavigator: true)
+        .push(
       MaterialPageRoute(
         builder: (context) => UpdateServico(id: id, clientId: clientId),
       ),
+    )
+        .then(
+      (_) {
+        _reloadHomeData();
+      },
     );
+  }
+
+  void _reloadHomeData() {
+    DateTime today = DateTime.now();
+    DateTime startOfDay = DateTime(today.year, today.month, today.day);
+    DateTime week = startOfDay.add(Duration(days: 7));
+
+    context.read<ServicoBloc>().add(
+          ServicoInitialLoadingEvent(
+            filterRequest: ServicoFilterRequest(
+              dataAtendimentoPrevistoAntes: startOfDay,
+              dataAtendimentoPrevistoDepois: week,
+            ),
+            page: 0,
+            size: 10,
+          ),
+        );
   }
 
   @override
@@ -88,7 +111,7 @@ class _HomeState extends State<Home> {
                     ElevatedButton(
                       onPressed: _onCreateUser,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                        backgroundColor: Color(0xFF007BFF),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(6),

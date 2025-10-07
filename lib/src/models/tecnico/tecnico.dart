@@ -33,9 +33,9 @@ class Tecnico {
     nome = tecnicoForm.nome.value;
     situacao = tecnicoForm.situacao.value.toSituation();
     telefoneFixo =
-        Formatters.transformTelefoneMask(tecnicoForm.telefoneFixo.value);
+        Formatters.transformPhoneMask(tecnicoForm.telefoneFixo.value);
     telefoneCelular =
-        Formatters.transformTelefoneMask(tecnicoForm.telefoneCelular.value);
+        Formatters.transformPhoneMask(tecnicoForm.telefoneCelular.value);
     especialidadesIds = tecnicoForm.conhecimentos.value;
   }
 

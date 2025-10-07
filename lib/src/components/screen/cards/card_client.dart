@@ -85,7 +85,7 @@ class CardClient extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(left: 32.0),
                             child: Text(
-                              'Telefone: ${Formatters.applyTelefoneMask(phoneNumber!)}',
+                              'Telefone: ${Formatters.applyPhoneMask(phoneNumber!)}',
                               style: TextStyle(
                                 fontSize: constraints.maxWidth * 0.045,
                               ),
@@ -95,7 +95,7 @@ class CardClient extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(left: 32.0),
                             child: Text(
-                              'Celular: ${Formatters.applyCelularMask(cellphone!)}',
+                              'Celular: ${Formatters.applyCellPhoneMask(cellphone!)}',
                               style: TextStyle(
                                 fontSize: constraints.maxWidth * 0.045,
                               ),

@@ -33,8 +33,7 @@ class ResponsiveSearchInputs extends StatelessWidget {
           onChanged.call();
         },
       );
-    }
-    else if (field is DropdownInputField) {
+    } else if (field is DropdownInputField) {
       return CustomDropdownFormField(
         leftPadding: 4,
         rightPadding: 4,
@@ -86,12 +85,7 @@ class ResponsiveSearchInputs extends StatelessWidget {
         lista = [];
       }
 
-      lista.add(
-        Expanded(
-          flex: 1,
-          child: _buildSearchField(fields[i])
-        )
-      );
+      lista.add(Expanded(flex: 1, child: _buildSearchField(fields[i])));
     }
 
     if (lista.isNotEmpty) {
@@ -111,8 +105,7 @@ class ResponsiveSearchInputs extends StatelessWidget {
       children: [
         for (SearchInputField field in fields)
           Expanded(flex: 1, child: _buildSearchField(field)),
-        if (onFilterTap != null)
-          _buildFilterIcon()
+        if (onFilterTap != null) _buildFilterIcon()
       ],
     );
   }
@@ -123,8 +116,7 @@ class ResponsiveSearchInputs extends StatelessWidget {
       children: [
         _buildSearchField(fields.first),
         if (fields.length > 1)
-          for (List<Widget> row in _chunkFieldsIntoRows())
-            Row(children: row),
+          for (List<Widget> row in _chunkFieldsIntoRows()) Row(children: row),
       ],
     );
   }
@@ -156,19 +148,18 @@ class ResponsiveSearchInputs extends StatelessWidget {
     final double width = (isLargeScreen) ? maxContainerWidth : double.infinity;
 
     return Container(
-      width: width,
-      padding: EdgeInsets.all(padding),
-      child: Builder(
-        builder: (context) {
-          if (isLargeScreen) {
-            return _buildLargeScreenSearchBar();
-          }
-          if (isMediumScreen) {
-            return _buildMediumScreenSearchBar();
-          }
-          return _buildSmallScreenSearchBar();
-        },
-      )
-    );
+        width: width,
+        padding: EdgeInsets.all(padding),
+        child: Builder(
+          builder: (context) {
+            if (isLargeScreen) {
+              return _buildLargeScreenSearchBar();
+            }
+            if (isMediumScreen) {
+              return _buildMediumScreenSearchBar();
+            }
+            return _buildSmallScreenSearchBar();
+          },
+        ));
   }
 }

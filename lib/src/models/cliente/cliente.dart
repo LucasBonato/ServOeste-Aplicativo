@@ -30,9 +30,9 @@ class Cliente implements Skeletonizable {
     id = clienteForm.id;
     nome = clienteForm.nome.value;
     telefoneFixo =
-        Formatters.transformTelefoneMask(clienteForm.telefoneFixo.value);
+        Formatters.transformPhoneMask(clienteForm.telefoneFixo.value);
     telefoneCelular =
-        Formatters.transformTelefoneMask(clienteForm.telefoneCelular.value);
+        Formatters.transformPhoneMask(clienteForm.telefoneCelular.value);
     endereco =
         "${clienteForm.rua.value}, ${clienteForm.numero.value}${(clienteForm.complemento.value.isNotEmpty) ? ", ${clienteForm.complemento.value}" : ""}";
     bairro = clienteForm.bairro.value;

@@ -127,6 +127,7 @@ class ClienteFormWidget extends StatelessWidget {
           keyboardType: TextInputType.phone,
           mask: InputMasks.telefoneFixo,
           valueNotifier: clienteForm.telefoneFixo,
+          enableValueNotifierSync: false,
           validator:
               validator.byField(clienteForm, ErrorCodeKey.telefones.name),
           onChanged: clienteForm.setTelefoneFixo,
@@ -140,6 +141,7 @@ class ClienteFormWidget extends StatelessWidget {
           maxLength: 15,
           mask: InputMasks.telefoneCelular,
           valueNotifier: clienteForm.telefoneCelular,
+          enableValueNotifierSync: false,
           validator:
               validator.byField(clienteForm, ErrorCodeKey.telefones.name),
           onChanged: clienteForm.setTelefoneCelular,

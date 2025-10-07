@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
 import 'package:serv_oeste/src/components/layout/fab_add.dart';
 import 'package:serv_oeste/src/components/layout/fab_remove.dart';
@@ -82,7 +83,9 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
       Cliente cliente, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return CardClient(
       onDoubleTap: () => onNavigateToUpdateScreen(
-          cliente.id!, () => _clienteBloc.add(ClienteSearchMenuEvent())),
+          cliente.id!,
+          () => _clienteBloc.add(ClienteSearchMenuEvent()),
+          () => _clienteBloc.add(ClienteSearchMenuEvent())),
       onLongPress: () => onSelectItemList(cliente.id!),
       onTap: () {
         if (isSelectMode) {
@@ -139,13 +142,7 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
               listener: (context, state) {
                 if (state is ClienteErrorState) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(state.error.errorMessage),
-                        duration: const Duration(seconds: 3),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
+                    Logger().e(state.error.errorMessage);
                   });
                 }
               },

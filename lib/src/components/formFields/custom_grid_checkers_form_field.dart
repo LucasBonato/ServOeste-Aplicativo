@@ -56,7 +56,7 @@ class CustomGridCheckersFormField extends StatelessWidget {
                     children: [
                       Checkbox(
                         value: checkersMap[label] ?? false,
-                        activeColor: Colors.blue,
+                        activeColor: Color(0xFF007BFF),
                         onChanged: (value) {
                           checkersMap[label] = value ?? false;
                           if (label == "Outros" && onOutrosSelected != null) {

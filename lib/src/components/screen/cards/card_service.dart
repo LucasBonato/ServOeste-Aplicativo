@@ -206,7 +206,7 @@ class CardService extends StatelessWidget {
                               left: constraints.maxWidth * 0.15,
                             ),
                             child: Text(
-                              "Data Prevista: ${Formatters.applyDateMask(dataPrevista!)} - ${Formatters.formatHorario(horario!)}",
+                              "Data Prevista: ${Formatters.applyDateMask(dataPrevista!)} - ${Formatters.formatScheduleTime(horario!)}",
                               style: TextStyle(
                                 fontSize: constraints.maxWidth * 0.045,
                                 color: Colors.black,
@@ -219,7 +219,7 @@ class CardService extends StatelessWidget {
                               left: constraints.maxWidth * 0.15,
                             ),
                             child: Text(
-                              "Data Efetiva: ${Formatters.applyDateMask(dataEfetiva!)} - ${Formatters.formatHorario(horario!)}",
+                              "Data Efetiva: ${Formatters.applyDateMask(dataEfetiva!)} - ${Formatters.formatScheduleTime(horario!)}",
                               style: TextStyle(
                                 fontSize: constraints.maxWidth * 0.045,
                                 color: Colors.black,

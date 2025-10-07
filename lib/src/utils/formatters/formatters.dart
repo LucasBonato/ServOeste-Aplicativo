@@ -1,29 +1,30 @@
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'package:serv_oeste/src/models/enums/service_status.dart';
 
 class Formatters {
   static String formatPhonePdf(String? phone, {required bool isCell}) {
     if (phone == null || phone.isEmpty) {
-      return isCell ? '(  )    -    ' : '(  )    -    ';
+      return isCell ? '(   )          -' : '(   )          -';
     }
     return isCell
-        ? Formatters.applyCelularMask(phone)
-        : Formatters.applyTelefoneMask(phone);
+        ? Formatters.applyCellPhoneMask(phone)
+        : Formatters.applyPhoneMask(phone);
   }
 
-  static String applyTelefoneMask(String telefone) {
-    if (telefone.length < 10) return telefone;
-    return "(${telefone.substring(0, 2)}) ${telefone.substring(2, 6)}-${telefone.substring(6)}";
+  static String applyPhoneMask(String phone) {
+    if (phone.length < 10) return phone;
+    return "(${phone.substring(0, 2)}) ${phone.substring(2, 6)}-${phone.substring(6)}";
   }
 
-  static String applyCelularMask(String telefone) {
-    if (telefone.length < 11) return telefone;
-    return "(${telefone.substring(0, 2)}) ${telefone.substring(2, 7)}-${telefone.substring(7)}";
+  static String applyCellPhoneMask(String phone) {
+    if (phone.length < 11) return phone;
+    return "(${phone.substring(0, 2)}) ${phone.substring(2, 7)}-${phone.substring(7)}";
   }
 
-  static String transformTelefoneMask(String telefone) {
-    if (telefone.length < 14 || telefone.length > 15) return "";
-    return telefone
+  static String transformPhoneMask(String phone) {
+    if (phone.length < 14 || phone.length > 15) return "";
+    return phone
         .replaceAll("(", "")
         .replaceAll(")", "")
         .replaceAll(" ", "")
@@ -45,14 +46,193 @@ class Formatters {
     return DateFormat('dd/MM/yyyy').parseStrict(dateString);
   }
 
-  static String formatHorario(String horario) {
-    switch (horario.toLowerCase()) {
+  static String formatDateForHistory(dynamic date) {
+    if (date == null) return "Não informado";
+
+    if (date is DateTime) {
+      return applyDateMask(date);
+    }
+
+    final dateString = date.toString();
+    return convertUsToBrDate(dateString);
+  }
+
+  static String convertUsToBrDate(String usDate) {
+    if (usDate.isEmpty) return '';
+
+    final parts = usDate.split('/');
+    if (parts.length == 3) {
+      return '${parts[1]}/${parts[0]}/${parts[2]}';
+    }
+
+    return usDate;
+  }
+
+  static DateTime parseBrDateForSorting(String brDate) {
+    List<String> parts = brDate.split('/');
+    if (parts.length == 3) {
+      int day = int.parse(parts[0]);
+      int month = int.parse(parts[1]);
+      int year = int.parse(parts[2]) + 2000;
+      return DateTime(year, month, day);
+    }
+
+    return DateTime.now();
+  }
+
+  static List<Map<String, String>> parseServiceHistory(String history) {
+    List<Map<String, String>> entries = [];
+
+    final dateRegex = RegExp(r'\[(.*?)\]');
+    List<String> dates =
+        dateRegex.allMatches(history).map((m) => m.group(1)!).toList();
+
+    dates = dates.reversed.toList();
+
+    String textWithoutDates = history.replaceAll(dateRegex, '').trim();
+
+    List<String> blocks = textWithoutDates
+        .split(' - ')
+        .where((p) => p.trim().isNotEmpty && p.trim() != '-')
+        .toList();
+
+    List<Map<String, String>> temporaryEntries = [];
+
+    for (int i = 0; i < blocks.length; i++) {
+      String currentBlock = blocks[i].trim();
+
+      if (currentBlock.contains('\n')) {
+        List<String> parts = currentBlock.split('\n');
+        if (parts.length >= 2) {
+          String description = parts[0].trim();
+          String situation = parts[1].trim();
+
+          temporaryEntries.add({
+            'situacao': situation,
+            'descricao': description,
+          });
+        }
+      } else if (currentBlock.contains("ABERTURA:")) {
+        String situation = currentBlock;
+        String description = '';
+
+        if (i + 1 < blocks.length && !blocks[i + 1].contains("ABERTURA:")) {
+          description = blocks[i + 1].trim();
+          i++;
+        }
+
+        temporaryEntries.add({
+          'situacao': situation,
+          'descricao': description,
+        });
+      } else if (currentBlock.toUpperCase().contains("AGUARDANDO") ||
+          currentBlock.toUpperCase().contains("CANCELADO") ||
+          currentBlock.toUpperCase().contains("RESOLVIDO") ||
+          currentBlock.toUpperCase().contains("GARANTIA")) {
+        String situation = currentBlock;
+        String description = '';
+
+        if (i + 1 < blocks.length &&
+            !blocks[i + 1].toUpperCase().contains("AGUARDANDO") &&
+            !blocks[i + 1].toUpperCase().contains("CANCELADO") &&
+            !blocks[i + 1].toUpperCase().contains("RESOLVIDO")) {
+          description = blocks[i + 1].trim();
+          i++;
+        }
+
+        temporaryEntries.add({
+          'situacao': situation,
+          'descricao': description,
+        });
+      } else if (temporaryEntries.isNotEmpty) {
+        int lastIndex = temporaryEntries.length - 1;
+        if (temporaryEntries[lastIndex]['descricao']!.isEmpty) {
+          temporaryEntries[lastIndex]['descricao'] = currentBlock;
+        }
+      }
+    }
+
+    for (int i = 0; i < temporaryEntries.length; i++) {
+      String date = '';
+
+      if (i < dates.length) {
+        date = Formatters.convertUsToBrDate(dates[i]);
+      }
+
+      entries.add({
+        'situacao': temporaryEntries[i]['situacao']!,
+        'descricao': temporaryEntries[i]['descricao']!,
+        'data': date,
+      });
+    }
+
+    entries.sort((a, b) {
+      if (a['data']!.isEmpty && b['data']!.isEmpty) return 0;
+      if (a['data']!.isEmpty) return -1;
+      if (b['data']!.isEmpty) return 1;
+
+      try {
+        DateTime dateA = Formatters.parseBrDateForSorting(a['data']!);
+        DateTime dateB = Formatters.parseBrDateForSorting(b['data']!);
+        return dateA.compareTo(dateB);
+      } catch (e) {
+        return a['data']!.compareTo(b['data']!);
+      }
+    });
+
+    entries = entries.reversed.toList();
+
+    return entries;
+  }
+
+  static DateTime? extractDateFromDescription(String? description) {
+    if (description == null) return null;
+
+    try {
+      final regex = RegExp(r'(\d{1,2}/\d{1,2}/\d{2,4})');
+      final matches = regex.allMatches(description);
+
+      if (matches.isEmpty) return null;
+
+      final dates = <DateTime>[];
+
+      for (final match in matches) {
+        final dateStr = match.group(0);
+        if (dateStr != null) {
+          final parts = dateStr.split('/');
+          if (parts.length == 3) {
+            int day = int.parse(parts[0]);
+            int month = int.parse(parts[1]);
+            int year = int.parse(parts[2]);
+
+            if (year < 100) {
+              year += 2000;
+            }
+
+            final date = DateTime(year, month, day);
+            dates.add(date);
+          }
+        }
+      }
+
+      if (dates.isEmpty) return null;
+
+      dates.sort();
+      return dates.first;
+    } catch (e) {
+      Logger().e('Erro ao extrair data da descrição: $e');
+      return null;
+    }
+  }
+
+  static String formatScheduleTime(String time) {
+    switch (time.toLowerCase()) {
       case "manha":
         return "Manhã";
       case "tarde":
         return "Tarde";
       default:
-        return horario[0].toUpperCase() + horario.substring(1);
+        return time[0].toUpperCase() + time.substring(1);
     }
   }
 
@@ -97,6 +277,46 @@ class Formatters {
     sanitizedValue = sanitizedValue.replaceAll(',', '.');
 
     return double.tryParse(sanitizedValue) ?? 0.0;
+  }
+
+  static String formatDescriptionForPDF(String? history) {
+    if (history == null || history.isEmpty) {
+      return 'Sem descrição';
+    }
+
+    try {
+      final entries = parseServiceHistory(history);
+      if (entries.isEmpty) return history;
+
+      final invertedEntries = entries.reversed.toList();
+
+      final buffer = StringBuffer();
+
+      for (final entry in invertedEntries) {
+        final situation = entry['situacao'] ?? '';
+        final description = entry['descricao'] ?? '';
+        final date = entry['data'] ?? '';
+
+        if (date.isNotEmpty) {
+          buffer.write('$date - $situation');
+        } else {
+          buffer.write(situation);
+        }
+
+        buffer.write('\n');
+
+        if (description.isNotEmpty) {
+          buffer.write('  $description');
+        }
+
+        buffer.write('\n\n');
+      }
+
+      return buffer.toString().trim();
+    } catch (e) {
+      Logger().e('Erro ao formatar descrição para PDF: $e');
+      return history;
+    }
   }
 
   static ServiceStatus mapStringStatusToEnumStatus(String status) {

@@ -77,6 +77,8 @@ class _CustomDatePickerFormFieldState extends State<CustomDatePickerFormField>
     final bool allowPastDates = args['allowPastDates'] as bool;
     final int initialDateMillis = args['initialDate'] as int;
 
+    DateTime initialDate =
+        DateTime.fromMillisecondsSinceEpoch(initialDateMillis);
     bool isSunday = (DateTime.now().weekday == DateTime.sunday);
     DateTime today = DateTime.now();
     DateTime tomorrow = today.add(const Duration(days: 1));
@@ -86,13 +88,17 @@ class _CustomDatePickerFormFieldState extends State<CustomDatePickerFormField>
 
     DateTime lastDate = DateTime(DateTime.now().year + 10, 12, 31);
 
+    if (initialDate.isBefore(firstDate)) {
+      initialDate = firstDate;
+    }
+
     return DialogRoute<DateTime>(
       context: context,
       builder: (BuildContext context) {
         return DatePickerDialog(
           restorationId: 'date_picker_dialog',
           initialEntryMode: DatePickerEntryMode.calendarOnly,
-          initialDate: DateTime.fromMillisecondsSinceEpoch(initialDateMillis),
+          initialDate: initialDate,
           firstDate: firstDate,
           lastDate: lastDate,
           selectableDayPredicate: allowPastDates

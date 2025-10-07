@@ -91,6 +91,7 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
         hint: field.hint,
         label: field.label,
         masks: field.mask,
+        enableValueNotifierSync: field.enableValueNotifierSync,
         inputFormatters: field.formatter,
         minLines: field.keyboardType == TextInputType.multiline ? 1 : null,
         maxLines: field.keyboardType == TextInputType.multiline ? 3 : null,

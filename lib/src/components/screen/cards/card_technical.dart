@@ -111,7 +111,7 @@ class CardTechnician extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsets.only(left: 28),
                                 child: Text(
-                                  "Telefone: ${Formatters.applyTelefoneMask(telefone!)}",
+                                  "Telefone: ${Formatters.applyPhoneMask(telefone!)}",
                                   style: TextStyle(
                                     fontSize: constraints.maxWidth * 0.04,
                                   ),
@@ -121,7 +121,7 @@ class CardTechnician extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsets.only(left: 28),
                                 child: Text(
-                                  "Celular: ${Formatters.applyCelularMask(celular!)}",
+                                  "Celular: ${Formatters.applyCellPhoneMask(celular!)}",
                                   style: TextStyle(
                                     fontSize: constraints.maxWidth * 0.04,
                                   ),

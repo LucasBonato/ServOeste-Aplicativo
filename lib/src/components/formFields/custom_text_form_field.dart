@@ -23,6 +23,7 @@ class CustomTextFormField extends StatefulWidget {
   final ValueNotifier<String> valueNotifier;
   final TextEditingController? controller;
   final IconButton? suffixIcon;
+  final bool enableValueNotifierSync;
 
   const CustomTextFormField({
     super.key,
@@ -46,6 +47,7 @@ class CustomTextFormField extends StatefulWidget {
     this.onTap,
     this.masks,
     this.suffixIcon,
+    this.enableValueNotifierSync = true,
   });
 
   @override
@@ -57,13 +59,16 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
   @override
   void initState() {
-    _internalController = TextEditingController(text: widget.valueNotifier.value);
+    _internalController =
+        TextEditingController(text: widget.valueNotifier.value);
 
-    widget.valueNotifier.addListener(() {
-      if (_internalController.text != widget.valueNotifier.value) {
-        _internalController.text = widget.valueNotifier.value;
-      }
-    });
+    if (widget.enableValueNotifierSync) {
+      widget.valueNotifier.addListener(() {
+        if (_internalController.text != widget.valueNotifier.value) {
+          _internalController.text = widget.valueNotifier.value;
+        }
+      });
+    }
 
     super.initState();
   }
@@ -71,10 +76,12 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(widget.leftPadding ?? 16, 4, widget.rightPadding ?? 16, 0),
+      padding: EdgeInsets.fromLTRB(
+          widget.leftPadding ?? 16, 4, widget.rightPadding ?? 16, 0),
       child: ValueListenableBuilder<String>(
         valueListenable: widget.valueNotifier,
-        builder: (BuildContext context, String value, Widget? child) => TextFormField(
+        builder: (BuildContext context, String value, Widget? child) =>
+            TextFormField(
           enabled: widget.enabled,
           controller: _internalController,
           inputFormatters: widget.masks ?? widget.inputFormatters,
@@ -98,7 +105,10 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               fontSize: 16,
             ),
             floatingLabelStyle: TextStyle(
-              color: _internalController.text.isNotEmpty || FocusScope.of(context).hasFocus ? Colors.black : Color(0xFF948F8F),
+              color: _internalController.text.isNotEmpty ||
+                      FocusScope.of(context).hasFocus
+                  ? Colors.black
+                  : Color(0xFF948F8F),
               fontSize: 16,
             ),
             border: OutlineInputBorder(

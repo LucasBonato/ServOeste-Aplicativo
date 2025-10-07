@@ -6,6 +6,7 @@ import 'package:serv_oeste/src/components/layout/report_menu_action.dart';
 import 'package:serv_oeste/src/components/screen/cards/card_builder_form.dart';
 import 'package:serv_oeste/src/components/screen/client_selection_modal.dart';
 import 'package:serv_oeste/src/components/screen/elevated_form_button.dart';
+import 'package:serv_oeste/src/components/screen/history_service_table.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
@@ -39,10 +40,11 @@ class _UpdateServicoState extends State<UpdateServico> {
   late TextEditingController _nomeClienteController;
   late TextEditingController _enderecoController;
 
+  late ServicoValidator _servicoUpdateValidator =
+      ServicoValidator(isUpdate: true);
+
   final ServicoForm _servicoUpdateForm = ServicoForm();
   final ClienteForm _clienteUpdateForm = ClienteForm();
-  final ServicoValidator _servicoUpdateValidator =
-      ServicoValidator(isUpdate: true);
   final GlobalKey<FormState> _servicoFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _clienteFormKey = GlobalKey<FormState>();
   bool deactivateClientFields = false;
@@ -53,7 +55,7 @@ class _UpdateServicoState extends State<UpdateServico> {
     if (convertedId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("ID inválido. Por favor, insira um número."),
+          content: Text("ID inválido. Por favor, selecione um serviço."),
           backgroundColor: Colors.red,
         ),
       );
@@ -88,13 +90,18 @@ class _UpdateServicoState extends State<UpdateServico> {
   }
 
   void _populateServicoFormWithState(Servico servico) {
+    final originalId = _servicoUpdateForm.id.value;
+
     _nomeTecnicoController.text = servico.nomeTecnico ?? "";
     _servicoUpdateForm.setForm(servico);
+
+    _servicoUpdateForm.setId(originalId ?? widget.id);
   }
 
   bool _isValidForm() {
     _clienteFormKey.currentState?.validate();
     _servicoFormKey.currentState?.validate();
+
     final ValidationResult response =
         _servicoUpdateValidator.validate(_servicoUpdateForm);
     return response.isValid;
@@ -212,64 +219,8 @@ class _UpdateServicoState extends State<UpdateServico> {
   Future<dynamic> buildDescriptionHistoryDialog(BuildContext context) {
     return showDialog(
       context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width * 0.6,
-            maxHeight: MediaQuery.of(context).size.height * 0.5,
-          ),
-          child: AlertDialog(
-            title: const Text(
-              "Histórico do serviço",
-              textAlign: TextAlign.center,
-            ),
-            backgroundColor: const Color(0xFFF9F9FF),
-            content: SizedBox(
-              width: double.maxFinite,
-              child: SingleChildScrollView(
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: const Color(0xFFEAE6E5),
-                      width: 1,
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: _servicoUpdateForm.historico.value
-                        .split('\n')
-                        .expand((texto) => [
-                              Text(
-                                texto,
-                                textAlign: TextAlign.left,
-                              ),
-                              const Divider(
-                                color: Colors.black,
-                                thickness: 1,
-                                height: 10,
-                              ),
-                            ])
-                        .toList()
-                      ..removeLast(),
-                  ),
-                ),
-              ),
-            ),
-            actions: [
-              ElevatedFormButton(
-                text: "Ok",
-                onPressed: () => Navigator.pop(context),
-              ),
-            ],
-          ),
-        ),
+      builder: (context) => ServiceHistoryTable(
+        historico: _servicoUpdateForm.historico.value,
       ),
     );
   }
@@ -284,8 +235,76 @@ class _UpdateServicoState extends State<UpdateServico> {
     _servicoBloc = context.read<ServicoBloc>();
     _tecnicoBloc = context.read<TecnicoBloc>();
     _clienteBloc = context.read<ClienteBloc>();
+
+    _servicoUpdateValidator = ServicoValidator(
+      isUpdate: true,
+      isFieldEnabled: _isServicoFieldEnabled,
+    );
+
     _servicoBloc.add(ServicoSearchOneEvent(id: widget.id));
     _clienteBloc.add(ClienteSearchOneEvent(id: widget.clientId));
+  }
+
+  bool _isServicoFieldEnabled(String fieldName) {
+    final currentSituation = _servicoUpdateForm.situacao.value;
+
+    final disabledSituations = {
+      "dataInicioGarantia": [
+        'Aguardando agendamento',
+        'Aguardando atendimento',
+        'Cancelado',
+        'Sem defeito',
+        'Aguardando orçamento',
+        'Aguardando aprovação do cliente',
+        'Não aprovado pelo cliente',
+        'Compra',
+        'Orçamento aprovado',
+        'Aguardando cliente retirar',
+        'Não retira há 3 meses'
+      ],
+      "dataFinalGarantia": [
+        'Aguardando agendamento',
+        'Aguardando atendimento',
+        'Cancelado',
+        'Sem defeito',
+        'Aguardando orçamento',
+        'Aguardando aprovação do cliente',
+        'Não aprovado pelo cliente',
+        'Compra',
+        'Orçamento aprovado',
+        'Aguardando cliente retirar',
+        'Não retira há 3 meses'
+      ],
+      "valor": [
+        'Aguardando agendamento',
+        'Aguardando atendimento',
+        'Cancelado',
+        'Sem defeito',
+        'Aguardando orçamento',
+      ],
+      "valorPecas": [
+        'Aguardando agendamento',
+        'Aguardando atendimento',
+        'Cancelado',
+        'Sem defeito',
+        'Aguardando orçamento',
+      ],
+      "formaPagamento": [
+        'Aguardando agendamento',
+        'Aguardando atendimento',
+        'Cancelado',
+        'Sem defeito',
+        'Aguardando orçamento',
+        'Aguardando aprovação do cliente',
+        'Não aprovado pelo cliente',
+        'Compra',
+      ],
+    };
+
+    final situations = disabledSituations[fieldName];
+    if (situations == null) return true;
+
+    return !situations.contains(currentSituation);
   }
 
   @override
