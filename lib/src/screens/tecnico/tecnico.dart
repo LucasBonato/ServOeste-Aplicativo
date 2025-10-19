@@ -97,8 +97,8 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
         id: tecnico.id!,
         nome: tecnico.nome!,
         sobrenome: tecnico.sobrenome!,
-        telefone: tecnico.telefoneFixo!,
-        celular: tecnico.telefoneCelular!,
+        telefone: tecnico.telefoneFixo,
+        celular: tecnico.telefoneCelular,
         status: tecnico.situacao!,
         isSelected: isSelected,
         isSkeleton: isSkeleton);
