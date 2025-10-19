@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:serv_oeste/src/services/secure_storage_service.dart';
@@ -8,10 +9,8 @@ class DioInterceptor extends Interceptor {
   final JsonEncoder jsonEncoder = const JsonEncoder.withIndent("  ");
 
   @override
-  Future<void> onRequest(
-      RequestOptions options, RequestInterceptorHandler handler) async {
-    final isAuthRoute = options.path.contains('/auth/login') ||
-        options.path.contains('/auth/refresh');
+  Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+    final isAuthRoute = options.path.contains('/auth/login') || options.path.contains('/auth/refresh');
 
     if (!isAuthRoute) {
       final token = await SecureStorageService.getAccessToken();

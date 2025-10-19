@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:serv_oeste/src/clients/auth_client.dart';
@@ -5,75 +7,79 @@ import 'package:serv_oeste/src/clients/dio/server_endpoints.dart';
 import 'package:serv_oeste/src/services/secure_storage_service.dart';
 
 class TokenRefreshInterceptor extends Interceptor {
+  final Dio dio;
   final AuthClient authClient;
-  final Dio _dio;
   final VoidCallback? onTokenRefreshFailed;
-  bool _isRefreshing = false;
 
-  TokenRefreshInterceptor(this.authClient, this._dio,
-      {this.onTokenRefreshFailed});
+  bool _isRefreshing = false;
+  final _queue = <Completer<void>>[];
+
+  TokenRefreshInterceptor({
+    required this.dio,
+    required this.authClient,
+    this.onTokenRefreshFailed,
+  });
 
   @override
-  Future<void> onError(
-      DioException err, ErrorInterceptorHandler handler) async {
-    if (_isRefreshing ||
-        err.requestOptions.path == ServerEndpoints.refreshEndpoint) {
-      handler.next(err);
-      return;
+  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
+    if (err.requestOptions.path == ServerEndpoints.refreshEndpoint) {
+      return handler.next(err);
     }
 
-    if (err.response?.statusCode == 401 || err.response?.statusCode == 403) {
-      _isRefreshing = true;
+    if (err.response?.statusCode != 401 && err.response?.statusCode != 403) {
+      return handler.next(err);
+    }
 
-      try {
-        final result = await authClient.refreshToken();
+    if (_isRefreshing) {
+      final completer = Completer<void>();
+      _queue.add(completer);
+      await completer.future;
 
-        if (result.isRight()) {
-          final newTokens = result.fold(
-            (left) => null,
-            (right) => right,
-          );
+      return _retryRequest(err, handler);
+    }
 
-          if (newTokens != null) {
-            await SecureStorageService.saveTokens(
-              newTokens.accessToken,
-              newTokens.refreshToken,
-            );
+    _isRefreshing = true;
 
-            err.requestOptions.headers['Authorization'] =
-                'Bearer ${newTokens.accessToken}';
+    try {
+      final refreshResult = await authClient.refreshToken();
 
-            final response = await _dio.request(
-              err.requestOptions.path,
-              data: err.requestOptions.data,
-              queryParameters: err.requestOptions.queryParameters,
-              options: Options(
-                method: err.requestOptions.method,
-                headers: err.requestOptions.headers,
-              ),
-            );
+      if (refreshResult.isRight()) {
+        final newTokens = refreshResult.getOrElse(() => throw Exception('Missing token'));
+        await SecureStorageService.saveTokens(newTokens.accessToken, newTokens.refreshToken);
 
-            _isRefreshing = false;
-            return handler.resolve(response);
-          }
+        for (final completer in _queue) {
+          completer.complete();
         }
+        _queue.clear();
 
-        await _handleTokenRefreshFailed();
-      } catch (refreshError) {
-        await _handleTokenRefreshFailed();
+        _isRefreshing = false;
+
+        return _retryRequest(err, handler);
       }
 
-      handler.next(err);
-    } else {
-      handler.next(err);
+      await _handleRefreshFailed(handler, err);
+    }
+    catch (_) {
+      await _handleRefreshFailed(handler, err);
     }
   }
 
-  Future<void> _handleTokenRefreshFailed() async {
-    await SecureStorageService.deleteTokens();
+  Future<void> _retryRequest(DioException err, ErrorInterceptorHandler handler) async {
+    final newAccessToken = await SecureStorageService.getAccessToken();
+
+    err.requestOptions.headers['Authorization'] = 'Bearer $newAccessToken';
+
+    final response = await dio.fetch(err.requestOptions);
+    return handler.resolve(response);
+  }
+
+  Future<void> _handleRefreshFailed(ErrorInterceptorHandler handler, DioException err) async {
     _isRefreshing = false;
-    if (onTokenRefreshFailed != null) {
-      onTokenRefreshFailed!();
-    }
+    _queue.clear();
+
+    await SecureStorageService.deleteTokens();
+    onTokenRefreshFailed?.call();
+
+    handler.next(err);
   }
 }

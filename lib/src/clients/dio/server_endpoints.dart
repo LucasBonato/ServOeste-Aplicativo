@@ -9,8 +9,7 @@ class ServerEndpoints {
 
   static const String tecnicoEndpoint = "tecnico";
   static const String tecnicoFindEndpoint = "tecnico/find";
-  static const String tecnicoDisponibilidadeEndpoint =
-      "tecnico/disponibilidade";
+  static const String tecnicoDisponibilidadeEndpoint = "tecnico/disponibilidade";
 
   static const String clienteEndpoint = "cliente";
   static const String clienteFindEndpoint = "cliente/find";

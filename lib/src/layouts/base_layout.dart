@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/layout/bottom_nav_bar.dart';
 import 'package:serv_oeste/src/components/layout/header.dart';
 import 'package:serv_oeste/src/components/layout/sidebar_navigation.dart';
+import 'package:serv_oeste/src/logic/auth/auth_bloc.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
@@ -15,7 +16,6 @@ import 'package:serv_oeste/src/screens/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/home.dart';
 import 'package:serv_oeste/src/screens/servico/servico.dart';
 import 'package:serv_oeste/src/screens/tecnico/tecnico.dart';
-import 'package:serv_oeste/src/logic/auth/auth_bloc.dart';
 
 class BaseLayout extends StatefulWidget {
   final int? initialIndex;
@@ -50,8 +50,6 @@ class BaseLayoutState extends State<BaseLayout> {
     _navigatorKeys = List.generate(4, (_) => GlobalKey<NavigatorState>());
     _screens = List.filled(4, null);
     _loadTab(_currentIndex);
-
-    _startAuthTimer();
   }
 
   @override
@@ -60,22 +58,9 @@ class BaseLayoutState extends State<BaseLayout> {
     super.dispose();
   }
 
-  void _startAuthTimer() {
-    _authTimer = Timer.periodic(const Duration(minutes: 5), (timer) {
-      if (!mounted) {
-        timer.cancel();
-        return;
-      }
-
-      final authBloc = context.read<AuthBloc>();
-      authBloc.add(AuthCheckStatusEvent());
-    });
-  }
-
   Widget _getScreen(int index) {
     _screens[index] = switch (index) {
-      0 =>
-        BlocProvider.value(value: _servicoBloc, child: Home(key: UniqueKey())),
+      0 => BlocProvider.value(value: _servicoBloc, child: Home(key: UniqueKey())),
       1 => MultiBlocProvider(
           providers: [
             BlocProvider.value(value: _tecnicoBloc),
@@ -112,12 +97,7 @@ class BaseLayoutState extends State<BaseLayout> {
   }
 
   void _loadTab(int index) {
-    final Map<int, VoidCallback> tabLoadAction = {
-      0: _loadHome,
-      1: _loadTecnico,
-      2: _loadCliente,
-      3: _loadServico
-    };
+    final Map<int, VoidCallback> tabLoadAction = {0: _loadHome, 1: _loadTecnico, 2: _loadCliente, 3: _loadServico};
     tabLoadAction[index]?.call();
   }
 
