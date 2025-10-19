@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:serv_oeste/src/components/layout/app_bar_form.dart';
-import 'package:serv_oeste/src/components/screen/elevated_form_button.dart';
-import 'package:serv_oeste/src/logic/filtro_servico/filtro_servico_provider.dart';
+import 'package:serv_oeste/src/components/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/date_picker_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
-import 'package:serv_oeste/src/components/formFields/custom_search_form_field.dart';
+import 'package:serv_oeste/src/components/layout/app_bar_form.dart';
+import 'package:serv_oeste/src/components/screen/elevated_form_button.dart';
+import 'package:serv_oeste/src/logic/filtro_servico/filtro_servico_provider.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/shared/constants/constants.dart';
@@ -32,9 +32,7 @@ class FilterService extends StatelessWidget {
       periodo: filter.periodo,
     );
 
-    context
-        .read<ServicoBloc>()
-        .add(ServicoSearchMenuEvent(filterRequest: filterRequest));
+    context.read<ServicoBloc>().add(ServicoSearchMenuEvent(filterRequest: filterRequest));
 
     context.read<FiltroServicoProvider>().clearFields();
 
@@ -56,8 +54,7 @@ class FilterService extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: ScrollConfiguration(
-              behavior: ScrollBehavior()
-                  .copyWith(overscroll: false, scrollbars: false),
+              behavior: ScrollBehavior().copyWith(overscroll: false, scrollbars: false),
               child: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -95,8 +92,7 @@ class FilterService extends StatelessWidget {
                           provider.updateFilter(situacao: value);
                         }
                       },
-                      valueNotifier:
-                          ValueNotifier(provider.filter.situacao ?? ''),
+                      valueNotifier: ValueNotifier(provider.filter.situacao ?? ''),
                     ),
                     const SizedBox(height: 8),
                     CustomDropdownFormField(
@@ -111,8 +107,7 @@ class FilterService extends StatelessWidget {
                           provider.updateFilter(garantia: value);
                         }
                       },
-                      valueNotifier:
-                          ValueNotifier(provider.filter.garantia ?? ''),
+                      valueNotifier: ValueNotifier(provider.filter.garantia ?? ''),
                     ),
                     const SizedBox(height: 8),
                     LayoutBuilder(
@@ -125,16 +120,10 @@ class FilterService extends StatelessWidget {
                                 hint: 'Código...',
                                 leftPadding: 4,
                                 rightPadding: 4,
-                                controller: TextEditingController(
-                                    text: provider.filter.id != null &&
-                                            provider.filter.id! > 0
-                                        ? provider.filter.id.toString()
-                                        : ''),
+                                controller: TextEditingController(text: provider.filter.id != null && provider.filter.id! > 0 ? provider.filter.id.toString() : ''),
                                 keyboardType: TextInputType.number,
                                 onChangedAction: (value) {
-                                  final codigoInt = value.isNotEmpty
-                                      ? int.tryParse(value)
-                                      : null;
+                                  final codigoInt = value.isNotEmpty ? int.tryParse(value) : null;
                                   provider.updateFilter(codigo: codigoInt);
                                 },
                               ),
@@ -151,8 +140,7 @@ class FilterService extends StatelessWidget {
                                     provider.updateFilter(filial: value);
                                   }
                                 },
-                                valueNotifier:
-                                    ValueNotifier(provider.filter.filial ?? ''),
+                                valueNotifier: ValueNotifier(provider.filter.filial ?? ''),
                               ),
                             ],
                           );
@@ -165,16 +153,10 @@ class FilterService extends StatelessWidget {
                                   hint: 'Código...',
                                   leftPadding: 4,
                                   rightPadding: 4,
-                                  controller: TextEditingController(
-                                      text: provider.filter.id != null &&
-                                              provider.filter.id! > 0
-                                          ? provider.filter.id.toString()
-                                          : ''),
+                                  controller: TextEditingController(text: provider.filter.id != null && provider.filter.id! > 0 ? provider.filter.id.toString() : ''),
                                   keyboardType: TextInputType.number,
                                   onChangedAction: (value) {
-                                    final codigoInt = value.isNotEmpty
-                                        ? int.tryParse(value)
-                                        : null;
+                                    final codigoInt = value.isNotEmpty ? int.tryParse(value) : null;
                                     provider.updateFilter(codigo: codigoInt);
                                   },
                                 ),
@@ -192,8 +174,7 @@ class FilterService extends StatelessWidget {
                                       provider.updateFilter(filial: value);
                                     }
                                   },
-                                  valueNotifier: ValueNotifier(
-                                      provider.filter.filial ?? ''),
+                                  valueNotifier: ValueNotifier(provider.filter.filial ?? ''),
                                 ),
                               ),
                             ],
@@ -218,19 +199,12 @@ class FilterService extends StatelessWidget {
                                 leftPadding: 4,
                                 type: TextInputType.datetime,
                                 valueNotifier: ValueNotifier(
-                                  provider.filter
-                                              .dataAtendimentoPrevistoAntes !=
-                                          null
-                                      ? Formatters.applyDateMask(provider
-                                          .filter.dataAtendimentoPrevistoAntes!)
-                                      : '',
+                                  provider.filter.dataAtendimentoPrevistoAntes != null ? Formatters.applyDateMask(provider.filter.dataAtendimentoPrevistoAntes!) : '',
                                 ),
                                 onChanged: (value) {
                                   if (value.isNotEmpty) {
-                                    final parsedDate =
-                                        DateFormat('dd/MM/yyyy').parse(value);
-                                    provider.updateFilter(
-                                        dataPrevista: parsedDate);
+                                    final parsedDate = DateFormat('dd/MM/yyyy').parse(value);
+                                    provider.updateFilter(dataPrevista: parsedDate);
                                   } else {
                                     provider.updateFilter(dataPrevista: null);
                                   }
@@ -248,18 +222,12 @@ class FilterService extends StatelessWidget {
                                 leftPadding: 4,
                                 type: TextInputType.datetime,
                                 valueNotifier: ValueNotifier(
-                                  provider.filter.dataAtendimentoEfetivoAntes !=
-                                          null
-                                      ? Formatters.applyDateMask(provider
-                                          .filter.dataAtendimentoEfetivoAntes!)
-                                      : '',
+                                  provider.filter.dataAtendimentoEfetivoAntes != null ? Formatters.applyDateMask(provider.filter.dataAtendimentoEfetivoAntes!) : '',
                                 ),
                                 onChanged: (value) {
                                   if (value.isNotEmpty) {
-                                    final parsedDate =
-                                        DateFormat('dd/MM/yyyy').parse(value);
-                                    provider.updateFilter(
-                                        dataEfetiva: parsedDate);
+                                    final parsedDate = DateFormat('dd/MM/yyyy').parse(value);
+                                    provider.updateFilter(dataEfetiva: parsedDate);
                                   } else {
                                     provider.updateFilter(dataEfetiva: null);
                                   }
@@ -282,20 +250,12 @@ class FilterService extends StatelessWidget {
                                   leftPadding: 4,
                                   type: TextInputType.datetime,
                                   valueNotifier: ValueNotifier(
-                                    provider.filter
-                                                .dataAtendimentoPrevistoAntes !=
-                                            null
-                                        ? Formatters.applyDateMask(provider
-                                            .filter
-                                            .dataAtendimentoPrevistoAntes!)
-                                        : '',
+                                    provider.filter.dataAtendimentoPrevistoAntes != null ? Formatters.applyDateMask(provider.filter.dataAtendimentoPrevistoAntes!) : '',
                                   ),
                                   onChanged: (value) {
                                     if (value.isNotEmpty) {
-                                      final parsedDate =
-                                          DateFormat('dd/MM/yyyy').parse(value);
-                                      provider.updateFilter(
-                                          dataPrevista: parsedDate);
+                                      final parsedDate = DateFormat('dd/MM/yyyy').parse(value);
+                                      provider.updateFilter(dataPrevista: parsedDate);
                                     } else {
                                       provider.updateFilter(dataPrevista: null);
                                     }
@@ -314,20 +274,12 @@ class FilterService extends StatelessWidget {
                                   leftPadding: 4,
                                   type: TextInputType.datetime,
                                   valueNotifier: ValueNotifier(
-                                    provider.filter
-                                                .dataAtendimentoEfetivoAntes !=
-                                            null
-                                        ? Formatters.applyDateMask(provider
-                                            .filter
-                                            .dataAtendimentoEfetivoAntes!)
-                                        : '',
+                                    provider.filter.dataAtendimentoEfetivoAntes != null ? Formatters.applyDateMask(provider.filter.dataAtendimentoEfetivoAntes!) : '',
                                   ),
                                   onChanged: (value) {
                                     if (value.isNotEmpty) {
-                                      final parsedDate =
-                                          DateFormat('dd/MM/yyyy').parse(value);
-                                      provider.updateFilter(
-                                          dataEfetiva: parsedDate);
+                                      final parsedDate = DateFormat('dd/MM/yyyy').parse(value);
+                                      provider.updateFilter(dataEfetiva: parsedDate);
                                     } else {
                                       provider.updateFilter(dataEfetiva: null);
                                     }
@@ -357,17 +309,12 @@ class FilterService extends StatelessWidget {
                                 leftPadding: 4,
                                 type: TextInputType.datetime,
                                 valueNotifier: ValueNotifier(
-                                  provider.filter.dataAberturaAntes != null
-                                      ? Formatters.applyDateMask(
-                                          provider.filter.dataAberturaAntes!)
-                                      : '',
+                                  provider.filter.dataAberturaAntes != null ? Formatters.applyDateMask(provider.filter.dataAberturaAntes!) : '',
                                 ),
                                 onChanged: (value) {
                                   if (value.isNotEmpty) {
-                                    final parsedDate =
-                                        DateFormat('dd/MM/yyyy').parse(value);
-                                    provider.updateFilter(
-                                        dataAbertura: parsedDate);
+                                    final parsedDate = DateFormat('dd/MM/yyyy').parse(value);
+                                    provider.updateFilter(dataAbertura: parsedDate);
                                   } else {
                                     provider.updateFilter(dataAbertura: null);
                                   }
@@ -387,8 +334,7 @@ class FilterService extends StatelessWidget {
                                     provider.updateFilter(periodo: value);
                                   }
                                 },
-                                valueNotifier: ValueNotifier(
-                                    provider.filter.periodo ?? ''),
+                                valueNotifier: ValueNotifier(provider.filter.periodo ?? ''),
                               ),
                             ],
                           );
@@ -406,17 +352,12 @@ class FilterService extends StatelessWidget {
                                   leftPadding: 4,
                                   type: TextInputType.datetime,
                                   valueNotifier: ValueNotifier(
-                                    provider.filter.dataAberturaAntes != null
-                                        ? Formatters.applyDateMask(
-                                            provider.filter.dataAberturaAntes!)
-                                        : '',
+                                    provider.filter.dataAberturaAntes != null ? Formatters.applyDateMask(provider.filter.dataAberturaAntes!) : '',
                                   ),
                                   onChanged: (value) {
                                     if (value.isNotEmpty) {
-                                      final parsedDate =
-                                          DateFormat('dd/MM/yyyy').parse(value);
-                                      provider.updateFilter(
-                                          dataAbertura: parsedDate);
+                                      final parsedDate = DateFormat('dd/MM/yyyy').parse(value);
+                                      provider.updateFilter(dataAbertura: parsedDate);
                                     } else {
                                       provider.updateFilter(dataAbertura: null);
                                     }
@@ -437,8 +378,7 @@ class FilterService extends StatelessWidget {
                                       provider.updateFilter(periodo: value);
                                     }
                                   },
-                                  valueNotifier: ValueNotifier(
-                                      provider.filter.periodo ?? ''),
+                                  valueNotifier: ValueNotifier(provider.filter.periodo ?? ''),
                                 ),
                               ),
                             ],

@@ -69,8 +69,7 @@ class ServiceHistoryTable extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF007BFF),
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 48, vertical: 12),
+                      padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 12),
                     ),
                     child: const Text(
                       "Fechar",
@@ -93,8 +92,7 @@ class ServiceHistoryTable extends StatelessWidget {
       return Center(
         child: Text(
           "Nenhum histórico disponível",
-          style:
-              TextStyle(color: Colors.grey[600], fontStyle: FontStyle.italic),
+          style: TextStyle(color: Colors.grey[600], fontStyle: FontStyle.italic),
         ),
       );
     }

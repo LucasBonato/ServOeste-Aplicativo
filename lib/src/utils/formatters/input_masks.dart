@@ -27,8 +27,6 @@ class InputMasks {
       filter: {"#": RegExp(r'[0-9]')},
     ),
   ];
-  static final List<TextInputFormatter> alphanumericLetters = [
-    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$'))
-  ];
+  static final List<TextInputFormatter> alphanumericLetters = [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$'))];
   static final List<TextInputFormatter> currency = [CurrencyInputFormatter()];
 }

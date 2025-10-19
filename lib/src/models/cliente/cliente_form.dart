@@ -23,15 +23,12 @@ class ClienteForm extends ChangeNotifier {
   }
 
   void setTelefoneFixo(String? telefoneFixo) {
-    this.telefoneFixo.value =
-        telefoneFixo == null ? "" : Formatters.applyPhoneMask(telefoneFixo);
+    this.telefoneFixo.value = telefoneFixo == null ? "" : Formatters.applyPhoneMask(telefoneFixo);
     notifyListeners();
   }
 
   void setTelefoneCelular(String? telefoneCelular) {
-    this.telefoneCelular.value = telefoneCelular == null
-        ? ""
-        : Formatters.applyCellPhoneMask(telefoneCelular);
+    this.telefoneCelular.value = telefoneCelular == null ? "" : Formatters.applyCellPhoneMask(telefoneCelular);
     notifyListeners();
   }
 

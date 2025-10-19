@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/layout/app_bar_form.dart';
-import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/logic/auth/auth_bloc.dart';
 import 'package:serv_oeste/src/models/auth/auth_form.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
@@ -55,8 +55,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 40.0),
+            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 40.0),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 400),
               child: Column(
@@ -77,8 +76,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                           maxLength: 255,
                           type: TextInputType.name,
                           valueNotifier: _authForm.username,
-                          validator: _validator.byField(
-                              _authForm, ErrorCodeKey.username.name),
+                          validator: _validator.byField(_authForm, ErrorCodeKey.username.name),
                           onChanged: _authForm.setUsername,
                         ),
                         const SizedBox(height: 20),
@@ -91,8 +89,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                           maxLength: 24,
                           type: TextInputType.name,
                           valueNotifier: _authForm.password,
-                          validator: _validator.byField(
-                              _authForm, ErrorCodeKey.password.name),
+                          validator: _validator.byField(_authForm, ErrorCodeKey.password.name),
                           onChanged: _authForm.setPassword,
                         ),
                         const SizedBox(height: 20),
@@ -103,8 +100,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                           valueNotifier: _authForm.role,
                           onChanged: _authForm.setRole,
                           dropdownValues: Constants.roleUserDisplayList,
-                          validator: _validator.byField(
-                              _authForm, ErrorCodeKey.role.name),
+                          validator: _validator.byField(_authForm, ErrorCodeKey.role.name),
                         ),
                         const SizedBox(height: 30),
                         BlocListener<AuthBloc, AuthState>(
@@ -115,7 +111,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
 
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text(state.error.errorMessage),
+                                  content: Text(state.error.detail),
                                   backgroundColor: Colors.red,
                                   duration: const Duration(seconds: 3),
                                 ),

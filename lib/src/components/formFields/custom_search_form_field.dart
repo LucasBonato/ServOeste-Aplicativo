@@ -21,8 +21,7 @@ class CustomSearchTextFormField extends StatefulWidget {
   });
 
   @override
-  State<CustomSearchTextFormField> createState() =>
-      _CustomSearchTextFormFieldState();
+  State<CustomSearchTextFormField> createState() => _CustomSearchTextFormFieldState();
 }
 
 class _CustomSearchTextFormFieldState extends State<CustomSearchTextFormField> {

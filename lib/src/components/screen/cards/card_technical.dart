@@ -61,16 +61,10 @@ class CardTechnician extends StatelessWidget {
                 return Container(
                   padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
-                    color: isSelected
-                        ? const Color(0xFFE9E7E7)
-                        : const Color(0xFCFDFDFF),
+                    color: isSelected ? const Color(0xFFE9E7E7) : const Color(0xFCFDFDFF),
                     borderRadius: BorderRadius.circular(8.0),
                     border: Border.all(
-                      color: isSelected
-                          ? Colors.black38
-                          : (hovered
-                              ? Colors.black38
-                              : const Color(0xFFEAE6E5)),
+                      color: isSelected ? Colors.black38 : (hovered ? Colors.black38 : const Color(0xFFEAE6E5)),
                       width: 1.5,
                     ),
                     boxShadow: [

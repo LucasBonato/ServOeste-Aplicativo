@@ -32,8 +32,7 @@ class CreateTecnico extends StatelessWidget {
       submitText: "Adicionar Técnico",
       bloc: bloc,
       tecnicoForm: tecnicoForm,
-      successMessage:
-          'Técnico registrado com sucesso! (Caso ele não esteja aparecendo, recarregue a página)',
+      successMessage: 'Técnico registrado com sucesso! (Caso ele não esteja aparecendo, recarregue a página)',
       checkersMap: checkersMap,
       situationMap: {},
       onSubmit: () {
@@ -43,8 +42,7 @@ class CreateTecnico extends StatelessWidget {
 
         tecnicoForm.setNome(nome);
 
-        bloc.add(TecnicoRegisterEvent(
-            tecnico: Tecnico.fromForm(tecnicoForm), sobrenome: sobrenome));
+        bloc.add(TecnicoRegisterEvent(tecnico: Tecnico.fromForm(tecnicoForm), sobrenome: sobrenome));
 
         tecnicoForm.setNome("$nome $sobrenome");
       },

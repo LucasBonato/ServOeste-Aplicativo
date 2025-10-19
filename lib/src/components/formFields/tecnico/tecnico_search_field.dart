@@ -1,10 +1,8 @@
-
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
-
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
 import 'package:serv_oeste/src/shared/debouncer.dart';
@@ -62,9 +60,7 @@ class _TecnicoSearchFieldState extends State<TecnicoSearchField> {
   }
 
   void _handleSelected(String name) {
-    final TecnicoResponse? match = _tecnicos.firstWhereOrNull(
-      (tecnico) => "${tecnico.nome} ${tecnico.sobrenome}" == name
-    );
+    final TecnicoResponse? match = _tecnicos.firstWhereOrNull((tecnico) => "${tecnico.nome} ${tecnico.sobrenome}" == name);
     if (match != null) {
       widget.onSelected?.call(match);
     }
@@ -76,10 +72,7 @@ class _TecnicoSearchFieldState extends State<TecnicoSearchField> {
       listener: (context, state) {
         if (state is TecnicoSearchSuccessState) {
           _tecnicos = state.tecnicos;
-          final names = state.tecnicos
-              .take(5)
-              .map((t) => "${t.nome} ${t.sobrenome}")
-              .toList();
+          final names = state.tecnicos.take(5).map((t) => "${t.nome} ${t.sobrenome}").toList();
           _names.value = names;
         }
       },
@@ -103,12 +96,12 @@ class _TecnicoSearchFieldState extends State<TecnicoSearchField> {
       ),
     );
 
-    return (widget.tooltipMessage?.isNotEmpty?? false)
+    return (widget.tooltipMessage?.isNotEmpty ?? false)
         ? Tooltip(
-          message: (enabled) ? "" : widget.tooltipMessage!,
-          textAlign: TextAlign.center,
-          child: field,
-        )
+            message: (enabled) ? "" : widget.tooltipMessage!,
+            textAlign: TextAlign.center,
+            child: field,
+          )
         : field;
   }
 

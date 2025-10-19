@@ -21,9 +21,7 @@ class ListaBloc extends Bloc<ListaEvent, ListaState> {
       final currentState = state as ListaSelectState;
       final updatedSelectedIds = List<int>.from(currentState.selectedIds);
 
-      updatedSelectedIds.contains(event.id)
-          ? updatedSelectedIds.remove(event.id)
-          : updatedSelectedIds.add(event.id);
+      updatedSelectedIds.contains(event.id) ? updatedSelectedIds.remove(event.id) : updatedSelectedIds.add(event.id);
 
       emit(ListaSelectState(selectedIds: updatedSelectedIds));
     }

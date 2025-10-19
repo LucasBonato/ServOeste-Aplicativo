@@ -12,11 +12,7 @@ class Constants {
     'Técnico',
   ];
 
-  static const List<String> situationTecnicoList = [
-    "Ativo",
-    "Licença",
-    "Desativado"
-  ];
+  static const List<String> situationTecnicoList = ["Ativo", "Licença", "Desativado"];
 
   static const List<String> situationServiceList = [
     'Aguardando agendamento',
@@ -58,12 +54,7 @@ class Constants {
     'Secadora',
   ];
 
-  static const List<String> marcas = [
-    "Brastemp",
-    "Consul",
-    "Electrolux",
-    "Samsung"
-  ];
+  static const List<String> marcas = ["Brastemp", "Consul", "Electrolux", "Samsung"];
 
   static const List<String> garantias = [
     'Dentro do período de garantia',

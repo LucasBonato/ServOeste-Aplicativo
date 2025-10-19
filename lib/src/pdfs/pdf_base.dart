@@ -87,8 +87,7 @@ class PDFBase {
   }
 
   static pw.Widget buildClientServiceTable(Servico servico, Cliente cliente) {
-    final effectiveDate =
-        Formatters.extractDateFromDescription(servico.descricao);
+    final effectiveDate = Formatters.extractDateFromDescription(servico.descricao);
 
     return pw.Table(
       border: pw.TableBorder.all(color: PdfColors.black, width: 0.5),
@@ -148,15 +147,11 @@ class PDFBase {
   }
 
   static String _formatDate(DateTime? date) {
-    return date != null
-        ? Formatters.formatDateForHistory(date)
-        : "Não informado.";
+    return date != null ? Formatters.formatDateForHistory(date) : "Não informado.";
   }
 
   static String _formatHorario(String? horario) {
-    return horario != null
-        ? Formatters.formatScheduleTime(horario)
-        : "Não informado.";
+    return horario != null ? Formatters.formatScheduleTime(horario) : "Não informado.";
   }
 
   static pw.Widget buildDescriptionSection(String? descricao) {

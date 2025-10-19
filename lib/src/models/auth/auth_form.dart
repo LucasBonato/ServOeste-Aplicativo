@@ -32,8 +32,6 @@ class AuthForm extends ChangeNotifier {
   }
 
   bool isRegisterValid() {
-    return username.value.isNotEmpty &&
-        password.value.isNotEmpty &&
-        role.value.isNotEmpty;
+    return username.value.isNotEmpty && password.value.isNotEmpty && role.value.isNotEmpty;
   }
 }

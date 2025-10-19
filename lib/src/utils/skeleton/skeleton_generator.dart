@@ -2,7 +2,9 @@ class SkeletonDataGenerator {
   static String string({int length = 12}) => 'X' * length;
 
   static String email() => 'john.doe@example.com';
+
   static String name() => 'John Doe';
+
   static String phone() => '(99) 99999-9999';
 
   static int integer({int min = 1, int max = 100}) => min + (max - min) ~/ 2;

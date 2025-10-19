@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
-import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/screen/loading.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 

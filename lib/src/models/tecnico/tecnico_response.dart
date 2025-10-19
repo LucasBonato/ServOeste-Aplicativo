@@ -18,8 +18,7 @@ class TecnicoResponse implements Skeletonizable {
     this.situacao,
   });
 
-  factory TecnicoResponse.fromJson(Map<String, dynamic> json) =>
-      TecnicoResponse(
+  factory TecnicoResponse.fromJson(Map<String, dynamic> json) => TecnicoResponse(
         id: json["id"],
         nome: json["nome"],
         sobrenome: json["sobrenome"],

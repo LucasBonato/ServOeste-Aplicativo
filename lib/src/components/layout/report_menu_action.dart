@@ -29,8 +29,7 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
 
   bool _menuIsOpen = false;
 
-  Future<List<Servico>> _fetchHistoricoEquipamento(
-      Servico servicoAtual, Cliente cliente) async {
+  Future<List<Servico>> _fetchHistoricoEquipamento(Servico servicoAtual, Cliente cliente) async {
     try {
       final filterRequest = ServicoFilterRequest(
         equipamento: servicoAtual.equipamento,
@@ -38,8 +37,7 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
         clienteId: servicoAtual.idCliente,
       );
 
-      widget.servicoBloc
-          .add(ServicoSearchMenuEvent(filterRequest: filterRequest));
+      widget.servicoBloc.add(ServicoSearchMenuEvent(filterRequest: filterRequest));
 
       await widget.servicoBloc.stream.firstWhere((state) {
         return state is ServicoSearchSuccessState || state is ServicoErrorState;
@@ -48,20 +46,15 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
       List<Servico> result = [];
 
       if (widget.servicoBloc.state is ServicoSearchSuccessState) {
-        final List<Servico> response =
-            (widget.servicoBloc.state as ServicoSearchSuccessState).servicos;
+        final List<Servico> response = (widget.servicoBloc.state as ServicoSearchSuccessState).servicos;
 
         final filtered = response.where((servico) {
-          final marcaAtual =
-              servicoAtual.marca.toLowerCase().replaceAll(' ', '');
+          final marcaAtual = servicoAtual.marca.toLowerCase().replaceAll(' ', '');
           final marcaServico = servico.marca.toLowerCase().replaceAll(' ', '');
-          final equipamentoAtual =
-              servicoAtual.equipamento.toLowerCase().replaceAll(' ', '');
-          final equipamentoServico =
-              servico.equipamento.toLowerCase().replaceAll(' ', '');
+          final equipamentoAtual = servicoAtual.equipamento.toLowerCase().replaceAll(' ', '');
+          final equipamentoServico = servico.equipamento.toLowerCase().replaceAll(' ', '');
 
-          return marcaAtual == marcaServico &&
-              equipamentoAtual == equipamentoServico;
+          return marcaAtual == marcaServico && equipamentoAtual == equipamentoServico;
         }).toList();
 
         result = filtered;
@@ -171,8 +164,7 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
 
       widget.servicoBloc.add(ServicoSearchOneEvent(id: servicoOriginal.id));
 
-      await widget.servicoBloc.stream.firstWhere((state) =>
-          state is ServicoSearchOneSuccessState || state is ServicoErrorState);
+      await widget.servicoBloc.stream.firstWhere((state) => state is ServicoSearchOneSuccessState || state is ServicoErrorState);
 
       switch (value) {
         case 'gerarOrcamento':
