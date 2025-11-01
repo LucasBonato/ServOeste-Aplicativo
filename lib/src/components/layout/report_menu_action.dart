@@ -69,12 +69,14 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
 
       widget.servicoBloc.add(ServicoLoadingEvent(
         filterRequest: ServicoFilterRequest(),
+        page: 0,
       ));
 
       return result;
     } catch (e) {
       widget.servicoBloc.add(ServicoLoadingEvent(
         filterRequest: ServicoFilterRequest(),
+        page: 0,
       ));
 
       Logger().e("Erro ao buscar histórico: $e");
@@ -171,8 +173,8 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
 
       widget.servicoBloc.add(ServicoSearchOneEvent(id: servicoOriginal.id));
 
-      await widget.servicoBloc.stream.firstWhere((state) =>
-          state is ServicoSearchOneSuccessState || state is ServicoErrorState);
+      await widget.servicoBloc.stream
+          .firstWhere((state) => state is ServicoSearchOneSuccessState);
 
       switch (value) {
         case 'gerarOrcamento':

@@ -3,12 +3,13 @@ class Constants {
 
   static const Map<String, String> roleUserMap = {
     'Administrador': 'ADMIN',
-    'Funcionário': 'EMPLOYEE',
+    // 'Balcão': 'FRONT_DESK',
+    'Balcão': 'EMPLOYEE',
     'Técnico': 'TECHNICIAN',
   };
 
   static const List<String> roleUserDisplayList = [
-    'Funcionário',
+    'Balcão',
     'Técnico',
   ];
 
@@ -46,6 +47,7 @@ class Constants {
 
   static const List<String> equipamentos = [
     'Adega',
+    'Air Fryer',
     'Bebedouro',
     'Climatizador',
     'Cooler',
@@ -60,8 +62,16 @@ class Constants {
 
   static const List<String> marcas = [
     "Brastemp",
+    "Britânia",
+    "Cadence",
     "Consul",
+    "Continental",
     "Electrolux",
+    "Esmaltec",
+    "GE",
+    "IBBL",
+    "Latina",
+    "Philco",
     "Samsung"
   ];
 

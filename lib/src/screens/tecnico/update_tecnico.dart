@@ -32,6 +32,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
   };
   final Map<String, bool> checkersMap = {
     "Adega": false,
+    "Air Fryer": false,
     "Bebedouro": false,
     "Climatizador": false,
     "Cooler": false,

@@ -9,7 +9,6 @@ import 'package:serv_oeste/src/components/screen/loading.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
-import 'package:serv_oeste/src/screens/auth/create_user.dart';
 import 'package:serv_oeste/src/screens/servico/update_servico.dart';
 import 'package:serv_oeste/src/utils/jwt_utils.dart';
 import 'package:serv_oeste/src/services/secure_storage_service.dart';
@@ -22,7 +21,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  String? _userRole;
   String? _userName;
 
   @override
@@ -38,19 +36,10 @@ class _HomeState extends State<Home> {
       final decodedToken = decodeJwt(token);
       if (decodedToken != null) {
         setState(() {
-          _userRole = decodedToken['role'] as String?;
           _userName = decodedToken['sub'] as String?;
         });
       }
     }
-  }
-
-  void _onCreateUser() {
-    Navigator.of(context, rootNavigator: true).push(
-      MaterialPageRoute(
-        builder: (context) => CreateUserScreen(),
-      ),
-    );
   }
 
   void _onNavigateToUpdateScreen(int id, int clientId) {
@@ -90,44 +79,27 @@ class _HomeState extends State<Home> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (_userRole == 'ROLE_ADMIN')
-            Align(
-              alignment: Alignment.topCenter,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Olá, ${_userName ?? "Admin"}! ',
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Olá, $_userName',
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
-                    ElevatedButton(
-                      onPressed: _onCreateUser,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF007BFF),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                      ),
-                      child: const Text(
-                        'Adicionar novo usuário',
-                        style: TextStyle(
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
+          ),
           Container(
             height: 300,
             decoration: BoxDecoration(

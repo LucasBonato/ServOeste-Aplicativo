@@ -16,6 +16,9 @@ import 'package:serv_oeste/src/screens/home.dart';
 import 'package:serv_oeste/src/screens/servico/servico.dart';
 import 'package:serv_oeste/src/screens/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/logic/auth/auth_bloc.dart';
+import 'package:serv_oeste/src/screens/user/user.dart';
+import 'package:serv_oeste/src/utils/jwt_utils.dart';
+import 'package:serv_oeste/src/services/secure_storage_service.dart';
 
 class BaseLayout extends StatefulWidget {
   final int? initialIndex;
@@ -30,9 +33,13 @@ class BaseLayout extends StatefulWidget {
 }
 
 class BaseLayoutState extends State<BaseLayout> {
-  late int _currentIndex;
-  late final List<GlobalKey<NavigatorState>> _navigatorKeys;
-  late final List<Widget?> _screens;
+  int _currentIndex = 0;
+  List<GlobalKey<NavigatorState>> _navigatorKeys = [];
+  List<Widget?> _screens = [];
+
+  int _maxIndex = 4;
+  String? _userRole;
+  bool _isInitialized = false;
 
   late final ServicoBloc _servicoBloc;
   late final TecnicoBloc _tecnicoBloc;
@@ -47,12 +54,48 @@ class BaseLayoutState extends State<BaseLayout> {
     _clienteBloc = context.read<ClienteBloc>();
 
     _currentIndex = widget.initialIndex ?? 0;
-    _navigatorKeys = List.generate(4, (_) => GlobalKey<NavigatorState>());
-    _screens = List.filled(4, null);
-    _loadTab(_currentIndex);
+
+    _navigatorKeys = [];
+    _screens = [];
 
     _startAuthTimer();
+    _initializeUserRole().then((_) {
+      _initializeLists();
+      _loadTab(_currentIndex);
+    });
   }
+
+  Future<void> _initializeUserRole() async {
+    final token = await SecureStorageService.getAccessToken();
+    if (token != null && token.isNotEmpty) {
+      final decodedToken = decodeJwt(token);
+      if (decodedToken != null) {
+        final newRole = decodedToken['role'] as String?;
+        final isAdmin = newRole == 'ROLE_ADMIN';
+        final newMaxIndex = isAdmin ? 5 : 4;
+
+        if (mounted) {
+          setState(() {
+            _userRole = newRole;
+            _maxIndex = newMaxIndex;
+          });
+        }
+      }
+    }
+  }
+
+  void _initializeLists() {
+    if (mounted) {
+      setState(() {
+        _navigatorKeys =
+            List.generate(_maxIndex, (_) => GlobalKey<NavigatorState>());
+        _screens = List.filled(_maxIndex, null);
+        _isInitialized = true;
+      });
+    }
+  }
+
+  bool get _isAdmin => _userRole == 'ROLE_ADMIN';
 
   @override
   void dispose() {
@@ -73,6 +116,14 @@ class BaseLayoutState extends State<BaseLayout> {
   }
 
   Widget _getScreen(int index) {
+    if (index >= _maxIndex || !_isInitialized) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_screens[index] != null) {
+      return _screens[index]!;
+    }
+
     _screens[index] = switch (index) {
       0 =>
         BlocProvider.value(value: _servicoBloc, child: Home(key: UniqueKey())),
@@ -97,12 +148,16 @@ class BaseLayoutState extends State<BaseLayout> {
           ],
           child: ServicoScreen(key: UniqueKey()),
         ),
+      4 when _isAdmin => UserManagementScreen(key: UniqueKey()),
       _ => Container()
     };
+
     return _screens[index]!;
   }
 
   void _selectTab(int index) {
+    if (index >= _maxIndex || !_isInitialized) return;
+
     if (_currentIndex == index) {
       _navigatorKeys[index].currentState?.popUntil((route) => route.isFirst);
     } else {
@@ -112,11 +167,13 @@ class BaseLayoutState extends State<BaseLayout> {
   }
 
   void _loadTab(int index) {
+    if (!_isInitialized) return;
+
     final Map<int, VoidCallback> tabLoadAction = {
       0: _loadHome,
       1: _loadTecnico,
       2: _loadCliente,
-      3: _loadServico
+      3: _loadServico,
     };
     tabLoadAction[index]?.call();
   }
@@ -155,6 +212,14 @@ class BaseLayoutState extends State<BaseLayout> {
     final screenWidth = MediaQuery.of(context).size.width;
     final bool isLargeScreen = screenWidth >= 800;
 
+    if (!_isInitialized) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is UnauthenticatedState || state is AuthLogoutSuccessState) {
@@ -171,6 +236,7 @@ class BaseLayoutState extends State<BaseLayout> {
               SidebarNavigation(
                 currentIndex: _currentIndex,
                 onSelect: _selectTab,
+                userRole: _userRole,
               ),
             Expanded(
               child: Column(
@@ -182,7 +248,7 @@ class BaseLayoutState extends State<BaseLayout> {
                   ),
                   Expanded(
                     child: Stack(
-                      children: List.generate(4, (index) {
+                      children: List.generate(_maxIndex, (index) {
                         return Offstage(
                           offstage: _currentIndex != index,
                           child: Navigator(
@@ -205,6 +271,7 @@ class BaseLayoutState extends State<BaseLayout> {
             : BottomNavBar(
                 currentIndex: _currentIndex,
                 onTap: _selectTab,
+                userRole: _userRole,
               ),
       ),
     );

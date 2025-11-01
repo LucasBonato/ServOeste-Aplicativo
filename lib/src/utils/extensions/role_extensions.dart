@@ -2,7 +2,8 @@ extension RoleConversions on String {
   String toBackendRole() {
     return switch (this) {
       'Administrador' => 'ADMIN',
-      'Funcionário' => 'EMPLOYEE',
+      // 'Balcão' => 'FRONT_DESK',
+      'Balcão' => 'EMPLOYEE',
       'Técnico' => 'TECHNICIAN',
       _ => 'EMPLOYEE',
     };
@@ -11,9 +12,10 @@ extension RoleConversions on String {
   String toDisplayRole() {
     return switch (this) {
       'ADMIN' => 'Administrador',
-      'EMPLOYEE' => 'Funcionário',
+      // 'FRONT_DESK' => 'Balcão',
+      'EMPLOYEE' => 'Balcão',
       'TECHNICIAN' => 'Técnico',
-      _ => 'Funcionário',
+      _ => 'Balcão',
     };
   }
 }
