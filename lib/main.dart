@@ -23,7 +23,8 @@ void main() {
 
   DioService dioService = DioService();
   final authClient = AuthClient(dioService.dio);
-  dioService = DioService.auth(
+
+  dioService.addAuthInterceptors(
       authClient,
       () {
         navigatorKey.currentState?.pushAndRemoveUntil(

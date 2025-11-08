@@ -23,28 +23,24 @@ class DioService {
   final CookieJar _cookieJar = CookieJar();
 
   DioService() {
+    _dio.interceptors.add(CookieManager(_cookieJar));
     if (Constants.isDev) {
       _dio.interceptors.add(DioInterceptor());
     }
   }
 
-  DioService.auth(
-    AuthClient authClient,
-    VoidCallback? onTokenRefreshFailed,
+  void addAuthInterceptors(
+      AuthClient authClient,
+      VoidCallback? onTokenRefreshFailed,
   ) {
     _dio.interceptors.addAll([
-      CookieManager(_cookieJar),
       AuthInterceptor(),
       TokenRefreshInterceptor(
-        dio: _dio,
-        authClient: authClient,
-        onTokenRefreshFailed: onTokenRefreshFailed
+          dio: _dio,
+          authClient: authClient,
+          onTokenRefreshFailed: onTokenRefreshFailed
       ),
     ]);
-
-    if (Constants.isDev) {
-      _dio.interceptors.add(DioInterceptor());
-    }
   }
 
   Dio get dio => _dio;
