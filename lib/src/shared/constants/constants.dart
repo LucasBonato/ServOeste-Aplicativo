@@ -3,7 +3,6 @@ class Constants {
 
   static const Map<String, String> roleUserMap = {
     'Administrador': 'ADMIN',
-    // 'Balcão': 'FRONT_DESK',
     'Balcão': 'EMPLOYEE',
     'Técnico': 'TECHNICIAN',
   };

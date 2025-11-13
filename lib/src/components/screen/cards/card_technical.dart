@@ -58,6 +58,31 @@ class CardTechnician extends StatelessWidget {
             onTap: isSkeleton ? () {} : onTap,
             child: LayoutBuilder(
               builder: (context, constraints) {
+                final double idSize = Formatters.getResponsiveFontSize(
+                  constraints.maxWidth,
+                  min: 14,
+                  max: 24,
+                  factor: 0.06,
+                );
+                final double nameSize = Formatters.getResponsiveFontSize(
+                  constraints.maxWidth,
+                  min: 16,
+                  max: 22,
+                  factor: 0.055,
+                );
+                final double phoneSize = Formatters.getResponsiveFontSize(
+                  constraints.maxWidth,
+                  min: 12,
+                  max: 16,
+                  factor: 0.04,
+                );
+                final double statusSize = Formatters.getResponsiveFontSize(
+                  constraints.maxWidth,
+                  min: 12,
+                  max: 18,
+                  factor: 0.045,
+                );
+
                 return Container(
                   padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
@@ -87,7 +112,7 @@ class CardTechnician extends StatelessWidget {
                       Text(
                         "$id",
                         style: TextStyle(
-                          fontSize: constraints.maxWidth * 0.06,
+                          fontSize: idSize,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -101,7 +126,7 @@ class CardTechnician extends StatelessWidget {
                               child: Text(
                                 "$nome ${getCompostName(sobrenome)}",
                                 style: TextStyle(
-                                  fontSize: constraints.maxWidth * 0.055,
+                                  fontSize: nameSize,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -113,7 +138,7 @@ class CardTechnician extends StatelessWidget {
                                 child: Text(
                                   "Telefone: ${Formatters.applyPhoneMask(telefone!)}",
                                   style: TextStyle(
-                                    fontSize: constraints.maxWidth * 0.04,
+                                    fontSize: phoneSize,
                                   ),
                                 ),
                               ),
@@ -123,7 +148,7 @@ class CardTechnician extends StatelessWidget {
                                 child: Text(
                                   "Celular: ${Formatters.applyCellPhoneMask(celular!)}",
                                   style: TextStyle(
-                                    fontSize: constraints.maxWidth * 0.04,
+                                    fontSize: phoneSize,
                                   ),
                                 ),
                               ),
@@ -133,7 +158,7 @@ class CardTechnician extends StatelessWidget {
                       Text(
                         status,
                         style: TextStyle(
-                          fontSize: constraints.maxWidth * 0.045,
+                          fontSize: statusSize,
                           color: status.toLowerCase() == "ativo"
                               ? const Color.fromARGB(255, 4, 80, 16)
                               : status.toLowerCase() == "licenca"

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/layout/app_bar_form.dart';
-import 'package:serv_oeste/src/logic/auth/auth_bloc.dart';
-import 'package:serv_oeste/src/models/auth/auth_form.dart';
-import 'package:serv_oeste/src/models/validators/auth_validator.dart';
+import 'package:serv_oeste/src/logic/user/user_bloc.dart';
+import 'package:serv_oeste/src/models/user/user_form.dart';
+import 'package:serv_oeste/src/models/validators/user_validator.dart';
 import 'package:serv_oeste/src/screens/user/user_form.dart';
 import 'package:serv_oeste/src/utils/extensions/role_extensions.dart';
 
@@ -25,14 +25,15 @@ class UpdateUserScreen extends StatefulWidget {
 
 class _UpdateUserScreenState extends State<UpdateUserScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _authForm = AuthForm();
-  final _validator = AuthValidator();
+  final _userForm = UserForm();
+  final _validator = UserValidator();
 
   @override
   void initState() {
     super.initState();
-    _authForm.setUsername(widget.currentUsername);
-    _authForm.setRole(widget.currentRole);
+    _userForm.setId(widget.userId);
+    _userForm.setUsername(widget.currentUsername);
+    _userForm.setRole(widget.currentRole);
   }
 
   void _submitForm() {
@@ -40,19 +41,20 @@ class _UpdateUserScreenState extends State<UpdateUserScreen> {
       return;
     }
 
-    final authBloc = context.read<AuthBloc>();
-    final String backendRole = _authForm.role.value.toBackendRole();
+    final userBloc = context.read<UserBloc>();
+    final String backendRole = _userForm.role.value.toBackendRole();
 
-    // authBloc.add(AuthUpdateEvent(
-    //   userId: widget.userId,
-    //   username: _authForm.username.value,
-    //   role: backendRole,
-    // ));
+    userBloc.add(UpdateUserEvent(
+      id: _userForm.id!,
+      username: _userForm.username.value,
+      password: _userForm.password.value,
+      role: backendRole,
+    ));
   }
 
   @override
   void dispose() {
-    _authForm.dispose();
+    _userForm.dispose();
     super.dispose();
   }
 
@@ -73,7 +75,7 @@ class _UpdateUserScreenState extends State<UpdateUserScreen> {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 400),
               child: UserFormWidget(
-                authForm: _authForm,
+                userForm: _userForm,
                 validator: _validator,
                 formKey: _formKey,
                 isUpdate: true,

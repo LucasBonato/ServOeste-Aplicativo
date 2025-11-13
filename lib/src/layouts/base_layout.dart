@@ -9,6 +9,7 @@ import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
+import 'package:serv_oeste/src/logic/user/user_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/screens/auth/login.dart';
 import 'package:serv_oeste/src/screens/cliente/cliente.dart';
@@ -44,6 +45,7 @@ class BaseLayoutState extends State<BaseLayout> {
   late final ServicoBloc _servicoBloc;
   late final TecnicoBloc _tecnicoBloc;
   late final ClienteBloc _clienteBloc;
+  late final UserBloc _userBloc;
   Timer? _authTimer;
 
   @override
@@ -52,6 +54,7 @@ class BaseLayoutState extends State<BaseLayout> {
     _servicoBloc = context.read<ServicoBloc>();
     _tecnicoBloc = context.read<TecnicoBloc>();
     _clienteBloc = context.read<ClienteBloc>();
+    _userBloc = context.read<UserBloc>();
 
     _currentIndex = widget.initialIndex ?? 0;
 
@@ -148,7 +151,10 @@ class BaseLayoutState extends State<BaseLayout> {
           ],
           child: ServicoScreen(key: UniqueKey()),
         ),
-      4 when _isAdmin => UserManagementScreen(key: UniqueKey()),
+      4 when _isAdmin => BlocProvider.value(
+          value: _userBloc,
+          child: UserScreen(key: UniqueKey()),
+        ),
       _ => Container()
     };
 
@@ -174,6 +180,7 @@ class BaseLayoutState extends State<BaseLayout> {
       1: _loadTecnico,
       2: _loadCliente,
       3: _loadServico,
+      4: _loadUser,
     };
     tabLoadAction[index]?.call();
   }
@@ -205,6 +212,10 @@ class BaseLayoutState extends State<BaseLayout> {
 
   void _loadServico() {
     _servicoBloc.add(ServicoSearchMenuEvent());
+  }
+
+  void _loadUser() {
+    _userBloc.add(LoadUsersEvent());
   }
 
   @override

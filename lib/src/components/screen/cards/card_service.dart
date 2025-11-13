@@ -81,211 +81,282 @@ class CardService extends StatelessWidget {
     final ValueNotifier<bool> isHovered = ValueNotifier(false);
 
     return LayoutBuilder(
-      builder: (context, constraints) => MouseRegion(
-        cursor: SystemMouseCursors.click,
-        onEnter: (_) => isHovered.value = true,
-        onExit: (_) => isHovered.value = false,
-        child: ValueListenableBuilder<bool>(
-          valueListenable: isHovered,
-          builder: (context, hovered, child) {
-            return GestureDetector(
-              onLongPress: isSkeleton ? () {} : onLongPress,
-              onDoubleTap: isSkeleton ? () {} : onDoubleTap,
-              onTap: isSkeleton ? () {} : onTap,
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: 100,
-                  maxHeight: 200,
-                  maxWidth: constraints.maxWidth,
-                ),
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? const Color(0xFFE9E7E7)
-                        : const Color(0xFCFDFDFF),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: isSelected
-                          ? Colors.black
-                          : (hovered
-                              ? Colors.black38
-                              : const Color(0xFFEAE6E5)),
-                      width: 1.5,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withValues(alpha: 0.2),
-                        spreadRadius: 2,
-                        blurRadius: 6,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
+      builder: (context, constraints) {
+        final double codigoSize = Formatters.getResponsiveFontSize(
+          constraints.maxWidth,
+          min: 16,
+          max: 28,
+          factor: 0.065,
+        );
+        final double clienteSize = Formatters.getResponsiveFontSize(
+          constraints.maxWidth,
+          min: 14,
+          max: 22,
+          factor: 0.055,
+        );
+        final double equipamentoSize = Formatters.getResponsiveFontSize(
+          constraints.maxWidth,
+          min: 12,
+          max: 20,
+          factor: 0.05,
+        );
+        final double tecnicoSize = Formatters.getResponsiveFontSize(
+          constraints.maxWidth,
+          min: 12,
+          max: 20,
+          factor: 0.05,
+        );
+        final double filialSize = Formatters.getResponsiveFontSize(
+          constraints.maxWidth,
+          min: 10,
+          max: 18,
+          factor: 0.045,
+        );
+        final double dataSize = Formatters.getResponsiveFontSize(
+          constraints.maxWidth,
+          min: 10,
+          max: 18,
+          factor: 0.045,
+        );
+        final double statusSize = Formatters.getResponsiveFontSize(
+          constraints.maxWidth,
+          min: 12,
+          max: 20,
+          factor: 0.05,
+        );
+
+        final double paddingLeftSmall = Formatters.getResponsiveFontSize(
+          constraints.maxWidth,
+          min: 8,
+          max: 20,
+          factor: 0.05,
+        );
+        final double paddingLeftMedium = Formatters.getResponsiveFontSize(
+          constraints.maxWidth,
+          min: 12,
+          max: 30,
+          factor: 0.1,
+        );
+        final double paddingLeftLarge = Formatters.getResponsiveFontSize(
+          constraints.maxWidth,
+          min: 15,
+          max: 45,
+          factor: 0.15,
+        );
+        final double paddingBottom = Formatters.getResponsiveFontSize(
+          constraints.maxWidth,
+          min: 5,
+          max: 15,
+          factor: 0.05,
+        );
+        final double paddingTop = Formatters.getResponsiveFontSize(
+          constraints.maxWidth,
+          min: 5,
+          max: 15,
+          factor: 0.035,
+        );
+
+        return MouseRegion(
+          cursor: SystemMouseCursors.click,
+          onEnter: (_) => isHovered.value = true,
+          onExit: (_) => isHovered.value = false,
+          child: ValueListenableBuilder<bool>(
+            valueListenable: isHovered,
+            builder: (context, hovered, child) {
+              return GestureDetector(
+                onLongPress: isSkeleton ? () {} : onLongPress,
+                onDoubleTap: isSkeleton ? () {} : onDoubleTap,
+                onTap: isSkeleton ? () {} : onTap,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: 100,
+                    maxHeight: 200,
+                    maxWidth: constraints.maxWidth,
                   ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Align(
-                          alignment: Alignment.center,
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                left: constraints.maxWidth * 0.05,
-                                bottom: constraints.maxWidth * 0.05),
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? const Color(0xFFE9E7E7)
+                          : const Color(0xFCFDFDFF),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: isSelected
+                            ? Colors.black
+                            : (hovered
+                                ? Colors.black38
+                                : const Color(0xFFEAE6E5)),
+                        width: 1.5,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withValues(alpha: 0.2),
+                          spreadRadius: 2,
+                          blurRadius: 6,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  left: paddingLeftSmall,
+                                  bottom: paddingBottom),
+                              child: Text(
+                                '$codigo',
+                                style: TextStyle(
+                                  fontSize: codigoSize,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: paddingLeftSmall),
                             child: Text(
-                              '$codigo',
+                              cliente,
                               style: TextStyle(
-                                fontSize: constraints.maxWidth * 0.065,
+                                fontSize: clienteSize,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
                               ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: constraints.maxWidth * 0.05),
-                          child: Text(
-                            cliente,
-                            style: TextStyle(
-                              fontSize: constraints.maxWidth * 0.055,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Padding(
-                          padding:
-                              EdgeInsets.only(left: constraints.maxWidth * 0.1),
-                          child: SizedBox(
-                            width: constraints.maxWidth * 0.5,
-                            child: Text(
-                              "$equipamento - $marca",
-                              style: TextStyle(
-                                fontSize: constraints.maxWidth * 0.05,
-                                color: Colors.black,
-                              ),
-                              maxLines: 2,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: constraints.maxWidth * 0.1,
-                              top: constraints.maxWidth * 0.035),
-                          child: Text(
-                            "Técnico - ${(tecnico == null) ? "Não declarado" : tecnico}",
-                            style: TextStyle(
-                              fontSize: constraints.maxWidth * 0.05,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: constraints.maxWidth * 0.15),
-                          child: Text(
-                            filial,
-                            style: TextStyle(
-                              fontSize: constraints.maxWidth * 0.045,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 3),
-                        if (dataPrevista != null && dataEfetiva == null)
+                          const SizedBox(height: 5),
                           Padding(
-                            padding: EdgeInsets.only(
-                              left: constraints.maxWidth * 0.15,
-                            ),
-                            child: Text(
-                              "Data Prevista: ${Formatters.applyDateMask(dataPrevista!)} - ${Formatters.formatScheduleTime(horario!)}",
-                              style: TextStyle(
-                                fontSize: constraints.maxWidth * 0.045,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        if (dataEfetiva != null)
-                          Padding(
-                            padding: EdgeInsets.only(
-                              left: constraints.maxWidth * 0.15,
-                            ),
-                            child: Text(
-                              "Data Efetiva: ${Formatters.applyDateMask(dataEfetiva!)} - ${Formatters.formatScheduleTime(horario!)}",
-                              style: TextStyle(
-                                fontSize: constraints.maxWidth * 0.045,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        if (dataFechamento != null)
-                          Padding(
-                            padding: EdgeInsets.only(
-                              top: 3,
-                              left: constraints.maxWidth * 0.15,
-                            ),
-                            child: Text(
-                              "Data Fechamento: ${Formatters.applyDateMask(dataFechamento!)}",
-                              style: TextStyle(
-                                fontSize: constraints.maxWidth * 0.045,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        if (dataFinalGarantia != null)
-                          Padding(
-                            padding: EdgeInsets.only(
-                              top: 3,
-                              left: constraints.maxWidth * 0.15,
-                            ),
-                            child: Text(
-                              "Data Final da Garantia: ${Formatters.applyDateMask(dataFinalGarantia!)}",
-                              style: TextStyle(
-                                fontSize: constraints.maxWidth * 0.045,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        Align(
-                          alignment: Alignment.center,
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                left: constraints.maxWidth * 0.05,
-                                top: constraints.maxWidth * 0.05),
+                            padding: EdgeInsets.only(left: paddingLeftMedium),
                             child: SizedBox(
-                              width: constraints.maxWidth * 0.45,
+                              width: constraints.maxWidth * 0.5,
                               child: Text(
-                                status.convertEnumStatusToString(),
+                                "$equipamento - $marca",
                                 style: TextStyle(
-                                  fontSize: constraints.maxWidth * 0.05,
-                                  fontWeight: FontWeight.bold,
-                                  color: _getStatusColor(
-                                      Formatters.mapStringStatusToEnumStatus(
-                                          status)),
+                                  fontSize: equipamentoSize,
+                                  color: Colors.black,
                                 ),
-                                maxLines: 3,
-                                textAlign: TextAlign.center,
+                                maxLines: 2,
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 5),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: paddingLeftMedium, top: paddingTop),
+                            child: Text(
+                              "Técnico - ${(tecnico == null) ? "Não declarado" : tecnico}",
+                              style: TextStyle(
+                                fontSize: tecnicoSize,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Padding(
+                            padding: EdgeInsets.only(left: paddingLeftLarge),
+                            child: Text(
+                              filial,
+                              style: TextStyle(
+                                fontSize: filialSize,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 3),
+                          if (dataPrevista != null && dataEfetiva == null)
+                            Padding(
+                              padding: EdgeInsets.only(
+                                left: paddingLeftLarge,
+                              ),
+                              child: Text(
+                                "Data Prevista: ${Formatters.applyDateMask(dataPrevista!)} - ${Formatters.formatScheduleTime(horario!)}",
+                                style: TextStyle(
+                                  fontSize: dataSize,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          if (dataEfetiva != null)
+                            Padding(
+                              padding: EdgeInsets.only(
+                                left: paddingLeftLarge,
+                              ),
+                              child: Text(
+                                "Data Efetiva: ${Formatters.applyDateMask(dataEfetiva!)} - ${Formatters.formatScheduleTime(horario!)}",
+                                style: TextStyle(
+                                  fontSize: dataSize,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          if (dataFechamento != null)
+                            Padding(
+                              padding: EdgeInsets.only(
+                                top: 3,
+                                left: paddingLeftLarge,
+                              ),
+                              child: Text(
+                                "Data Fechamento: ${Formatters.applyDateMask(dataFechamento!)}",
+                                style: TextStyle(
+                                  fontSize: dataSize,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          if (dataFinalGarantia != null)
+                            Padding(
+                              padding: EdgeInsets.only(
+                                top: 3,
+                                left: paddingLeftLarge,
+                              ),
+                              child: Text(
+                                "Data Final da Garantia: ${Formatters.applyDateMask(dataFinalGarantia!)}",
+                                style: TextStyle(
+                                  fontSize: dataSize,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          Align(
+                            alignment: Alignment.center,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  left: paddingLeftSmall, top: paddingBottom),
+                              child: SizedBox(
+                                width: constraints.maxWidth * 0.45,
+                                child: Text(
+                                  status.convertEnumStatusToString(),
+                                  style: TextStyle(
+                                    fontSize: statusSize,
+                                    fontWeight: FontWeight.bold,
+                                    color: _getStatusColor(
+                                        Formatters.mapStringStatusToEnumStatus(
+                                            status)),
+                                  ),
+                                  maxLines: 3,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            );
-          },
-        ),
-      ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

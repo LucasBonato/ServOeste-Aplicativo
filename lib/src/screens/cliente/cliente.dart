@@ -93,8 +93,8 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
         }
       },
       name: cliente.nome!,
-      phoneNumber: cliente.telefoneFixo!,
-      cellphone: cliente.telefoneCelular!,
+      phoneNumber: cliente.telefoneFixo,
+      cellphone: cliente.telefoneCelular,
       city: cliente.municipio!,
       street: cliente.endereco!,
       isSelected: isSelected,

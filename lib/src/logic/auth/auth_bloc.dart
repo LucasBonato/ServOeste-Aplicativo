@@ -22,7 +22,6 @@ class AuthBloc extends BaseEntityBloc<AuthEvent, AuthState> {
   AuthBloc(this._authClient) : super(AuthInitialState()) {
     on<AuthCheckStatusEvent>(_checkStatus);
     on<AuthLoginEvent>(_login);
-    on<AuthRegisterEvent>(_register);
     on<AuthLogoutEvent>(_logout);
     on<RestoreAuthStateEvent>(_restoreState);
 
@@ -80,33 +79,6 @@ class AuthBloc extends BaseEntityBloc<AuthEvent, AuthState> {
       emit(errorState(ErrorEntity(
         id: 0,
         errorMessage: 'Erro inesperado no login: $e',
-      )));
-    }
-  }
-
-  Future<void> _register(
-    AuthRegisterEvent event,
-    Emitter<AuthState> emit,
-  ) async {
-    emit(AuthLoadingState());
-
-    try {
-      final result = await _authClient.register(
-        username: event.username,
-        password: event.password,
-        role: event.role,
-      );
-
-      if (result.isLeft()) {
-        final error = result.fold((l) => l, (r) => null)!;
-        emit(errorState(error));
-      } else {
-        emit(AuthRegisterSuccessState());
-      }
-    } catch (e) {
-      emit(errorState(ErrorEntity(
-        id: 0,
-        errorMessage: 'Erro inesperado no registro: $e',
       )));
     }
   }

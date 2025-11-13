@@ -49,12 +49,16 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
   void _fillForm(Tecnico tecnico) {
     form.setId(widget.id);
     form.setNome("${tecnico.nome} ${tecnico.sobrenome}");
-    form.setTelefoneFixo(tecnico.telefoneFixo!.isEmpty
-        ? ""
-        : Formatters.applyPhoneMask(tecnico.telefoneFixo!));
-    form.setTelefoneCelular(tecnico.telefoneCelular!.isEmpty
-        ? ""
-        : Formatters.applyCellPhoneMask(tecnico.telefoneCelular!));
+
+    form.setTelefoneFixo(
+        tecnico.telefoneFixo == null || tecnico.telefoneFixo!.isEmpty
+            ? ""
+            : Formatters.applyPhoneMask(tecnico.telefoneFixo!));
+
+    form.setTelefoneCelular(
+        tecnico.telefoneCelular == null || tecnico.telefoneCelular!.isEmpty
+            ? ""
+            : Formatters.applyCellPhoneMask(tecnico.telefoneCelular!));
 
     nomeController.text = form.nome.value;
 

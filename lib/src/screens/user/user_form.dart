@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
-import 'package:serv_oeste/src/logic/auth/auth_bloc.dart';
-import 'package:serv_oeste/src/models/auth/auth_form.dart';
+import 'package:serv_oeste/src/logic/user/user_bloc.dart';
+import 'package:serv_oeste/src/models/user/user_form.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
-import 'package:serv_oeste/src/models/validators/auth_validator.dart';
+import 'package:serv_oeste/src/models/validators/user_validator.dart';
 import 'package:serv_oeste/src/shared/constants/constants.dart';
 
 class UserFormWidget extends StatefulWidget {
-  final AuthForm authForm;
-  final AuthValidator validator;
+  final UserForm userForm;
+  final UserValidator validator;
   final GlobalKey<FormState> formKey;
   final bool isUpdate;
   final String submitText;
@@ -19,7 +19,7 @@ class UserFormWidget extends StatefulWidget {
 
   const UserFormWidget({
     super.key,
-    required this.authForm,
+    required this.userForm,
     required this.validator,
     required this.formKey,
     this.isUpdate = false,
@@ -33,14 +33,14 @@ class UserFormWidget extends StatefulWidget {
 }
 
 class _UserFormWidgetState extends State<UserFormWidget> {
-  late AuthForm _authForm;
-  late AuthValidator _validator;
+  late UserForm _userForm;
+  late UserValidator _validator;
   late GlobalKey<FormState> _formKey;
 
   @override
   void initState() {
     super.initState();
-    _authForm = widget.authForm;
+    _userForm = widget.userForm;
     _validator = widget.validator;
     _formKey = widget.formKey;
   }
@@ -69,10 +69,10 @@ class _UserFormWidgetState extends State<UserFormWidget> {
             hide: true,
             maxLength: 255,
             type: TextInputType.name,
-            valueNotifier: _authForm.username,
+            valueNotifier: _userForm.username,
             validator:
-                _validator.byField(_authForm, ErrorCodeKey.username.name),
-            onChanged: _authForm.setUsername,
+                _validator.byField(_userForm, ErrorCodeKey.username.name),
+            onChanged: _userForm.setUsername,
           ),
           const SizedBox(height: 20),
           CustomTextFormField(
@@ -83,25 +83,25 @@ class _UserFormWidgetState extends State<UserFormWidget> {
             hide: true,
             maxLength: 24,
             type: TextInputType.name,
-            valueNotifier: _authForm.password,
+            valueNotifier: _userForm.password,
             validator:
-                _validator.byField(_authForm, ErrorCodeKey.password.name),
-            onChanged: _authForm.setPassword,
+                _validator.byField(_userForm, ErrorCodeKey.password.name),
+            onChanged: _userForm.setPassword,
           ),
           const SizedBox(height: 20),
           CustomDropdownFormField(
             label: 'Cargo*',
             leftPadding: 0,
             rightPadding: 0,
-            valueNotifier: _authForm.role,
-            onChanged: _authForm.setRole,
+            valueNotifier: _userForm.role,
+            onChanged: _userForm.setRole,
             dropdownValues: Constants.roleUserDisplayList,
-            validator: _validator.byField(_authForm, ErrorCodeKey.role.name),
+            validator: _validator.byField(_userForm, ErrorCodeKey.role.name),
           ),
           const SizedBox(height: 30),
-          BlocListener<AuthBloc, AuthState>(
+          BlocListener<UserBloc, UserState>(
             listener: (context, state) {
-              if (state is AuthErrorState) {
+              if (state is UserError) {
                 _validator.applyBackendError(state.error);
                 _formKey.currentState?.validate();
 
@@ -112,8 +112,7 @@ class _UserFormWidgetState extends State<UserFormWidget> {
                     duration: const Duration(seconds: 3),
                   ),
                 );
-              } else if (state
-                  is AuthRegisterSuccessState /*|| state is AuthUpdateSuccessState*/) {
+              } else if (state is UserCreated) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(widget.successMessage),
@@ -123,24 +122,39 @@ class _UserFormWidgetState extends State<UserFormWidget> {
                 Navigator.pop(context);
               }
             },
-            child: ElevatedButton(
-              onPressed: _submitForm,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF007BFF),
-                foregroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-              child: Text(
-                widget.submitText,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+            child: BlocBuilder<UserBloc, UserState>(
+              builder: (context, state) {
+                final isLoading = state is UserOperationLoading;
+
+                return ElevatedButton(
+                  onPressed: isLoading ? null : _submitForm,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF007BFF),
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : Text(
+                          widget.submitText,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                );
+              },
             ),
           ),
         ],

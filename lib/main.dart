@@ -6,11 +6,13 @@ import 'package:serv_oeste/src/clients/cliente_client.dart';
 import 'package:serv_oeste/src/clients/dio/dio_service.dart';
 import 'package:serv_oeste/src/clients/servico_client.dart';
 import 'package:serv_oeste/src/clients/tecnico_client.dart';
+import 'package:serv_oeste/src/clients/user_client.dart';
 import 'package:serv_oeste/src/layouts/base_layout.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/logic/filtro_servico/filtro_servico_provider.dart';
+import 'package:serv_oeste/src/logic/user/user_bloc.dart';
 import 'package:serv_oeste/src/shared/routing/custom_router.dart';
 import 'package:serv_oeste/src/logic/auth/auth_bloc.dart';
 import 'package:serv_oeste/src/screens/auth/login.dart';
@@ -21,6 +23,7 @@ void main() {
   final tecnicoClient = TecnicoClient(dioService.dio);
   final clienteClient = ClienteClient(dioService.dio);
   final servicoClient = ServicoClient(dioService.dio);
+  final userClient = UserClient(dioService.dio);
 
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -31,10 +34,12 @@ void main() {
         BlocProvider<TecnicoBloc>(create: (_) => TecnicoBloc(tecnicoClient)),
         BlocProvider<ClienteBloc>(create: (_) => ClienteBloc(clienteClient)),
         BlocProvider<ServicoBloc>(create: (_) => ServicoBloc(servicoClient)),
+        BlocProvider<UserBloc>(create: (_) => UserBloc(userClient)),
       ],
       child: MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => FiltroServicoProvider()),
+          Provider<UserClient>(create: (_) => userClient),
         ],
         child: MyApp(
           navigatorKey: navigatorKey,

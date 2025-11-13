@@ -8,8 +8,8 @@ class ErrorEntity {
   });
 
   factory ErrorEntity.fromJson(Map<String, dynamic> json) => ErrorEntity(
-        id: json["idError"],
-        errorMessage: json["message"],
+        id: json["idError"] ?? 0,
+        errorMessage: json["message"] ?? "Erro desconhecido",
       );
 
   @override

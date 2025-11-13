@@ -26,8 +26,10 @@ class _UpdateClienteState extends State<UpdateCliente> {
     form.setId(widget.id);
     form.setNome(cliente.nome ?? "");
     nomeController.text = form.nome.value;
+
     form.setTelefoneFixo(cliente.telefoneFixo ?? "");
     form.setTelefoneCelular(cliente.telefoneCelular ?? "");
+
     form.setMunicipio(cliente.municipio ?? "");
     form.setBairro(cliente.bairro ?? "");
 

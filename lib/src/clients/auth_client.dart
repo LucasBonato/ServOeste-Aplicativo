@@ -5,7 +5,6 @@ import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:serv_oeste/src/clients/dio/server_endpoints.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/auth/auth_request.dart';
-import 'package:serv_oeste/src/models/auth/register_request.dart';
 import 'package:serv_oeste/src/models/auth/auth.dart';
 import 'package:serv_oeste/src/utils/error_handler.dart';
 
@@ -40,29 +39,6 @@ class AuthClient {
         ));
       }
 
-      return Left(ErrorHandler.onRequestError(e));
-    }
-  }
-
-  Future<Either<ErrorEntity, void>> register({
-    required String username,
-    required String password,
-    required String role,
-  }) async {
-    try {
-      final RegisterRequest request = RegisterRequest(
-        username: username,
-        password: password,
-        role: role,
-      );
-
-      await dio.post(
-        ServerEndpoints.registerEndpoint,
-        data: request.toJson(),
-      );
-
-      return Right(null);
-    } on DioException catch (e) {
       return Left(ErrorHandler.onRequestError(e));
     }
   }

@@ -236,7 +236,10 @@ class _CreateServicoState extends State<CreateServico> {
     final Widget clienteSection = Column(
       children: [
         CardBuilderForm(
-            title: "Pesquise um Cliente", child: _buildClientForm()),
+            title: isClientAndService
+                ? "Adicione um Cliente"
+                : "Pesquise um Cliente",
+            child: _buildClientForm()),
         if (!isClientAndService)
           Padding(
             padding: const EdgeInsets.only(top: 12),

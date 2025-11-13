@@ -12,18 +12,6 @@ final class AuthLoginEvent extends AuthEvent {
   AuthLoginEvent({required this.username, required this.password});
 }
 
-final class AuthRegisterEvent extends AuthEvent {
-  final String username;
-  final String password;
-  final String role;
-
-  AuthRegisterEvent({
-    required this.username,
-    required this.password,
-    required this.role,
-  });
-}
-
 final class AuthLogoutEvent extends AuthEvent {}
 
 final class RestoreAuthStateEvent extends AuthEvent {
