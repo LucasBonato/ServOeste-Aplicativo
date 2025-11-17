@@ -88,7 +88,14 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
 
     if (widget.controller != oldWidget.controller) {
       _effectiveController.removeListener(_onInternalControllerTextChanged);
-      _effectiveController = widget.controller ?? (_effectiveController);
+
+      if (widget.controller != null) {
+        final newText = widget.controller!.text;
+        if (_effectiveController.text != newText) {
+          _effectiveController.text = newText;
+        }
+      }
+
       _effectiveController.addListener(_onInternalControllerTextChanged);
       _synchronizeControllerWithValueNotifier();
     }

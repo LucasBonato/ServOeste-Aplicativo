@@ -13,9 +13,5 @@ class AuthValidator extends LucidValidator<AuthForm> with BackendErrorsValidator
         .must((password) => password.isNotEmpty, "Senha é obrigatória", ErrorCodeKey.password.name)
         .must((password) => password.length >= 4, "Senha deve ter pelo menos 4 caracteres", ErrorCodeKey.password.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.password.name);
-
-    ruleFor((auth) => auth.role.value, key: ErrorCodeKey.role.name)
-        .must((role) => role.isNotEmpty, "Cargo é obrigatório", ErrorCodeKey.role.name)
-        .customValidExternalErrors(externalErrors, ErrorCodeKey.role.name);
   }
 }

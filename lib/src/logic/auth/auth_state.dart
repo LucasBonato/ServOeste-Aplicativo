@@ -13,10 +13,6 @@ final class AuthLoginSuccessState extends AuthState {
   AuthLoginSuccessState({required this.authResponse});
 }
 
-final class AuthRegisterSuccessState extends AuthState {
-  AuthRegisterSuccessState();
-}
-
 final class UnauthenticatedState extends AuthState {}
 
 final class AuthLogoutSuccessState extends AuthState {}

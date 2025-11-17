@@ -303,6 +303,29 @@ class Formatters {
     }
   }
 
+  static double getResponsiveFontSize(
+    double containerWidth, {
+    required double min,
+    required double max,
+    required double factor,
+  }) {
+    final double calculatedSize = containerWidth * factor;
+    return calculatedSize.clamp(min, max);
+  }
+
+  static String getRoleDisplayName(String role) {
+    switch (role) {
+      case 'ADMIN':
+        return 'Administrador';
+      case 'EMPLOYEE':
+        return 'Balcão';
+      case 'TECHNICIAN':
+        return 'Técnico';
+      default:
+        return role;
+    }
+  }
+
   static ServiceStatus mapStringStatusToEnumStatus(String status) {
     return switch (status) {
       "AGUARDANDO_AGENDAMENTO" || "Aguardando agendamento" => ServiceStatus.aguardandoAgendamento,

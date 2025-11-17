@@ -134,7 +134,27 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
     _servicoBloc = context.read<ServicoBloc>();
     _nomeClienteController = TextEditingController();
     _nomeTecnicoController = TextEditingController();
+
+    _syncControllersWithBlocState();
+
+    _servicoBloc.stream.listen((state) {
+      if (state is ServicoSearchSuccessState) {
+        _syncControllersWithBlocState();
+      }
+    });
     _setFilterValues();
+  }
+
+  void _syncControllersWithBlocState() {
+    if (_servicoBloc.filterRequest != null) {
+      _nomeClienteController.text =
+          _servicoBloc.filterRequest!.clienteNome ?? "";
+      _nomeTecnicoController.text =
+          _servicoBloc.filterRequest!.tecnicoNome ?? "";
+    } else {
+      _nomeClienteController.text = "";
+      _nomeTecnicoController.text = "";
+    }
   }
 
   @override

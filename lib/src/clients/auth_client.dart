@@ -1,8 +1,6 @@
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:dio_cookie_manager/dio_cookie_manager.dart';
-import 'package:serv_oeste/src/clients/dio/dio_service.dart';
 import 'package:serv_oeste/src/clients/dio/server_endpoints.dart';
 import 'package:serv_oeste/src/models/auth/auth.dart';
 import 'package:serv_oeste/src/models/auth/auth_request.dart';
@@ -33,25 +31,6 @@ class AuthClient {
         return Left(ErrorEntity.global('Credenciais inválidas'));
       }
 
-      return Left(ErrorHandler.onRequestError(e));
-    }
-  }
-
-  Future<Either<ErrorEntity, void>> register({required String username, required String password, required String role}) async {
-    try {
-      final RegisterRequest request = RegisterRequest(
-        username: username,
-        password: password,
-        role: role,
-      );
-
-      await dio.post(
-        ServerEndpoints.registerEndpoint,
-        data: request.toJson(),
-      );
-
-      return Right(null);
-    } on DioException catch (e) {
       return Left(ErrorHandler.onRequestError(e));
     }
   }

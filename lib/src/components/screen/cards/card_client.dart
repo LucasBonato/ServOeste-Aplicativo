@@ -40,6 +40,44 @@ class CardClient extends StatelessWidget {
           onTap: isSkeleton ? () {} : onTap,
           child: LayoutBuilder(
             builder: (context, constraints) {
+              final double nameSize = Formatters.getResponsiveFontSize(
+                constraints.maxWidth,
+                min: 16,
+                max: 22,
+                factor: 0.05,
+              );
+              final double phoneSize = Formatters.getResponsiveFontSize(
+                constraints.maxWidth,
+                min: 12,
+                max: 18,
+                factor: 0.045,
+              );
+              final double addressSize = Formatters.getResponsiveFontSize(
+                constraints.maxWidth,
+                min: 12,
+                max: 18,
+                factor: 0.045,
+              );
+
+              final double paddingLeftSmall = Formatters.getResponsiveFontSize(
+                constraints.maxWidth,
+                min: 12,
+                max: 20,
+                factor: 0.02,
+              );
+              final double paddingLeftMedium = Formatters.getResponsiveFontSize(
+                constraints.maxWidth,
+                min: 16,
+                max: 24,
+                factor: 0.026,
+              );
+              final double paddingLeftLarge = Formatters.getResponsiveFontSize(
+                constraints.maxWidth,
+                min: 20,
+                max: 28,
+                factor: 0.03,
+              );
+
               return Container(
                 decoration: BoxDecoration(
                   color: isSelected ? const Color(0xFFE9E7E7) : const Color(0xFCFDFDFF),
@@ -61,58 +99,72 @@ class CardClient extends StatelessWidget {
                   onEnter: (_) => isHovered.value = true,
                   onExit: (_) => isHovered.value = false,
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 8, top: 16),
+                    padding: const EdgeInsets.only(
+                      right: 8,
+                      top: 12,
+                      bottom: 12,
+                    ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(left: 24),
+                          padding: EdgeInsets.only(
+                            left: paddingLeftSmall,
+                            bottom: 2,
+                          ),
                           child: Text(
                             name,
                             style: TextStyle(
-                              fontSize: constraints.maxWidth * 0.05,
+                              fontSize: nameSize,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                        const SizedBox(height: 4),
                         if (phoneNumber != null && phoneNumber!.isNotEmpty)
                           Padding(
-                            padding: const EdgeInsets.only(left: 32.0),
+                            padding: EdgeInsets.only(
+                              left: paddingLeftMedium,
+                              bottom: 2,
+                            ),
                             child: Text(
                               'Telefone: ${Formatters.applyPhoneMask(phoneNumber!)}',
                               style: TextStyle(
-                                fontSize: constraints.maxWidth * 0.045,
+                                fontSize: phoneSize,
                               ),
                             ),
                           ),
                         if (cellphone != null && cellphone!.isNotEmpty)
                           Padding(
-                            padding: const EdgeInsets.only(left: 32.0),
+                            padding: EdgeInsets.only(
+                              left: paddingLeftMedium,
+                              bottom: 4,
+                            ),
                             child: Text(
                               'Celular: ${Formatters.applyCellPhoneMask(cellphone!)}',
                               style: TextStyle(
-                                fontSize: constraints.maxWidth * 0.045,
+                                fontSize: phoneSize,
                               ),
                             ),
                           ),
-                        const SizedBox(height: 10),
                         Padding(
-                          padding: const EdgeInsets.only(left: 32.0),
+                          padding: EdgeInsets.only(
+                            left: paddingLeftMedium,
+                            bottom: 2,
+                          ),
                           child: Text(
                             '$city - SP',
                             style: TextStyle(
-                              fontSize: constraints.maxWidth * 0.045,
+                              fontSize: addressSize,
                             ),
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 36.0),
+                          padding: EdgeInsets.only(left: paddingLeftLarge),
                           child: Text(
                             street,
                             style: TextStyle(
-                              fontSize: constraints.maxWidth * 0.045,
+                              fontSize: addressSize,
                             ),
                           ),
                         ),

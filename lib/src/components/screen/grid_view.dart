@@ -16,7 +16,9 @@ class GridListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: MediaQuery.of(context).size.width > 600 ? MediaQuery.of(context).size.width * 0.02 : 30,
+        horizontal: MediaQuery.of(context).size.width > 600
+            ? MediaQuery.of(context).size.width * 0.02
+            : 15,
         vertical: 10,
       ),
       child: GridView.builder(

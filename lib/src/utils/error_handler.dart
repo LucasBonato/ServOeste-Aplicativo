@@ -11,6 +11,10 @@ class ErrorHandler {
       return ErrorEntity.global("Sessão expirada. Faça login novamente.");
     }
 
+    if (e.response?.statusCode == 401) {
+      return ErrorEntity.global("Não autorizado. Token inválido ou expirado.");
+    }
+
     if (e.response?.data is Map<String, dynamic>) {
       Map<String, dynamic> data = (e.response!.data as Map<String, dynamic>);
       return ErrorEntity.fromJson(data);

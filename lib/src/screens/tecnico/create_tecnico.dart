@@ -14,6 +14,7 @@ class CreateTecnico extends StatelessWidget {
     final TecnicoForm tecnicoForm = TecnicoForm();
     final Map<String, bool> checkersMap = {
       "Adega": false,
+      "Air Fryer": false,
       "Bebedouro": false,
       "Climatizador": false,
       "Cooler": false,

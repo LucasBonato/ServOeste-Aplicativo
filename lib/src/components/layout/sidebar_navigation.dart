@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class SidebarNavigation extends StatelessWidget {
   final int currentIndex;
   final Function(int) onSelect;
+  final String? userRole;
 
   const SidebarNavigation({
     super.key,
     required this.currentIndex,
     required this.onSelect,
+    this.userRole,
   });
 
   @override
@@ -63,6 +65,13 @@ class SidebarNavigation extends StatelessWidget {
                   icon: Icons.paste_outlined,
                   label: 'Serviços',
                 ),
+                if (_isAdmin) const Divider(color: Colors.black),
+                if (_isAdmin)
+                  _buildMenuItem(
+                    index: 4,
+                    icon: Icons.admin_panel_settings_outlined,
+                    label: 'Usuários',
+                  ),
               ],
             ),
           ),
@@ -80,6 +89,8 @@ class SidebarNavigation extends StatelessWidget {
       ),
     );
   }
+
+  bool get _isAdmin => userRole == 'ROLE_ADMIN';
 
   Widget _buildMenuItem({
     required int index,

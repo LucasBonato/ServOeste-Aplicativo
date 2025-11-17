@@ -3,12 +3,16 @@ import 'package:flutter/material.dart';
 class BottomNavBar extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
+  final String? userRole;
 
   const BottomNavBar({
     super.key,
     required this.currentIndex,
     required this.onTap,
+    this.userRole,
   });
+
+  bool get _isAdmin => userRole == 'ROLE_ADMIN';
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +59,14 @@ class BottomNavBar extends StatelessWidget {
             label: "Serviços",
             isSelected: currentIndex == 3,
           ),
+          if (_isAdmin)
+            _buildNavItem(
+              context,
+              index: 4,
+              icon: Icons.admin_panel_settings_outlined,
+              label: "Usuários",
+              isSelected: currentIndex == 4,
+            ),
         ],
       ),
     );

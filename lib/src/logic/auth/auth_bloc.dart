@@ -21,7 +21,6 @@ class AuthBloc extends BaseEntityBloc<AuthEvent, AuthState> {
 
   AuthBloc(this._authClient) : super(AuthInitialState()) {
     on<AuthLoginEvent>(_login);
-    on<AuthRegisterEvent>(_register);
     on<AuthLogoutEvent>(_logout);
     on<RestoreAuthStateEvent>(_restoreState);
   }
@@ -37,38 +36,6 @@ class AuthBloc extends BaseEntityBloc<AuthEvent, AuthState> {
         await SecureStorageService.saveTokens(authResponse.accessToken, authResponse.refreshToken);
         emit(AuthLoginSuccessState(authResponse: authResponse));
       }
-    );
-
-    // emit(AuthLoadingState());
-    //
-    // try {
-    //   final result = await _authClient.login(
-    //     username: event.username,
-    //     password: event.password,
-    //   );
-    //
-    //   if (result.isLeft()) {
-    //     final error = result.fold((l) => l, (r) => null)!;
-    //     emit(errorState(error));
-    //   }
-    //   else {
-    //     final authResponse = result.fold((l) => null, (r) => r)!;
-    //     await SecureStorageService.saveTokens(authResponse.accessToken, authResponse.refreshToken);
-    //     emit(AuthLoginSuccessState(authResponse: authResponse));
-    //   }
-    // } catch (e) {
-    //   emit(errorState(ErrorEntity.global('Erro inesperado no login: $e')));
-    // }
-  }
-
-  Future<void> _register(
-    AuthRegisterEvent event,
-    Emitter<AuthState> emit,
-  ) async {
-    await handleRequest(
-      emit: emit,
-      request: () => _authClient.register(username: event.username, password: event.password, role: event.role),
-      onSuccess: (_) => emit(AuthRegisterSuccessState())
     );
   }
 
@@ -100,23 +67,6 @@ class AuthBloc extends BaseEntityBloc<AuthEvent, AuthState> {
         emit(errorState(error));
       },
     );
-
-    // emit(AuthLoadingState());
-
-    // try {
-    //   final accessToken = await SecureStorageService.getAccessToken();
-    //   final refreshToken = await SecureStorageService.getRefreshToken();
-    //   if (accessToken != null && refreshToken != null) {
-    //     await _authClient.logout(
-    //         accessToken: accessToken, refreshToken: refreshToken);
-    //   }
-    //
-    //   await SecureStorageService.deleteTokens();
-    //   emit(AuthLogoutSuccessState());
-    // } catch (e) {
-    //   emit(errorState(ErrorEntity.global('Erro ao fazer logout: $e')));
-    //   await SecureStorageService.deleteTokens();
-    // }
   }
 
   Future<void> _restoreState(

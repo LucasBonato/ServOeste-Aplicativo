@@ -62,12 +62,14 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
 
       widget.servicoBloc.add(ServicoLoadingEvent(
         filterRequest: ServicoFilterRequest(),
+        page: 0,
       ));
 
       return result;
     } catch (e) {
       widget.servicoBloc.add(ServicoLoadingEvent(
         filterRequest: ServicoFilterRequest(),
+        page: 0,
       ));
 
       Logger().e("Erro ao buscar histórico: $e");
