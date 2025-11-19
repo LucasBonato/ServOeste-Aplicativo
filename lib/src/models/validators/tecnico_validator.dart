@@ -1,7 +1,6 @@
-
 import 'package:lucid_validation/lucid_validation.dart';
-import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
+import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
 
 class TecnicoValidator extends LucidValidator<TecnicoForm> with BackendErrorsValidator {
@@ -28,7 +27,7 @@ class TecnicoValidator extends LucidValidator<TecnicoForm> with BackendErrorsVal
 
     ruleFor((cliente) => cliente, key: ErrorCodeKey.telefones.name)
         .must((cliente) => cliente.telefoneCelular.value.isNotEmpty || cliente.telefoneFixo.value.isNotEmpty, "Preencha ao menos um dos campos telefone!",
-        ErrorCodeKey.telefones.name)
+            ErrorCodeKey.telefones.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.telefones.name);
 
     ruleFor((tecnico) => tecnico.conhecimentos.value, key: ErrorCodeKey.conhecimento.name)

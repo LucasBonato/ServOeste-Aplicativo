@@ -28,14 +28,11 @@ class ClientSelectionModalState extends State<ClientSelectionModal> {
 
   void _onSearchChanged() {
     _debouncer.execute(
-      () => context.read<ClienteBloc>().add(
-        ClienteSearchEvent(
-          nome: widget.nomeController.text,
-          endereco: widget.enderecoController.text,
-        )
-      ),
-      delay: const Duration(milliseconds: 500)
-    );
+        () => context.read<ClienteBloc>().add(ClienteSearchEvent(
+              nome: widget.nomeController.text,
+              endereco: widget.enderecoController.text,
+            )),
+        delay: const Duration(milliseconds: 500));
   }
 
   @override

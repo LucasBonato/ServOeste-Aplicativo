@@ -72,11 +72,7 @@ class BottomNavBar extends StatelessWidget {
     );
   }
 
-  Widget _buildNavItem(BuildContext context,
-      {required int index,
-      required IconData icon,
-      required String label,
-      required bool isSelected}) {
+  Widget _buildNavItem(BuildContext context, {required int index, required IconData icon, required String label, required bool isSelected}) {
     return GestureDetector(
       onTap: () => onTap(index),
       child: Column(

@@ -37,8 +37,7 @@ class _UpdateClienteState extends State<UpdateCliente> {
 
     String rua = addressParts[0].trim();
     String numero = addressParts.length > 1 ? addressParts[1].trim() : '';
-    String complemento =
-        addressParts.length > 2 ? addressParts.sublist(2).join(',').trim() : '';
+    String complemento = addressParts.length > 2 ? addressParts.sublist(2).join(',').trim() : '';
 
     form.setRua(rua);
     form.setNumero(numero);
@@ -55,9 +54,7 @@ class _UpdateClienteState extends State<UpdateCliente> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<ClienteBloc, ClienteState>(
-      listenWhen: (previous, current) =>
-          current is ClienteUpdateSuccessState ||
-          current is ClienteSearchOneSuccessState,
+      listenWhen: (previous, current) => current is ClienteUpdateSuccessState || current is ClienteSearchOneSuccessState,
       listener: (context, state) {
         if (state is ClienteUpdateSuccessState) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -71,9 +68,7 @@ class _UpdateClienteState extends State<UpdateCliente> {
       },
       child: BlocBuilder<ClienteBloc, ClienteState>(
         bloc: bloc,
-        buildWhen: (previous, current) =>
-            current is ClienteSearchOneSuccessState ||
-            current is ClienteSearchOneLoadingState,
+        buildWhen: (previous, current) => current is ClienteSearchOneSuccessState || current is ClienteSearchOneLoadingState,
         builder: (context, state) {
           return ClienteFormScreen(
             isSkeleton: state is ClienteSearchOneLoadingState,
@@ -83,8 +78,7 @@ class _UpdateClienteState extends State<UpdateCliente> {
             clienteForm: form,
             nomeController: nomeController,
             isUpdate: true,
-            successMessage:
-                'Cliente atualizado com sucesso! (Caso ele não esteja atualizado, recarregue a página)',
+            successMessage: 'Cliente atualizado com sucesso! (Caso ele não esteja atualizado, recarregue a página)',
             onSubmit: () {
               final List<String> nomesSplit = form.nome.value.split(" ");
               final String nome = nomesSplit.first;

@@ -107,7 +107,7 @@ class _UserFormWidgetState extends State<UserFormWidget> {
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(state.error.errorMessage),
+                    content: Text(state.error.detail),
                     backgroundColor: Colors.red,
                     duration: const Duration(seconds: 3),
                   ),

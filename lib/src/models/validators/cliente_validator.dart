@@ -18,7 +18,8 @@ class ClienteValidator extends LucidValidator<ClienteForm> with BackendErrorsVal
         .customValidExternalErrors(externalErrors, ErrorCodeKey.telefoneFixo.name);
 
     ruleFor((cliente) => cliente, key: ErrorCodeKey.telefones.name)
-        .must((cliente) => cliente.telefoneCelular.value.isNotEmpty || cliente.telefoneFixo.value.isNotEmpty, "Preencha ao menos um dos campos telefone!", ErrorCodeKey.telefones.name)
+        .must((cliente) => cliente.telefoneCelular.value.isNotEmpty || cliente.telefoneFixo.value.isNotEmpty, "Preencha ao menos um dos campos telefone!",
+            ErrorCodeKey.telefones.name)
         .customValidExternalErrors(externalErrors, ErrorCodeKey.telefones.name);
 
     ruleFor((cliente) => cliente.municipio.value, key: ErrorCodeKey.municipio.name)

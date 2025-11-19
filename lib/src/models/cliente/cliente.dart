@@ -5,8 +5,7 @@ import 'package:serv_oeste/src/utils/formatters/formatters.dart';
 import 'package:serv_oeste/src/utils/skeleton/skeleton_generator.dart';
 import 'package:serv_oeste/src/utils/skeleton/skeletonizable.dart';
 
-List<Cliente> clienteFromJson(String str) =>
-    List<Cliente>.from(json.decode(str));
+List<Cliente> clienteFromJson(String str) => List<Cliente>.from(json.decode(str));
 
 class Cliente implements Skeletonizable {
   int? id;
@@ -17,24 +16,14 @@ class Cliente implements Skeletonizable {
   String? bairro;
   String? municipio;
 
-  Cliente(
-      {this.id,
-      this.nome,
-      this.telefoneFixo,
-      this.telefoneCelular,
-      this.endereco,
-      this.bairro,
-      this.municipio});
+  Cliente({this.id, this.nome, this.telefoneFixo, this.telefoneCelular, this.endereco, this.bairro, this.municipio});
 
   Cliente.fromForm(ClienteForm clienteForm) {
     id = clienteForm.id;
     nome = clienteForm.nome.value;
-    telefoneFixo =
-        Formatters.transformPhoneMask(clienteForm.telefoneFixo.value);
-    telefoneCelular =
-        Formatters.transformPhoneMask(clienteForm.telefoneCelular.value);
-    endereco =
-        "${clienteForm.rua.value}, ${clienteForm.numero.value}${(clienteForm.complemento.value.isNotEmpty) ? ", ${clienteForm.complemento.value}" : ""}";
+    telefoneFixo = Formatters.transformPhoneMask(clienteForm.telefoneFixo.value);
+    telefoneCelular = Formatters.transformPhoneMask(clienteForm.telefoneCelular.value);
+    endereco = "${clienteForm.rua.value}, ${clienteForm.numero.value}${(clienteForm.complemento.value.isNotEmpty) ? ", ${clienteForm.complemento.value}" : ""}";
     bairro = clienteForm.bairro.value;
     municipio = clienteForm.municipio.value;
   }

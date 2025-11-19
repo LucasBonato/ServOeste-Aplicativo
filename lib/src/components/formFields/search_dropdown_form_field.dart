@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:drop_down_search_field/drop_down_search_field.dart';
+import 'package:flutter/material.dart';
 
 class CustomSearchDropDownFormField extends StatefulWidget {
   final List<String> dropdownValues;
@@ -77,9 +77,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
     if (_isDisposed || !mounted) return;
     if (mounted) {
       setState(() {
-        labelColor = _effectiveController.text.isNotEmpty
-            ? const Color(0xFF948F8F)
-            : const Color(0xFF000000);
+        labelColor = _effectiveController.text.isNotEmpty ? const Color(0xFF948F8F) : const Color(0xFF000000);
       });
     }
   }
@@ -186,10 +184,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
         ),
         suggestionsCallback: (query) async {
           if (query.isEmpty) return widget.dropdownValues;
-          return widget.dropdownValues
-              .where((element) =>
-                  element.toLowerCase().contains(query.toLowerCase()))
-              .toList();
+          return widget.dropdownValues.where((element) => element.toLowerCase().contains(query.toLowerCase())).toList();
         },
         onSuggestionSelected: (String? suggestion) {
           if (suggestion != null && suggestion.isNotEmpty && !_isDisposed) {

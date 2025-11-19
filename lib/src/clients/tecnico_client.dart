@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:serv_oeste/src/clients/dio/server_endpoints.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/page_content.dart';
 import 'package:serv_oeste/src/models/servico/tecnico_disponivel.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
-import 'package:serv_oeste/src/clients/dio/server_endpoints.dart';
 import 'package:serv_oeste/src/utils/error_handler.dart';
 
 import '../models/tecnico/tecnico.dart';
@@ -27,8 +27,7 @@ class TecnicoClient {
     int size = 10,
   }) async {
     try {
-      final response =
-          await dio.post(ServerEndpoints.tecnicoFindEndpoint, data: {
+      final response = await dio.post(ServerEndpoints.tecnicoFindEndpoint, data: {
         "id": id,
         "nome": nome,
         "telefoneFixo": telefoneFixo,
@@ -52,17 +51,12 @@ class TecnicoClient {
     return Right(PageContent.empty());
   }
 
-  Future<Either<ErrorEntity, List<TecnicoDisponivel>>>
-      fetchListAvailabilityBySpecialityId(int especialidadeId) async {
+  Future<Either<ErrorEntity, List<TecnicoDisponivel>>> fetchListAvailabilityBySpecialityId(int especialidadeId) async {
     try {
-      final response = await dio.post(
-          ServerEndpoints.tecnicoDisponibilidadeEndpoint,
-          data: {"especialidadeId": especialidadeId});
+      final response = await dio.post(ServerEndpoints.tecnicoDisponibilidadeEndpoint, data: {"especialidadeId": especialidadeId});
 
       if (response.data is List) {
-        return Right((response.data as List)
-            .map((json) => TecnicoDisponivel.fromJson(json))
-            .toList());
+        return Right((response.data as List).map((json) => TecnicoDisponivel.fromJson(json)).toList());
       }
     } on DioException catch (e) {
       return Left(ErrorHandler.onRequestError(e));
@@ -114,11 +108,9 @@ class TecnicoClient {
     return Right(null);
   }
 
-  Future<Either<ErrorEntity, void>> disableListByIds(
-      List<int> selectedItems) async {
+  Future<Either<ErrorEntity, void>> disableListByIds(List<int> selectedItems) async {
     try {
-      await dio.delete(ServerEndpoints.tecnicoEndpoint,
-          data: jsonEncode(selectedItems));
+      await dio.delete(ServerEndpoints.tecnicoEndpoint, data: jsonEncode(selectedItems));
     } on DioException catch (e) {
       return Left(ErrorHandler.onRequestError(e));
     }

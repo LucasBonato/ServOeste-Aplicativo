@@ -199,7 +199,7 @@ class _UserScreenState extends State<UserScreen> {
         } else if (state is UserError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.error.errorMessage),
+              content: Text(state.error.detail),
               backgroundColor: Colors.red,
             ),
           );

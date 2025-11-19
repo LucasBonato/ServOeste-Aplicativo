@@ -52,8 +52,7 @@ pw.Widget _buildServiceInfoSection(Servico servico, Cliente cliente) {
 }
 
 pw.Widget _buildHistoricoSection(List<Servico> historico, int servicoAtualId) {
-  final historicoFiltrado =
-      historico.where((s) => s.id != servicoAtualId).toList();
+  final historicoFiltrado = historico.where((s) => s.id != servicoAtualId).toList();
 
   if (historicoFiltrado.isEmpty) {
     return pw.Padding(
@@ -91,8 +90,7 @@ pw.Widget _buildHistoricoEquipamento(List<Servico> historico) {
 }
 
 pw.Widget _buildHistoricoTable(Servico servico) {
-  final effectiveDate =
-      Formatters.extractDateFromDescription(servico.descricao);
+  final effectiveDate = Formatters.extractDateFromDescription(servico.descricao);
 
   return pw.Container(
     margin: const pw.EdgeInsets.only(bottom: 15),
@@ -117,9 +115,7 @@ pw.Widget _buildHistoricoTable(Servico servico) {
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(5),
                   child: pw.Text(
-                    servico.dataFechamento != null
-                        ? 'Fechado em: ${Formatters.formatDateForHistory(servico.dataFechamento!)}'
-                        : 'Não foi fechado.',
+                    servico.dataFechamento != null ? 'Fechado em: ${Formatters.formatDateForHistory(servico.dataFechamento!)}' : 'Não foi fechado.',
                     style: const pw.TextStyle(fontSize: 10),
                   ),
                 ),

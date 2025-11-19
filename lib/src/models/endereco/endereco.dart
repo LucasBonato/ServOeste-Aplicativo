@@ -10,8 +10,8 @@ class Endereco {
   });
 
   factory Endereco.fromJson(Map<String, dynamic> json) => Endereco(
-    logradouro: json["logradouro"],
-    bairro: json["bairro"],
-    municipio: json["municipio"],
-  );
+        logradouro: json["logradouro"],
+        bairro: json["bairro"],
+        municipio: json["municipio"],
+      );
 }

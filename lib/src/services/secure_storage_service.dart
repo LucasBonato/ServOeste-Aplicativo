@@ -6,12 +6,10 @@ class SecureStorageService {
   static const _keyAccessToken = 'access_token';
   static const _keyRefreshToken = 'refresh_token';
 
-  static Future<void> saveTokens(
-      String accessToken, String refreshToken) async {
+  static Future<void> saveTokens(String accessToken, String refreshToken) async {
     await Future.wait([
       _storage.write(key: _keyAccessToken, value: accessToken),
-      if (refreshToken.isNotEmpty)
-        _storage.write(key: _keyRefreshToken, value: refreshToken),
+      if (refreshToken.isNotEmpty) _storage.write(key: _keyRefreshToken, value: refreshToken),
     ]);
   }
 

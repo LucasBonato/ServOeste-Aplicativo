@@ -55,8 +55,7 @@ final class ServicoRegisterPlusClientEvent extends ServicoEvent {
   final ClienteRequest cliente;
   final ServicoRequest servico;
 
-  ServicoRegisterPlusClientEvent(
-      {required this.cliente, required this.servico});
+  ServicoRegisterPlusClientEvent({required this.cliente, required this.servico});
 }
 
 final class ServicoUpdateEvent extends ServicoEvent {

@@ -18,14 +18,31 @@ class ServicoClient {
 
   ServicoClient(this.dio);
 
-  Future<Either<ErrorEntity, PageContent<Servico>>> getServicosByFilter(
-    ServicoFilterRequest servicoFilter, {
-    int page = 0,
-    int size = 10,
-  }) async {
+  Future<Either<ErrorEntity, Servico?>> getServicoById(int id) async {
     try {
-      final response =
-          await dio.post(ServerEndpoints.servicoFilterEndpoint, data: {
+      final response = await dio.get("${ServerEndpoints.servicoEndpoint}/$id");
+      if (response.data != null && response.data is Map<String, dynamic>) {
+        return Right(Servico.fromJson(response.data));
+      }
+    }
+    on DioException catch (e) {
+      return Left(ErrorHandler.onRequestError(e));
+    }
+    catch (e) {
+      Logger().e('Erro inesperado: $e');
+    }
+    return Right(null);
+  }
+
+  Future<Either<ErrorEntity, PageContent<Servico>>> getServicosByFilter(
+    ServicoFilterRequest servicoFilter,
+    {
+      int page = 0,
+      int size = 10,
+    }
+  ) async {
+    try {
+      final response = await dio.post(ServerEndpoints.servicoFilterEndpoint, data: {
         'servicoId': servicoFilter.id,
         'clienteId': servicoFilter.clienteId,
         'tecnicoId': servicoFilter.tecnicoId,
@@ -36,25 +53,19 @@ class ServicoClient {
         'garantia': servicoFilter.garantia,
         'filial': servicoFilter.filial,
         'periodo': servicoFilter.periodo,
-        'dataAtendimentoPrevistoAntes':
-            servicoFilter.dataAtendimentoPrevistoAntes?.toIso8601String(),
-        'dataAtendimentoPrevistoDepois':
-            servicoFilter.dataAtendimentoPrevistoDepois?.toIso8601String(),
-        'dataAtendimentoEfetivoAntes':
-            servicoFilter.dataAtendimentoEfetivoAntes?.toIso8601String(),
-        'dataAtendimentoEfetivoDepois':
-            servicoFilter.dataAtendimentoEfetivoDepois?.toIso8601String(),
+        'dataAtendimentoPrevistoAntes': servicoFilter.dataAtendimentoPrevistoAntes?.toIso8601String(),
+        'dataAtendimentoPrevistoDepois': servicoFilter.dataAtendimentoPrevistoDepois?.toIso8601String(),
+        'dataAtendimentoEfetivoAntes': servicoFilter.dataAtendimentoEfetivoAntes?.toIso8601String(),
+        'dataAtendimentoEfetivoDepois': servicoFilter.dataAtendimentoEfetivoDepois?.toIso8601String(),
         'dataAberturaAntes': servicoFilter.dataAberturaAntes?.toIso8601String(),
-        'dataAberturaDepois':
-            servicoFilter.dataAberturaDepois?.toIso8601String(),
+        'dataAberturaDepois': servicoFilter.dataAberturaDepois?.toIso8601String(),
       }, queryParameters: {
         "page": page,
         "size": size,
       });
 
       if (response.data != null && response.data is Map<String, dynamic>) {
-        return Right(PageContent.fromJson(
-            response.data, (json) => Servico.fromJson(json)));
+        return Right(PageContent.fromJson(response.data, (json) => Servico.fromJson(json)));
       }
     } on DioException catch (e) {
       return Left(ErrorHandler.onRequestError(e));
@@ -64,8 +75,7 @@ class ServicoClient {
     return Right(PageContent.empty());
   }
 
-  Future<Either<ErrorEntity, void>> createServicoComClienteNaoExistente(
-      ServicoRequest servico, ClienteRequest cliente) async {
+  Future<Either<ErrorEntity, void>> createServicoComClienteNaoExistente(ServicoRequest servico, ClienteRequest cliente) async {
     try {
       await dio.post(ServerEndpoints.servicoMaisClienteEndpoint, data: {
         "clienteRequest": {
@@ -75,8 +85,7 @@ class ServicoClient {
           "telefoneCelular": cliente.telefoneCelular,
           "endereco": cliente.endereco,
           "bairro": cliente.bairro,
-          "municipio":
-              cliente.municipio.replaceAll("í", "i").replaceAll("ã", "a")
+          "municipio": cliente.municipio.replaceAll("í", "i").replaceAll("ã", "a")
         },
         "servicoRequest": {
           "idTecnico": servico.idTecnico,
@@ -94,8 +103,7 @@ class ServicoClient {
     return Right(null);
   }
 
-  Future<Either<ErrorEntity, void>> createServicoComClienteExistente(
-      ServicoRequest servico) async {
+  Future<Either<ErrorEntity, void>> createServicoComClienteExistente(ServicoRequest servico) async {
     try {
       await dio.post(ServerEndpoints.servicoEndpoint, data: {
         "idCliente": servico.idCliente,
@@ -125,8 +133,7 @@ class ServicoClient {
         "filial": servico.filial,
         "descricao": servico.descricao,
         "situacao": Formatters.mapSituationToEnumSituation(servico.situacao),
-        "formaPagamento":
-            servico.formaPagamento?.replaceAll("é", "e").toUpperCase(),
+        "formaPagamento": servico.formaPagamento?.replaceAll("é", "e").toUpperCase(),
         "horarioPrevisto": servico.horarioPrevisto,
         "valor": servico.valor,
         "valorComissao": servico.valorComissao,
@@ -144,11 +151,9 @@ class ServicoClient {
     return Right(null);
   }
 
-  Future<Either<ErrorEntity, void>> disableListOfServico(
-      List<int> selectedItems) async {
+  Future<Either<ErrorEntity, void>> disableListOfServico(List<int> selectedItems) async {
     try {
-      await dio.delete(ServerEndpoints.servicoEndpoint,
-          data: jsonEncode(selectedItems));
+      await dio.delete(ServerEndpoints.servicoEndpoint, data: jsonEncode(selectedItems));
     } on DioException catch (e) {
       return Left(ErrorHandler.onRequestError(e));
     }

@@ -102,11 +102,7 @@ class ResponsiveSearchInputs extends StatelessWidget {
 
   Widget _buildLargeScreenSearchBar() {
     return Row(
-      children: [
-        for (SearchInputField field in fields)
-          Expanded(flex: 1, child: _buildSearchField(field)),
-        if (onFilterTap != null) _buildFilterIcon()
-      ],
+      children: [for (SearchInputField field in fields) Expanded(flex: 1, child: _buildSearchField(field)), if (onFilterTap != null) _buildFilterIcon()],
     );
   }
 

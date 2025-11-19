@@ -40,8 +40,7 @@ class _UpdateServicoState extends State<UpdateServico> {
   late TextEditingController _nomeClienteController;
   late TextEditingController _enderecoController;
 
-  late ServicoValidator _servicoUpdateValidator =
-      ServicoValidator(isUpdate: true);
+  late ServicoValidator _servicoUpdateValidator = ServicoValidator(isUpdate: true);
 
   final ServicoForm _servicoUpdateForm = ServicoForm();
   final ClienteForm _clienteUpdateForm = ClienteForm();
@@ -76,13 +75,9 @@ class _UpdateServicoState extends State<UpdateServico> {
 
     List<String> enderecoParts = cliente.endereco?.split(',') ?? [];
 
-    _clienteUpdateForm
-        .setRua(enderecoParts.isNotEmpty ? enderecoParts.first.trim() : '');
-    _clienteUpdateForm
-        .setNumero(enderecoParts.length > 1 ? enderecoParts[1].trim() : '');
-    _clienteUpdateForm.setComplemento(enderecoParts.length > 2
-        ? enderecoParts.sublist(2).join(',').trim()
-        : '');
+    _clienteUpdateForm.setRua(enderecoParts.isNotEmpty ? enderecoParts.first.trim() : '');
+    _clienteUpdateForm.setNumero(enderecoParts.length > 1 ? enderecoParts[1].trim() : '');
+    _clienteUpdateForm.setComplemento(enderecoParts.length > 2 ? enderecoParts.sublist(2).join(',').trim() : '');
 
     _servicoUpdateForm.setIdCliente(cliente.id);
     _servicoUpdateForm.setNomeCliente(cliente.nome ?? '');
@@ -102,8 +97,7 @@ class _UpdateServicoState extends State<UpdateServico> {
     _clienteFormKey.currentState?.validate();
     _servicoFormKey.currentState?.validate();
 
-    final ValidationResult response =
-        _servicoUpdateValidator.validate(_servicoUpdateForm);
+    final ValidationResult response = _servicoUpdateValidator.validate(_servicoUpdateForm);
     return response.isValid;
   }
 
@@ -169,22 +163,18 @@ class _UpdateServicoState extends State<UpdateServico> {
       nameTecnicoController: _nomeTecnicoController,
       submitText: "",
       onSubmit: () {},
-      successMessage:
-          'Serviço atualizado com sucesso! (Caso ele não esteja atualizado, recarregue a página)',
+      successMessage: 'Serviço atualizado com sucesso! (Caso ele não esteja atualizado, recarregue a página)',
       isUpdate: true,
     );
   }
 
   Widget _buildMainFormLayout(bool isMobile) {
-    final Widget serviceForm =
-        CardBuilderForm(title: "Serviço", child: _buildServiceForm());
+    final Widget serviceForm = CardBuilderForm(title: "Serviço", child: _buildServiceForm());
 
     final List<Widget> children = [
       CardBuilderForm(title: "Cliente", child: _buildClientForm()),
       const SizedBox(height: 12),
-      ElevatedFormButton(
-          text: "Alterar Cliente",
-          onPressed: () => _showClientSelectionModal(context)),
+      ElevatedFormButton(text: "Alterar Cliente", onPressed: () => _showClientSelectionModal(context)),
       if (isMobile) ...[
         const SizedBox(height: 12),
         serviceForm,
@@ -312,10 +302,7 @@ class _UpdateServicoState extends State<UpdateServico> {
     return MultiBlocListener(
       listeners: [
         BlocListener<ServicoBloc, ServicoState>(
-          listenWhen: (previous, current) =>
-              current is ServicoSearchOneSuccessState ||
-              current is ServicoUpdateSuccessState ||
-              current is ServicoErrorState,
+          listenWhen: (previous, current) => current is ServicoSearchOneSuccessState || current is ServicoUpdateSuccessState || current is ServicoErrorState,
           listener: (context, state) {
             if (state is ServicoUpdateSuccessState) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -339,17 +326,14 @@ class _UpdateServicoState extends State<UpdateServico> {
         ),
       ],
       child: BlocBuilder<ServicoBloc, ServicoState>(
-        buildWhen: (previous, current) =>
-            current is ServicoSearchOneSuccessState ||
-            current is ServicoSearchOneLoadingState,
+        buildWhen: (previous, current) => current is ServicoSearchOneSuccessState || current is ServicoSearchOneLoadingState,
         builder: (context, state) {
           return BaseFormScreen(
               shouldActivateEvent: true,
               sizeMultiplier: 2,
               title: "Consultar/Atualizar Serviço",
               actions: [
-                ReportMenuActionButton(
-                    servicoBloc: _servicoBloc, clienteBloc: _clienteBloc),
+                ReportMenuActionButton(servicoBloc: _servicoBloc, clienteBloc: _clienteBloc),
               ],
               child: Skeletonizer(
                   enabled: state is ServicoSearchOneLoadingState,
@@ -368,8 +352,7 @@ class _UpdateServicoState extends State<UpdateServico> {
                           children: [
                             ElevatedFormButton(
                               text: "Ver Histórico de Atendimento",
-                              onPressed: () =>
-                                  buildDescriptionHistoryDialog(context),
+                              onPressed: () => buildDescriptionHistoryDialog(context),
                             ),
                             const SizedBox(height: 16),
                             ElevatedFormButton(

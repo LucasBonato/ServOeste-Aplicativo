@@ -20,14 +20,11 @@ class ClienteRequest {
     required this.municipio,
   });
 
-  ClienteRequest.fromClienteForm(
-      {required ClienteForm cliente, required this.sobrenome}) {
+  ClienteRequest.fromClienteForm({required ClienteForm cliente, required this.sobrenome}) {
     nome = cliente.nome.value;
     telefoneFixo = Formatters.transformPhoneMask(cliente.telefoneFixo.value);
-    telefoneCelular =
-        Formatters.transformPhoneMask(cliente.telefoneCelular.value);
-    endereco =
-        "${cliente.rua.value}, ${cliente.numero.value}${(cliente.complemento.value.isNotEmpty) ? ", ${cliente.complemento.value}" : ""}";
+    telefoneCelular = Formatters.transformPhoneMask(cliente.telefoneCelular.value);
+    endereco = "${cliente.rua.value}, ${cliente.numero.value}${(cliente.complemento.value.isNotEmpty) ? ", ${cliente.complemento.value}" : ""}";
     bairro = cliente.bairro.value;
     municipio = cliente.municipio.value;
   }
