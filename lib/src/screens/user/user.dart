@@ -29,33 +29,33 @@ class _UserScreenState extends State<UserScreen> {
   void _onCreateUser() {
     Navigator.of(context, rootNavigator: true)
         .push(
-      MaterialPageRoute(
-        builder: (context) => CreateUserScreen(),
-      ),
-    )
+          MaterialPageRoute(
+            builder: (context) => CreateUserScreen(),
+          ),
+        )
         .then((_) {
-      if (mounted) {
-        context.read<UserBloc>().add(LoadUsersEvent());
-      }
-    });
+          if (mounted) {
+            context.read<UserBloc>().add(LoadUsersEvent());
+          }
+        });
   }
 
   void _onEditUser(User user) {
     Navigator.of(context, rootNavigator: true)
         .push(
-      MaterialPageRoute(
-        builder: (context) => UpdateUserScreen(
-          userId: user.id,
-          currentUsername: user.username,
-          currentRole: user.role,
-        ),
-      ),
-    )
+          MaterialPageRoute(
+            builder: (context) => UpdateUserScreen(
+              id: user.id,
+              username: user.username,
+              role: user.role,
+            ),
+          ),
+        )
         .then((_) {
-      if (mounted) {
-        context.read<UserBloc>().add(LoadUsersEvent());
-      }
-    });
+          if (mounted) {
+            context.read<UserBloc>().add(LoadUsersEvent());
+          }
+        });
   }
 
   void _onDeleteUser(String username) {
@@ -64,20 +64,16 @@ class _UserScreenState extends State<UserScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Confirmar Exclusão'),
-          content:
-              Text('Tem certeza que deseja excluir o usuário "$username"?'),
+          content: Text('Tem certeza que deseja excluir o usuário "$username"?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child:
-                  Text('Cancelar', style: TextStyle(color: Colors.grey[600])),
+              child: Text('Cancelar', style: TextStyle(color: Colors.grey[600])),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                context
-                    .read<UserBloc>()
-                    .add(DeleteUserEvent(username: username));
+                context.read<UserBloc>().add(DeleteUserEvent(username: username));
               },
               child: const Text('Excluir', style: TextStyle(color: Colors.red)),
             ),
@@ -188,7 +184,7 @@ class _UserScreenState extends State<UserScreen> {
   Widget _buildUserList() {
     return BlocConsumer<UserBloc, UserState>(
       listener: (context, state) {
-        if (state is UserDeleted) {
+        if (state is UserDeletedState) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Usuário excluído com sucesso!'),
@@ -196,7 +192,7 @@ class _UserScreenState extends State<UserScreen> {
             ),
           );
           context.read<UserBloc>().add(LoadUsersEvent());
-        } else if (state is UserError) {
+        } else if (state is UserErrorState) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.error.detail),
@@ -206,12 +202,10 @@ class _UserScreenState extends State<UserScreen> {
         }
       },
       builder: (context, state) {
-        if (state is UserLoading) {
+        if (state is UserLoadingState) {
           return const Loading();
-        } else if (state is UserLoaded) {
-          final nonAdminUsers = state.users.content
-              .where((user) => user.role != 'ADMIN')
-              .toList();
+        } else if (state is UserLoadedState) {
+          final nonAdminUsers = state.users.content.where((user) => user.role != 'ADMIN').toList();
 
           if (nonAdminUsers.isEmpty) {
             return const EntityNotFound(
@@ -243,15 +237,13 @@ class _UserScreenState extends State<UserScreen> {
                     currentPage: state.users.page.page + 1,
                     totalPages: state.users.page.totalPages,
                     onPageChanged: (page) {
-                      context
-                          .read<UserBloc>()
-                          .add(LoadUsersEvent(page: page - 1));
+                      context.read<UserBloc>().add(LoadUsersEvent(page: page - 1));
                     },
                   ),
                 ),
             ],
           );
-        } else if (state is UserOperationLoading) {
+        } else if (state is UserOperationLoadingState) {
           return const Loading();
         }
         return const ErrorComponent();

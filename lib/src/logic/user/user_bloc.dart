@@ -11,7 +11,7 @@ part 'user_state.dart';
 class UserBloc extends Bloc<UserEvent, UserState> {
   final UserClient _userClient;
 
-  UserBloc(this._userClient) : super(UserInitial()) {
+  UserBloc(this._userClient) : super(UserInitialState()) {
     on<LoadUsersEvent>(_onLoadUsers);
     on<CreateUserEvent>(_onCreateUser);
     on<UpdateUserEvent>(_onUpdateUser);
@@ -22,7 +22,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     LoadUsersEvent event,
     Emitter<UserState> emit,
   ) async {
-    emit(UserLoading());
+    emit(UserLoadingState());
 
     final result = await _userClient.findAll(
       page: event.page,
@@ -30,8 +30,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     );
 
     result.fold(
-      (error) => emit(UserError(error: error)),
-      (users) => emit(UserLoaded(users: users)),
+      (error) => emit(UserErrorState(error: error)),
+      (users) => emit(UserLoadedState(users: users)),
     );
   }
 
@@ -39,7 +39,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     CreateUserEvent event,
     Emitter<UserState> emit,
   ) async {
-    emit(UserOperationLoading());
+    emit(UserOperationLoadingState());
 
     final result = await _userClient.register(
       username: event.username,
@@ -48,8 +48,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     );
 
     result.fold(
-      (error) => emit(UserError(error: error)),
-      (_) => emit(UserCreated()),
+      (error) => emit(UserErrorState(error: error)),
+      (_) => emit(UserCreatedState()),
     );
   }
 
@@ -57,7 +57,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     UpdateUserEvent event,
     Emitter<UserState> emit,
   ) async {
-    emit(UserOperationLoading());
+    emit(UserOperationLoadingState());
 
     final result = await _userClient.update(
       id: event.id,
@@ -67,8 +67,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     );
 
     result.fold(
-      (error) => emit(UserError(error: error)),
-      (_) => emit(UserUpdated()),
+      (error) => emit(UserErrorState(error: error)),
+      (_) => emit(UserUpdatedState()),
     );
   }
 
@@ -76,15 +76,15 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     DeleteUserEvent event,
     Emitter<UserState> emit,
   ) async {
-    emit(UserOperationLoading());
+    emit(UserOperationLoadingState());
 
     final result = await _userClient.delete(
       username: event.username,
     );
 
     result.fold(
-      (error) => emit(UserError(error: error)),
-      (_) => emit(UserDeleted()),
+      (error) => emit(UserErrorState(error: error)),
+      (_) => emit(UserDeletedState()),
     );
   }
 }
