@@ -112,7 +112,7 @@ class _UserFormWidgetState extends State<UserFormWidget> {
                     duration: const Duration(seconds: 3),
                   ),
                 );
-              } else if (state is UserCreated) {
+              } else if (state is UserCreated || state is UserUpdated) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(widget.successMessage),
