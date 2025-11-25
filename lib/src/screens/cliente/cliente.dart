@@ -129,7 +129,7 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
         children: [
           _buildSearchInputs(),
           Expanded(
-            child: BlocListener<ClienteBloc, ClienteState>(
+            child: BlocConsumer<ClienteBloc, ClienteState>(
               listenWhen: (previous, current) => current is ClienteErrorState,
               listener: (context, state) {
                 if (state is ClienteErrorState) {
@@ -138,41 +138,39 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
                   });
                 }
               },
-              child: BlocBuilder<ClienteBloc, ClienteState>(
-                builder: (context, stateCliente) {
-                  if (stateCliente is ClienteInitialState || stateCliente is ClienteLoadingState) {
-                    return Skeletonizer(
-                      enableSwitchAnimation: true,
-                      child: buildGridOfCards(
-                        items: List.generate(16, (_) => Cliente()..applySkeletonData()),
-                        aspectRatio: 1.65,
-                        totalPages: 1,
-                        currentPage: 0,
-                        onPageChanged: (_) {},
-                        isSkeleton: true,
-                      ),
-                    );
-                  }
-                  else if (stateCliente is ClienteSearchSuccessState) {
-                    return buildGridOfCards(
-                      items: stateCliente.clientes,
+              builder: (context, stateCliente) {
+                if (stateCliente is ClienteInitialState || stateCliente is ClienteLoadingState) {
+                  return Skeletonizer(
+                    enableSwitchAnimation: true,
+                    child: buildGridOfCards(
+                      items: List.generate(16, (_) => Cliente()..applySkeletonData()),
                       aspectRatio: 1.65,
-                      totalPages: stateCliente.totalPages,
-                      currentPage: stateCliente.currentPage,
-                      onPageChanged: (page) {
-                        _clienteBloc.add(ClienteLoadingEvent(
-                          nome: _clienteBloc.nomeMenu,
-                          telefone: _clienteBloc.telefoneMenu,
-                          endereco: _clienteBloc.enderecoMenu,
-                          page: page - 1,
-                          size: 20,
-                        ));
-                      }
-                    );
-                  }
-                  return const ErrorComponent();
-                },
-              ),
+                      totalPages: 1,
+                      currentPage: 0,
+                      onPageChanged: (_) {},
+                      isSkeleton: true,
+                    ),
+                  );
+                }
+                else if (stateCliente is ClienteSearchSuccessState) {
+                  return buildGridOfCards(
+                    items: stateCliente.clientes,
+                    aspectRatio: 1.65,
+                    totalPages: stateCliente.totalPages,
+                    currentPage: stateCliente.currentPage,
+                    onPageChanged: (page) {
+                      _clienteBloc.add(ClienteLoadingEvent(
+                        nome: _clienteBloc.nomeMenu,
+                        telefone: _clienteBloc.telefoneMenu,
+                        endereco: _clienteBloc.enderecoMenu,
+                        page: page - 1,
+                        size: 20,
+                      ));
+                    }
+                  );
+                }
+                return const ErrorComponent();
+              },
             ),
           ),
         ],

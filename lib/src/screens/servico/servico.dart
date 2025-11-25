@@ -165,7 +165,7 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
         children: [
           _buildSearchInputs(),
           Expanded(
-            child: BlocListener<ServicoBloc, ServicoState>(
+            child: BlocConsumer<ServicoBloc, ServicoState>(
               listenWhen: (previous, current) => current is ServicoErrorState,
               listener: (context, state) {
                 if (state is ServicoErrorState) {
@@ -174,39 +174,37 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
                   });
                 }
               },
-              child: BlocBuilder<ServicoBloc, ServicoState>(
-                builder: (context, stateServico) {
-                  if (stateServico is ServicoInitialState || stateServico is ServicoLoadingState) {
-                    return Skeletonizer(
-                      enableSwitchAnimation: true,
-                      child: buildGridOfCards(
-                        items: List.generate(8, (_) => Servico.skeleton()),
-                        aspectRatio: 0.9,
-                        totalPages: 1,
-                        currentPage: 0,
-                        onPageChanged: (_) {},
-                        isSkeleton: true,
-                      ),
-                    );
-                  }
-                  if (stateServico is ServicoSearchSuccessState) {
-                    return buildGridOfCards(
-                      items: stateServico.servicos,
+              builder: (context, stateServico) {
+                if (stateServico is ServicoInitialState || stateServico is ServicoLoadingState) {
+                  return Skeletonizer(
+                    enableSwitchAnimation: true,
+                    child: buildGridOfCards(
+                      items: List.generate(8, (_) => Servico.skeleton()),
                       aspectRatio: 0.9,
-                      totalPages: stateServico.totalPages,
-                      currentPage: stateServico.currentPage,
-                      onPageChanged: (page) {
-                        _servicoBloc.add(ServicoLoadingEvent(
-                          filterRequest: _servicoBloc.filterRequest ?? ServicoFilterRequest(),
-                          page: page - 1,
-                          size: 15,
-                        ));
-                      },
-                    );
-                  }
-                  return const ErrorComponent();
-                },
-              ),
+                      totalPages: 1,
+                      currentPage: 0,
+                      onPageChanged: (_) {},
+                      isSkeleton: true,
+                    ),
+                  );
+                }
+                if (stateServico is ServicoSearchSuccessState) {
+                  return buildGridOfCards(
+                    items: stateServico.servicos,
+                    aspectRatio: 0.9,
+                    totalPages: stateServico.totalPages,
+                    currentPage: stateServico.currentPage,
+                    onPageChanged: (page) {
+                      _servicoBloc.add(ServicoLoadingEvent(
+                        filterRequest: _servicoBloc.filterRequest ?? ServicoFilterRequest(),
+                        page: page - 1,
+                        size: 15,
+                      ));
+                    },
+                  );
+                }
+                return const ErrorComponent();
+              },
             ),
           )
         ],

@@ -149,7 +149,7 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
         children: [
           _buildSearchInputs(),
           Expanded(
-            child: BlocListener<TecnicoBloc, TecnicoState>(
+            child: BlocConsumer<TecnicoBloc, TecnicoState>(
               listenWhen: (previous, current) => current is TecnicoErrorState,
               listener: (context, state) {
                 if (state is TecnicoErrorState) {
@@ -158,42 +158,40 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
                   });
                 }
               },
-              child: BlocBuilder<TecnicoBloc, TecnicoState>(
-                builder: (context, stateTecnico) {
-                  if (stateTecnico is TecnicoInitialState || stateTecnico is TecnicoLoadingState) {
-                    return Skeletonizer(
-                      enableSwitchAnimation: true,
-                      child: buildGridOfCards(
-                        items: List.generate(20, (_) => TecnicoResponse()..applySkeletonData()),
-                        aspectRatio: 2.5,
-                        totalPages: 1,
-                        currentPage: 0,
-                        onPageChanged: (_) {},
-                        isSkeleton: true,
-                      ),
-                    );
-                  }
-                  else if (stateTecnico is TecnicoSearchSuccessState) {
-                    return buildGridOfCards(
-                      items: stateTecnico.tecnicos,
+              builder: (context, stateTecnico) {
+                if (stateTecnico is TecnicoInitialState || stateTecnico is TecnicoLoadingState) {
+                  return Skeletonizer(
+                    enableSwitchAnimation: true,
+                    child: buildGridOfCards(
+                      items: List.generate(20, (_) => TecnicoResponse()..applySkeletonData()),
                       aspectRatio: 2.5,
-                      totalPages: stateTecnico.totalPages,
-                      currentPage: stateTecnico.currentPage,
-                      onPageChanged: (page) {
-                        _tecnicoBloc.add(TecnicoLoadingEvent(
-                          id: _tecnicoBloc.idMenu,
-                          nome: _tecnicoBloc.nomeMenu,
-                          situacao: _tecnicoBloc.situacaoMenu,
-                          equipamento: null,
-                          page: page - 1,
-                          size: 20,
-                        ));
-                      }
-                    );
-                  }
-                  return const ErrorComponent();
-                },
-              ),
+                      totalPages: 1,
+                      currentPage: 0,
+                      onPageChanged: (_) {},
+                      isSkeleton: true,
+                    ),
+                  );
+                }
+                else if (stateTecnico is TecnicoSearchSuccessState) {
+                  return buildGridOfCards(
+                    items: stateTecnico.tecnicos,
+                    aspectRatio: 2.5,
+                    totalPages: stateTecnico.totalPages,
+                    currentPage: stateTecnico.currentPage,
+                    onPageChanged: (page) {
+                      _tecnicoBloc.add(TecnicoLoadingEvent(
+                        id: _tecnicoBloc.idMenu,
+                        nome: _tecnicoBloc.nomeMenu,
+                        situacao: _tecnicoBloc.situacaoMenu,
+                        equipamento: null,
+                        page: page - 1,
+                        size: 20,
+                      ));
+                    }
+                  );
+                }
+                return const ErrorComponent();
+              },
             ),
           ),
         ],
