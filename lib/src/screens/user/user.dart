@@ -4,6 +4,7 @@ import 'package:serv_oeste/src/components/layout/fab_add.dart';
 import 'package:serv_oeste/src/components/screen/cards/card_user.dart';
 import 'package:serv_oeste/src/components/screen/error_component.dart';
 import 'package:serv_oeste/src/logic/user/user_bloc.dart';
+import 'package:serv_oeste/src/models/enums/list_style.dart';
 import 'package:serv_oeste/src/models/user/user_response.dart';
 import 'package:serv_oeste/src/screens/base_list_screen.dart';
 import 'package:serv_oeste/src/screens/user/update_user.dart';

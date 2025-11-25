@@ -4,6 +4,7 @@ import 'package:serv_oeste/src/components/layout/pagination_widget.dart';
 import 'package:serv_oeste/src/components/screen/entity_not_found.dart';
 import 'package:serv_oeste/src/components/screen/grid_view.dart';
 import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
+import 'package:serv_oeste/src/models/enums/list_style.dart';
 import 'package:serv_oeste/src/shared/debouncer.dart';
 
 abstract class BaseListScreen<T> extends StatefulWidget {
@@ -121,9 +122,4 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
       ],
     );
   }
-}
-
-enum ListStyle {
-  grid,
-  list
 }
