@@ -49,8 +49,7 @@ class TecnicoForm extends ChangeNotifier {
   }
 
   void removeConhecimentos(int conhecimento) {
-    conhecimentos.value
-        .removeWhere((especialidade) => especialidade == conhecimento);
+    conhecimentos.value.removeWhere((especialidade) => especialidade == conhecimento);
     notifyListeners();
   }
 }

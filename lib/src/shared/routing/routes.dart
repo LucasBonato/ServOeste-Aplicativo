@@ -9,4 +9,7 @@ class Routes {
   static const String servicoCreate = "/createServico";
   static const String servicoUpdate = "/updateServico";
   static const String servicoFilter = "/filterServico";
+  static const String user = "/user";
+  static const String userCreate = "/createUser";
+  static const String userUpdate = "/updateUser";
 }

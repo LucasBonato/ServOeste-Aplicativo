@@ -93,8 +93,7 @@ pw.Widget _buildPagamentoField(Servico servico) {
         children: [
           pw.Padding(
             padding: const pw.EdgeInsets.all(8),
-            child:
-                pw.Text('Forma de pagamento: ${servico.formaPagamento ?? ''}'),
+            child: pw.Text('Forma de pagamento: ${servico.formaPagamento ?? ''}'),
           ),
         ],
       ),

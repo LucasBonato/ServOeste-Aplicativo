@@ -25,14 +25,12 @@ class FloatingActionButtonRemove extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
-            title: Text("Deletar itens selecionados?",
-                textAlign: TextAlign.center),
+            title: Text("Deletar itens selecionados?", textAlign: TextAlign.center),
             actionsAlignment: MainAxisAlignment.spaceAround,
             actions: [
               TextButton(
                 style: const ButtonStyle(
-                    shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5)))),
+                    shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5)))),
                     backgroundColor: WidgetStatePropertyAll(Color(0xFF007BFF)),
                     foregroundColor: WidgetStatePropertyAll(Colors.white)),
                 onPressed: () {
@@ -43,8 +41,7 @@ class FloatingActionButtonRemove extends StatelessWidget {
               ),
               TextButton(
                 style: const ButtonStyle(
-                  shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5)))),
+                  shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5)))),
                   backgroundColor: WidgetStatePropertyAll(Colors.red),
                   foregroundColor: WidgetStatePropertyAll(Colors.white),
                 ),

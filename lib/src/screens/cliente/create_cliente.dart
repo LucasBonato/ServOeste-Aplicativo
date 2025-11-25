@@ -18,8 +18,7 @@ class CreateCliente extends StatelessWidget {
       submitText: "Adicionar Cliente",
       bloc: bloc,
       clienteForm: form,
-      successMessage:
-          'Cliente registrado com sucesso! (Caso ele não esteja aparecendo, recarregue a página)',
+      successMessage: 'Cliente registrado com sucesso! (Caso ele não esteja aparecendo, recarregue a página)',
       onSubmit: () {
         final List<String> nomesSplit = form.nome.value.split(" ");
         final String nome = nomesSplit.first;

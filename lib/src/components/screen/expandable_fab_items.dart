@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'expandable_fab.dart';
 
 class ExpandableFabItems extends StatelessWidget {
@@ -31,9 +32,7 @@ class ExpandableFabItems extends StatelessWidget {
       distance: 100,
       children: [
         FloatingActionButton(
-          onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed(
-              firstRouterName,
-              arguments: {"isClientAndService": false}).then((value) {
+          onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed(firstRouterName, arguments: {"isClientAndService": false}).then((value) {
             if (value == true) {
               updateList();
             }
@@ -45,9 +44,7 @@ class ExpandableFabItems extends StatelessWidget {
           child: firstChild,
         ),
         FloatingActionButton(
-          onPressed: () => Navigator.of(context, rootNavigator: true)
-              .pushNamed(secondRouterName)
-              .then((value) {
+          onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed(secondRouterName).then((value) {
             if (value == true) {
               updateList();
             }

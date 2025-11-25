@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/layout/bottom_nav_bar.dart';
 import 'package:serv_oeste/src/components/layout/header.dart';
 import 'package:serv_oeste/src/components/layout/sidebar_navigation.dart';
+import 'package:serv_oeste/src/logic/auth/auth_bloc.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/lista/lista_bloc.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
@@ -16,7 +17,6 @@ import 'package:serv_oeste/src/screens/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/home.dart';
 import 'package:serv_oeste/src/screens/servico/servico.dart';
 import 'package:serv_oeste/src/screens/tecnico/tecnico.dart';
-import 'package:serv_oeste/src/logic/auth/auth_bloc.dart';
 import 'package:serv_oeste/src/screens/user/user.dart';
 import 'package:serv_oeste/src/utils/jwt_utils.dart';
 import 'package:serv_oeste/src/services/secure_storage_service.dart';
@@ -61,7 +61,6 @@ class BaseLayoutState extends State<BaseLayout> {
     _navigatorKeys = [];
     _screens = [];
 
-    _startAuthTimer();
     _initializeUserRole().then((_) {
       _initializeLists();
       _loadTab(_currentIndex);
@@ -106,18 +105,6 @@ class BaseLayoutState extends State<BaseLayout> {
     super.dispose();
   }
 
-  void _startAuthTimer() {
-    _authTimer = Timer.periodic(const Duration(minutes: 5), (timer) {
-      if (!mounted) {
-        timer.cancel();
-        return;
-      }
-
-      final authBloc = context.read<AuthBloc>();
-      authBloc.add(AuthCheckStatusEvent());
-    });
-  }
-
   Widget _getScreen(int index) {
     if (index >= _maxIndex || !_isInitialized) {
       return const Center(child: CircularProgressIndicator());
@@ -128,8 +115,7 @@ class BaseLayoutState extends State<BaseLayout> {
     }
 
     _screens[index] = switch (index) {
-      0 =>
-        BlocProvider.value(value: _servicoBloc, child: Home(key: UniqueKey())),
+      0 => BlocProvider.value(value: _servicoBloc, child: Home(key: UniqueKey())),
       1 => MultiBlocProvider(
           providers: [
             BlocProvider.value(value: _tecnicoBloc),

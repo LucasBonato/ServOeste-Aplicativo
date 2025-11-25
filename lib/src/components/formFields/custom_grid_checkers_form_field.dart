@@ -6,12 +6,7 @@ class CustomGridCheckersFormField extends StatelessWidget {
   final Function(bool)? onOutrosSelected;
   final String? title;
 
-  const CustomGridCheckersFormField(
-      {super.key,
-      required this.validator,
-      required this.checkersMap,
-      this.onOutrosSelected,
-      this.title});
+  const CustomGridCheckersFormField({super.key, required this.validator, required this.checkersMap, this.onOutrosSelected, this.title});
 
   @override
   Widget build(BuildContext context) {

@@ -6,7 +6,5 @@ sealed class EnderecoEvent {}
 final class EnderecoSearchCepEvent extends EnderecoEvent {
   final String cep;
 
-  EnderecoSearchCepEvent({
-    required this.cep
-  });
+  EnderecoSearchCepEvent({required this.cep});
 }

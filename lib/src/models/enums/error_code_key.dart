@@ -1,5 +1,7 @@
 enum ErrorCodeKey {
   global,
+  nome,
+  sobrenome,
   nomeESobrenome,
   telefoneCelular,
   telefoneFixo,

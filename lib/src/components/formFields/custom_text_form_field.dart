@@ -59,8 +59,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
   @override
   void initState() {
-    _internalController =
-        TextEditingController(text: widget.valueNotifier.value);
+    _internalController = TextEditingController(text: widget.valueNotifier.value);
 
     if (widget.enableValueNotifierSync) {
       widget.valueNotifier.addListener(() {
@@ -76,12 +75,10 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(
-          widget.leftPadding ?? 16, 4, widget.rightPadding ?? 16, 0),
+      padding: EdgeInsets.fromLTRB(widget.leftPadding ?? 16, 4, widget.rightPadding ?? 16, 0),
       child: ValueListenableBuilder<String>(
         valueListenable: widget.valueNotifier,
-        builder: (BuildContext context, String value, Widget? child) =>
-            TextFormField(
+        builder: (BuildContext context, String value, Widget? child) => TextFormField(
           enabled: widget.enabled,
           controller: _internalController,
           inputFormatters: widget.masks ?? widget.inputFormatters,
@@ -105,10 +102,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               fontSize: 16,
             ),
             floatingLabelStyle: TextStyle(
-              color: _internalController.text.isNotEmpty ||
-                      FocusScope.of(context).hasFocus
-                  ? Colors.black
-                  : Color(0xFF948F8F),
+              color: _internalController.text.isNotEmpty || FocusScope.of(context).hasFocus ? Colors.black : Color(0xFF948F8F),
               fontSize: 16,
             ),
             border: OutlineInputBorder(

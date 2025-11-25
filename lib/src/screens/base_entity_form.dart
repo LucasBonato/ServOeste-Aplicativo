@@ -46,13 +46,9 @@ class BaseEntityForm<B extends StateStreamable<S>, S> extends StatefulWidget {
   State<BaseEntityForm<B, S>> createState() => _BaseEntityFormState<B, S>();
 }
 
-class _BaseEntityFormState<B extends StateStreamable<S>, S>
-    extends State<BaseEntityForm<B, S>> {
-  Widget _buildFormContent(
-      BuildContext context, bool isLargeScreen, List<Object> currentFields) {
-    final fields = isLargeScreen
-        ? _buildLargeScreenFormFields(currentFields)
-        : _buildSmallScreenFormFields(currentFields);
+class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEntityForm<B, S>> {
+  Widget _buildFormContent(BuildContext context, bool isLargeScreen, List<Object> currentFields) {
+    final fields = isLargeScreen ? _buildLargeScreenFormFields(currentFields) : _buildSmallScreenFormFields(currentFields);
 
     final button = widget.shouldBuildButton
         ? [
@@ -63,9 +59,7 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
                   constraints: const BoxConstraints(maxWidth: 650),
                   child: ElevatedFormButton(
                     text: widget.submitText,
-                    onPressed: widget.isLoading(context.read<B>().state)
-                        ? null
-                        : widget.onSubmit,
+                    onPressed: widget.isLoading(context.read<B>().state) ? null : widget.onSubmit,
                   ),
                 );
               },
@@ -164,8 +158,7 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
           flushRow();
         }
         if (field is Wrap && field.children.length > 1) {
-          currentRow =
-              field.children.map((input) => Expanded(child: input)).toList();
+          currentRow = field.children.map((input) => Expanded(child: input)).toList();
           flushRow();
           continue;
         }
@@ -178,10 +171,7 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
       Widget formField = _buildFormField(field);
 
       if (field.listenTo != null && field.listenTo!.isNotEmpty) {
-        formField = AnimatedBuilder(
-            animation: Listenable.merge(field.listenTo!),
-            builder: (context, child) => child!,
-            child: formField);
+        formField = AnimatedBuilder(animation: Listenable.merge(field.listenTo!), builder: (context, child) => child!, child: formField);
       }
 
       if (field.startNewRow && currentRow.isNotEmpty) {
@@ -250,8 +240,7 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
           widget.onSuccess?.call();
           Navigator.pop(context, true);
 
-          final successMessage = widget.getSuccessMessage?.call(state) ??
-              'Operação realizada com sucesso!';
+          final successMessage = widget.getSuccessMessage?.call(state) ?? 'Operação realizada com sucesso!';
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -262,8 +251,7 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
         } else if (widget.isError(state)) {
           widget.onError?.call(state);
 
-          final errorMessage = widget.getErrorMessage?.call(state) ??
-              "Erro ao realizar operação";
+          final errorMessage = widget.getErrorMessage?.call(state) ?? "Erro ao realizar operação";
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(errorMessage),

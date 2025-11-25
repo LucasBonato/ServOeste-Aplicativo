@@ -12,11 +12,7 @@ class Constants {
     'Técnico',
   ];
 
-  static const List<String> situationTecnicoList = [
-    "Ativo",
-    "Licença",
-    "Desativado"
-  ];
+  static const List<String> situationTecnicoList = ["Ativo", "Licença", "Desativado"];
 
   static const List<String> situationServiceList = [
     'Aguardando agendamento',

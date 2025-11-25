@@ -68,14 +68,10 @@ class ServicoFilterRequest {
       garantia: garantia ?? this.garantia,
       filial: filial ?? this.filial,
       periodo: periodo ?? this.periodo,
-      dataAtendimentoPrevistoAntes:
-          dataAtendimentoPrevistoAntes ?? this.dataAtendimentoPrevistoAntes,
-      dataAtendimentoPrevistoDepois:
-          dataAtendimentoPrevistoDepois ?? this.dataAtendimentoPrevistoDepois,
-      dataAtendimentoEfetivoAntes:
-          dataAtendimentoEfetivoAntes ?? this.dataAtendimentoEfetivoAntes,
-      dataAtendimentoEfetivoDepois:
-          dataAtendimentoEfetivoDepois ?? this.dataAtendimentoEfetivoDepois,
+      dataAtendimentoPrevistoAntes: dataAtendimentoPrevistoAntes ?? this.dataAtendimentoPrevistoAntes,
+      dataAtendimentoPrevistoDepois: dataAtendimentoPrevistoDepois ?? this.dataAtendimentoPrevistoDepois,
+      dataAtendimentoEfetivoAntes: dataAtendimentoEfetivoAntes ?? this.dataAtendimentoEfetivoAntes,
+      dataAtendimentoEfetivoDepois: dataAtendimentoEfetivoDepois ?? this.dataAtendimentoEfetivoDepois,
       dataAberturaAntes: dataAberturaAntes ?? this.dataAberturaAntes,
       dataAberturaDepois: dataAberturaDepois ?? this.dataAberturaDepois,
     );
@@ -94,14 +90,10 @@ class ServicoFilterRequest {
       'garantia': garantia,
       'filial': filial,
       'periodo': periodo,
-      'dataAtendimentoPrevistoAntes':
-          dataAtendimentoPrevistoAntes?.toIso8601String(),
-      'dataAtendimentoPrevistoDepois':
-          dataAtendimentoPrevistoDepois?.toIso8601String(),
-      'dataAtendimentoEfetivoAntes':
-          dataAtendimentoEfetivoAntes?.toIso8601String(),
-      'dataAtendimentoEfetivoDepois':
-          dataAtendimentoEfetivoDepois?.toIso8601String(),
+      'dataAtendimentoPrevistoAntes': dataAtendimentoPrevistoAntes?.toIso8601String(),
+      'dataAtendimentoPrevistoDepois': dataAtendimentoPrevistoDepois?.toIso8601String(),
+      'dataAtendimentoEfetivoAntes': dataAtendimentoEfetivoAntes?.toIso8601String(),
+      'dataAtendimentoEfetivoDepois': dataAtendimentoEfetivoDepois?.toIso8601String(),
       'dataAberturaAntes': dataAberturaAntes?.toIso8601String(),
       'dataAberturaDepois': dataAberturaDepois?.toIso8601String(),
     };

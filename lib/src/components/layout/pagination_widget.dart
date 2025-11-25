@@ -43,8 +43,7 @@ class PaginationWidget extends StatelessWidget {
             icon: Icon(Icons.chevron_left),
             onPressed: null,
           ),
-        if (currentPage > (maxVisiblePages ~/ 2) + 1 &&
-            totalPages > maxVisiblePages)
+        if (currentPage > (maxVisiblePages ~/ 2) + 1 && totalPages > maxVisiblePages)
           _buildPageButton(
             1,
             currentPage,
@@ -54,8 +53,7 @@ class PaginationWidget extends StatelessWidget {
             unselectedTextColor,
             onPageChanged,
           ),
-        if (currentPage > (maxVisiblePages ~/ 2) + 2 &&
-            totalPages > maxVisiblePages)
+        if (currentPage > (maxVisiblePages ~/ 2) + 2 && totalPages > maxVisiblePages)
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 8),
             child: Text('...'),
@@ -71,14 +69,12 @@ class PaginationWidget extends StatelessWidget {
             onPageChanged,
           ),
         ),
-        if (currentPage < totalPages - (maxVisiblePages ~/ 2) - 1 &&
-            totalPages > maxVisiblePages)
+        if (currentPage < totalPages - (maxVisiblePages ~/ 2) - 1 && totalPages > maxVisiblePages)
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 8),
             child: Text('...'),
           ),
-        if (currentPage < totalPages - (maxVisiblePages ~/ 2) &&
-            totalPages > maxVisiblePages)
+        if (currentPage < totalPages - (maxVisiblePages ~/ 2) && totalPages > maxVisiblePages)
           _buildPageButton(
             totalPages,
             currentPage,
@@ -150,11 +146,8 @@ class PaginationWidget extends StatelessWidget {
             child: Text(
               '$page',
               style: (textStyle ?? const TextStyle()).copyWith(
-                color: page == currentPage
-                    ? selectedTextColor
-                    : unselectedTextColor,
-                fontWeight:
-                    page == currentPage ? FontWeight.bold : FontWeight.normal,
+                color: page == currentPage ? selectedTextColor : unselectedTextColor,
+                fontWeight: page == currentPage ? FontWeight.bold : FontWeight.normal,
               ),
             ),
           ),

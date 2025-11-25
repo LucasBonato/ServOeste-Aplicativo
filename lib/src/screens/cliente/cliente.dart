@@ -4,10 +4,8 @@ import 'package:logger/logger.dart';
 import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
 import 'package:serv_oeste/src/components/layout/fab_add.dart';
 import 'package:serv_oeste/src/components/layout/fab_remove.dart';
-import 'package:serv_oeste/src/components/layout/pagination_widget.dart';
 import 'package:serv_oeste/src/components/layout/responsive_search_inputs.dart';
 import 'package:serv_oeste/src/components/screen/cards/card_client.dart';
-import 'package:serv_oeste/src/components/screen/entity_not_found.dart';
 import 'package:serv_oeste/src/components/screen/error_component.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
@@ -25,9 +23,7 @@ class ClienteScreen extends BaseListScreen<Cliente> {
 
 class _ClienteScreenState extends BaseListScreenState<Cliente> {
   late final ClienteBloc _clienteBloc;
-  late final TextEditingController _nomeController,
-      _telefoneController,
-      _enderecoController;
+  late final TextEditingController _nomeController, _telefoneController, _enderecoController;
 
   void _setFilterValues() {
     _nomeController.text = _clienteBloc.nomeMenu ?? "";
@@ -79,13 +75,9 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
   }
 
   @override
-  Widget buildItemCard(
-      Cliente cliente, bool isSelected, bool isSelectMode, bool isSkeleton) {
+  Widget buildItemCard(Cliente cliente, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return CardClient(
-      onDoubleTap: () => onNavigateToUpdateScreen(
-          cliente.id!,
-          () => _clienteBloc.add(ClienteSearchMenuEvent()),
-          () => _clienteBloc.add(ClienteSearchMenuEvent())),
+      onDoubleTap: () => onNavigateToUpdateScreen(cliente.id!, () => _clienteBloc.add(ClienteSearchMenuEvent())),
       onLongPress: () => onSelectItemList(cliente.id!),
       onTap: () {
         if (isSelectMode) {
@@ -137,60 +129,48 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
         children: [
           _buildSearchInputs(),
           Expanded(
-            child: BlocListener<ClienteBloc, ClienteState>(
+            child: BlocConsumer<ClienteBloc, ClienteState>(
               listenWhen: (previous, current) => current is ClienteErrorState,
               listener: (context, state) {
                 if (state is ClienteErrorState) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    Logger().e(state.error.errorMessage);
+                    Logger().e(state.error.detail);
                   });
                 }
               },
-              child: BlocBuilder<ClienteBloc, ClienteState>(
-                builder: (context, stateCliente) {
-                  if (stateCliente is ClienteInitialState ||
-                      stateCliente is ClienteLoadingState) {
-                    return Skeletonizer(
-                      enableSwitchAnimation: true,
-                      child: buildGridOfCards(
-                        List.generate(
-                            16, (_) => Cliente()..applySkeletonData()),
-                        1.65,
-                        isSkeleton: true,
-                      ),
-                    );
-                  } else if (stateCliente is ClienteSearchSuccessState) {
-                    return Column(
-                      children: [
-                        Expanded(
-                          child: stateCliente.clientes.isNotEmpty
-                              ? buildGridOfCards(stateCliente.clientes, 1.65)
-                              : const EntityNotFound(
-                                  message: "Nenhum técnico encontrado."),
-                        ),
-                        if (stateCliente.totalPages > 1)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            child: PaginationWidget(
-                              currentPage: stateCliente.currentPage + 1,
-                              totalPages: stateCliente.totalPages,
-                              onPageChanged: (page) {
-                                _clienteBloc.add(ClienteLoadingEvent(
-                                  nome: _clienteBloc.nomeMenu,
-                                  telefone: _clienteBloc.telefoneMenu,
-                                  endereco: _clienteBloc.enderecoMenu,
-                                  page: page - 1,
-                                  size: 20,
-                                ));
-                              },
-                            ),
-                          ),
-                      ],
-                    );
-                  }
-                  return const ErrorComponent();
-                },
-              ),
+              builder: (context, stateCliente) {
+                if (stateCliente is ClienteInitialState || stateCliente is ClienteLoadingState) {
+                  return Skeletonizer(
+                    enableSwitchAnimation: true,
+                    child: buildGridOfCards(
+                      items: List.generate(16, (_) => Cliente()..applySkeletonData()),
+                      aspectRatio: 1.65,
+                      totalPages: 1,
+                      currentPage: 0,
+                      onPageChanged: (_) {},
+                      isSkeleton: true,
+                    ),
+                  );
+                }
+                else if (stateCliente is ClienteSearchSuccessState) {
+                  return buildGridOfCards(
+                    items: stateCliente.clientes,
+                    aspectRatio: 1.65,
+                    totalPages: stateCliente.totalPages,
+                    currentPage: stateCliente.currentPage,
+                    onPageChanged: (page) {
+                      _clienteBloc.add(ClienteLoadingEvent(
+                        nome: _clienteBloc.nomeMenu,
+                        telefone: _clienteBloc.telefoneMenu,
+                        endereco: _clienteBloc.enderecoMenu,
+                        page: page - 1,
+                        size: 20,
+                      ));
+                    }
+                  );
+                }
+                return const ErrorComponent();
+              },
             ),
           ),
         ],

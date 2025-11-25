@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/main.dart';
+import 'package:serv_oeste/src/layouts/base_layout.dart';
 import 'package:serv_oeste/src/logic/auth/auth_bloc.dart';
 import 'package:serv_oeste/src/models/auth/auth_form.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
@@ -28,11 +30,11 @@ class _LoginScreenState extends State<LoginScreen> {
   void _handleLogin() {
     if (_formKey.currentState?.validate() ?? false) {
       context.read<AuthBloc>().add(
-            AuthLoginEvent(
-              username: _authForm.username.value,
-              password: _authForm.password.value,
-            ),
-          );
+        AuthLoginEvent(
+          username: _authForm.username.value,
+          password: _authForm.password.value,
+        ),
+      );
     }
   }
 
@@ -46,10 +48,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is AuthenticatedState) {
-          return;
-        }
-
         if (state is AuthErrorState) {
           setState(() {
             _isLoading = false;
@@ -62,19 +60,25 @@ class _LoginScreenState extends State<LoginScreen> {
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.error.errorMessage),
+              content: Text(state.error.detail),
               backgroundColor: Colors.red,
               duration: const Duration(seconds: 3),
             ),
           );
-        } else if (state is AuthLoadingState) {
+        }
+        else if (state is AuthLoadingState) {
           setState(() {
             _isLoading = true;
           });
-        } else if (state is AuthLoginSuccessState) {
+        }
+        else if (state is AuthLoginSuccessState) {
           setState(() {
             _isLoading = false;
           });
+          navigatorKey.currentState?.pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const BaseLayout()),
+                (route) => false,
+          );
         }
       },
       child: Scaffold(
@@ -164,8 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onChanged: _authForm.setUsername,
                                   decoration: InputDecoration(
                                     labelText: 'Nome de Usuário',
-                                    prefixIcon:
-                                        const Icon(Icons.person_outline),
+                                    prefixIcon: const Icon(Icons.person_outline),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
@@ -174,9 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       vertical: 14,
                                     ),
                                   ),
-                                  validator: (value) => _validator.byField(
-                                      _authForm,
-                                      ErrorCodeKey.username.name)(value),
+                                  validator: (value) => _validator.byField(_authForm, ErrorCodeKey.username.name)(value),
                                 );
                               },
                             ),
@@ -192,9 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     prefixIcon: const Icon(Icons.lock_outline),
                                     suffixIcon: IconButton(
                                       icon: Icon(
-                                        _obscurePassword
-                                            ? Icons.visibility_outlined
-                                            : Icons.visibility_off_outlined,
+                                        _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
                                         color: Colors.grey,
                                       ),
                                       onPressed: _togglePasswordVisibility,
@@ -207,9 +206,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       vertical: 14,
                                     ),
                                   ),
-                                  validator: (value) => _validator.byField(
-                                      _authForm,
-                                      ErrorCodeKey.password.name)(value),
+                                  validator: (value) => _validator.byField(_authForm, ErrorCodeKey.password.name)(value),
                                 );
                               },
                             ),
