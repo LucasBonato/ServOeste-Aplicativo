@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/src/models/user/user.dart';
+import 'package:serv_oeste/src/models/user/user_response.dart';
 import 'package:serv_oeste/src/utils/formatters/formatters.dart';
 
 class UserCard extends StatelessWidget {
-  final User user;
+  final UserResponse user;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
   final bool showDeleteButton;
@@ -67,7 +67,7 @@ class UserCard extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              user.username,
+                              user.username!,
                               style: TextStyle(
                                 fontSize: titleSize,
                                 fontWeight: FontWeight.bold,
@@ -81,7 +81,7 @@ class UserCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        Formatters.getRoleDisplayName(user.role),
+                        Formatters.getRoleDisplayName(user.role?? ""),
                         style: TextStyle(
                           fontSize: subtitleSize,
                           color: Colors.grey[600],

@@ -5,10 +5,8 @@ import 'package:logger/logger.dart';
 import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
 import 'package:serv_oeste/src/components/layout/fab_add.dart';
 import 'package:serv_oeste/src/components/layout/fab_remove.dart';
-import 'package:serv_oeste/src/components/layout/pagination_widget.dart';
 import 'package:serv_oeste/src/components/layout/responsive_search_inputs.dart';
 import 'package:serv_oeste/src/components/screen/cards/card_technical.dart';
-import 'package:serv_oeste/src/components/screen/entity_not_found.dart';
 import 'package:serv_oeste/src/components/screen/error_component.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
@@ -87,21 +85,22 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
   @override
   Widget buildItemCard(TecnicoResponse tecnico, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return CardTechnician(
-        onDoubleTap: () => onNavigateToUpdateScreen(tecnico.id!, () => _tecnicoBloc.add(TecnicoSearchMenuEvent()), () => _tecnicoBloc.add(TecnicoSearchMenuEvent())),
-        onLongPress: () => onSelectItemList(tecnico.id!),
-        onTap: () {
-          if (isSelectMode) {
-            onSelectItemList(tecnico.id!);
-          }
-        },
-        id: tecnico.id!,
-        nome: tecnico.nome!,
-        sobrenome: tecnico.sobrenome!,
-        telefone: tecnico.telefoneFixo,
-        celular: tecnico.telefoneCelular,
-        status: tecnico.situacao!,
-        isSelected: isSelected,
-        isSkeleton: isSkeleton);
+      onDoubleTap: () => onNavigateToUpdateScreen(tecnico.id!, () => _tecnicoBloc.add(TecnicoSearchMenuEvent())),
+      onLongPress: () => onSelectItemList(tecnico.id!),
+      onTap: () {
+        if (isSelectMode) {
+          onSelectItemList(tecnico.id!);
+        }
+      },
+      id: tecnico.id!,
+      nome: tecnico.nome!,
+      sobrenome: tecnico.sobrenome!,
+      telefone: tecnico.telefoneFixo,
+      celular: tecnico.telefoneCelular,
+      status: tecnico.situacao!,
+      isSelected: isSelected,
+      isSkeleton: isSkeleton,
+    );
   }
 
   @override
@@ -155,9 +154,7 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
               listener: (context, state) {
                 if (state is TecnicoErrorState) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      Logger().e(state.error.detail);
-                    });
+                    Logger().e(state.error.detail);
                   });
                 }
               },
@@ -167,36 +164,31 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
                     return Skeletonizer(
                       enableSwitchAnimation: true,
                       child: buildGridOfCards(
-                        List.generate(20, (_) => TecnicoResponse()..applySkeletonData()),
-                        2.5,
+                        items: List.generate(20, (_) => TecnicoResponse()..applySkeletonData()),
+                        aspectRatio: 2.5,
+                        totalPages: 1,
+                        currentPage: 0,
+                        onPageChanged: (_) {},
                         isSkeleton: true,
                       ),
                     );
-                  } else if (stateTecnico is TecnicoSearchSuccessState) {
-                    return Column(
-                      children: [
-                        Expanded(
-                          child: stateTecnico.tecnicos.isNotEmpty ? buildGridOfCards(stateTecnico.tecnicos, 2.5) : const EntityNotFound(message: "Nenhum técnico encontrado."),
-                        ),
-                        if (stateTecnico.totalPages > 1)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            child: PaginationWidget(
-                              currentPage: stateTecnico.currentPage + 1,
-                              totalPages: stateTecnico.totalPages,
-                              onPageChanged: (page) {
-                                _tecnicoBloc.add(TecnicoLoadingEvent(
-                                  id: _tecnicoBloc.idMenu,
-                                  nome: _tecnicoBloc.nomeMenu,
-                                  situacao: _tecnicoBloc.situacaoMenu,
-                                  equipamento: null,
-                                  page: page - 1,
-                                  size: 20,
-                                ));
-                              },
-                            ),
-                          ),
-                      ],
+                  }
+                  else if (stateTecnico is TecnicoSearchSuccessState) {
+                    return buildGridOfCards(
+                      items: stateTecnico.tecnicos,
+                      aspectRatio: 2.5,
+                      totalPages: stateTecnico.totalPages,
+                      currentPage: stateTecnico.currentPage,
+                      onPageChanged: (page) {
+                        _tecnicoBloc.add(TecnicoLoadingEvent(
+                          id: _tecnicoBloc.idMenu,
+                          nome: _tecnicoBloc.nomeMenu,
+                          situacao: _tecnicoBloc.situacaoMenu,
+                          equipamento: null,
+                          page: page - 1,
+                          size: 20,
+                        ));
+                      }
                     );
                   }
                   return const ErrorComponent();

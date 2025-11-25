@@ -1,14 +1,9 @@
 import 'package:lucid_validation/lucid_validation.dart';
-import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
 
 mixin BackendErrorsValidator {
   final Map<String, String> externalErrors = {};
-
-  Map<String, List<String>> get _backendToFrontendKeyMap => {
-    ErrorCodeKey.telefones.name: [ErrorCodeKey.telefoneFixo.name, ErrorCodeKey.telefoneCelular.name],
-  };
 
   void applyBackendError(ErrorEntity errorEntity) {
     externalErrors.clear();
@@ -21,12 +16,7 @@ mixin BackendErrorsValidator {
 
       final message = messages.join("\n");
 
-      addError(key, messages.join("\n"));
-      // if (_backendToFrontendKeyMap.containsKey(key)) {
-      //   addListError(_backendToFrontendKeyMap[key]!, message);
-      // }
-      // else {
-      // }
+      addError(key, message);
     }
   }
 

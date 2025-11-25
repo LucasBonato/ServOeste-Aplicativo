@@ -3,10 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
 import 'package:serv_oeste/src/components/layout/fab_remove.dart';
-import 'package:serv_oeste/src/components/layout/pagination_widget.dart';
 import 'package:serv_oeste/src/components/layout/responsive_search_inputs.dart';
 import 'package:serv_oeste/src/components/screen/cards/card_service.dart';
-import 'package:serv_oeste/src/components/screen/entity_not_found.dart';
+import 'package:serv_oeste/src/components/screen/error_component.dart';
 import 'package:serv_oeste/src/components/screen/expandable_fab_items.dart';
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
@@ -82,7 +81,7 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
   @override
   Widget buildItemCard(Servico servico, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return CardService(
-        onDoubleTap: () => onNavigateToUpdateScreen(servico.id, onSearchFieldChanged, onSearchFieldChanged, secondId: servico.idCliente),
+        onDoubleTap: () => onNavigateToUpdateScreen(servico.id, onSearchFieldChanged, secondId: servico.idCliente),
         onLongPress: () => onSelectItemList(servico.id),
         onTap: () {
           if (isSelectMode) {
@@ -177,41 +176,35 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
               },
               child: BlocBuilder<ServicoBloc, ServicoState>(
                 builder: (context, stateServico) {
-                  if (stateServico is ServicoSearchSuccessState) {
-                    return Column(
-                      children: [
-                        Expanded(
-                          child: stateServico.servicos.isNotEmpty ? buildGridOfCards(stateServico.servicos, 0.9) : const EntityNotFound(message: "Nenhum serviço encontrado."),
-                        ),
-                        if (stateServico.totalPages > 1)
-                          PaginationWidget(
-                            currentPage: stateServico.currentPage + 1,
-                            totalPages: stateServico.totalPages,
-                            onPageChanged: (page) {
-                              _servicoBloc.add(ServicoLoadingEvent(
-                                filterRequest: _servicoBloc.filterRequest ?? ServicoFilterRequest(),
-                                page: page - 1,
-                                size: 15,
-                              ));
-                            },
-                          ),
-                        const SizedBox(height: 16),
-                      ],
+                  if (stateServico is ServicoInitialState || stateServico is ServicoLoadingState) {
+                    return Skeletonizer(
+                      enableSwitchAnimation: true,
+                      child: buildGridOfCards(
+                        items: List.generate(8, (_) => Servico.skeleton()),
+                        aspectRatio: 0.9,
+                        totalPages: 1,
+                        currentPage: 0,
+                        onPageChanged: (_) {},
+                        isSkeleton: true,
+                      ),
                     );
-                  } else if (stateServico is ServicoSearchSuccessState) {
-                    if (stateServico.servicos.isNotEmpty) {
-                      return buildGridOfCards(stateServico.servicos, 0.9);
-                    }
-                    return const EntityNotFound(message: "Nenhum serviço encontrado.");
                   }
-                  return Skeletonizer(
-                    enableSwitchAnimation: true,
-                    child: buildGridOfCards(
-                      List.generate(8, (_) => Servico.skeleton()),
-                      0.9,
-                      isSkeleton: true,
-                    ),
-                  );
+                  if (stateServico is ServicoSearchSuccessState) {
+                    return buildGridOfCards(
+                      items: stateServico.servicos,
+                      aspectRatio: 0.9,
+                      totalPages: stateServico.totalPages,
+                      currentPage: stateServico.currentPage,
+                      onPageChanged: (page) {
+                        _servicoBloc.add(ServicoLoadingEvent(
+                          filterRequest: _servicoBloc.filterRequest ?? ServicoFilterRequest(),
+                          page: page - 1,
+                          size: 15,
+                        ));
+                      },
+                    );
+                  }
+                  return const ErrorComponent();
                 },
               ),
             ),

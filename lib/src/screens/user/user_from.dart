@@ -46,7 +46,7 @@ class UserFormPage extends StatelessWidget {
           formKey: formKey,
           getSuccessMessage: (state) => successMessage,
           submitText: submitText,
-          isLoading: (state) => state is UserLoadingState || state is UserOperationLoadingState,
+          isLoading: (state) => state is UserLoadingState,
           isSuccess: (state) => isUpdate ? state is UserUpdatedState : state is UserCreatedState,
           isError: (state) => state is UserErrorState,
           space: 20,

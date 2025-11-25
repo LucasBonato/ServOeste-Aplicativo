@@ -17,7 +17,6 @@ import 'package:serv_oeste/src/screens/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/home.dart';
 import 'package:serv_oeste/src/screens/servico/servico.dart';
 import 'package:serv_oeste/src/screens/tecnico/tecnico.dart';
-import 'package:serv_oeste/src/logic/auth/auth_bloc.dart';
 import 'package:serv_oeste/src/screens/user/user.dart';
 import 'package:serv_oeste/src/utils/jwt_utils.dart';
 import 'package:serv_oeste/src/services/secure_storage_service.dart';

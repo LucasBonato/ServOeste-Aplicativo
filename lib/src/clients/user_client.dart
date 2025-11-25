@@ -2,8 +2,8 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:serv_oeste/src/clients/dio/server_endpoints.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
-import 'package:serv_oeste/src/models/user/user.dart';
 import 'package:serv_oeste/src/models/page_content.dart';
+import 'package:serv_oeste/src/models/user/user_response.dart';
 import 'package:serv_oeste/src/utils/error_handler.dart';
 
 class UserClient {
@@ -11,7 +11,7 @@ class UserClient {
 
   UserClient(this.dio);
 
-  Future<Either<ErrorEntity, PageContent<User>>> findAll({
+  Future<Either<ErrorEntity, PageContent<UserResponse>>> findAll({
     int page = 0,
     int size = 10,
   }) async {
@@ -25,8 +25,7 @@ class UserClient {
       );
 
       if (response.data is Map<String, dynamic>) {
-        return Right(
-            PageContent.fromJson(response.data, (json) => User.fromJson(json)));
+        return Right(PageContent.fromJson(response.data, (json) => UserResponse.fromJson(json)));
       }
       return Right(PageContent.empty());
     } on DioException catch (e) {

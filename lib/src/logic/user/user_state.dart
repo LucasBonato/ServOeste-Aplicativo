@@ -7,12 +7,18 @@ class UserInitialState extends UserState {}
 
 class UserLoadingState extends UserState {}
 
-class UserOperationLoadingState extends UserState {}
-
 class UserLoadedState extends UserState {
-  final PageContent<User> users;
+  final List<UserResponse> users;
+  final int currentPage;
+  final int totalPages;
+  final int totalElements;
 
-  UserLoadedState({required this.users});
+  UserLoadedState({
+    required this.users,
+    required this.currentPage,
+    required this.totalPages,
+    required this.totalElements,
+  });
 }
 
 class UserCreatedState extends UserState {}
