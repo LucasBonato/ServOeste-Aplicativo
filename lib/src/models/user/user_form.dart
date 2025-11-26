@@ -27,9 +27,7 @@ class UserForm extends ChangeNotifier {
   }
 
   bool get isValid {
-    return username.value.isNotEmpty &&
-        password.value.isNotEmpty &&
-        role.value.isNotEmpty;
+    return username.value.isNotEmpty && password.value.isNotEmpty && role.value.isNotEmpty;
   }
 
   bool get isValidForUpdate {

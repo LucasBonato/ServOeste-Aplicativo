@@ -10,7 +10,6 @@ import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/models/servico/servico_request.dart';
 
 part 'servico_event.dart';
-
 part 'servico_state.dart';
 
 class ServicoBloc extends BaseEntityBloc<ServicoEvent, ServicoState> {

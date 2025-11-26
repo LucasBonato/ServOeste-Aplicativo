@@ -30,11 +30,11 @@ class _LoginScreenState extends State<LoginScreen> {
   void _handleLogin() {
     if (_formKey.currentState?.validate() ?? false) {
       context.read<AuthBloc>().add(
-        AuthLoginEvent(
-          username: _authForm.username.value,
-          password: _authForm.password.value,
-        ),
-      );
+            AuthLoginEvent(
+              username: _authForm.username.value,
+              password: _authForm.password.value,
+            ),
+          );
     }
   }
 
@@ -65,19 +65,17 @@ class _LoginScreenState extends State<LoginScreen> {
               duration: const Duration(seconds: 3),
             ),
           );
-        }
-        else if (state is AuthLoadingState) {
+        } else if (state is AuthLoadingState) {
           setState(() {
             _isLoading = true;
           });
-        }
-        else if (state is AuthLoginSuccessState) {
+        } else if (state is AuthLoginSuccessState) {
           setState(() {
             _isLoading = false;
           });
           navigatorKey.currentState?.pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => const BaseLayout()),
-                (route) => false,
+            (route) => false,
           );
         }
       },

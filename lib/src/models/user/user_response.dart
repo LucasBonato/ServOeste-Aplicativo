@@ -6,17 +6,13 @@ class UserResponse extends Skeletonizable {
   String? username;
   String? role;
 
-  UserResponse({
-    this.id,
-    this.username,
-    this.role
-  });
+  UserResponse({this.id, this.username, this.role});
 
   factory UserResponse.fromJson(Map<String, dynamic> json) => UserResponse(
-    id: json["id"],
-    username: json["username"],
-    role: json["role"],
-  );
+        id: json["id"],
+        username: json["username"],
+        role: json["role"],
+      );
 
   @override
   void applySkeletonData() {

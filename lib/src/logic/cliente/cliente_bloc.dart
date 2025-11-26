@@ -7,7 +7,6 @@ import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/page_content.dart';
 
 part 'cliente_event.dart';
-
 part 'cliente_state.dart';
 
 class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
@@ -78,11 +77,10 @@ class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
 
   Future<void> _registerClient(ClienteRegisterEvent event, Emitter<ClienteState> emit) async {
     await handleRequest(
-      emit: emit,
-      request: () => _clienteClient.create(event.cliente, event.sobrenome),
-      onSuccess: (_) => emit(ClienteRegisterSuccessState()),
-      onError: (error) => emit(ClienteErrorState(error: error))
-    );
+        emit: emit,
+        request: () => _clienteClient.create(event.cliente, event.sobrenome),
+        onSuccess: (_) => emit(ClienteRegisterSuccessState()),
+        onError: (error) => emit(ClienteErrorState(error: error)));
   }
 
   Future<void> _updateClient(ClienteUpdateEvent event, Emitter<ClienteState> emit) async {

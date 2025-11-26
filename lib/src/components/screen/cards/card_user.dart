@@ -27,21 +27,9 @@ class UserCard extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final double titleSize = Formatters.getResponsiveFontSize(
-                constraints.maxWidth,
-                min: 16,
-                max: 20,
-                factor: 0.04);
-            final double subtitleSize = Formatters.getResponsiveFontSize(
-                constraints.maxWidth,
-                min: 14,
-                max: 16,
-                factor: 0.03);
-            final double iconSize = Formatters.getResponsiveFontSize(
-                constraints.maxWidth,
-                min: 20,
-                max: 24,
-                factor: 0.045);
+            final double titleSize = Formatters.getResponsiveFontSize(constraints.maxWidth, min: 16, max: 20, factor: 0.04);
+            final double subtitleSize = Formatters.getResponsiveFontSize(constraints.maxWidth, min: 14, max: 16, factor: 0.03);
+            final double iconSize = Formatters.getResponsiveFontSize(constraints.maxWidth, min: 20, max: 24, factor: 0.045);
 
             return Row(
               children: [
@@ -71,8 +59,7 @@ class UserCard extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: titleSize,
                                 fontWeight: FontWeight.bold,
-                                color:
-                                    isAdmin ? Colors.red[800] : Colors.black87,
+                                color: isAdmin ? Colors.red[800] : Colors.black87,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -81,7 +68,7 @@ class UserCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        Formatters.getRoleDisplayName(user.role?? ""),
+                        Formatters.getRoleDisplayName(user.role ?? ""),
                         style: TextStyle(
                           fontSize: subtitleSize,
                           color: Colors.grey[600],

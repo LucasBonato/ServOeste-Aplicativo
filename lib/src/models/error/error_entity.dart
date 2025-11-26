@@ -18,9 +18,7 @@ class ErrorEntity {
   });
 
   factory ErrorEntity.fromJson(Map<String, dynamic> json) {
-    final errorMap = (json['error'] as Map<String, dynamic>?)
-        ?.map((key, value) => MapEntry(key, List<String>.from(value)))
-        ?? {};
+    final errorMap = (json['error'] as Map<String, dynamic>?)?.map((key, value) => MapEntry(key, List<String>.from(value))) ?? {};
 
     return ErrorEntity(
       type: json['type'] ?? '',
@@ -39,7 +37,9 @@ class ErrorEntity {
       status: status ?? 500,
       detail: message,
       instance: "/",
-      errors: { ErrorCodeKey.global.name: ["Unexpected Error"] },
+      errors: {
+        ErrorCodeKey.global.name: ["Unexpected Error"]
+      },
     );
   }
 

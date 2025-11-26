@@ -174,19 +174,12 @@ class CardService extends StatelessWidget {
                     maxWidth: constraints.maxWidth,
                   ),
                   child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     decoration: BoxDecoration(
-                      color: isSelected
-                          ? const Color(0xFFE9E7E7)
-                          : const Color(0xFCFDFDFF),
+                      color: isSelected ? const Color(0xFFE9E7E7) : const Color(0xFCFDFDFF),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: isSelected
-                            ? Colors.black
-                            : (hovered
-                                ? Colors.black38
-                                : const Color(0xFFEAE6E5)),
+                        color: isSelected ? Colors.black : (hovered ? Colors.black38 : const Color(0xFFEAE6E5)),
                         width: 1.5,
                       ),
                       boxShadow: [
@@ -207,9 +200,7 @@ class CardService extends StatelessWidget {
                           Align(
                             alignment: Alignment.center,
                             child: Padding(
-                              padding: EdgeInsets.only(
-                                  left: paddingLeftSmall,
-                                  bottom: paddingBottom),
+                              padding: EdgeInsets.only(left: paddingLeftSmall, bottom: paddingBottom),
                               child: Text(
                                 '$codigo',
                                 style: TextStyle(
@@ -248,8 +239,7 @@ class CardService extends StatelessWidget {
                           ),
                           const SizedBox(height: 5),
                           Padding(
-                            padding: EdgeInsets.only(
-                                left: paddingLeftMedium, top: paddingTop),
+                            padding: EdgeInsets.only(left: paddingLeftMedium, top: paddingTop),
                             child: Text(
                               "Técnico - ${(tecnico == null) ? "Não declarado" : tecnico}",
                               style: TextStyle(
@@ -328,8 +318,7 @@ class CardService extends StatelessWidget {
                           Align(
                             alignment: Alignment.center,
                             child: Padding(
-                              padding: EdgeInsets.only(
-                                  left: paddingLeftSmall, top: paddingBottom),
+                              padding: EdgeInsets.only(left: paddingLeftSmall, top: paddingBottom),
                               child: SizedBox(
                                 width: constraints.maxWidth * 0.45,
                                 child: Text(
@@ -337,9 +326,7 @@ class CardService extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: statusSize,
                                     fontWeight: FontWeight.bold,
-                                    color: _getStatusColor(
-                                        Formatters.mapStringStatusToEnumStatus(
-                                            status)),
+                                    color: _getStatusColor(Formatters.mapStringStatusToEnumStatus(status)),
                                   ),
                                   maxLines: 3,
                                   textAlign: TextAlign.center,

@@ -12,20 +12,20 @@ class User {
   });
 
   User.fromForm(UserForm userForm) {
-      id = userForm.id;
-      username = userForm.username.value;
-      role = userForm.role.value;
+    id = userForm.id;
+    username = userForm.username.value;
+    role = userForm.role.value;
   }
 
   factory User.fromJson(Map<String, dynamic> json) => User(
-    id: json['id'] as int,
-    username: json['username'] as String,
-    role: json['role'] as String,
-  );
+        id: json['id'] as int,
+        username: json['username'] as String,
+        role: json['role'] as String,
+      );
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'username': username,
-    'role': role,
-  };
+        'id': id,
+        'username': username,
+        'role': role,
+      };
 }

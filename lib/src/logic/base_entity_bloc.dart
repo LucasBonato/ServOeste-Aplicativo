@@ -24,12 +24,10 @@ abstract class BaseEntityBloc<Event, State> extends Bloc<Event, State> {
     await result.fold((ErrorEntity error) {
       if (onError != null) {
         onError(error);
-      }
-      else {
+      } else {
         emit(errorState(error));
       }
-    },
-    (T success) async {
+    }, (T success) async {
       await onSuccess(success);
     });
   }

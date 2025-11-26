@@ -87,8 +87,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
               Navigator.pop(context, true);
             }
           });
-        }
-        else if (state is TecnicoSearchOneSuccessState) {
+        } else if (state is TecnicoSearchOneSuccessState) {
           _fillForm(state.tecnico);
         }
       },

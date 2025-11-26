@@ -146,10 +146,8 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
 
   void _syncControllersWithBlocState() {
     if (_servicoBloc.filterRequest != null) {
-      _nomeClienteController.text =
-          _servicoBloc.filterRequest!.clienteNome ?? "";
-      _nomeTecnicoController.text =
-          _servicoBloc.filterRequest!.tecnicoNome ?? "";
+      _nomeClienteController.text = _servicoBloc.filterRequest!.clienteNome ?? "";
+      _nomeTecnicoController.text = _servicoBloc.filterRequest!.tecnicoNome ?? "";
     } else {
       _nomeClienteController.text = "";
       _nomeTecnicoController.text = "";

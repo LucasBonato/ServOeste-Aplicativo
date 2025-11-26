@@ -18,8 +18,8 @@ import 'package:serv_oeste/src/screens/home.dart';
 import 'package:serv_oeste/src/screens/servico/servico.dart';
 import 'package:serv_oeste/src/screens/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/screens/user/user.dart';
-import 'package:serv_oeste/src/utils/jwt_utils.dart';
 import 'package:serv_oeste/src/services/secure_storage_service.dart';
+import 'package:serv_oeste/src/utils/jwt_utils.dart';
 
 class BaseLayout extends StatefulWidget {
   final int? initialIndex;
@@ -89,8 +89,7 @@ class BaseLayoutState extends State<BaseLayout> {
   void _initializeLists() {
     if (mounted) {
       setState(() {
-        _navigatorKeys =
-            List.generate(_maxIndex, (_) => GlobalKey<NavigatorState>());
+        _navigatorKeys = List.generate(_maxIndex, (_) => GlobalKey<NavigatorState>());
         _screens = List.filled(_maxIndex, null);
         _isInitialized = true;
       });

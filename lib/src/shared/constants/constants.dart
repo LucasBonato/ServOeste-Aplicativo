@@ -67,7 +67,7 @@ class Constants {
     "IBBL",
     "Latina",
     "Philco",
-    "Samsung"
+    "Samsung",
   ];
 
   static const List<String> garantias = [

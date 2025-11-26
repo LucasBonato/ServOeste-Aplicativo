@@ -151,23 +151,21 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
                       isSkeleton: true,
                     ),
                   );
-                }
-                else if (stateCliente is ClienteSearchSuccessState) {
+                } else if (stateCliente is ClienteSearchSuccessState) {
                   return buildGridOfCards(
-                    items: stateCliente.clientes,
-                    aspectRatio: 1.65,
-                    totalPages: stateCliente.totalPages,
-                    currentPage: stateCliente.currentPage,
-                    onPageChanged: (page) {
-                      _clienteBloc.add(ClienteLoadingEvent(
-                        nome: _clienteBloc.nomeMenu,
-                        telefone: _clienteBloc.telefoneMenu,
-                        endereco: _clienteBloc.enderecoMenu,
-                        page: page - 1,
-                        size: 20,
-                      ));
-                    }
-                  );
+                      items: stateCliente.clientes,
+                      aspectRatio: 1.65,
+                      totalPages: stateCliente.totalPages,
+                      currentPage: stateCliente.currentPage,
+                      onPageChanged: (page) {
+                        _clienteBloc.add(ClienteLoadingEvent(
+                          nome: _clienteBloc.nomeMenu,
+                          telefone: _clienteBloc.telefoneMenu,
+                          endereco: _clienteBloc.enderecoMenu,
+                          page: page - 1,
+                          size: 20,
+                        ));
+                      });
                 }
                 return const ErrorComponent();
               },

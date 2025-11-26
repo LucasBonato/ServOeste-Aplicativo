@@ -2,7 +2,6 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
 part 'lista_event.dart';
-
 part 'lista_state.dart';
 
 class ListaBloc extends Bloc<ListaEvent, ListaState> {

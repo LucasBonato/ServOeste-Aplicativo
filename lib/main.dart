@@ -26,15 +26,9 @@ void main() {
   DioService dioService = DioService();
   final authClient = AuthClient(dioService.dio);
 
-  dioService.addAuthInterceptors(
-      authClient,
-      () {
-        navigatorKey.currentState?.pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
-          (route) => false
-        );
-      }
-  );
+  dioService.addAuthInterceptors(authClient, () {
+    navigatorKey.currentState?.pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const LoginScreen()), (route) => false);
+  });
 
   final tecnicoClient = TecnicoClient(dioService.dio);
   final clienteClient = ClienteClient(dioService.dio);

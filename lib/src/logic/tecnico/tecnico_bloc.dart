@@ -12,7 +12,6 @@ import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
 import 'package:serv_oeste/src/shared/constants/constants.dart';
 
 part 'tecnico_event.dart';
-
 part 'tecnico_state.dart';
 
 class TecnicoBloc extends BaseEntityBloc<TecnicoEvent, TecnicoState> {

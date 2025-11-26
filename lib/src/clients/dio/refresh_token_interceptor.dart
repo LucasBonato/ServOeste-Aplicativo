@@ -58,8 +58,7 @@ class TokenRefreshInterceptor extends Interceptor {
       }
 
       await _handleRefreshFailed(handler, err);
-    }
-    catch (_) {
+    } catch (_) {
       await _handleRefreshFailed(handler, err);
     }
   }

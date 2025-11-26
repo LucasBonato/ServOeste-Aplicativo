@@ -32,12 +32,8 @@ class UserBloc extends BaseEntityBloc<UserEvent, UserState> {
         page: event.page,
         size: event.size,
       ),
-      onSuccess: (PageContent<UserResponse> pageUsers) => emit(UserLoadedState(
-        users: pageUsers.content,
-        currentPage: pageUsers.page.page,
-        totalPages: pageUsers.page.totalPages,
-        totalElements: pageUsers.page.totalElements
-      )),
+      onSuccess: (PageContent<UserResponse> pageUsers) =>
+          emit(UserLoadedState(users: pageUsers.content, currentPage: pageUsers.page.page, totalPages: pageUsers.page.totalPages, totalElements: pageUsers.page.totalElements)),
     );
   }
 
@@ -56,12 +52,7 @@ class UserBloc extends BaseEntityBloc<UserEvent, UserState> {
   Future<void> _onUpdateUser(UpdateUserEvent event, Emitter<UserState> emit) async {
     await handleRequest(
       emit: emit,
-      request: () => _userClient.update(
-        id: event.id,
-        username: event.username,
-        password: event.password,
-        role: event.role
-      ),
+      request: () => _userClient.update(id: event.id, username: event.username, password: event.password, role: event.role),
       onSuccess: (_) => emit(UserUpdatedState()),
     );
   }

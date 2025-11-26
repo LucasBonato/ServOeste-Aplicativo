@@ -47,8 +47,7 @@ class UserFormPage extends StatelessWidget {
           getSuccessMessage: (state) => successMessage,
           submitText: submitText,
           isLoading: (state) => state is UserLoadingState,
-          isSuccess: (state) =>
-              isUpdate ? state is UserUpdatedState : state is UserCreatedState,
+          isSuccess: (state) => isUpdate ? state is UserUpdatedState : state is UserCreatedState,
           isError: (state) => state is UserErrorState,
           space: 20,
           onError: (state) {
@@ -81,8 +80,7 @@ class UserFormPage extends StatelessWidget {
               hint: "Digite o nome do usuário",
               maxLength: 255,
               valueNotifier: userForm.username,
-              validator:
-                  validator.byField(userForm, ErrorCodeKey.username.name),
+              validator: validator.byField(userForm, ErrorCodeKey.username.name),
               onChanged: userForm.setUsername,
               keyboardType: TextInputType.name,
             ),
@@ -91,8 +89,7 @@ class UserFormPage extends StatelessWidget {
               hint: "Digite a senha do usuário",
               maxLength: 24,
               valueNotifier: userForm.password,
-              validator:
-                  validator.byField(userForm, ErrorCodeKey.password.name),
+              validator: validator.byField(userForm, ErrorCodeKey.password.name),
               onChanged: userForm.setPassword,
               keyboardType: TextInputType.visiblePassword,
             ),

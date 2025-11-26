@@ -171,24 +171,22 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
                       isSkeleton: true,
                     ),
                   );
-                }
-                else if (stateTecnico is TecnicoSearchSuccessState) {
+                } else if (stateTecnico is TecnicoSearchSuccessState) {
                   return buildGridOfCards(
-                    items: stateTecnico.tecnicos,
-                    aspectRatio: 2.5,
-                    totalPages: stateTecnico.totalPages,
-                    currentPage: stateTecnico.currentPage,
-                    onPageChanged: (page) {
-                      _tecnicoBloc.add(TecnicoLoadingEvent(
-                        id: _tecnicoBloc.idMenu,
-                        nome: _tecnicoBloc.nomeMenu,
-                        situacao: _tecnicoBloc.situacaoMenu,
-                        equipamento: null,
-                        page: page - 1,
-                        size: 20,
-                      ));
-                    }
-                  );
+                      items: stateTecnico.tecnicos,
+                      aspectRatio: 2.5,
+                      totalPages: stateTecnico.totalPages,
+                      currentPage: stateTecnico.currentPage,
+                      onPageChanged: (page) {
+                        _tecnicoBloc.add(TecnicoLoadingEvent(
+                          id: _tecnicoBloc.idMenu,
+                          nome: _tecnicoBloc.nomeMenu,
+                          situacao: _tecnicoBloc.situacaoMenu,
+                          equipamento: null,
+                          page: page - 1,
+                          size: 20,
+                        ));
+                      });
                 }
                 return const ErrorComponent();
               },

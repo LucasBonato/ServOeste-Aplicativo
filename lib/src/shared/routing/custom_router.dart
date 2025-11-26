@@ -20,8 +20,7 @@ import '../../screens/tecnico/create_tecnico.dart';
 import '../../screens/tecnico/tecnico.dart';
 
 class CustomRouter {
-  static Route<dynamic>? onGenerateRoute(
-      RouteSettings settings, BuildContext context) {
+  static Route<dynamic>? onGenerateRoute(RouteSettings settings, BuildContext context) {
     final TecnicoBloc tecnicoBloc = context.read<TecnicoBloc>();
     final ClienteBloc clienteBloc = context.read<ClienteBloc>();
     final UserBloc userBloc = context.read<UserBloc>();
@@ -39,31 +38,19 @@ class CustomRouter {
     };
 
     if (routes.containsKey(settings.name)) {
-      return createRoute(
-          routes[settings.name]!,
-          _getBloc(
-              settings.name!, tecnicoBloc, clienteBloc, userBloc, servicoBloc));
+      return createRoute(routes[settings.name]!, _getBloc(settings.name!, tecnicoBloc, clienteBloc, userBloc, servicoBloc));
     }
 
     switch (settings.name) {
       case Routes.tecnicoUpdate:
-        return createRoute(
-            (_) => UpdateTecnico(id: settings.arguments as int), tecnicoBloc);
+        return createRoute((_) => UpdateTecnico(id: settings.arguments as int), tecnicoBloc);
       case Routes.clienteUpdate:
-        return createRoute(
-            (_) => UpdateCliente(id: settings.arguments as int), clienteBloc);
+        return createRoute((_) => UpdateCliente(id: settings.arguments as int), clienteBloc);
       case Routes.servicoUpdate:
-        return createRoute(
-            (_) => UpdateServico(
-                id: settings.arguments as int,
-                clientId: settings.arguments as int),
-            servicoBloc);
+        return createRoute((_) => UpdateServico(id: settings.arguments as int, clientId: settings.arguments as int), servicoBloc);
       case Routes.servicoCreate:
         final args = settings.arguments as Map<String, dynamic>?;
-        return createRoute(
-            (_) => CreateServico(
-                isClientAndService: args?['isClientAndService'] ?? true),
-            servicoBloc);
+        return createRoute((_) => CreateServico(isClientAndService: args?['isClientAndService'] ?? true), servicoBloc);
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
@@ -73,20 +60,13 @@ class CustomRouter {
     }
   }
 
-  static Route<dynamic> createRoute<T extends StateStreamableSource<Object?>>(
-      Widget Function(BuildContext) builder, T bloc) {
+  static Route<dynamic> createRoute<T extends StateStreamableSource<Object?>>(Widget Function(BuildContext) builder, T bloc) {
     return MaterialPageRoute(
-      builder: (context) =>
-          BlocProvider<T>.value(value: bloc, child: builder(context)),
+      builder: (context) => BlocProvider<T>.value(value: bloc, child: builder(context)),
     );
   }
 
-  static StateStreamableSource<Object?> _getBloc(
-      String route,
-      TecnicoBloc tecnicoBloc,
-      ClienteBloc clienteBloc,
-      UserBloc userBloc,
-      ServicoBloc servicoBloc) {
+  static StateStreamableSource<Object?> _getBloc(String route, TecnicoBloc tecnicoBloc, ClienteBloc clienteBloc, UserBloc userBloc, ServicoBloc servicoBloc) {
     if (route.contains("tecnico")) return tecnicoBloc;
     if (route.contains("cliente")) return clienteBloc;
     if (route.contains("user")) return userBloc;

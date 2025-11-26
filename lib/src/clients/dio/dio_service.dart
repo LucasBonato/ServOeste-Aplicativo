@@ -30,16 +30,12 @@ class DioService {
   }
 
   void addAuthInterceptors(
-      AuthClient authClient,
-      VoidCallback? onTokenRefreshFailed,
+    AuthClient authClient,
+    VoidCallback? onTokenRefreshFailed,
   ) {
     _dio.interceptors.addAll([
       AuthInterceptor(),
-      TokenRefreshInterceptor(
-          dio: _dio,
-          authClient: authClient,
-          onTokenRefreshFailed: onTokenRefreshFailed
-      ),
+      TokenRefreshInterceptor(dio: _dio, authClient: authClient, onTokenRefreshFailed: onTokenRefreshFailed),
     ]);
   }
 

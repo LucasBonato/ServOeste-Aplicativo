@@ -16,18 +16,17 @@ class ClienteFormScreen extends StatelessWidget {
   final bool isUpdate;
   final bool isSkeleton;
 
-  const ClienteFormScreen({
-    super.key,
-    required this.title,
-    required this.submitText,
-    required this.successMessage,
-    required this.bloc,
-    required this.clienteForm,
-    required this.onSubmit,
-    this.nomeController,
-    this.isUpdate = false,
-    this.isSkeleton = false
-  });
+  const ClienteFormScreen(
+      {super.key,
+      required this.title,
+      required this.submitText,
+      required this.successMessage,
+      required this.bloc,
+      required this.clienteForm,
+      required this.onSubmit,
+      this.nomeController,
+      this.isUpdate = false,
+      this.isSkeleton = false});
 
   @override
   Widget build(BuildContext context) {

@@ -30,13 +30,12 @@ class AuthBloc extends BaseEntityBloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     await handleRequest<AuthResponse>(
-      emit: emit,
-      request: () => _authClient.login(username: event.username, password: event.password),
-      onSuccess: (AuthResponse authResponse) async {
-        await SecureStorageService.saveTokens(authResponse.accessToken, authResponse.refreshToken);
-        emit(AuthLoginSuccessState(authResponse: authResponse));
-      }
-    );
+        emit: emit,
+        request: () => _authClient.login(username: event.username, password: event.password),
+        onSuccess: (AuthResponse authResponse) async {
+          await SecureStorageService.saveTokens(authResponse.accessToken, authResponse.refreshToken);
+          emit(AuthLoginSuccessState(authResponse: authResponse));
+        });
   }
 
   Future<void> _logout(

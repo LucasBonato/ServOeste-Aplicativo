@@ -37,8 +37,7 @@ class AuthClient {
     try {
       final Response<Map<String, dynamic>> response = await dio.post<Map<String, dynamic>>(ServerEndpoints.refreshEndpoint);
       return Right(AuthResponse.fromJson(response.data!));
-    }
-    on DioException catch (e) {
+    } on DioException catch (e) {
       if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
         return Left(ErrorEntity.global('Sessão expirada. Faça login novamente.'));
       }

@@ -24,23 +24,19 @@ class ServicoClient {
       if (response.data != null && response.data is Map<String, dynamic>) {
         return Right(Servico.fromJson(response.data));
       }
-    }
-    on DioException catch (e) {
+    } on DioException catch (e) {
       return Left(ErrorHandler.onRequestError(e));
-    }
-    catch (e) {
+    } catch (e) {
       Logger().e('Erro inesperado: $e');
     }
     return Right(null);
   }
 
   Future<Either<ErrorEntity, PageContent<Servico>>> getServicosByFilter(
-    ServicoFilterRequest servicoFilter,
-    {
-      int page = 0,
-      int size = 10,
-    }
-  ) async {
+    ServicoFilterRequest servicoFilter, {
+    int page = 0,
+    int size = 10,
+  }) async {
     try {
       final response = await dio.post(ServerEndpoints.servicoFilterEndpoint, data: {
         'servicoId': servicoFilter.id,

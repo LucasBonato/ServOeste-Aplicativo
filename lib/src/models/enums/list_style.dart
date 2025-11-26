@@ -1,4 +1,1 @@
-enum ListStyle {
-  grid,
-  list
-}
+enum ListStyle { grid, list }

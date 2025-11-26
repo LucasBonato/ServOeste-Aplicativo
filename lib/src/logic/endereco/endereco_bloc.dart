@@ -6,7 +6,6 @@ import 'package:serv_oeste/src/models/endereco/endereco.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 
 part 'endereco_event.dart';
-
 part 'endereco_state.dart';
 
 class EnderecoBloc extends BaseEntityBloc<EnderecoEvent, EnderecoState> {
