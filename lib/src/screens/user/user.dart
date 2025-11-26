@@ -35,80 +35,21 @@ class _UserScreenTestState extends BaseListScreenState<UserResponse> {
   }
 
   Widget _buildHeaderSection() {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final bool isLargeScreen = screenWidth >= 1000;
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
-      child:
-          isLargeScreen ? _buildLargeScreenHeader() : _buildSmallScreenHeader(),
-    );
-  }
-
-  Widget _buildLargeScreenHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          'Usuários do Sistema',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
-        ),
-        ElevatedButton.icon(
-          onPressed: () => onNavigateToCreateScreen(
-              0, () => _userBloc.add(LoadUsersEvent())),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF007BFF),
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(6),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'Usuários do Sistema',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
             ),
           ),
-          icon: const Icon(Icons.person_add, size: 20),
-          label: const Text(
-            'Novo Usuário',
-            style: TextStyle(fontSize: 16),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSmallScreenHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          'Usuários do Sistema',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 16),
-        ElevatedButton.icon(
-          onPressed: () => onNavigateToCreateScreen(
-              0, () => _userBloc.add(LoadUsersEvent())),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF007BFF),
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(6),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 16),
-          ),
-          icon: const Icon(Icons.person_add, size: 20),
-          label: const Text(
-            'Novo Usuário',
-            style: TextStyle(fontSize: 16),
-          ),
-        ),
-      ],
+        ],
+      )
     );
   }
 
