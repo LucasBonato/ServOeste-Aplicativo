@@ -94,8 +94,14 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
     );
   }
 
-  Widget buildGridOfCards(
-      {required List<T> items, required double aspectRatio, required int totalPages, required int currentPage, required Function(int) onPageChanged, bool isSkeleton = false}) {
+  Widget buildGridOfCards({
+    required List<T> items,
+    required double aspectRatio,
+    required int totalPages,
+    required int currentPage,
+    required Function(int) onPageChanged,
+    bool isSkeleton = false,
+  }) {
     return Column(
       children: [
         Expanded(
