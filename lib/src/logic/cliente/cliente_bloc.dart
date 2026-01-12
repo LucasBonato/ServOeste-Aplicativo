@@ -11,7 +11,10 @@ part 'cliente_state.dart';
 
 class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
   final ClienteClient _clienteClient;
-  String? _nome, _telefone, _endereco, nomeMenu, telefoneMenu, enderecoMenu;
+
+  String? nomeMenu;
+  String? telefoneMenu;
+  String? enderecoMenu;
 
   @override
   ClienteState loadingState() => ClienteLoadingState();
@@ -30,7 +33,8 @@ class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
     on<RestoreClienteStateEvent>(_restoreState);
   }
 
-  Future<void> _fetchOneClient(ClienteSearchOneEvent event, Emitter<ClienteState> emit) async {
+  Future<void> _fetchOneClient(
+      ClienteSearchOneEvent event, Emitter<ClienteState> emit) async {
     await handleRequest<Cliente?>(
         emit: emit,
         loading: ClienteSearchOneLoadingState(),
@@ -42,7 +46,8 @@ class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
         });
   }
 
-  Future<void> _fetchAllClients(ClienteLoadingEvent event, Emitter<ClienteState> emit) async {
+  Future<void> _fetchAllClients(
+      ClienteLoadingEvent event, Emitter<ClienteState> emit) async {
     await handleRequest<PageContent<Cliente>>(
       emit: emit,
       request: () => _clienteClient.fetchListByFilter(
@@ -52,7 +57,8 @@ class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
         page: event.page,
         size: event.size,
       ),
-      onSuccess: (PageContent<Cliente> pageClientes) => emit(ClienteSearchSuccessState(
+      onSuccess: (PageContent<Cliente> pageClientes) =>
+          emit(ClienteSearchSuccessState(
         clientes: pageClientes.content,
         currentPage: pageClientes.page.page,
         totalPages: pageClientes.page.totalPages,
@@ -61,21 +67,29 @@ class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
     );
   }
 
-  Future<void> _searchClients(ClienteSearchEvent event, Emitter<ClienteState> emit) async {
-    _nome = (event.nome?.isNotEmpty == true) ? event.nome : null;
-    _telefone = (event.telefone?.isNotEmpty == true) ? event.telefone : null;
-    _endereco = (event.endereco?.isNotEmpty == true) ? event.endereco : null;
-    add(ClienteLoadingEvent(nome: _nome, telefone: _telefone, endereco: _endereco));
+  Future<void> _searchClients(
+      ClienteSearchEvent event, Emitter<ClienteState> emit) async {
+    add(ClienteLoadingEvent(
+      nome: event.nome,
+      telefone: event.telefone,
+      endereco: event.endereco,
+    ));
   }
 
-  Future<void> _searchMenuClients(ClienteSearchMenuEvent event, Emitter<ClienteState> emit) async {
+  Future<void> _searchMenuClients(
+      ClienteSearchMenuEvent event, Emitter<ClienteState> emit) async {
     nomeMenu = event.nome ?? nomeMenu;
     telefoneMenu = event.telefone ?? telefoneMenu;
     enderecoMenu = event.endereco ?? enderecoMenu;
-    add(ClienteLoadingEvent(nome: nomeMenu, telefone: telefoneMenu, endereco: enderecoMenu));
+    add(ClienteLoadingEvent(
+      nome: nomeMenu,
+      telefone: telefoneMenu,
+      endereco: enderecoMenu,
+    ));
   }
 
-  Future<void> _registerClient(ClienteRegisterEvent event, Emitter<ClienteState> emit) async {
+  Future<void> _registerClient(
+      ClienteRegisterEvent event, Emitter<ClienteState> emit) async {
     await handleRequest(
         emit: emit,
         request: () => _clienteClient.create(event.cliente, event.sobrenome),
@@ -83,7 +97,8 @@ class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
         onError: (error) => emit(ClienteErrorState(error: error)));
   }
 
-  Future<void> _updateClient(ClienteUpdateEvent event, Emitter<ClienteState> emit) async {
+  Future<void> _updateClient(
+      ClienteUpdateEvent event, Emitter<ClienteState> emit) async {
     await handleRequest(
         emit: emit,
         request: () => _clienteClient.update(event.cliente, event.sobrenome),
@@ -91,7 +106,8 @@ class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
         onError: (error) => emit(ClienteErrorState(error: error)));
   }
 
-  Future<void> _deleteListClients(ClienteDeleteListEvent event, Emitter<ClienteState> emit) async {
+  Future<void> _deleteListClients(
+      ClienteDeleteListEvent event, Emitter<ClienteState> emit) async {
     List<Cliente> existingClientes = [];
 
     if (state is ClienteSearchSuccessState) {
@@ -103,11 +119,17 @@ class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
     await handleRequest(
         emit: emit,
         request: () => _clienteClient.deleteListByIds(event.selectedList),
-        onSuccess: (_) => add(ClienteLoadingEvent(nome: _nome, endereco: _endereco, telefone: _telefone)),
-        onError: (error) => emit(ClienteErrorState(error: error, clientes: existingClientes)));
+        onSuccess: (_) => add(ClienteLoadingEvent(
+              nome: nomeMenu,
+              telefone: telefoneMenu,
+              endereco: enderecoMenu,
+            )),
+        onError: (error) =>
+            emit(ClienteErrorState(error: error, clientes: existingClientes)));
   }
 
-  Future<void> _restoreState(RestoreClienteStateEvent event, Emitter<ClienteState> emit) async {
+  Future<void> _restoreState(
+      RestoreClienteStateEvent event, Emitter<ClienteState> emit) async {
     emit(event.state);
   }
 }

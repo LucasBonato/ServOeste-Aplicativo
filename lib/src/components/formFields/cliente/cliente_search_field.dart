@@ -20,7 +20,7 @@ class ClienteSearchField extends StatefulWidget {
   final String? Function([String?])? validator;
   final bool Function()? enabledCalculator;
   final String? tooltipMessage;
-  final ClienteSearchEvent Function(String nome) buildSearchEvent;
+  final bool isForListScreen;
 
   const ClienteSearchField({
     super.key,
@@ -33,10 +33,10 @@ class ClienteSearchField extends StatefulWidget {
     this.maxLength = 50,
     this.validator,
     this.tooltipMessage,
-    required this.buildSearchEvent,
     this.onSearchStart,
     this.listenTo,
     this.enabledCalculator,
+    this.isForListScreen = false,
   });
 
   @override
@@ -55,12 +55,18 @@ class _ClienteSearchFieldState extends State<ClienteSearchField> {
       if (name.split(" ").length > 1 && _names.value.isEmpty) return;
 
       widget.onSearchStart?.call();
-      widget.clienteBloc.add(widget.buildSearchEvent(name));
+
+      if (widget.isForListScreen) {
+        widget.clienteBloc.add(ClienteSearchMenuEvent(nome: name));
+      } else {
+        widget.clienteBloc.add(ClienteSearchEvent(nome: name));
+      }
     });
   }
 
   void _handleSelected(String name) {
-    final Cliente? match = _clientes.firstWhereOrNull((cliente) => cliente.nome == name);
+    final Cliente? match =
+        _clientes.firstWhereOrNull((cliente) => cliente.nome == name);
     if (match != null) {
       widget.onSelected?.call(match);
     }
@@ -72,7 +78,8 @@ class _ClienteSearchFieldState extends State<ClienteSearchField> {
       listener: (context, state) {
         if (state is ClienteSearchSuccessState) {
           _clientes = state.clientes;
-          final names = state.clientes.take(5).map((cliente) => cliente.nome!).toList();
+          final names =
+              state.clientes.take(5).map((cliente) => cliente.nome!).toList();
           _names.value = names;
         }
       },
@@ -103,6 +110,11 @@ class _ClienteSearchFieldState extends State<ClienteSearchField> {
             child: field,
           )
         : field;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override

@@ -77,7 +77,9 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
     if (_isDisposed || !mounted) return;
     if (mounted) {
       setState(() {
-        labelColor = _effectiveController.text.isNotEmpty ? const Color(0xFF948F8F) : const Color(0xFF000000);
+        labelColor = _effectiveController.text.isNotEmpty
+            ? const Color(0xFF948F8F)
+            : const Color(0xFF000000);
       });
     }
   }
@@ -132,7 +134,8 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
       child: DropDownSearchFormField(
         onSaved: widget.onSaved,
         validator: widget.validator,
-        displayAllSuggestionWhenTap: false,
+        displayAllSuggestionWhenTap:
+            true, // IMPORTANTE: Mostra tudo quando clica
         textFieldConfiguration: TextFieldConfiguration(
           enabled: widget.enabled,
           maxLength: widget.maxLength,
@@ -140,6 +143,10 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
           onChanged: (value) {
             widget.onChanged!(value);
             widget.valueNotifier?.value = value;
+          },
+          onTap: () {
+            // Força a exibição das sugestões quando o campo é tocado
+            // O pacote já lida com isso quando displayAllSuggestionWhenTap é true
           },
           decoration: InputDecoration(
             counterText: widget.hide ? null : "",
@@ -183,8 +190,15 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
           ),
         ),
         suggestionsCallback: (query) async {
-          if (query.isEmpty) return widget.dropdownValues;
-          return widget.dropdownValues.where((element) => element.toLowerCase().contains(query.toLowerCase())).toList();
+          // SEMPRE retorna valores, mesmo quando query está vazia
+          // Isso permite que o dropdown seja mostrado quando clica no campo
+          if (query.isEmpty) {
+            return widget.dropdownValues;
+          }
+          return widget.dropdownValues
+              .where((element) =>
+                  element.toLowerCase().contains(query.toLowerCase()))
+              .toList();
         },
         onSuggestionSelected: (String? suggestion) {
           if (suggestion != null && suggestion.isNotEmpty && !_isDisposed) {
@@ -204,7 +218,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
                   title: Text(suggestion),
                 );
         },
-        hideOnEmpty: true,
+        hideOnEmpty: false, // IMPORTANTE: Não esconde quando vazio
         debounceDuration: const Duration(milliseconds: 150),
         transitionBuilder: (context, suggestionBox, animationController) {
           final animation = CurvedAnimation(
@@ -217,6 +231,14 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
           );
         },
         suggestionsBoxVerticalOffset: widget.hide ? -20 : 0,
+        suggestionsBoxDecoration: SuggestionsBoxDecoration(
+          constraints: BoxConstraints(
+            maxHeight: 200,
+            minWidth: MediaQuery.of(context).size.width * 0.8,
+          ),
+          elevation: 4,
+          color: Colors.white,
+        ),
       ),
     );
   }

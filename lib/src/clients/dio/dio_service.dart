@@ -22,6 +22,8 @@ class DioService {
   );
   final CookieJar _cookieJar = CookieJar();
 
+  bool _authInterceptorsAdded = false; // ← Controle para evitar duplicação
+
   DioService() {
     _dio.interceptors.add(CookieManager(_cookieJar));
     if (Constants.isDev) {
@@ -33,13 +35,21 @@ class DioService {
     AuthClient authClient,
     VoidCallback? onTokenRefreshFailed,
   ) {
+    if (_authInterceptorsAdded) {
+      return;
+    }
+
     _dio.interceptors.addAll([
       AuthInterceptor(),
-      TokenRefreshInterceptor(dio: _dio, authClient: authClient, onTokenRefreshFailed: onTokenRefreshFailed),
+      TokenRefreshInterceptor(
+          dio: _dio,
+          authClient: authClient,
+          onTokenRefreshFailed: onTokenRefreshFailed),
     ]);
+
+    _authInterceptorsAdded = true;
   }
 
   Dio get dio => _dio;
-
   CookieJar get cookieJar => _cookieJar;
 }

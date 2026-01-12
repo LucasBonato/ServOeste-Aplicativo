@@ -9,8 +9,10 @@ class DioInterceptor extends Interceptor {
   final JsonEncoder jsonEncoder = const JsonEncoder.withIndent("  ");
 
   @override
-  Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    final isAuthRoute = options.path.contains('/auth/login') || options.path.contains('/auth/refresh');
+  Future<void> onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
+    final isAuthRoute = options.path.contains('/auth/login') ||
+        options.path.contains('/auth/refresh');
 
     if (!isAuthRoute) {
       final token = await SecureStorageService.getAccessToken();
@@ -18,6 +20,8 @@ class DioInterceptor extends Interceptor {
         options.headers['Authorization'] = 'Bearer $token';
       }
     }
+
+    _limparCookiesDuplicados(options);
 
     String logMessage = "";
     logMessage += "TimeStamp: ${DateTime.now()}\n";
@@ -36,6 +40,15 @@ class DioInterceptor extends Interceptor {
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
+    // DEBUG: Se for refresh, analisa o novo token
+    if (response.requestOptions.path.contains('/auth/refresh') &&
+        response.data != null) {
+      final newToken = response.data['accessToken'];
+      if (newToken != null) {
+        _analisarToken(newToken, 'Novo token recebido');
+      }
+    }
+
     String logMessage = "";
     logMessage += "TimeStamp: ${DateTime.now()}\n";
     logMessage += "StatusCode: ${response.statusCode}\n";
@@ -50,6 +63,25 @@ class DioInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
+    // DEBUG: Se for 401, mostra informações do token
+    if (err.response?.statusCode == 401) {
+      _logger.w('⚠️ 401 Unauthorized detectado');
+
+      final authHeader = err.requestOptions.headers['Authorization'];
+      if (authHeader is String && authHeader.startsWith('Bearer ')) {
+        final token = authHeader.substring(7);
+        _analisarToken(token, 'Token que causou 401');
+      }
+
+      // Verifica se há cookies duplicados
+      final cookies = err.requestOptions.headers['cookie'];
+      if (cookies is String &&
+          _contarOcorrencias(cookies, 'refreshToken') > 1) {
+        _logger.e('🚨 COOKIES DUPLICADOS DETECTADOS!');
+        _logger.e('Cookie header corrompido: $cookies');
+      }
+    }
+
     String logMessage = "";
     logMessage += "TimeStamp: ${DateTime.now()}\n";
     logMessage += "ErrorType: ${err.type}\n";
@@ -61,5 +93,82 @@ class DioInterceptor extends Interceptor {
 
     _logger.e(logMessage);
     handler.next(err);
+  }
+
+  // Método para limpar cookies duplicados
+  void _limparCookiesDuplicados(RequestOptions options) {
+    if (options.headers.containsKey('cookie')) {
+      final cookieHeader = options.headers['cookie'] as String?;
+      if (cookieHeader != null &&
+          _contarOcorrencias(cookieHeader, 'refreshToken') > 1) {
+        _logger.w('⚠️ Detectado cookie duplicado, limpando...');
+
+        // Extrai apenas o primeiro refreshToken
+        final firstTokenMatch =
+            RegExp(r'refreshToken=([^;]+)').firstMatch(cookieHeader);
+        if (firstTokenMatch != null) {
+          final cleanToken = firstTokenMatch.group(1);
+          options.headers['cookie'] = 'refreshToken=$cleanToken';
+          _logger.w('✅ Cookie corrigido: refreshToken=$cleanToken');
+        } else {
+          // Se não conseguir extrair, remove completamente
+          options.headers.remove('cookie');
+          _logger.w('✅ Cookie removido completamente');
+        }
+      }
+    }
+  }
+
+  // Método para analisar token JWT
+  void _analisarToken(String token, String contexto) {
+    try {
+      final parts = token.split('.');
+      if (parts.length != 3) {
+        _logger.w('$contexto: Token JWT mal-formado (${parts.length} partes)');
+        return;
+      }
+
+      final payload = parts[1];
+      final normalized = base64Url.normalize(payload);
+      final decoded = utf8.decode(base64Url.decode(normalized));
+      final json = jsonDecode(decoded);
+
+      final iat = json['iat'] as int?;
+      final exp = json['exp'] as int?;
+      final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
+      _logger.d('''
+🎯 $contexto:
+   👤 Sub: ${json['sub']}
+   🎭 Role: ${json['role']}
+   📅 IAT: $iat (${_timestampParaData(iat)})
+   📅 EXP: $exp (${_timestampParaData(exp)})
+   ⏰ Agora: $now
+   ⏳ Expira em: ${exp != null ? exp - now : 'N/A'} segundos
+   ❌ Expirado? ${exp != null && exp < now}
+''');
+    } catch (e) {
+      _logger.w('Erro ao analisar token: $e');
+    }
+  }
+
+  // Helper para converter timestamp para data
+  String _timestampParaData(int? timestamp) {
+    if (timestamp == null) return 'N/A';
+    final date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+    return '${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute}:${date.second}';
+  }
+
+  // Helper para contar ocorrências em uma string
+  int _contarOcorrencias(String texto, String substring) {
+    int count = 0;
+    int index = 0;
+
+    while ((index = texto.indexOf(substring, index)) != -1) {
+      count++;
+      index += substring.length;
+    }
+
+    return count;
   }
 }

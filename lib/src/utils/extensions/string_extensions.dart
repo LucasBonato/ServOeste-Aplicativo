@@ -8,10 +8,9 @@ extension StringConversions on String? {
   }
 
   String convertToHorarioString() {
-    if (this == "manha") {
+    if (this == "MANHA") {
       return "Manhã";
-    }
-    else if (this == "tarde") {
+    } else if (this == "TARDE") {
       return "Tarde";
     }
     return "";
@@ -32,7 +31,8 @@ extension StringEnumConversion on String {
       return specialCases[this]!;
     }
 
-    String convertedStatus = "${this[0]}${substring(1).replaceAll("_", " ").toLowerCase()}";
+    String convertedStatus =
+        "${this[0]}${substring(1).replaceAll("_", " ").toLowerCase()}";
     return convertedStatus;
   }
 }

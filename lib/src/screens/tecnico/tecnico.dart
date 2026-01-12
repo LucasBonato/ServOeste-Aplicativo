@@ -30,9 +30,13 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
   late ValueNotifier<String> _situacaoNotifier;
 
   void _setFilterValues() {
-    _idController.text = (_tecnicoBloc.idMenu == null) ? "" : _tecnicoBloc.idMenu.toString();
+    _idController.text =
+        (_tecnicoBloc.idMenu == null) ? "" : _tecnicoBloc.idMenu.toString();
     _nomeController.text = _tecnicoBloc.nomeMenu ?? "";
-    String situacao = (_tecnicoBloc.situacaoMenu != null) ? _tecnicoBloc.situacaoMenu![0].toUpperCase() + _tecnicoBloc.situacaoMenu!.substring(1) : "";
+    String situacao = (_tecnicoBloc.situacaoMenu != null)
+        ? _tecnicoBloc.situacaoMenu![0].toUpperCase() +
+            _tecnicoBloc.situacaoMenu!.substring(1)
+        : "";
     if (situacao != "" && Constants.situationTecnicoList.contains(situacao)) {
       setState(() {
         _situacaoNotifier.value = situacao;
@@ -45,7 +49,10 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
     return ResponsiveSearchInputs(
       onChanged: onSearchFieldChanged,
       fields: [
-        TextInputField(hint: "Procure por Técnicos...", controller: _nomeController, keyboardType: TextInputType.text),
+        TextInputField(
+            hint: "Procure por Técnicos...",
+            controller: _nomeController,
+            keyboardType: TextInputType.text),
         TextInputField(
           hint: "ID...",
           controller: _idController,
@@ -71,7 +78,10 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
 
   @override
   Widget buildDefaultFloatingActionButton() {
-    return FloatingActionButtonAdd(route: Routes.tecnicoCreate, event: () => _tecnicoBloc.add(TecnicoSearchMenuEvent()), tooltip: "Adicionar um Técnico");
+    return FloatingActionButtonAdd(
+        route: Routes.tecnicoCreate,
+        event: () => _tecnicoBloc.add(TecnicoSearchMenuEvent()),
+        tooltip: "Adicionar um Técnico");
   }
 
   @override
@@ -79,13 +89,16 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
     return FloatingActionButtonRemove(
       removeMethod: () => disableSelectedItems(context, selectedIds),
       tooltip: "Excluir técnicos selecionados",
+      content: 'Deletar técnicos selecionados?',
     );
   }
 
   @override
-  Widget buildItemCard(TecnicoResponse tecnico, bool isSelected, bool isSelectMode, bool isSkeleton) {
+  Widget buildItemCard(TecnicoResponse tecnico, bool isSelected,
+      bool isSelectMode, bool isSkeleton) {
     return CardTechnician(
-      onDoubleTap: () => onNavigateToUpdateScreen(tecnico.id!, () => _tecnicoBloc.add(TecnicoSearchMenuEvent())),
+      onDoubleTap: () => onNavigateToUpdateScreen(
+          tecnico.id!, () => _tecnicoBloc.add(TecnicoSearchMenuEvent())),
       onLongPress: () => onSelectItemList(tecnico.id!),
       onTap: () {
         if (isSelectMode) {
@@ -122,7 +135,8 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
     _tecnicoBloc.add(TecnicoDisableListEvent(selectedList: selectedIds));
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Técnico desativado com sucesso! (Caso ele não esteja desativado, recarregue a página)'),
+        content: Text(
+            'Técnico desativado com sucesso! (Caso ele não esteja desativado, recarregue a página)'),
         backgroundColor: Colors.green,
       ),
     );
@@ -134,8 +148,10 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
     _tecnicoBloc = context.read<TecnicoBloc>();
     _idController = TextEditingController();
     _nomeController = TextEditingController();
-    _situacaoController = SingleSelectController<String>(Constants.situationTecnicoList.first);
-    _situacaoNotifier = ValueNotifier<String>(Constants.situationTecnicoList.first);
+    _situacaoController =
+        SingleSelectController<String>(Constants.situationTecnicoList.first);
+    _situacaoNotifier =
+        ValueNotifier<String>(Constants.situationTecnicoList.first);
 
     _setFilterValues();
   }
@@ -159,11 +175,13 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
                 }
               },
               builder: (context, stateTecnico) {
-                if (stateTecnico is TecnicoInitialState || stateTecnico is TecnicoLoadingState) {
+                if (stateTecnico is TecnicoInitialState ||
+                    stateTecnico is TecnicoLoadingState) {
                   return Skeletonizer(
                     enableSwitchAnimation: true,
                     child: buildGridOfCards(
-                      items: List.generate(20, (_) => TecnicoResponse()..applySkeletonData()),
+                      items: List.generate(
+                          20, (_) => TecnicoResponse()..applySkeletonData()),
                       aspectRatio: 2.5,
                       totalPages: 1,
                       currentPage: 0,

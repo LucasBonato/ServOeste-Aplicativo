@@ -23,7 +23,9 @@ class ClienteScreen extends BaseListScreen<Cliente> {
 
 class _ClienteScreenState extends BaseListScreenState<Cliente> {
   late final ClienteBloc _clienteBloc;
-  late final TextEditingController _nomeController, _telefoneController, _enderecoController;
+  late final TextEditingController _nomeController,
+      _telefoneController,
+      _enderecoController;
 
   void _setFilterValues() {
     _nomeController.text = _clienteBloc.nomeMenu ?? "";
@@ -71,13 +73,16 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
     return FloatingActionButtonRemove(
       removeMethod: () => disableSelectedItems(context, selectedIds),
       tooltip: "Excluir clientes Selecionados",
+      content: 'Deletar clientes selecionados?',
     );
   }
 
   @override
-  Widget buildItemCard(Cliente cliente, bool isSelected, bool isSelectMode, bool isSkeleton) {
+  Widget buildItemCard(
+      Cliente cliente, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return CardClient(
-      onDoubleTap: () => onNavigateToUpdateScreen(cliente.id!, () => _clienteBloc.add(ClienteSearchMenuEvent())),
+      onDoubleTap: () => onNavigateToUpdateScreen(
+          cliente.id!, () => _clienteBloc.add(ClienteSearchMenuEvent())),
       onLongPress: () => onSelectItemList(cliente.id!),
       onTap: () {
         if (isSelectMode) {
@@ -139,11 +144,13 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
                 }
               },
               builder: (context, stateCliente) {
-                if (stateCliente is ClienteInitialState || stateCliente is ClienteLoadingState) {
+                if (stateCliente is ClienteInitialState ||
+                    stateCliente is ClienteLoadingState) {
                   return Skeletonizer(
                     enableSwitchAnimation: true,
                     child: buildGridOfCards(
-                      items: List.generate(16, (_) => Cliente()..applySkeletonData()),
+                      items: List.generate(
+                          16, (_) => Cliente()..applySkeletonData()),
                       aspectRatio: 1.65,
                       totalPages: 1,
                       currentPage: 0,

@@ -59,17 +59,20 @@ class _UserScreenTestState extends BaseListScreenState<UserResponse> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Confirmar Exclusão'),
-          content: Text('Tem certeza que deseja excluir o usuário "$username"?'),
+          content:
+              Text('Tem certeza que deseja excluir o usuário "$username"?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancelar', style: TextStyle(color: Colors.grey[600])),
+              child:
+                  Text('Cancelar', style: TextStyle(color: Colors.grey[800])),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 _userBloc.add(DeleteUserEvent(username: username));
               },
+              style: TextButton.styleFrom(overlayColor: Colors.red),
               child: const Text('Excluir', style: TextStyle(color: Colors.red)),
             ),
           ],
@@ -86,13 +89,15 @@ class _UserScreenTestState extends BaseListScreenState<UserResponse> {
       );
 
   @override
-  Widget buildItemCard(UserResponse item, bool isSelected, bool isSelectMode, bool isSkeleton) {
+  Widget buildItemCard(
+      UserResponse item, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return UserCard(
       user: item,
       onEdit: () {
         username = item.username!;
         role = item.role!;
-        onNavigateToUpdateScreen(item.id!, () => _userBloc.add(LoadUsersEvent()));
+        onNavigateToUpdateScreen(
+            item.id!, () => _userBloc.add(LoadUsersEvent()));
       },
       onDelete: () => _onDeleteUser(item.username!),
       showDeleteButton: true,
@@ -108,7 +113,8 @@ class _UserScreenTestState extends BaseListScreenState<UserResponse> {
   Widget getCreateScreen() => CreateUserScreen();
 
   @override
-  Widget getUpdateScreen(int id, {int? secondId}) => UpdateUserScreen(id: id, username: username, role: role);
+  Widget getUpdateScreen(int id, {int? secondId}) =>
+      UpdateUserScreen(id: id, username: username, role: role);
 
   @override
   void onDisableItems(List<int> selectedIds) {
@@ -138,7 +144,8 @@ class _UserScreenTestState extends BaseListScreenState<UserResponse> {
           _buildHeaderSection(),
           Expanded(
             child: BlocConsumer<UserBloc, UserState>(
-              listenWhen: (previous, current) => current is UserErrorState || current is UserDeletedState,
+              listenWhen: (previous, current) =>
+                  current is UserErrorState || current is UserDeletedState,
               listener: (context, state) {
                 if (state is UserDeletedState) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -148,8 +155,7 @@ class _UserScreenTestState extends BaseListScreenState<UserResponse> {
                     ),
                   );
                   _userBloc.add(LoadUsersEvent());
-                }
-                else if (state is UserErrorState) {
+                } else if (state is UserErrorState) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(state.error.detail),
@@ -159,20 +165,23 @@ class _UserScreenTestState extends BaseListScreenState<UserResponse> {
                 }
               },
               builder: (context, userState) {
-                if (userState is UserInitialState || userState is UserLoadingState) {
+                if (userState is UserInitialState ||
+                    userState is UserLoadingState) {
                   return Skeletonizer(
                     enableSwitchAnimation: true,
                     child: buildGridOfCards(
-                      items: List.generate(10, (_) => UserResponse()..applySkeletonData()),
+                      items: List.generate(
+                          10, (_) => UserResponse()..applySkeletonData()),
                       aspectRatio: 1,
                       totalPages: 1,
                       currentPage: 0,
                       onPageChanged: (_) {},
                     ),
                   );
-                }
-                else if (userState is UserLoadedState) {
-                  final List<UserResponse> users = userState.users.where((user) => user.role != "ADMIN").toList();
+                } else if (userState is UserLoadedState) {
+                  final List<UserResponse> users = userState.users
+                      .where((user) => user.role != "ADMIN")
+                      .toList();
                   return buildGridOfCards(
                     items: users,
                     aspectRatio: 1,

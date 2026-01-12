@@ -27,7 +27,9 @@ void main() {
   final authClient = AuthClient(dioService.dio);
 
   dioService.addAuthInterceptors(authClient, () {
-    navigatorKey.currentState?.pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const LoginScreen()), (route) => false);
+    navigatorKey.currentState?.pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        (route) => false);
   });
 
   final tecnicoClient = TecnicoClient(dioService.dio);
@@ -81,7 +83,8 @@ class MyApp extends StatelessWidget {
       ),
       navigatorKey: navigatorKey,
       home: const LoginScreen(),
-      onGenerateRoute: (settings) => CustomRouter.onGenerateRoute(settings, context),
+      onGenerateRoute: (settings) =>
+          CustomRouter.onGenerateRoute(settings, context),
     );
   }
 }

@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class FloatingActionButtonRemove extends StatelessWidget {
   final dynamic removeMethod;
   final String tooltip;
+  final String content;
 
   const FloatingActionButtonRemove({
     super.key,
     required this.removeMethod,
     required this.tooltip,
+    required this.content,
   });
 
   @override
@@ -22,34 +24,23 @@ class FloatingActionButtonRemove extends StatelessWidget {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-            ),
-            title: Text("Deletar itens selecionados?", textAlign: TextAlign.center),
-            actionsAlignment: MainAxisAlignment.spaceAround,
+            title: const Text('Confirmar Exclusão'),
+            content: Text(content),
             actions: [
               TextButton(
-                style: const ButtonStyle(
-                    shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5)))),
-                    backgroundColor: WidgetStatePropertyAll(Color(0xFF007BFF)),
-                    foregroundColor: WidgetStatePropertyAll(Colors.white)),
+                onPressed: () => Navigator.of(context).pop(),
+                child:
+                    Text('Cancelar', style: TextStyle(color: Colors.grey[800])),
+              ),
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                   removeMethod();
                 },
-                child: Text("Sim", style: const TextStyle(fontSize: 25)),
+                style: TextButton.styleFrom(overlayColor: Colors.red),
+                child:
+                    const Text('Excluir', style: TextStyle(color: Colors.red)),
               ),
-              TextButton(
-                style: const ButtonStyle(
-                  shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5)))),
-                  backgroundColor: WidgetStatePropertyAll(Colors.red),
-                  foregroundColor: WidgetStatePropertyAll(Colors.white),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text("Não", style: const TextStyle(fontSize: 25)),
-              )
             ],
           );
         },

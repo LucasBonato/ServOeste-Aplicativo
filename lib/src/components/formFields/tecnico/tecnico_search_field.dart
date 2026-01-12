@@ -20,7 +20,7 @@ class TecnicoSearchField extends StatefulWidget {
   final String? Function([String?])? validator;
   final bool Function()? enabledCalculator;
   final String? tooltipMessage;
-  final TecnicoSearchEvent Function(String nome) buildSearchEvent;
+  final bool isForListScreen;
 
   const TecnicoSearchField({
     super.key,
@@ -33,10 +33,10 @@ class TecnicoSearchField extends StatefulWidget {
     this.maxLength = 50,
     this.validator,
     this.tooltipMessage,
-    required this.buildSearchEvent,
     this.onSearchStart,
     this.listenTo,
     this.enabledCalculator,
+    this.isForListScreen = false,
   });
 
   @override
@@ -47,33 +47,85 @@ class _TecnicoSearchFieldState extends State<TecnicoSearchField> {
   final Debouncer _debouncer = Debouncer();
   final ValueNotifier<List<String>> _names = ValueNotifier([]);
   List<TecnicoResponse> _tecnicos = [];
+  bool _hasInitialFetch = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchInitialTecnicos();
+    });
+  }
+
+  void _fetchInitialTecnicos() {
+    if (!_hasInitialFetch) {
+      _hasInitialFetch = true;
+
+      if (widget.isForListScreen) {
+        widget.tecnicoBloc.add(TecnicoSearchMenuEvent(nome: ''));
+      }
+    }
+  }
 
   void _handleChange(String name) {
     widget.onChanged.call(name);
 
     _debouncer.execute(() {
-      if (name.split(" ").length > 1 && _names.value.isEmpty) return;
-
       widget.onSearchStart?.call();
-      widget.tecnicoBloc.add(widget.buildSearchEvent(name));
+
+      if (name.isEmpty) {
+        widget.tecnicoBloc.add(TecnicoSearchMenuEvent(nome: ''));
+      } else {
+        widget.tecnicoBloc.add(TecnicoSearchMenuEvent(nome: name));
+      }
     });
   }
 
   void _handleSelected(String name) {
-    final TecnicoResponse? match = _tecnicos.firstWhereOrNull((tecnico) => "${tecnico.nome} ${tecnico.sobrenome}" == name);
+    final TecnicoResponse? match = _tecnicos.firstWhereOrNull(
+        (tecnico) => "${tecnico.nome} ${tecnico.sobrenome}" == name);
     if (match != null) {
       widget.onSelected?.call(match);
     }
   }
 
+  void _filterAndUpdateNames(String searchText) {
+    if (_tecnicos.isEmpty) return;
+
+    List<TecnicoResponse> filteredTecnicos;
+
+    if (searchText.isEmpty) {
+      filteredTecnicos = _tecnicos.take(5).toList();
+    } else {
+      final searchLower = searchText.toLowerCase();
+      filteredTecnicos = _tecnicos
+          .where((tecnico) {
+            final fullName =
+                "${tecnico.nome} ${tecnico.sobrenome}".toLowerCase();
+            return fullName.contains(searchLower) ||
+                tecnico.nome!.toLowerCase().contains(searchLower) ||
+                tecnico.sobrenome!.toLowerCase().contains(searchLower);
+          })
+          .take(5)
+          .toList();
+    }
+
+    final names =
+        filteredTecnicos.map((t) => "${t.nome} ${t.sobrenome}").toList();
+    if (!listEquals(names, _names.value)) {
+      _names.value = names;
+    }
+  }
+
   Widget _buildField(bool enabled) {
-    final Widget field = BlocListener<TecnicoBloc, TecnicoState>(
+    return BlocListener<TecnicoBloc, TecnicoState>(
       bloc: widget.tecnicoBloc,
       listener: (context, state) {
         if (state is TecnicoSearchSuccessState) {
           _tecnicos = state.tecnicos;
-          final names = state.tecnicos.take(5).map((t) => "${t.nome} ${t.sobrenome}").toList();
-          _names.value = names;
+          final currentText = widget.controller?.text ?? '';
+          _filterAndUpdateNames(currentText);
         }
       },
       child: ValueListenableBuilder<List<String>>(
@@ -95,6 +147,10 @@ class _TecnicoSearchFieldState extends State<TecnicoSearchField> {
         },
       ),
     );
+  }
+
+  Widget _buildFieldWithTooltip(bool enabled) {
+    final field = _buildField(enabled);
 
     return (widget.tooltipMessage?.isNotEmpty ?? false)
         ? Tooltip(
@@ -106,15 +162,20 @@ class _TecnicoSearchFieldState extends State<TecnicoSearchField> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (widget.listenTo != null && widget.enabledCalculator != null) {
       return AnimatedBuilder(
         animation: Listenable.merge(widget.listenTo!),
         builder: (context, _) {
-          return _buildField(widget.enabledCalculator!());
+          return _buildFieldWithTooltip(widget.enabledCalculator!());
         },
       );
     }
-    return _buildField(widget.enabled);
+    return _buildFieldWithTooltip(widget.enabled);
   }
 }
