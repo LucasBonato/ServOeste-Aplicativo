@@ -134,8 +134,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
       child: DropDownSearchFormField(
         onSaved: widget.onSaved,
         validator: widget.validator,
-        displayAllSuggestionWhenTap:
-            true, // IMPORTANTE: Mostra tudo quando clica
+        displayAllSuggestionWhenTap: true,
         textFieldConfiguration: TextFieldConfiguration(
           enabled: widget.enabled,
           maxLength: widget.maxLength,
@@ -144,10 +143,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
             widget.onChanged!(value);
             widget.valueNotifier?.value = value;
           },
-          onTap: () {
-            // Força a exibição das sugestões quando o campo é tocado
-            // O pacote já lida com isso quando displayAllSuggestionWhenTap é true
-          },
+          onTap: () {},
           decoration: InputDecoration(
             counterText: widget.hide ? null : "",
             labelText: widget.label,
@@ -190,8 +186,6 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
           ),
         ),
         suggestionsCallback: (query) async {
-          // SEMPRE retorna valores, mesmo quando query está vazia
-          // Isso permite que o dropdown seja mostrado quando clica no campo
           if (query.isEmpty) {
             return widget.dropdownValues;
           }
@@ -218,7 +212,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
                   title: Text(suggestion),
                 );
         },
-        hideOnEmpty: false, // IMPORTANTE: Não esconde quando vazio
+        hideOnEmpty: false,
         debounceDuration: const Duration(milliseconds: 150),
         transitionBuilder: (context, suggestionBox, animationController) {
           final animation = CurvedAnimation(

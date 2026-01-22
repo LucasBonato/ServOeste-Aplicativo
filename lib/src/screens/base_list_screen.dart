@@ -27,7 +27,8 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
 
   Widget buildSelectionFloatingActionButton(List<int> selectedIds);
 
-  Widget buildItemCard(T item, bool isSelected, bool isSelectMode, bool isSkeleton);
+  Widget buildItemCard(
+      T item, bool isSelected, bool isSelectMode, bool isSkeleton);
 
   void setListStyle(ListStyle listStyle) {
     _listStyle = listStyle;
@@ -37,7 +38,8 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
     _debouncer.execute(searchFieldChanged);
   }
 
-  void onNavigateToUpdateScreen(int id, VoidCallback onSuccess, {int? secondId}) {
+  void onNavigateToUpdateScreen(int id, VoidCallback onSuccess,
+      {int? secondId}) {
     Navigator.of(context, rootNavigator: true)
         .push(
       MaterialPageRoute(
@@ -52,7 +54,8 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
     context.read<ListaBloc>().add(ListaClearSelectionEvent());
   }
 
-  void onNavigateToCreateScreen(int id, VoidCallback onSuccess, {int? secondId}) {
+  void onNavigateToCreateScreen(int id, VoidCallback onSuccess,
+      {int? secondId}) {
     Navigator.of(context, rootNavigator: true)
         .push(
       MaterialPageRoute(
@@ -77,19 +80,26 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
   }
 
   bool isSelectionMode(ListaState stateLista) {
-    return (stateLista is ListaSelectState) ? stateLista.selectedIds.isNotEmpty : false;
+    return (stateLista is ListaSelectState)
+        ? stateLista.selectedIds.isNotEmpty
+        : false;
   }
 
   bool isItemSelected(int id, ListaState listState) {
-    return (listState is ListaSelectState) ? listState.selectedIds.contains(id) : false;
+    return (listState is ListaSelectState)
+        ? listState.selectedIds.contains(id)
+        : false;
   }
 
   Widget buildFloatingActionButton() {
     return BlocBuilder<ListaBloc, ListaState>(
       builder: (context, state) {
-        final bool hasSelection = state is ListaSelectState && state.selectedIds.isNotEmpty;
+        final bool hasSelection =
+            state is ListaSelectState && state.selectedIds.isNotEmpty;
 
-        return !hasSelection ? buildDefaultFloatingActionButton() : buildSelectionFloatingActionButton(state.selectedIds);
+        return !hasSelection
+            ? buildDefaultFloatingActionButton()
+            : buildSelectionFloatingActionButton(state.selectedIds);
       },
     );
   }
@@ -102,34 +112,60 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
     required Function(int) onPageChanged,
     bool isSkeleton = false,
   }) {
-    return Column(
-      children: [
-        Expanded(
-          child: items.isNotEmpty
-              ? _listStyle == ListStyle.grid
-                  ? SingleChildScrollView(
-                      child: GridListView(
-                        aspectRatio: aspectRatio,
-                        dataList: items,
-                        buildCard: (item) => BlocBuilder<ListaBloc, ListaState>(
-                          builder: (context, stateLista) {
-                            final bool isSelected = isSkeleton ? false : isItemSelected(item.id, stateLista);
-                            final bool isSelectMode = isSkeleton ? false : isSelectionMode(stateLista);
+    // Se não houver itens, mostra apenas a mensagem
+    if (items.isEmpty) {
+      return const EntityNotFound(message: "Nenhum item encontrado.");
+    }
 
-                            return buildItemCard(item, isSelected, isSelectMode, isSkeleton);
-                          },
-                        ),
-                      ),
-                    )
-                  : ListView.builder(
-                      itemCount: items.length,
-                      itemBuilder: (context, index) => buildItemCard(items[index], false, false, isSkeleton),
-                    )
-              : const EntityNotFound(message: "Nenhum item encontrado."),
-        ),
-        if (totalPages > 1)
-          Padding(padding: const EdgeInsets.symmetric(vertical: 16), child: PaginationWidget(currentPage: currentPage + 1, totalPages: totalPages, onPageChanged: onPageChanged)),
-      ],
+    // Widget da lista/grid
+    final contentWidget = _listStyle == ListStyle.grid
+        ? GridListView(
+            aspectRatio: aspectRatio,
+            dataList: items,
+            buildCard: (item) => BlocBuilder<ListaBloc, ListaState>(
+              builder: (context, stateLista) {
+                final bool isSelected =
+                    isSkeleton ? false : isItemSelected(item.id, stateLista);
+                final bool isSelectMode =
+                    isSkeleton ? false : isSelectionMode(stateLista);
+
+                return buildItemCard(
+                    item, isSelected, isSelectMode, isSkeleton);
+              },
+            ),
+          )
+        : ListView.builder(
+            itemCount: items.length,
+            itemBuilder: (context, index) =>
+                buildItemCard(items[index], false, false, isSkeleton),
+          );
+
+    // Se tiver apenas uma página, mostra apenas o conteúdo
+    if (totalPages <= 1) {
+      return contentWidget;
+    }
+
+    // Se tiver múltiplas páginas, usa SingleChildScrollView com a paginação no final
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          contentWidget,
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 20,
+              bottom: 40, // Mais espaço no final
+              left: 16,
+              right: 16,
+            ),
+            child: PaginationWidget(
+              currentPage: currentPage + 1,
+              totalPages: totalPages,
+              onPageChanged: onPageChanged,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

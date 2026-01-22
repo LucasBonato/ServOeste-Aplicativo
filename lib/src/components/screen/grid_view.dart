@@ -14,9 +14,11 @@ class GridListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: MediaQuery.of(context).size.width > 600 ? MediaQuery.of(context).size.width * 0.02 : 15,
+        horizontal: screenWidth > 600 ? screenWidth * 0.02 : 15,
         vertical: 10,
       ),
       child: GridView.builder(
@@ -24,11 +26,11 @@ class GridListView extends StatelessWidget {
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: MediaQuery.of(context).size.width > 1650
+          crossAxisCount: screenWidth > 1650
               ? 4
-              : MediaQuery.of(context).size.width > 1200
+              : screenWidth > 1200
                   ? 3
-                  : MediaQuery.of(context).size.width > 600
+                  : screenWidth > 600
                       ? 2
                       : 1,
           mainAxisSpacing: 15,

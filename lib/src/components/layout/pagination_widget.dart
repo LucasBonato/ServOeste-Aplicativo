@@ -24,84 +24,200 @@ class PaginationWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     if (totalPages <= 1) return const SizedBox.shrink();
 
-    final theme = Theme.of(context);
-    final selectedBgColor = selectedColor ?? theme.colorScheme.primary;
-    final unselectedBgColor = unselectedColor ?? theme.colorScheme.surface;
-    final selectedTextColor = theme.colorScheme.onPrimary;
-    final unselectedTextColor = theme.colorScheme.onSurface;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenWidth = constraints.maxWidth;
+        final isSmallScreen = screenWidth < 600;
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (currentPage > 1)
-          IconButton(
-            icon: const Icon(Icons.chevron_left),
-            onPressed: () => onPageChanged(currentPage - 1),
-          )
-        else
-          const IconButton(
-            icon: Icon(Icons.chevron_left),
-            onPressed: null,
+        final double buttonSize = _getResponsiveValue(
+          screenWidth,
+          min: 28,
+          max: 34,
+          factor: 0.015,
+        );
+
+        final double fontSize = _getResponsiveValue(
+          screenWidth,
+          min: 10,
+          max: 14,
+          factor: 0.02,
+        );
+
+        final double iconSize = _getResponsiveValue(
+          screenWidth,
+          min: 14,
+          max: 22,
+          factor: 0.015,
+        );
+
+        final theme = Theme.of(context);
+        final selectedBgColor = selectedColor ?? theme.colorScheme.primary;
+        final unselectedBgColor = unselectedColor ?? theme.colorScheme.surface;
+        final selectedTextColor = theme.colorScheme.onPrimary;
+        final unselectedTextColor = theme.colorScheme.onSurface;
+
+        final visibleMaxPages =
+            isSmallScreen ? maxVisiblePages.clamp(3, 5) : maxVisiblePages;
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: _buildPaginationItems(
+            context: context,
+            currentPage: currentPage,
+            totalPages: totalPages,
+            maxVisiblePages: visibleMaxPages,
+            buttonSize: buttonSize,
+            fontSize: fontSize,
+            iconSize: iconSize,
+            selectedBgColor: selectedBgColor,
+            unselectedBgColor: unselectedBgColor,
+            selectedTextColor: selectedTextColor,
+            unselectedTextColor: unselectedTextColor,
+            onPageChanged: onPageChanged,
+            theme: theme,
+            isSmallScreen: isSmallScreen,
           ),
-        if (currentPage > (maxVisiblePages ~/ 2) + 1 && totalPages > maxVisiblePages)
-          _buildPageButton(
-            1,
-            currentPage,
-            selectedBgColor,
-            unselectedBgColor,
-            selectedTextColor,
-            unselectedTextColor,
-            onPageChanged,
-          ),
-        if (currentPage > (maxVisiblePages ~/ 2) + 2 && totalPages > maxVisiblePages)
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8),
-            child: Text('...'),
-          ),
-        ..._generatePageNumbers().map(
-          (page) => _buildPageButton(
-            page,
-            currentPage,
-            selectedBgColor,
-            unselectedBgColor,
-            selectedTextColor,
-            unselectedTextColor,
-            onPageChanged,
-          ),
-        ),
-        if (currentPage < totalPages - (maxVisiblePages ~/ 2) - 1 && totalPages > maxVisiblePages)
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8),
-            child: Text('...'),
-          ),
-        if (currentPage < totalPages - (maxVisiblePages ~/ 2) && totalPages > maxVisiblePages)
-          _buildPageButton(
-            totalPages,
-            currentPage,
-            selectedBgColor,
-            unselectedBgColor,
-            selectedTextColor,
-            unselectedTextColor,
-            onPageChanged,
-          ),
-        if (currentPage < totalPages)
-          IconButton(
-            icon: const Icon(Icons.chevron_right),
-            onPressed: () => onPageChanged(currentPage + 1),
-          )
-        else
-          const IconButton(
-            icon: Icon(Icons.chevron_right),
-            onPressed: null,
-          ),
-      ],
+        );
+      },
     );
   }
 
-  List<int> _generatePageNumbers() {
+  List<Widget> _buildPaginationItems({
+    required BuildContext context,
+    required int currentPage,
+    required int totalPages,
+    required int maxVisiblePages,
+    required double buttonSize,
+    required double fontSize,
+    required double iconSize,
+    required Color selectedBgColor,
+    required Color unselectedBgColor,
+    required Color selectedTextColor,
+    required Color unselectedTextColor,
+    required Function(int) onPageChanged,
+    required ThemeData theme,
+    required bool isSmallScreen,
+  }) {
+    final List<Widget> items = [];
+    final int sidePages = (maxVisiblePages - 1) ~/ 2;
+
+    items.add(
+      _buildIconButton(
+        context: context,
+        icon: Icons.chevron_left,
+        onPressed:
+            currentPage > 1 ? () => onPageChanged(currentPage - 1) : null,
+        size: buttonSize,
+        iconSize: iconSize,
+        isEnabled: currentPage > 1,
+      ),
+    );
+
+    // Página 1 e "..." se necessário
+    if (currentPage > sidePages + 1) {
+      items.add(_buildPageButton(
+        page: 1,
+        currentPage: currentPage,
+        selectedBgColor: selectedBgColor,
+        unselectedBgColor: unselectedBgColor,
+        selectedTextColor: selectedTextColor,
+        unselectedTextColor: unselectedTextColor,
+        onPageChanged: onPageChanged,
+        buttonSize: buttonSize,
+        fontSize: fontSize,
+      ));
+
+      if (currentPage > sidePages + 1) {
+        items.add(Padding(
+          padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 2 : 4),
+          child: Text(
+            '...',
+            style: TextStyle(
+              fontSize: fontSize,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+            ),
+          ),
+        ));
+      }
+    }
+
+    // Páginas numeradas
+    final pageNumbers = _generatePageNumbers(
+      currentPage: currentPage,
+      totalPages: totalPages,
+      maxVisiblePages: maxVisiblePages,
+    );
+
+    for (final page in pageNumbers) {
+      items.add(_buildPageButton(
+        page: page,
+        currentPage: currentPage,
+        selectedBgColor: selectedBgColor,
+        unselectedBgColor: unselectedBgColor,
+        selectedTextColor: selectedTextColor,
+        unselectedTextColor: unselectedTextColor,
+        onPageChanged: onPageChanged,
+        buttonSize: buttonSize,
+        fontSize: fontSize,
+      ));
+    }
+
+    // "..." e última página se necessário
+    if (currentPage < totalPages - sidePages - 1) {
+      if (currentPage < totalPages - sidePages - 2) {
+        items.add(Padding(
+          padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 2 : 4),
+          child: Text(
+            '...',
+            style: TextStyle(
+              fontSize: fontSize,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+            ),
+          ),
+        ));
+      }
+
+      items.add(_buildPageButton(
+        page: totalPages,
+        currentPage: currentPage,
+        selectedBgColor: selectedBgColor,
+        unselectedBgColor: unselectedBgColor,
+        selectedTextColor: selectedTextColor,
+        unselectedTextColor: unselectedTextColor,
+        onPageChanged: onPageChanged,
+        buttonSize: buttonSize,
+        fontSize: fontSize,
+      ));
+    }
+
+    // Botão próximo
+    items.add(
+      _buildIconButton(
+        context: context,
+        icon: Icons.chevron_right,
+        onPressed: currentPage < totalPages
+            ? () => onPageChanged(currentPage + 1)
+            : null,
+        size: buttonSize,
+        iconSize: iconSize,
+        isEnabled: currentPage < totalPages,
+      ),
+    );
+
+    return items;
+  }
+
+  List<int> _generatePageNumbers({
+    required int currentPage,
+    required int totalPages,
+    required int maxVisiblePages,
+  }) {
     final List<int> pages = [];
-    int startPage = currentPage - (maxVisiblePages ~/ 2);
-    int endPage = currentPage + (maxVisiblePages ~/ 2);
+
+    final int sidePages = (maxVisiblePages - 1) ~/ 4;
+
+    int startPage = currentPage - sidePages;
+    int endPage = currentPage + sidePages;
 
     if (startPage < 1) {
       endPage += 1 - startPage;
@@ -122,37 +238,86 @@ class PaginationWidget extends StatelessWidget {
     return pages;
   }
 
-  Widget _buildPageButton(
-    int page,
-    int currentPage,
-    Color selectedBgColor,
-    Color unselectedBgColor,
-    Color selectedTextColor,
-    Color unselectedTextColor,
-    Function(int) onPageChanged,
-  ) {
+  Widget _buildPageButton({
+    required int page,
+    required int currentPage,
+    required Color selectedBgColor,
+    required Color unselectedBgColor,
+    required Color selectedTextColor,
+    required Color unselectedTextColor,
+    required Function(int) onPageChanged,
+    required double buttonSize,
+    required double fontSize,
+  }) {
+    final bool isSelected = page == currentPage;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 3),
       child: Material(
         shape: const CircleBorder(),
-        color: page == currentPage ? selectedBgColor : unselectedBgColor,
+        color: isSelected ? selectedBgColor : unselectedBgColor,
+        elevation: isSelected ? 1 : 0,
         child: InkWell(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(buttonSize / 2),
           onTap: () => onPageChanged(page),
           child: Container(
-            width: 40,
-            height: 40,
+            width: buttonSize,
+            height: buttonSize,
             alignment: Alignment.center,
             child: Text(
               '$page',
-              style: (textStyle ?? const TextStyle()).copyWith(
-                color: page == currentPage ? selectedTextColor : unselectedTextColor,
-                fontWeight: page == currentPage ? FontWeight.bold : FontWeight.normal,
+              style: (textStyle ?? TextStyle()).copyWith(
+                fontSize: fontSize,
+                color: isSelected ? selectedTextColor : unselectedTextColor,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildIconButton({
+    required BuildContext context,
+    required IconData icon,
+    required Function()? onPressed,
+    required double size,
+    required double iconSize,
+    required bool isEnabled,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 1),
+      child: Material(
+        shape: const CircleBorder(),
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(size / 2),
+          onTap: onPressed,
+          child: Container(
+            width: size,
+            height: size,
+            alignment: Alignment.center,
+            child: Icon(
+              icon,
+              size: iconSize,
+              color: isEnabled
+                  ? Theme.of(context).colorScheme.primary
+                  : Colors.grey.withValues(alpha: 0.5),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  double _getResponsiveValue(
+    double screenWidth, {
+    required double min,
+    required double max,
+    required double factor,
+  }) {
+    final value = min + (screenWidth * factor);
+    return value.clamp(min, max);
   }
 }

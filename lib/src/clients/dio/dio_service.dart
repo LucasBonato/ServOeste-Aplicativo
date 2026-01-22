@@ -22,7 +22,7 @@ class DioService {
   );
   final CookieJar _cookieJar = CookieJar();
 
-  bool _authInterceptorsAdded = false; // ← Controle para evitar duplicação
+  bool _authInterceptorsAdded = false;
 
   DioService() {
     _dio.interceptors.add(CookieManager(_cookieJar));
