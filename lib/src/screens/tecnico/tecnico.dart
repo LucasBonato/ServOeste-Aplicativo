@@ -181,30 +181,51 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
                     enableSwitchAnimation: true,
                     child: buildGridOfCards(
                       items: List.generate(
-                          20, (_) => TecnicoResponse()..applySkeletonData()),
-                      aspectRatio: 2.5,
+                          16, (_) => TecnicoResponse()..applySkeletonData()),
+                      aspectRatio: 2.1,
                       totalPages: 1,
                       currentPage: 0,
                       onPageChanged: (_) {},
                       isSkeleton: true,
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 16,
+                      horizontalPadding: 16,
+                      verticalPadding: 10,
                     ),
                   );
                 } else if (stateTecnico is TecnicoSearchSuccessState) {
                   return buildGridOfCards(
-                      items: stateTecnico.tecnicos,
-                      aspectRatio: 2.5,
-                      totalPages: stateTecnico.totalPages,
-                      currentPage: stateTecnico.currentPage,
-                      onPageChanged: (page) {
-                        _tecnicoBloc.add(TecnicoLoadingEvent(
-                          id: _tecnicoBloc.idMenu,
-                          nome: _tecnicoBloc.nomeMenu,
-                          situacao: _tecnicoBloc.situacaoMenu,
-                          equipamento: null,
-                          page: page - 1,
-                          size: 20,
-                        ));
-                      });
+                    items: stateTecnico.tecnicos,
+                    aspectRatio: 2.1,
+                    totalPages: stateTecnico.totalPages,
+                    currentPage: stateTecnico.currentPage,
+                    onPageChanged: (page) {
+                      _tecnicoBloc.add(TecnicoLoadingEvent(
+                        id: _tecnicoBloc.idMenu,
+                        nome: _tecnicoBloc.nomeMenu,
+                        situacao: _tecnicoBloc.situacaoMenu,
+                        equipamento: null,
+                        page: page - 1,
+                        size: 20,
+                      ));
+                    },
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: MediaQuery.of(context).size.width > 1300
+                          ? 4
+                          : MediaQuery.of(context).size.width > 900
+                              ? 3
+                              : MediaQuery.of(context).size.width > 450
+                                  ? 2
+                                  : 1,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: 2.1,
+                    ),
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                    horizontalPadding: 16,
+                    verticalPadding: 10,
+                  );
                 }
                 return const ErrorComponent();
               },

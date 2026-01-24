@@ -85,43 +85,43 @@ class CardService extends StatelessWidget {
         final double codigoSize = Formatters.getResponsiveFontSize(
           constraints.maxWidth,
           min: 16,
-          max: 28,
-          factor: 0.065,
+          max: 22,
+          factor: 0.06,
         );
         final double clienteSize = Formatters.getResponsiveFontSize(
           constraints.maxWidth,
           min: 14,
-          max: 22,
-          factor: 0.055,
+          max: 20,
+          factor: 0.05,
         );
         final double equipamentoSize = Formatters.getResponsiveFontSize(
           constraints.maxWidth,
           min: 12,
-          max: 20,
+          max: 18,
           factor: 0.05,
         );
         final double tecnicoSize = Formatters.getResponsiveFontSize(
           constraints.maxWidth,
           min: 12,
-          max: 20,
+          max: 18,
           factor: 0.05,
         );
         final double filialSize = Formatters.getResponsiveFontSize(
           constraints.maxWidth,
           min: 10,
-          max: 18,
+          max: 16,
           factor: 0.045,
         );
         final double dataSize = Formatters.getResponsiveFontSize(
           constraints.maxWidth,
           min: 10,
-          max: 18,
+          max: 16,
           factor: 0.045,
         );
         final double statusSize = Formatters.getResponsiveFontSize(
           constraints.maxWidth,
           min: 12,
-          max: 20,
+          max: 18,
           factor: 0.05,
         );
 
@@ -143,18 +143,6 @@ class CardService extends StatelessWidget {
           max: 45,
           factor: 0.15,
         );
-        final double paddingBottom = Formatters.getResponsiveFontSize(
-          constraints.maxWidth,
-          min: 5,
-          max: 15,
-          factor: 0.05,
-        );
-        final double paddingTop = Formatters.getResponsiveFontSize(
-          constraints.maxWidth,
-          min: 5,
-          max: 15,
-          factor: 0.035,
-        );
 
         return MouseRegion(
           cursor: SystemMouseCursors.click,
@@ -167,176 +155,175 @@ class CardService extends StatelessWidget {
                 onLongPress: isSkeleton ? () {} : onLongPress,
                 onDoubleTap: isSkeleton ? () {} : onDoubleTap,
                 onTap: isSkeleton ? () {} : onTap,
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: 100,
-                    maxHeight: 200,
-                    maxWidth: constraints.maxWidth,
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? const Color(0xFFE9E7E7)
+                        : const Color(0xFCFDFDFF),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: isSelected
+                          ? Colors.black
+                          : (hovered
+                              ? Colors.black38
+                              : const Color(0xFFEAE6E5)),
+                      width: 1.5,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withValues(alpha: 0.2),
+                        spreadRadius: 2,
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
                   ),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                    decoration: BoxDecoration(
-                      color: isSelected ? const Color(0xFFE9E7E7) : const Color(0xFCFDFDFF),
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: isSelected ? Colors.black : (hovered ? Colors.black38 : const Color(0xFFEAE6E5)),
-                        width: 1.5,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withValues(alpha: 0.2),
-                          spreadRadius: 2,
-                          blurRadius: 6,
-                          offset: const Offset(0, 3),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Align(
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding: EdgeInsets.only(left: paddingLeftSmall),
+                          child: Text(
+                            '$codigo',
+                            style: TextStyle(
+                              fontSize: codigoSize,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
                         ),
-                      ],
-                    ),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Align(
-                            alignment: Alignment.center,
-                            child: Padding(
-                              padding: EdgeInsets.only(left: paddingLeftSmall, bottom: paddingBottom),
-                              child: Text(
-                                '$codigo',
-                                style: TextStyle(
-                                  fontSize: codigoSize,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: paddingLeftSmall),
-                            child: Text(
-                              cliente,
-                              style: TextStyle(
-                                fontSize: clienteSize,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-                          Padding(
-                            padding: EdgeInsets.only(left: paddingLeftMedium),
-                            child: SizedBox(
-                              width: constraints.maxWidth * 0.5,
-                              child: Text(
-                                "$equipamento - $marca",
-                                style: TextStyle(
-                                  fontSize: equipamentoSize,
-                                  color: Colors.black,
-                                ),
-                                maxLines: 2,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-                          Padding(
-                            padding: EdgeInsets.only(left: paddingLeftMedium, top: paddingTop),
-                            child: Text(
-                              "Técnico - ${(tecnico == null) ? "Não declarado" : tecnico}",
-                              style: TextStyle(
-                                fontSize: tecnicoSize,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-                          Padding(
-                            padding: EdgeInsets.only(left: paddingLeftLarge),
-                            child: Text(
-                              filial,
-                              style: TextStyle(
-                                fontSize: filialSize,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 3),
-                          if (dataPrevista != null && dataEfetiva == null)
-                            Padding(
-                              padding: EdgeInsets.only(
-                                left: paddingLeftLarge,
-                              ),
-                              child: Text(
-                                "Data Prevista: ${Formatters.applyDateMask(dataPrevista!)} - ${Formatters.formatScheduleTime(horario!)}",
-                                style: TextStyle(
-                                  fontSize: dataSize,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          if (dataEfetiva != null)
-                            Padding(
-                              padding: EdgeInsets.only(
-                                left: paddingLeftLarge,
-                              ),
-                              child: Text(
-                                "Data Efetiva: ${Formatters.applyDateMask(dataEfetiva!)} - ${Formatters.formatScheduleTime(horario!)}",
-                                style: TextStyle(
-                                  fontSize: dataSize,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          if (dataFechamento != null)
-                            Padding(
-                              padding: EdgeInsets.only(
-                                top: 3,
-                                left: paddingLeftLarge,
-                              ),
-                              child: Text(
-                                "Data Fechamento: ${Formatters.applyDateMask(dataFechamento!)}",
-                                style: TextStyle(
-                                  fontSize: dataSize,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          if (dataFinalGarantia != null)
-                            Padding(
-                              padding: EdgeInsets.only(
-                                top: 3,
-                                left: paddingLeftLarge,
-                              ),
-                              child: Text(
-                                "Data Final da Garantia: ${Formatters.applyDateMask(dataFinalGarantia!)}",
-                                style: TextStyle(
-                                  fontSize: dataSize,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Padding(
-                              padding: EdgeInsets.only(left: paddingLeftSmall, top: paddingBottom),
-                              child: SizedBox(
-                                width: constraints.maxWidth * 0.45,
-                                child: Text(
-                                  status.convertEnumStatusToString(),
-                                  style: TextStyle(
-                                    fontSize: statusSize,
-                                    fontWeight: FontWeight.bold,
-                                    color: _getStatusColor(Formatters.mapStringStatusToEnumStatus(status)),
-                                  ),
-                                  maxLines: 3,
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
                       ),
-                    ),
+                      Padding(
+                        padding: EdgeInsets.only(left: paddingLeftSmall),
+                        child: Text(
+                          cliente,
+                          style: TextStyle(
+                            fontSize: clienteSize,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Padding(
+                        padding: EdgeInsets.only(left: paddingLeftMedium),
+                        child: SizedBox(
+                          width: constraints.maxWidth * 0.5,
+                          child: Text(
+                            "$equipamento - $marca",
+                            style: TextStyle(
+                              fontSize: equipamentoSize,
+                              color: Colors.black,
+                            ),
+                            maxLines: 2,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Padding(
+                        padding: EdgeInsets.only(left: paddingLeftMedium),
+                        child: Text(
+                          "Técnico - ${(tecnico == null) ? "Não declarado" : tecnico}",
+                          style: TextStyle(
+                            fontSize: tecnicoSize,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Padding(
+                        padding: EdgeInsets.only(left: paddingLeftLarge),
+                        child: Text(
+                          filial,
+                          style: TextStyle(
+                            fontSize: filialSize,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      if (dataPrevista != null && dataEfetiva == null)
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: paddingLeftLarge,
+                          ),
+                          child: Text(
+                            "Data Prevista: ${Formatters.applyDateMask(dataPrevista!)} - ${Formatters.formatScheduleTime(horario!)}",
+                            style: TextStyle(
+                              fontSize: dataSize,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      if (dataEfetiva != null)
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: paddingLeftLarge,
+                          ),
+                          child: Text(
+                            "Data Efetiva: ${Formatters.applyDateMask(dataEfetiva!)} - ${Formatters.formatScheduleTime(horario!)}",
+                            style: TextStyle(
+                              fontSize: dataSize,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      if (dataFechamento != null)
+                        Padding(
+                          padding: EdgeInsets.only(
+                            top: 3,
+                            left: paddingLeftLarge,
+                          ),
+                          child: Text(
+                            "Data Fechamento: ${Formatters.applyDateMask(dataFechamento!)}",
+                            style: TextStyle(
+                              fontSize: dataSize,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      if (dataFinalGarantia != null)
+                        Padding(
+                          padding: EdgeInsets.only(
+                            top: 3,
+                            left: paddingLeftLarge,
+                          ),
+                          child: Text(
+                            "Data Final da Garantia: ${Formatters.applyDateMask(dataFinalGarantia!)}",
+                            style: TextStyle(
+                              fontSize: dataSize,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      const Spacer(),
+                      Align(
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding:
+                              EdgeInsets.only(left: paddingLeftSmall, top: 5),
+                          child: SizedBox(
+                            width: constraints.maxWidth * 0.45,
+                            child: Text(
+                              status.convertEnumStatusToString(),
+                              style: TextStyle(
+                                fontSize: statusSize,
+                                fontWeight: FontWeight.bold,
+                                color: _getStatusColor(
+                                    Formatters.mapStringStatusToEnumStatus(
+                                        status)),
+                              ),
+                              maxLines: 3,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               );

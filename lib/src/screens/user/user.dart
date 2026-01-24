@@ -176,6 +176,7 @@ class _UserScreenTestState extends BaseListScreenState<UserResponse> {
                       totalPages: 1,
                       currentPage: 0,
                       onPageChanged: (_) {},
+                      isSkeleton: true,
                     ),
                   );
                 } else if (userState is UserLoadedState) {

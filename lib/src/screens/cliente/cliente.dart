@@ -151,7 +151,7 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
                     child: buildGridOfCards(
                       items: List.generate(
                           16, (_) => Cliente()..applySkeletonData()),
-                      aspectRatio: 1.65,
+                      aspectRatio: 1.55,
                       totalPages: 1,
                       currentPage: 0,
                       onPageChanged: (_) {},
@@ -160,19 +160,32 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
                   );
                 } else if (stateCliente is ClienteSearchSuccessState) {
                   return buildGridOfCards(
-                      items: stateCliente.clientes,
-                      aspectRatio: 1.65,
-                      totalPages: stateCliente.totalPages,
-                      currentPage: stateCliente.currentPage,
-                      onPageChanged: (page) {
-                        _clienteBloc.add(ClienteLoadingEvent(
-                          nome: _clienteBloc.nomeMenu,
-                          telefone: _clienteBloc.telefoneMenu,
-                          endereco: _clienteBloc.enderecoMenu,
-                          page: page - 1,
-                          size: 20,
-                        ));
-                      });
+                    items: stateCliente.clientes,
+                    aspectRatio: 1.55,
+                    totalPages: stateCliente.totalPages,
+                    currentPage: stateCliente.currentPage,
+                    onPageChanged: (page) {
+                      _clienteBloc.add(ClienteLoadingEvent(
+                        nome: _clienteBloc.nomeMenu,
+                        telefone: _clienteBloc.telefoneMenu,
+                        endereco: _clienteBloc.enderecoMenu,
+                        page: page - 1,
+                        size: 20,
+                      ));
+                    },
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: MediaQuery.of(context).size.width > 1400
+                          ? 4
+                          : MediaQuery.of(context).size.width > 1100
+                              ? 3
+                              : MediaQuery.of(context).size.width > 600
+                                  ? 2
+                                  : 1,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: 1.55,
+                    ),
+                  );
                 }
                 return const ErrorComponent();
               },

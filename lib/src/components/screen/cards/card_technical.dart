@@ -60,33 +60,33 @@ class CardTechnician extends StatelessWidget {
               builder: (context, constraints) {
                 final double idSize = Formatters.getResponsiveFontSize(
                   constraints.maxWidth,
-                  min: 14,
+                  min: 16,
                   max: 22,
                   factor: 0.055,
                 );
                 final double nameSize = Formatters.getResponsiveFontSize(
                   constraints.maxWidth,
-                  min: 16,
+                  min: 14,
                   max: 20,
                   factor: 0.05,
                 );
                 final double phoneSize = Formatters.getResponsiveFontSize(
                   constraints.maxWidth,
-                  min: 12,
+                  min: 10,
                   max: 14,
-                  factor: 0.035,
+                  factor: 0.045,
                 );
                 final double statusSize = Formatters.getResponsiveFontSize(
                   constraints.maxWidth,
                   min: 12,
                   max: 16,
-                  factor: 0.04,
+                  factor: 0.05,
                 );
 
                 final bool isCompactLayout = constraints.maxWidth < 320;
 
                 return Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? const Color(0xFFE9E7E7)

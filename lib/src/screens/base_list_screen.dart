@@ -111,50 +111,69 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
     required int currentPage,
     required Function(int) onPageChanged,
     bool isSkeleton = false,
+    SliverGridDelegate? gridDelegate,
+    double mainAxisSpacing = 15,
+    double crossAxisSpacing = 15,
+    double horizontalPadding = 15,
+    double verticalPadding = 10,
   }) {
-    // Se não houver itens, mostra apenas a mensagem
     if (items.isEmpty) {
       return const EntityNotFound(message: "Nenhum item encontrado.");
     }
 
-    // Widget da lista/grid
-    final contentWidget = _listStyle == ListStyle.grid
-        ? GridListView(
-            aspectRatio: aspectRatio,
-            dataList: items,
-            buildCard: (item) => BlocBuilder<ListaBloc, ListaState>(
-              builder: (context, stateLista) {
-                final bool isSelected =
-                    isSkeleton ? false : isItemSelected(item.id, stateLista);
-                final bool isSelectMode =
-                    isSkeleton ? false : isSelectionMode(stateLista);
-
-                return buildItemCard(
-                    item, isSelected, isSelectMode, isSkeleton);
-              },
-            ),
-          )
-        : ListView.builder(
-            itemCount: items.length,
-            itemBuilder: (context, index) =>
-                buildItemCard(items[index], false, false, isSkeleton),
-          );
-
-    // Se tiver apenas uma página, mostra apenas o conteúdo
-    if (totalPages <= 1) {
-      return contentWidget;
+    // SE FOR MODO LISTA: Retorna diretamente o ListView.builder (que já é scrollable)
+    if (_listStyle == ListStyle.list) {
+      return ListView.builder(
+        itemCount: items.length,
+        itemBuilder: (context, index) =>
+            buildItemCard(items[index], false, false, isSkeleton),
+      );
     }
 
-    // Se tiver múltiplas páginas, usa SingleChildScrollView com a paginação no final
+    // MODO GRID: Mantém a lógica atual com GridListView
+    final gridContent = GridListView(
+      aspectRatio: aspectRatio,
+      dataList: items,
+      gridDelegate: gridDelegate,
+      mainAxisSpacing: mainAxisSpacing,
+      crossAxisSpacing: crossAxisSpacing,
+      horizontalPadding: horizontalPadding,
+      verticalPadding: verticalPadding,
+      buildCard: (item) => BlocBuilder<ListaBloc, ListaState>(
+        builder: (context, stateLista) {
+          final bool isSelected =
+              isSkeleton ? false : isItemSelected(item.id, stateLista);
+          final bool isSelectMode =
+              isSkeleton ? false : isSelectionMode(stateLista);
+
+          return buildItemCard(item, isSelected, isSelectMode, isSkeleton);
+        },
+      ),
+    );
+
+    // PARA UMA ÚNICA PÁGINA
+    if (totalPages <= 1) {
+      return SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            gridContent,
+            SizedBox(height: MediaQuery.of(context).padding.bottom + 20),
+          ],
+        ),
+      );
+    }
+
+    // PARA MÚLTIPLAS PÁGINAS
     return SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          contentWidget,
+          gridContent,
           Padding(
             padding: const EdgeInsets.only(
               top: 20,
-              bottom: 40, // Mais espaço no final
+              bottom: 40,
               left: 16,
               right: 16,
             ),

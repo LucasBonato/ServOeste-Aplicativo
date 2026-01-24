@@ -202,6 +202,18 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
                         size: 15,
                       ));
                     },
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: MediaQuery.of(context).size.width > 1400
+                          ? 4
+                          : MediaQuery.of(context).size.width > 1000
+                              ? 3
+                              : MediaQuery.of(context).size.width > 500
+                                  ? 2
+                                  : 1,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: 1,
+                    ),
                   );
                 }
                 return const ErrorComponent();

@@ -42,8 +42,8 @@ class CardClient extends StatelessWidget {
             builder: (context, constraints) {
               final double nameSize = Formatters.getResponsiveFontSize(
                 constraints.maxWidth,
-                min: 16,
-                max: 22,
+                min: 14,
+                max: 20,
                 factor: 0.05,
               );
               final double phoneSize = Formatters.getResponsiveFontSize(
@@ -80,10 +80,14 @@ class CardClient extends StatelessWidget {
 
               return Container(
                 decoration: BoxDecoration(
-                  color: isSelected ? const Color(0xFFE9E7E7) : const Color(0xFCFDFDFF),
+                  color: isSelected
+                      ? const Color(0xFFE9E7E7)
+                      : const Color(0xFCFDFDFF),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isSelected ? Colors.black : (hovered ? Colors.black38 : const Color(0xFFEAE6E5)),
+                    color: isSelected
+                        ? Colors.black
+                        : (hovered ? Colors.black38 : const Color(0xFFEAE6E5)),
                     width: 1.5,
                   ),
                   boxShadow: [
@@ -101,8 +105,8 @@ class CardClient extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(
                       right: 8,
-                      top: 12,
-                      bottom: 12,
+                      top: 8,
+                      bottom: 8,
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,

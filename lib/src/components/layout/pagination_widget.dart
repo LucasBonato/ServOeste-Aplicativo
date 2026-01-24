@@ -113,7 +113,6 @@ class PaginationWidget extends StatelessWidget {
       ),
     );
 
-    // Página 1 e "..." se necessário
     if (currentPage > sidePages + 1) {
       items.add(_buildPageButton(
         page: 1,
@@ -141,7 +140,6 @@ class PaginationWidget extends StatelessWidget {
       }
     }
 
-    // Páginas numeradas
     final pageNumbers = _generatePageNumbers(
       currentPage: currentPage,
       totalPages: totalPages,
@@ -162,7 +160,6 @@ class PaginationWidget extends StatelessWidget {
       ));
     }
 
-    // "..." e última página se necessário
     if (currentPage < totalPages - sidePages - 1) {
       if (currentPage < totalPages - sidePages - 2) {
         items.add(Padding(
@@ -190,7 +187,6 @@ class PaginationWidget extends StatelessWidget {
       ));
     }
 
-    // Botão próximo
     items.add(
       _buildIconButton(
         context: context,
