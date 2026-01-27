@@ -1,4 +1,5 @@
 class Routes {
+  static const String login = "/login";
   static const String tecnico = "/tecnico";
   static const String tecnicoCreate = "/createTecnico";
   static const String tecnicoUpdate = "/updateTecnico";
