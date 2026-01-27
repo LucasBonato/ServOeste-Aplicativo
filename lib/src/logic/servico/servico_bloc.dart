@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:serv_oeste/src/clients/servico_client.dart';
+import 'package:serv_oeste/features/servico/data/servico_client.dart';
 import 'package:serv_oeste/src/logic/base_entity_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_request.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';

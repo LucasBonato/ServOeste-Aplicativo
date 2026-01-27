@@ -9,7 +9,7 @@ import 'package:serv_oeste/src/models/servico/tecnico_disponivel.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
 import 'package:serv_oeste/src/utils/error_handler.dart';
 
-import '../models/tecnico/tecnico.dart';
+import '../../../src/models/tecnico/tecnico.dart';
 
 class TecnicoClient {
   final Dio dio;

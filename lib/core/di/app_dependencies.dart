@@ -11,6 +11,8 @@ import 'package:serv_oeste/features/cliente/data/cliente_client.dart';
 import 'package:serv_oeste/features/cliente/data/cliente_repository_implementation.dart';
 import 'package:serv_oeste/features/cliente/domain/cliente_repository.dart';
 import 'package:serv_oeste/features/auth/data/auth_client.dart';
+import 'package:serv_oeste/features/tecnico/data/tecnico_repository_implementation.dart';
+import 'package:serv_oeste/features/tecnico/domain/tecnico_repository.dart';
 import 'package:serv_oeste/src/clients/dio/dio_service.dart';
 import 'package:serv_oeste/features/endereco/data/endereco_client.dart';
 import 'package:serv_oeste/features/servico/data/servico_client.dart';
@@ -31,7 +33,7 @@ class AppDependencies {
   late final DioService dioService;
   late final AuthRepository authRepository;
   late final ClienteRepository clienteRepository;
-  late final TecnicoClient tecnicoClient;
+  late final TecnicoRepository tecnicoRepository;
   late final ServicoClient servicoClient;
   late final EnderecoClient enderecoClient;
   late final UserClient userClient;
@@ -57,7 +59,7 @@ class AppDependencies {
     });
 
     clienteRepository = ClienteRepositoryImplementation(ClienteClient(dioService.dio));
-    tecnicoClient = TecnicoClient(dioService.dio);
+    tecnicoRepository = TecnicoRepositoryImplementation(TecnicoClient(dioService.dio));
     servicoClient = ServicoClient(dioService.dio);
     enderecoClient = EnderecoClient(dioService.dio);
     userClient = UserClient(dioService.dio);
@@ -67,7 +69,7 @@ class AppDependencies {
     return [
       BlocProvider<AuthBloc>(create: (_) => AuthBloc(authRepository, secureStorageService)),
       BlocProvider<ClienteBloc>(create: (_) => ClienteBloc(clienteRepository)),
-      BlocProvider<TecnicoBloc>(create: (_) => TecnicoBloc(tecnicoClient)),
+      BlocProvider<TecnicoBloc>(create: (_) => TecnicoBloc(tecnicoRepository)),
       BlocProvider<ServicoBloc>(create: (_) => ServicoBloc(servicoClient)),
       BlocProvider<EnderecoBloc>(create: (_) => EnderecoBloc(enderecoClient)),
       BlocProvider<UserBloc>(create: (_) => UserBloc(userClient)),

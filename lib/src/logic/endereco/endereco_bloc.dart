@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:serv_oeste/src/clients/endereco_client.dart';
+import 'package:serv_oeste/features/endereco/data/endereco_client.dart';
 import 'package:serv_oeste/src/logic/base_entity_bloc.dart';
 import 'package:serv_oeste/src/models/endereco/endereco.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
