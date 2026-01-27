@@ -137,6 +137,10 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
                   tecnico: Tecnico.fromForm(form), sobrenome: sobrenome));
 
               form.setNome("$nome $sobrenome");
+
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                bloc.add(TecnicoSearchMenuEvent());
+              });
             },
           );
         },

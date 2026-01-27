@@ -74,10 +74,18 @@ class _TecnicoSearchFieldState extends State<TecnicoSearchField> {
     _debouncer.execute(() {
       widget.onSearchStart?.call();
 
-      if (name.isEmpty) {
-        widget.tecnicoBloc.add(TecnicoSearchMenuEvent(nome: ''));
+      if (widget.isForListScreen) {
+        if (name.isEmpty) {
+          widget.tecnicoBloc.add(TecnicoSearchMenuEvent(nome: ''));
+        } else {
+          widget.tecnicoBloc.add(TecnicoSearchMenuEvent(nome: name));
+        }
       } else {
-        widget.tecnicoBloc.add(TecnicoSearchMenuEvent(nome: name));
+        if (name.isEmpty) {
+          widget.tecnicoBloc.add(TecnicoSearchEvent(nome: ''));
+        } else {
+          widget.tecnicoBloc.add(TecnicoSearchEvent(nome: name));
+        }
       }
     });
   }
