@@ -5,8 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:serv_oeste/core/services/flutter_secure_storage_service.dart';
 import 'package:serv_oeste/core/services/secure_storage_service.dart';
+import 'package:serv_oeste/features/cliente/data/cliente_client.dart';
+import 'package:serv_oeste/features/cliente/data/cliente_repository_implementation.dart';
+import 'package:serv_oeste/features/cliente/domain/cliente_repository.dart';
 import 'package:serv_oeste/src/clients/auth_client.dart';
-import 'package:serv_oeste/src/clients/cliente_client.dart';
 import 'package:serv_oeste/src/clients/dio/dio_service.dart';
 import 'package:serv_oeste/src/clients/endereco_client.dart';
 import 'package:serv_oeste/src/clients/servico_client.dart';
@@ -19,14 +21,14 @@ import 'package:serv_oeste/src/logic/filtro_servico/filtro_servico_provider.dart
 import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
 import 'package:serv_oeste/src/logic/user/user_bloc.dart';
-import 'package:serv_oeste/src/screens/auth/login.dart';
+import 'package:serv_oeste/src/shared/routing/routes.dart';
 
 class AppDependencies {
   final GlobalKey<NavigatorState> navigatorKey;
 
   late final DioService dioService;
   late final AuthClient authClient;
-  late final ClienteClient clienteClient;
+  late final ClienteRepository clienteRepository;
   late final TecnicoClient tecnicoClient;
   late final ServicoClient servicoClient;
   late final EnderecoClient enderecoClient;
@@ -46,13 +48,13 @@ class AppDependencies {
     authClient = AuthClient(dioService.dio);
 
     dioService.addAuthInterceptors(authClient, () {
-      navigatorKey.currentState?.pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
+      navigatorKey.currentState?.pushNamedAndRemoveUntil(
+        Routes.login,
         (_) => false,
       );
     });
 
-    clienteClient = ClienteClient(dioService.dio);
+    clienteRepository = ClienteRepositoryImplementation(ClienteClient(dioService.dio));
     tecnicoClient = TecnicoClient(dioService.dio);
     servicoClient = ServicoClient(dioService.dio);
     enderecoClient = EnderecoClient(dioService.dio);
@@ -62,7 +64,7 @@ class AppDependencies {
   List<BlocProvider> buildBlocProviders() {
     return [
       BlocProvider<AuthBloc>(create: (_) => AuthBloc(authClient, secureStorageService)),
-      BlocProvider<ClienteBloc>(create: (_) => ClienteBloc(clienteClient)),
+      BlocProvider<ClienteBloc>(create: (_) => ClienteBloc(clienteRepository)),
       BlocProvider<TecnicoBloc>(create: (_) => TecnicoBloc(tecnicoClient)),
       BlocProvider<ServicoBloc>(create: (_) => ServicoBloc(servicoClient)),
       BlocProvider<EnderecoBloc>(create: (_) => EnderecoBloc(enderecoClient)),

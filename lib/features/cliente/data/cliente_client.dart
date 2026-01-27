@@ -21,14 +21,18 @@ class ClienteClient {
     int size = 10,
   }) async {
     try {
-      final Response<dynamic> response = await dio.post(ServerEndpoints.clienteFindEndpoint, data: {
-        'nome': nome,
-        'telefone': telefone,
-        'endereco': endereco,
-      }, queryParameters: {
-        "page": page,
-        "size": size,
-      });
+      final Response<dynamic> response = await dio.post(
+        ServerEndpoints.clienteFindEndpoint,
+        data: {
+          'nome': nome,
+          'telefone': telefone,
+          'endereco': endereco,
+        },
+        queryParameters: {
+          "page": page,
+          "size": size,
+        },
+      );
 
       if (response.data != null && response.data is Map<String, dynamic>) {
         return Right(PageContent.fromJson(response.data, (json) => Cliente.fromJson(json)));
@@ -71,17 +75,19 @@ class ClienteClient {
 
   Future<Either<ErrorEntity, void>> update(Cliente cliente, String sobrenome) async {
     try {
-      await dio.put(ServerEndpoints.clienteEndpoint, queryParameters: {
-        "id": cliente.id
-      }, data: {
-        "nome": cliente.nome,
-        "sobrenome": sobrenome,
-        "telefoneFixo": cliente.telefoneFixo,
-        "telefoneCelular": cliente.telefoneCelular,
-        "endereco": cliente.endereco,
-        "bairro": cliente.bairro,
-        "municipio": cliente.municipio,
-      });
+      await dio.put(
+        ServerEndpoints.clienteEndpoint,
+        queryParameters: {"id": cliente.id},
+        data: {
+          "nome": cliente.nome,
+          "sobrenome": sobrenome,
+          "telefoneFixo": cliente.telefoneFixo,
+          "telefoneCelular": cliente.telefoneCelular,
+          "endereco": cliente.endereco,
+          "bairro": cliente.bairro,
+          "municipio": cliente.municipio,
+        },
+      );
     } on DioException catch (e) {
       return Left(ErrorHandler.onRequestError(e));
     }
