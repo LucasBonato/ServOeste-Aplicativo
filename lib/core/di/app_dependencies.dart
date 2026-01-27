@@ -17,6 +17,8 @@ import 'package:serv_oeste/features/servico/data/servico_repository_implementati
 import 'package:serv_oeste/features/servico/domain/servico_repository.dart';
 import 'package:serv_oeste/features/tecnico/data/tecnico_repository_implementation.dart';
 import 'package:serv_oeste/features/tecnico/domain/tecnico_repository.dart';
+import 'package:serv_oeste/features/user/data/user_repository_implementation.dart';
+import 'package:serv_oeste/features/user/domain/user_repository.dart';
 import 'package:serv_oeste/src/clients/dio/dio_service.dart';
 import 'package:serv_oeste/features/endereco/data/endereco_client.dart';
 import 'package:serv_oeste/features/servico/data/servico_client.dart';
@@ -40,7 +42,7 @@ class AppDependencies {
   late final TecnicoRepository tecnicoRepository;
   late final ServicoRepository servicoRepository;
   late final EnderecoRepository enderecoRepository;
-  late final UserClient userClient;
+  late final UserRepository userRepository;
   late final SecureStorageService secureStorageService;
 
   AppDependencies(
@@ -66,7 +68,7 @@ class AppDependencies {
     tecnicoRepository = TecnicoRepositoryImplementation(TecnicoClient(dioService.dio));
     servicoRepository = ServicoRepositoryImplementation(ServicoClient(dioService.dio));
     enderecoRepository = EnderecoRepositoryImplementation(EnderecoClient(dioService.dio));
-    userClient = UserClient(dioService.dio);
+    userRepository = UserRepositoryImplementation(UserClient(dioService.dio));
   }
 
   List<BlocProvider> buildBlocProviders() {
@@ -76,14 +78,13 @@ class AppDependencies {
       BlocProvider<TecnicoBloc>(create: (_) => TecnicoBloc(tecnicoRepository)),
       BlocProvider<ServicoBloc>(create: (_) => ServicoBloc(servicoRepository)),
       BlocProvider<EnderecoBloc>(create: (_) => EnderecoBloc(enderecoRepository)),
-      BlocProvider<UserBloc>(create: (_) => UserBloc(userClient)),
+      BlocProvider<UserBloc>(create: (_) => UserBloc(userRepository)),
     ];
   }
 
   List<SingleChildWidget> buildProviders() {
     return [
       ChangeNotifierProvider(create: (_) => FiltroServicoProvider()),
-      Provider<UserClient>.value(value: userClient),
       Provider<SecureStorageService>.value(value: secureStorageService),
     ];
   }

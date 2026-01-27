@@ -10,7 +10,7 @@ class EnderecoRepositoryImplementation implements EnderecoRepository {
   EnderecoRepositoryImplementation(this._client);
 
   @override
-  Future<Either<ErrorEntity, Endereco?>> getEndereco(String cep) {
-    return _client.getEndereco(cep);
+  Future<Either<ErrorEntity, Endereco?>> getEndereco(String cep) async {
+    return await _client.getEndereco(cep);
   }
 }
