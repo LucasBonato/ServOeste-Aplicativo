@@ -11,6 +11,8 @@ import 'package:serv_oeste/features/cliente/data/cliente_client.dart';
 import 'package:serv_oeste/features/cliente/data/cliente_repository_implementation.dart';
 import 'package:serv_oeste/features/cliente/domain/cliente_repository.dart';
 import 'package:serv_oeste/features/auth/data/auth_client.dart';
+import 'package:serv_oeste/features/endereco/data/endereco_repository_implementation.dart';
+import 'package:serv_oeste/features/endereco/domain/endereco_repository.dart';
 import 'package:serv_oeste/features/servico/data/servico_repository_implementation.dart';
 import 'package:serv_oeste/features/servico/domain/servico_repository.dart';
 import 'package:serv_oeste/features/tecnico/data/tecnico_repository_implementation.dart';
@@ -37,7 +39,7 @@ class AppDependencies {
   late final ClienteRepository clienteRepository;
   late final TecnicoRepository tecnicoRepository;
   late final ServicoRepository servicoRepository;
-  late final EnderecoClient enderecoClient;
+  late final EnderecoRepository enderecoRepository;
   late final UserClient userClient;
   late final SecureStorageService secureStorageService;
 
@@ -63,7 +65,7 @@ class AppDependencies {
     clienteRepository = ClienteRepositoryImplementation(ClienteClient(dioService.dio));
     tecnicoRepository = TecnicoRepositoryImplementation(TecnicoClient(dioService.dio));
     servicoRepository = ServicoRepositoryImplementation(ServicoClient(dioService.dio));
-    enderecoClient = EnderecoClient(dioService.dio);
+    enderecoRepository = EnderecoRepositoryImplementation(EnderecoClient(dioService.dio));
     userClient = UserClient(dioService.dio);
   }
 
@@ -73,7 +75,7 @@ class AppDependencies {
       BlocProvider<ClienteBloc>(create: (_) => ClienteBloc(clienteRepository)),
       BlocProvider<TecnicoBloc>(create: (_) => TecnicoBloc(tecnicoRepository)),
       BlocProvider<ServicoBloc>(create: (_) => ServicoBloc(servicoRepository)),
-      BlocProvider<EnderecoBloc>(create: (_) => EnderecoBloc(enderecoClient)),
+      BlocProvider<EnderecoBloc>(create: (_) => EnderecoBloc(enderecoRepository)),
       BlocProvider<UserBloc>(create: (_) => UserBloc(userClient)),
     ];
   }
