@@ -2,29 +2,29 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:serv_oeste/core/services/secure_storage_service.dart';
 import 'package:serv_oeste/src/clients/auth_client.dart';
 import 'package:serv_oeste/src/clients/dio/server_endpoints.dart';
-import 'package:serv_oeste/src/services/secure_storage_service.dart';
 
 class TokenRefreshInterceptor extends Interceptor {
   final Dio dio;
   final AuthClient authClient;
   final VoidCallback? onTokenRefreshFailed;
+  final SecureStorageService secureStorageService;
 
   bool _isRefreshing = false;
-  final List<({DioException error, ErrorInterceptorHandler handler})>
-      _pendingRequests = [];
+  final List<({DioException error, ErrorInterceptorHandler handler})> _pendingRequests = [];
   final Set<String> _processedRequests = {};
 
   TokenRefreshInterceptor({
+    required this.secureStorageService,
     required this.dio,
     required this.authClient,
     this.onTokenRefreshFailed,
   });
 
   @override
-  Future<void> onError(
-      DioException err, ErrorInterceptorHandler handler) async {
+  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.requestOptions.path == ServerEndpoints.refreshEndpoint) {
       return handler.next(err);
     }
@@ -33,8 +33,7 @@ class TokenRefreshInterceptor extends Interceptor {
       return handler.next(err);
     }
 
-    final requestId =
-        '${err.requestOptions.method}:${err.requestOptions.path}:${DateTime.now().millisecondsSinceEpoch}';
+    final requestId = '${err.requestOptions.method}:${err.requestOptions.path}:${DateTime.now().millisecondsSinceEpoch}';
 
     if (_processedRequests.contains(requestId)) {
       return handler.next(err);
@@ -53,10 +52,8 @@ class TokenRefreshInterceptor extends Interceptor {
       final refreshResult = await authClient.refreshToken();
 
       if (refreshResult.isRight()) {
-        final newTokens =
-            refreshResult.getOrElse(() => throw Exception('Missing token'));
-        await SecureStorageService.saveTokens(
-            newTokens.accessToken, newTokens.refreshToken);
+        final newTokens = refreshResult.getOrElse(() => throw Exception('Missing token'));
+        await secureStorageService.saveTokens(newTokens.accessToken, newTokens.refreshToken);
 
         await _retryRequest(err, handler);
 
@@ -81,12 +78,11 @@ class TokenRefreshInterceptor extends Interceptor {
     }
   }
 
-  Future<void> _retryRequest(
-      DioException err, ErrorInterceptorHandler handler) async {
+  Future<void> _retryRequest(DioException err, ErrorInterceptorHandler handler) async {
     try {
-      final newAccessToken = await SecureStorageService.getAccessToken();
+      final String? newAccessToken = await secureStorageService.getAccessToken();
 
-      if (newAccessToken == null || newAccessToken.isEmpty) {
+      if (!secureStorageService.hasToken(newAccessToken)) {
         throw Exception('Token inválido após refresh');
       }
 
@@ -123,13 +119,12 @@ class TokenRefreshInterceptor extends Interceptor {
     }
   }
 
-  Future<void> _handleRefreshFailed(
-      ErrorInterceptorHandler handler, DioException err) async {
+  Future<void> _handleRefreshFailed(ErrorInterceptorHandler handler, DioException err) async {
     _isRefreshing = false;
     _pendingRequests.clear();
     _processedRequests.clear();
 
-    await SecureStorageService.deleteTokens();
+    await secureStorageService.deleteTokens();
     onTokenRefreshFailed?.call();
 
     for (final pending in _pendingRequests) {

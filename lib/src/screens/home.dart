@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/core/services/secure_storage_service.dart';
 import 'package:serv_oeste/src/components/layout/pagination_widget.dart';
 import 'package:serv_oeste/src/components/screen/cards/card_service.dart';
 import 'package:serv_oeste/src/components/screen/entity_not_found.dart';
@@ -10,7 +11,6 @@ import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/screens/servico/update_servico.dart';
-import 'package:serv_oeste/src/services/secure_storage_service.dart';
 import 'package:serv_oeste/src/utils/jwt_utils.dart';
 
 class Home extends StatefulWidget {
@@ -22,18 +22,20 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   String? _userName;
+  late final SecureStorageService _secureStorageService;
 
   @override
   void initState() {
     super.initState();
+    _secureStorageService = context.read<SecureStorageService>();
     _extractUserInfo();
   }
 
   void _extractUserInfo() async {
-    final token = await SecureStorageService.getAccessToken();
+    final String? token = await _secureStorageService.getAccessToken();
 
-    if (token != null && token.isNotEmpty) {
-      final decodedToken = decodeJwt(token);
+    if (_secureStorageService.hasToken(token)) {
+      final decodedToken = decodeJwt(token!);
       if (decodedToken != null) {
         setState(() {
           _userName = decodedToken['sub'] as String?;
