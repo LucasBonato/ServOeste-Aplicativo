@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
 import 'package:serv_oeste/core/services/secure_storage_service.dart';
-import 'package:serv_oeste/src/clients/auth_client.dart';
+import 'package:serv_oeste/features/auth/domain/auth_repository.dart';
 import 'package:serv_oeste/src/logic/base_entity_bloc.dart';
 import 'package:serv_oeste/src/models/auth/auth.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
@@ -11,7 +11,7 @@ part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends BaseEntityBloc<AuthEvent, AuthState> {
-  final AuthClient _authClient;
+  final AuthRepository _authRepository;
   final SecureStorageService _storage;
 
   @override
@@ -20,7 +20,7 @@ class AuthBloc extends BaseEntityBloc<AuthEvent, AuthState> {
   @override
   AuthState errorState(ErrorEntity error) => AuthErrorState(error: error);
 
-  AuthBloc(this._authClient, this._storage) : super(AuthInitialState()) {
+  AuthBloc(this._authRepository, this._storage) : super(AuthInitialState()) {
     on<AuthLoginEvent>(_login);
     on<AuthLogoutEvent>(_logout);
     on<RestoreAuthStateEvent>(_restoreState);
@@ -32,7 +32,7 @@ class AuthBloc extends BaseEntityBloc<AuthEvent, AuthState> {
   ) async {
     await handleRequest<AuthResponse>(
       emit: emit,
-      request: () => _authClient.login(username: event.username, password: event.password),
+      request: () => _authRepository.login(username: event.username, password: event.password),
       onSuccess: (AuthResponse authResponse) async {
         await _storage.saveTokens(authResponse.accessToken, authResponse.refreshToken);
         emit(AuthLoginSuccessState(authResponse: authResponse));
@@ -51,7 +51,7 @@ class AuthBloc extends BaseEntityBloc<AuthEvent, AuthState> {
         final String? refreshToken = await _storage.getRefreshToken();
 
         if (accessToken != null && refreshToken != null) {
-          return _authClient.logout(
+          return _authRepository.logout(
             accessToken: accessToken,
             refreshToken: refreshToken,
           );

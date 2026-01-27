@@ -4,14 +4,14 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:serv_oeste/core/services/secure_storage_service.dart';
-import 'package:serv_oeste/src/clients/auth_client.dart';
+import 'package:serv_oeste/features/auth/domain/auth_repository.dart';
 import 'package:serv_oeste/src/clients/dio/server_endpoints.dart';
 import 'package:serv_oeste/src/models/auth/auth.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 
 class TokenRefreshInterceptor extends Interceptor {
   final Dio dio;
-  final AuthClient authClient;
+  final AuthRepository authRepository;
   final VoidCallback? onTokenRefreshFailed;
   final SecureStorageService secureStorageService;
 
@@ -21,7 +21,7 @@ class TokenRefreshInterceptor extends Interceptor {
   TokenRefreshInterceptor({
     required this.secureStorageService,
     required this.dio,
-    required this.authClient,
+    required this.authRepository,
     this.onTokenRefreshFailed,
   });
 
@@ -44,7 +44,7 @@ class TokenRefreshInterceptor extends Interceptor {
     _isRefreshing = true;
 
     try {
-      final Either<ErrorEntity, AuthResponse> refreshResult = await authClient.refreshToken();
+      final Either<ErrorEntity, AuthResponse> refreshResult = await authRepository.refreshToken();
 
       if (refreshResult.isRight()) {
         final AuthResponse newTokens = refreshResult.getOrElse(() => throw Exception('Missing token'));

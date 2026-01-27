@@ -5,15 +5,17 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:serv_oeste/core/services/flutter_secure_storage_service.dart';
 import 'package:serv_oeste/core/services/secure_storage_service.dart';
+import 'package:serv_oeste/features/auth/data/auth_repository_implementation.dart';
+import 'package:serv_oeste/features/auth/domain/auth_repository.dart';
 import 'package:serv_oeste/features/cliente/data/cliente_client.dart';
 import 'package:serv_oeste/features/cliente/data/cliente_repository_implementation.dart';
 import 'package:serv_oeste/features/cliente/domain/cliente_repository.dart';
-import 'package:serv_oeste/src/clients/auth_client.dart';
+import 'package:serv_oeste/features/auth/data/auth_client.dart';
 import 'package:serv_oeste/src/clients/dio/dio_service.dart';
-import 'package:serv_oeste/src/clients/endereco_client.dart';
-import 'package:serv_oeste/src/clients/servico_client.dart';
-import 'package:serv_oeste/src/clients/tecnico_client.dart';
-import 'package:serv_oeste/src/clients/user_client.dart';
+import 'package:serv_oeste/features/endereco/data/endereco_client.dart';
+import 'package:serv_oeste/features/servico/data/servico_client.dart';
+import 'package:serv_oeste/features/tecnico/data/tecnico_client.dart';
+import 'package:serv_oeste/features/user/data/user_client.dart';
 import 'package:serv_oeste/src/logic/auth/auth_bloc.dart';
 import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
 import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
@@ -27,7 +29,7 @@ class AppDependencies {
   final GlobalKey<NavigatorState> navigatorKey;
 
   late final DioService dioService;
-  late final AuthClient authClient;
+  late final AuthRepository authRepository;
   late final ClienteRepository clienteRepository;
   late final TecnicoClient tecnicoClient;
   late final ServicoClient servicoClient;
@@ -45,9 +47,9 @@ class AppDependencies {
     secureStorageService = FlutterSecureStorageService(const FlutterSecureStorage());
 
     dioService = DioService(secureStorageService);
-    authClient = AuthClient(dioService.dio);
+    authRepository = AuthRepositoryImplementation(AuthClient(dioService.dio));
 
-    dioService.addAuthInterceptors(authClient, () {
+    dioService.addAuthInterceptors(authRepository, () {
       navigatorKey.currentState?.pushNamedAndRemoveUntil(
         Routes.login,
         (_) => false,
@@ -63,7 +65,7 @@ class AppDependencies {
 
   List<BlocProvider> buildBlocProviders() {
     return [
-      BlocProvider<AuthBloc>(create: (_) => AuthBloc(authClient, secureStorageService)),
+      BlocProvider<AuthBloc>(create: (_) => AuthBloc(authRepository, secureStorageService)),
       BlocProvider<ClienteBloc>(create: (_) => ClienteBloc(clienteRepository)),
       BlocProvider<TecnicoBloc>(create: (_) => TecnicoBloc(tecnicoClient)),
       BlocProvider<ServicoBloc>(create: (_) => ServicoBloc(servicoClient)),
