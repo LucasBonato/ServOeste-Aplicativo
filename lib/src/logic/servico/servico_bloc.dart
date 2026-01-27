@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:serv_oeste/features/servico/data/servico_client.dart';
+import 'package:serv_oeste/features/servico/domain/servico_repository.dart';
 import 'package:serv_oeste/src/logic/base_entity_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_request.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
@@ -13,7 +13,7 @@ part 'servico_event.dart';
 part 'servico_state.dart';
 
 class ServicoBloc extends BaseEntityBloc<ServicoEvent, ServicoState> {
-  final ServicoClient _servicoClient;
+  final ServicoRepository _servicoRepository;
   ServicoFilterRequest? filterRequest;
   bool isFirstRequest = true;
 
@@ -23,7 +23,7 @@ class ServicoBloc extends BaseEntityBloc<ServicoEvent, ServicoState> {
   @override
   ServicoState errorState(ErrorEntity error) => ServicoErrorState(error: error);
 
-  ServicoBloc(this._servicoClient) : super(ServicoInitialState()) {
+  ServicoBloc(this._servicoRepository) : super(ServicoInitialState()) {
     on<ServicoLoadingEvent>(_fetchAllServicesWithFilter);
     on<ServicoInitialLoadingEvent>(_fetchAllServicesInitial);
     on<ServicoSearchMenuEvent>(_fetchServiceSearchMenu);
@@ -39,34 +39,36 @@ class ServicoBloc extends BaseEntityBloc<ServicoEvent, ServicoState> {
     filterRequest = _combineFilters(filterRequest ?? ServicoFilterRequest(), event.filterRequest);
 
     await handleRequest<PageContent<Servico>>(
-        emit: emit,
-        request: () => _servicoClient.getServicosByFilter(
-              filterRequest!,
-              page: event.page,
-              size: event.size,
-            ),
-        onSuccess: (PageContent<Servico> pageServicos) => emit(ServicoSearchSuccessState(
-              servicos: pageServicos.content,
-              currentPage: pageServicos.page.page,
-              totalPages: pageServicos.page.totalPages,
-              totalElements: pageServicos.page.totalElements,
-            )));
+      emit: emit,
+      request: () => _servicoRepository.getServicosByFilter(
+        filterRequest!,
+        page: event.page,
+        size: event.size,
+      ),
+      onSuccess: (PageContent<Servico> pageServicos) => emit(ServicoSearchSuccessState(
+        servicos: pageServicos.content,
+        currentPage: pageServicos.page.page,
+        totalPages: pageServicos.page.totalPages,
+        totalElements: pageServicos.page.totalElements,
+      )),
+    );
   }
 
   Future<void> _fetchAllServicesInitial(ServicoInitialLoadingEvent event, Emitter<ServicoState> emit) async {
     await handleRequest<PageContent<Servico>>(
-        emit: emit,
-        request: () => _servicoClient.getServicosByFilter(
-              event.filterRequest,
-              page: event.page,
-              size: event.size,
-            ),
-        onSuccess: (PageContent<Servico> pageServicos) => emit(ServicoSearchSuccessState(
-              servicos: pageServicos.content,
-              currentPage: pageServicos.page.page,
-              totalPages: pageServicos.page.totalPages,
-              totalElements: pageServicos.page.totalElements,
-            )));
+      emit: emit,
+      request: () => _servicoRepository.getServicosByFilter(
+        event.filterRequest,
+        page: event.page,
+        size: event.size,
+      ),
+      onSuccess: (PageContent<Servico> pageServicos) => emit(ServicoSearchSuccessState(
+        servicos: pageServicos.content,
+        currentPage: pageServicos.page.page,
+        totalPages: pageServicos.page.totalPages,
+        totalElements: pageServicos.page.totalElements,
+      )),
+    );
   }
 
   Future<void> _fetchServiceSearchMenu(ServicoSearchMenuEvent event, Emitter<ServicoState> emit) async {
@@ -79,25 +81,26 @@ class ServicoBloc extends BaseEntityBloc<ServicoEvent, ServicoState> {
     }
 
     await handleRequest<PageContent<Servico>>(
-        emit: emit,
-        request: () => _servicoClient.getServicosByFilter(
-              filterRequest!,
-              page: event.page,
-              size: event.size,
-            ),
-        onSuccess: (PageContent<Servico> pageServicos) => emit(ServicoSearchSuccessState(
-              servicos: pageServicos.content,
-              currentPage: pageServicos.page.page,
-              totalPages: pageServicos.page.totalPages,
-              totalElements: pageServicos.page.totalElements,
-            )));
+      emit: emit,
+      request: () => _servicoRepository.getServicosByFilter(
+        filterRequest!,
+        page: event.page,
+        size: event.size,
+      ),
+      onSuccess: (PageContent<Servico> pageServicos) => emit(ServicoSearchSuccessState(
+        servicos: pageServicos.content,
+        currentPage: pageServicos.page.page,
+        totalPages: pageServicos.page.totalPages,
+        totalElements: pageServicos.page.totalElements,
+      )),
+    );
   }
 
   Future<void> _fetchOneService(ServicoSearchOneEvent event, Emitter<ServicoState> emit) async {
     await handleRequest<Servico?>(
       emit: emit,
       loading: ServicoSearchOneLoadingState(),
-      request: () => _servicoClient.getServicoById(event.id),
+      request: () => _servicoRepository.getServicoById(event.id),
       onSuccess: (Servico? servico) => emit(ServicoSearchOneSuccessState(servico: servico!)),
     );
   }
@@ -105,7 +108,7 @@ class ServicoBloc extends BaseEntityBloc<ServicoEvent, ServicoState> {
   Future<void> _registerService(ServicoRegisterEvent event, Emitter<ServicoState> emit) async {
     await handleRequest(
       emit: emit,
-      request: () => _servicoClient.createServicoComClienteExistente(event.servico),
+      request: () => _servicoRepository.createServicoComClienteExistente(event.servico),
       onSuccess: (_) => emit(ServicoRegisterSuccessState()),
     );
   }
@@ -113,7 +116,7 @@ class ServicoBloc extends BaseEntityBloc<ServicoEvent, ServicoState> {
   Future<void> _registerServicePlusClient(ServicoRegisterPlusClientEvent event, Emitter<ServicoState> emit) async {
     await handleRequest(
       emit: emit,
-      request: () => _servicoClient.createServicoComClienteNaoExistente(event.servico, event.cliente),
+      request: () => _servicoRepository.createServicoComClienteNaoExistente(event.servico, event.cliente),
       onSuccess: (_) => emit(ServicoRegisterSuccessState()),
     );
   }
@@ -121,7 +124,7 @@ class ServicoBloc extends BaseEntityBloc<ServicoEvent, ServicoState> {
   Future<void> _updateService(ServicoUpdateEvent event, Emitter<ServicoState> emit) async {
     await handleRequest(
       emit: emit,
-      request: () => _servicoClient.putServico(event.servico),
+      request: () => _servicoRepository.update(event.servico),
       onSuccess: (_) => emit(ServicoUpdateSuccessState()),
     );
   }
@@ -129,7 +132,7 @@ class ServicoBloc extends BaseEntityBloc<ServicoEvent, ServicoState> {
   Future<void> _deleteService(ServicoDisableListEvent event, Emitter<ServicoState> emit) async {
     await handleRequest(
       emit: emit,
-      request: () => _servicoClient.disableListOfServico(event.selectedList),
+      request: () => _servicoRepository.disableListOfServico(event.selectedList),
       onSuccess: (_) => emit(ServicoUpdateSuccessState()),
     );
     await _fetchServiceSearchMenu(ServicoSearchMenuEvent(), emit);
