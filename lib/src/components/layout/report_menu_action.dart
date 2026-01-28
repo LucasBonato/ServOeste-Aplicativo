@@ -3,12 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
 import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
+import 'package:serv_oeste/shared/pdfs/orcamento_pdf.dart';
+import 'package:serv_oeste/shared/pdfs/recibo_pdf.dart';
+import 'package:serv_oeste/shared/pdfs/relatorio_visitas_pdf.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
-import 'package:serv_oeste/src/pdfs/orcamento_pdf.dart';
-import 'package:serv_oeste/src/pdfs/recibo_pdf.dart';
-import 'package:serv_oeste/src/pdfs/relatorio_visitas_pdf.dart';
 
 class ReportMenuActionButton extends StatefulWidget {
   final ServicoBloc servicoBloc;
