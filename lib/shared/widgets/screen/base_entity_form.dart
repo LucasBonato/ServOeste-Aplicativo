@@ -252,10 +252,16 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
   Widget build(BuildContext context) {
     return BlocConsumer<B, S>(
       bloc: widget.bloc,
+      listenWhen: (previous, current) {
+        return !widget.isSuccess(previous) && widget.isSuccess(current) ||
+            !widget.isError(previous) && widget.isError(current);
+      },
       listener: (context, state) {
         if (widget.isSuccess(state)) {
           widget.onSuccess?.call();
-          Navigator.pop(context, true);
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context, true);
+          }
 
           final successMessage = widget.getSuccessMessage?.call(state) ?? 'Operação realizada com sucesso!';
 
@@ -265,7 +271,8 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
               backgroundColor: Colors.green,
             ),
           );
-        } else if (widget.isError(state)) {
+        }
+        else if (widget.isError(state)) {
           widget.onError?.call(state);
 
           final errorMessage = widget.getErrorMessage?.call(state) ?? "Erro ao realizar operação";
