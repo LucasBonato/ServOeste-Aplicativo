@@ -35,6 +35,7 @@ class ClienteFormScreen extends StatelessWidget {
       title: title,
       shouldActivateEvent: isUpdate,
       child: Skeletonizer(
+        enabled: isSkeleton,
         child: ClienteFormWidget(
           bloc: bloc,
           clienteForm: form,
