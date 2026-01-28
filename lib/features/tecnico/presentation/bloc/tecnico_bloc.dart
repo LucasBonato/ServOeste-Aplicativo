@@ -7,8 +7,8 @@ import 'package:serv_oeste/features/servico/domain/entities/tecnico_disponivel.d
 import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_response.dart';
 import 'package:serv_oeste/features/tecnico/domain/tecnico_repository.dart';
 import 'package:serv_oeste/shared/bloc/base_entity_bloc.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
-import 'package:serv_oeste/src/models/page_content.dart';
+import 'package:serv_oeste/shared/models/error/error_entity.dart';
+import 'package:serv_oeste/shared/models/page_content.dart';
 import 'package:serv_oeste/features/tecnico/domain/entities/tecnico.dart';
 
 part 'tecnico_event.dart';

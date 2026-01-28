@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
+import 'package:serv_oeste/shared/models/error/error_entity.dart';
 
 abstract class BaseEntityBloc<Event, State> extends Bloc<Event, State> {
   BaseEntityBloc(super.initialState);

@@ -7,7 +7,7 @@ import 'package:serv_oeste/core/http/server_endpoints.dart';
 import 'package:serv_oeste/core/services/secure_storage_service.dart';
 import 'package:serv_oeste/features/auth/domain/auth_repository.dart';
 import 'package:serv_oeste/features/auth/domain/entities/auth.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
+import 'package:serv_oeste/shared/models/error/error_entity.dart';
 
 class TokenRefreshInterceptor extends Interceptor {
   final Dio dio;

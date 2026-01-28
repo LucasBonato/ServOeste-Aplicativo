@@ -1,5 +1,5 @@
-import 'package:serv_oeste/src/utils/skeleton/skeleton_generator.dart';
-import 'package:serv_oeste/src/utils/skeleton/skeletonizable.dart';
+import 'package:serv_oeste/shared/widgets/skeleton/skeleton_generator.dart';
+import 'package:serv_oeste/shared/widgets/skeleton/skeletonizable.dart';
 
 class UserResponse extends Skeletonizable {
   int? id;

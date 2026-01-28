@@ -2,8 +2,8 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:serv_oeste/core/http/server_endpoints.dart';
 import 'package:serv_oeste/features/endereco/domain/entities/endereco.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
-import 'package:serv_oeste/src/utils/error_handler.dart';
+import 'package:serv_oeste/shared/models/error/error_entity.dart';
+import 'package:serv_oeste/core/errors/error_handler.dart';
 
 class EnderecoClient {
   final Dio dio;

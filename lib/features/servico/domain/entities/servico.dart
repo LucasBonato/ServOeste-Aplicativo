@@ -1,8 +1,8 @@
 import 'package:serv_oeste/core/constants/constants.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_form.dart';
-import 'package:serv_oeste/src/utils/formatters/formatters.dart';
-import 'package:serv_oeste/src/utils/skeleton/skeleton_generator.dart';
-import 'package:serv_oeste/src/utils/skeleton/skeletonizable.dart';
+import 'package:serv_oeste/shared/utils/formatters/formatters.dart';
+import 'package:serv_oeste/shared/widgets/skeleton/skeleton_generator.dart';
+import 'package:serv_oeste/shared/widgets/skeleton/skeletonizable.dart';
 
 class Servico implements Skeletonizable {
   int id;

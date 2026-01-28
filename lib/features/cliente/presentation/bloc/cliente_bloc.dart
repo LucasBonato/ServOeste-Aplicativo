@@ -3,8 +3,8 @@ import 'package:meta/meta.dart';
 import 'package:serv_oeste/features/cliente/domain/cliente_repository.dart';
 import 'package:serv_oeste/shared/bloc/base_entity_bloc.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
-import 'package:serv_oeste/src/models/page_content.dart';
+import 'package:serv_oeste/shared/models/error/error_entity.dart';
+import 'package:serv_oeste/shared/models/page_content.dart';
 
 part 'cliente_event.dart';
 part 'cliente_state.dart';

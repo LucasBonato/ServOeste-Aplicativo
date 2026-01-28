@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/src/utils/formatters/formatters.dart';
+import 'package:serv_oeste/shared/utils/formatters/formatters.dart';
 
 class ClienteForm extends ChangeNotifier {
   int? id;

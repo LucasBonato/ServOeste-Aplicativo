@@ -4,8 +4,8 @@ import 'package:serv_oeste/features/servico/data/servico_client.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_filter_request.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_request.dart';
 import 'package:serv_oeste/features/servico/domain/servico_repository.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
-import 'package:serv_oeste/src/models/page_content.dart';
+import 'package:serv_oeste/shared/models/error/error_entity.dart';
+import 'package:serv_oeste/shared/models/page_content.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico.dart';
 
 class ServicoRepositoryImplementation implements ServicoRepository {

@@ -4,15 +4,15 @@ import 'package:logger/logger.dart';
 import 'package:serv_oeste/core/routing/routes.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_filter_request.dart';
 import 'package:serv_oeste/features/servico/presentation/screens/servico_update_screen.dart';
-import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
-import 'package:serv_oeste/src/components/layout/fab_remove.dart';
-import 'package:serv_oeste/src/components/layout/responsive_search_inputs.dart';
-import 'package:serv_oeste/src/components/screen/cards/card_service.dart';
-import 'package:serv_oeste/src/components/screen/error_component.dart';
-import 'package:serv_oeste/src/components/screen/expandable_fab_items.dart';
+import 'package:serv_oeste/shared/widgets/formFields/search_input_field.dart';
+import 'package:serv_oeste/shared/widgets/layout/fab_remove.dart';
+import 'package:serv_oeste/shared/widgets/layout/responsive_search_inputs.dart';
+import 'package:serv_oeste/features/servico/presentation/widgets/servico_card.dart';
+import 'package:serv_oeste/shared/widgets/screen/error_component.dart';
+import 'package:serv_oeste/shared/widgets/screen/expandable_fab_items.dart';
 import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico.dart';
-import 'package:serv_oeste/src/screens/base_list_screen.dart';
+import 'package:serv_oeste/shared/widgets/screen/base_list_screen.dart';
 import 'package:serv_oeste/features/servico/presentation/screens/filter_servico.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -92,7 +92,7 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
 
   @override
   Widget buildItemCard(Servico servico, bool isSelected, bool isSelectMode, bool isSkeleton) {
-    return CardService(
+    return ServicoCard(
       onDoubleTap: () => onNavigateToUpdateScreen(servico.id, onSearchFieldChanged, secondId: servico.idCliente),
       onLongPress: () => onSelectItemList(servico.id),
       onTap: () {

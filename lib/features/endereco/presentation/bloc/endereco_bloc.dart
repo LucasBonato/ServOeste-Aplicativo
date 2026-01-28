@@ -3,7 +3,7 @@ import 'package:meta/meta.dart';
 import 'package:serv_oeste/features/endereco/domain/endereco_repository.dart';
 import 'package:serv_oeste/shared/bloc/base_entity_bloc.dart';
 import 'package:serv_oeste/features/endereco/domain/entities/endereco.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
+import 'package:serv_oeste/shared/models/error/error_entity.dart';
 
 part 'endereco_event.dart';
 part 'endereco_state.dart';

@@ -3,7 +3,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico.dart';
-import 'package:serv_oeste/src/utils/formatters/formatters.dart';
+import 'package:serv_oeste/shared/utils/formatters/formatters.dart';
 
 class PDFBase {
   static Future<pw.Document> createDocument() async {

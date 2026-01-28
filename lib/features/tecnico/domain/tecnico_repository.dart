@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:serv_oeste/features/servico/domain/entities/tecnico_disponivel.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
-import 'package:serv_oeste/src/models/page_content.dart';
+import 'package:serv_oeste/shared/models/error/error_entity.dart';
+import 'package:serv_oeste/shared/models/page_content.dart';
 import 'package:serv_oeste/features/tecnico/domain/entities/tecnico.dart';
 
 import 'entities/tecnico_response.dart';
