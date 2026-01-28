@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:serv_oeste/features/cliente/domain/entities/cliente_form.dart';
 import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
 import 'package:serv_oeste/features/cliente/presentation/widgets/cliente_form_widget.dart';
-import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
 import 'package:serv_oeste/src/screens/base_form_screen.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 

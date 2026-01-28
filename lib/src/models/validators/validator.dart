@@ -1,6 +1,6 @@
 import 'package:lucid_validation/lucid_validation.dart';
+import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_form.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
-import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
 
 mixin BackendErrorsValidator {
   final Map<String, String> externalErrors = {};

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/main.dart';
 import 'package:serv_oeste/src/layouts/base_layout.dart';
 import 'package:serv_oeste/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:serv_oeste/src/models/auth/auth_form.dart';
+import 'package:serv_oeste/features/auth/domain/entities/auth_form.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/validators/auth_validator.dart';
 

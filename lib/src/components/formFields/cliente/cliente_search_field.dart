@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
 import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
-import 'package:serv_oeste/src/models/cliente/cliente.dart';
+import 'package:serv_oeste/features/cliente/domain/entities/cliente.dart';
 import 'package:serv_oeste/src/shared/debouncer.dart';
 
 class ClienteSearchField extends StatefulWidget {

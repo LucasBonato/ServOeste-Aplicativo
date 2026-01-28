@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:serv_oeste/src/clients/dio/server_endpoints.dart';
-import 'package:serv_oeste/src/models/endereco/endereco.dart';
+import 'package:serv_oeste/core/http/server_endpoints.dart';
+import 'package:serv_oeste/features/endereco/domain/entities/endereco.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/utils/error_handler.dart';
 

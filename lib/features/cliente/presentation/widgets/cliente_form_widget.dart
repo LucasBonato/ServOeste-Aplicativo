@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/core/constants/constants.dart';
+import 'package:serv_oeste/features/cliente/domain/entities/cliente_form.dart';
 import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
 import 'package:serv_oeste/features/endereco/presentation/bloc/endereco_bloc.dart';
 import 'package:serv_oeste/src/components/formFields/cliente/cliente_search_field.dart';
@@ -8,7 +9,6 @@ import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart
 import 'package:serv_oeste/src/components/formFields/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
-import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/validators/cliente_validator.dart';
 import 'package:serv_oeste/src/screens/base_entity_form.dart';

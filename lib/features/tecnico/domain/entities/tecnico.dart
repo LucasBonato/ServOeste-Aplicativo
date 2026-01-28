@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
+import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_form.dart';
 import 'package:serv_oeste/src/utils/extensions/string_extensions.dart';
 import 'package:serv_oeste/src/utils/formatters/formatters.dart';
 

@@ -1,4 +1,4 @@
-import 'package:serv_oeste/src/models/user/user_form.dart';
+import 'package:serv_oeste/features/user/domain/entities/user_form.dart';
 
 class User {
   int? id;

@@ -1,5 +1,5 @@
 import 'package:lucid_validation/lucid_validation.dart';
-import 'package:serv_oeste/src/models/auth/auth_form.dart';
+import 'package:serv_oeste/features/auth/domain/entities/auth_form.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
 

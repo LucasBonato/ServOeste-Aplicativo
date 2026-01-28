@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/core/constants/constants.dart';
+import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_form.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
 import 'package:serv_oeste/src/components/formFields/custom_grid_checkers_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
 import 'package:serv_oeste/src/components/formFields/tecnico/tecnico_search_field.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
-import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
 import 'package:serv_oeste/src/models/validators/tecnico_validator.dart';
 import 'package:serv_oeste/src/screens/base_entity_form.dart';
 import 'package:serv_oeste/src/screens/base_form_screen.dart';

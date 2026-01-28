@@ -20,7 +20,7 @@ import 'package:serv_oeste/features/tecnico/data/tecnico_repository_implementati
 import 'package:serv_oeste/features/tecnico/domain/tecnico_repository.dart';
 import 'package:serv_oeste/features/user/data/user_repository_implementation.dart';
 import 'package:serv_oeste/features/user/domain/user_repository.dart';
-import 'package:serv_oeste/src/clients/dio/dio_service.dart';
+import 'package:serv_oeste/core/http/dio_service.dart';
 import 'package:serv_oeste/features/endereco/data/endereco_client.dart';
 import 'package:serv_oeste/features/servico/data/servico_client.dart';
 import 'package:serv_oeste/features/tecnico/data/tecnico_client.dart';

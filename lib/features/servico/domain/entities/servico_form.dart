@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:serv_oeste/core/constants/constants.dart';
-import 'package:serv_oeste/src/models/servico/servico.dart';
+import 'package:serv_oeste/features/servico/domain/entities/servico.dart';
 import 'package:serv_oeste/src/utils/extensions/string_extensions.dart';
 import 'package:serv_oeste/src/utils/formatters/formatters.dart';
 

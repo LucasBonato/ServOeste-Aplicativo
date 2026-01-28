@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/src/models/user/user_response.dart';
+import 'package:serv_oeste/features/user/domain/entities/user_response.dart';
 import 'package:serv_oeste/src/utils/formatters/formatters.dart';
 
 class UserCard extends StatelessWidget {

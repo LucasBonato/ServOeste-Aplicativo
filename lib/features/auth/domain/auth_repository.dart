@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:serv_oeste/src/models/auth/auth.dart';
+import 'package:serv_oeste/features/auth/domain/entities/auth.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 
 abstract class AuthRepository {

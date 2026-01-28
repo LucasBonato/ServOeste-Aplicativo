@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:serv_oeste/core/constants/constants.dart';
+import 'package:serv_oeste/features/servico/domain/entities/servico_filter_request.dart';
 import 'package:serv_oeste/src/components/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/date_picker_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/dropdown_form_field.dart';
@@ -10,7 +11,6 @@ import 'package:serv_oeste/src/components/layout/app_bar_form.dart';
 import 'package:serv_oeste/src/components/screen/elevated_form_button.dart';
 import 'package:serv_oeste/src/logic/filtro_servico/filtro_servico_provider.dart';
 import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
-import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/utils/formatters/formatters.dart';
 import 'package:serv_oeste/src/utils/formatters/input_masks.dart';
 
@@ -20,7 +20,7 @@ class FilterService extends StatelessWidget {
   void applyFilters(BuildContext context) {
     final filter = context.read<FiltroServicoProvider>().filter;
 
-    final filterRequest = ServicoFilterRequest(
+    final ServicoFilterRequest filterRequest = ServicoFilterRequest(
       id: filter.id != null && filter.id! > 0 ? filter.id! : null,
       filial: filter.filial,
       equipamento: filter.equipamento,

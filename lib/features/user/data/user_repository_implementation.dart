@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:serv_oeste/features/user/data/user_client.dart';
+import 'package:serv_oeste/features/user/domain/entities/user_response.dart';
 import 'package:serv_oeste/features/user/domain/user_repository.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/page_content.dart';
-import 'package:serv_oeste/src/models/user/user_response.dart';
 
 class UserRepositoryImplementation implements UserRepository {
   final UserClient _client;

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/core/routing/routes.dart';
+import 'package:serv_oeste/features/user/domain/entities/user_response.dart';
 import 'package:serv_oeste/src/components/layout/fab_add.dart';
 import 'package:serv_oeste/src/components/screen/cards/card_user.dart';
 import 'package:serv_oeste/src/components/screen/error_component.dart';
 import 'package:serv_oeste/features/user/presentation/bloc/user_bloc.dart';
 import 'package:serv_oeste/src/models/enums/list_style.dart';
-import 'package:serv_oeste/src/models/user/user_response.dart';
 import 'package:serv_oeste/src/screens/base_list_screen.dart';
 import 'package:serv_oeste/features/user/presentation/screens/user_create_screen.dart';
 import 'package:serv_oeste/features/user/presentation/screens/user_update_screen.dart';

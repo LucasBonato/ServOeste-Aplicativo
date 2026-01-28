@@ -1,4 +1,4 @@
-import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
+import 'package:serv_oeste/features/cliente/domain/entities/cliente_form.dart';
 import 'package:serv_oeste/src/utils/formatters/formatters.dart';
 
 class ClienteRequest {

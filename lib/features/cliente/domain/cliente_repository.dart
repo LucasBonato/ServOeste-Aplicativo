@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:serv_oeste/src/models/cliente/cliente.dart';
+import 'package:serv_oeste/features/cliente/domain/entities/cliente.dart';
 import 'package:serv_oeste/src/models/error/error_entity.dart';
 import 'package:serv_oeste/src/models/page_content.dart';
 

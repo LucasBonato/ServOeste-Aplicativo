@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
+import 'package:serv_oeste/features/servico/domain/entities/servico_filter_request.dart';
 
 class FiltroServicoProvider extends ChangeNotifier {
   ServicoFilterRequest _filter = ServicoFilterRequest();

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/core/services/secure_storage_service.dart';
+import 'package:serv_oeste/features/servico/domain/entities/servico_filter_request.dart';
 import 'package:serv_oeste/src/components/layout/pagination_widget.dart';
 import 'package:serv_oeste/src/components/screen/cards/card_service.dart';
 import 'package:serv_oeste/src/components/screen/entity_not_found.dart';
@@ -8,8 +9,7 @@ import 'package:serv_oeste/src/components/screen/error_component.dart';
 import 'package:serv_oeste/src/components/screen/grid_view.dart';
 import 'package:serv_oeste/src/components/screen/loading.dart';
 import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
-import 'package:serv_oeste/src/models/servico/servico.dart';
-import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
+import 'package:serv_oeste/features/servico/domain/entities/servico.dart';
 import 'package:serv_oeste/features/servico/presentation/screens/servico_update_screen.dart';
 import 'package:serv_oeste/src/utils/jwt_utils.dart';
 

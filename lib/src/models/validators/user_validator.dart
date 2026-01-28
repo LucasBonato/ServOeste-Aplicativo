@@ -1,6 +1,6 @@
 import 'package:lucid_validation/lucid_validation.dart';
+import 'package:serv_oeste/features/user/domain/entities/user_form.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
-import 'package:serv_oeste/src/models/user/user_form.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
 
 class UserValidator extends LucidValidator<UserForm> with BackendErrorsValidator {

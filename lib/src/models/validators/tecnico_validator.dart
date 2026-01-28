@@ -1,6 +1,6 @@
 import 'package:lucid_validation/lucid_validation.dart';
+import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_form.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
-import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
 import 'package:serv_oeste/src/models/validators/validator.dart';
 
 class TecnicoValidator extends LucidValidator<TecnicoForm> with BackendErrorsValidator {
