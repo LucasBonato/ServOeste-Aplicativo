@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
+import 'package:serv_oeste/core/routing/routes.dart';
 import 'package:serv_oeste/core/services/flutter_secure_storage_service.dart';
 import 'package:serv_oeste/core/services/secure_storage_service.dart';
 import 'package:serv_oeste/features/auth/data/auth_repository_implementation.dart';
@@ -19,7 +20,7 @@ import 'package:serv_oeste/features/tecnico/data/tecnico_repository_implementati
 import 'package:serv_oeste/features/tecnico/domain/tecnico_repository.dart';
 import 'package:serv_oeste/features/user/data/user_repository_implementation.dart';
 import 'package:serv_oeste/features/user/domain/user_repository.dart';
-import 'package:serv_oeste/src/clients/dio/dio_service.dart';
+import 'package:serv_oeste/core/http/dio_service.dart';
 import 'package:serv_oeste/features/endereco/data/endereco_client.dart';
 import 'package:serv_oeste/features/servico/data/servico_client.dart';
 import 'package:serv_oeste/features/tecnico/data/tecnico_client.dart';
@@ -31,7 +32,6 @@ import 'package:serv_oeste/src/logic/filtro_servico/filtro_servico_provider.dart
 import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
 import 'package:serv_oeste/features/user/presentation/bloc/user_bloc.dart';
-import 'package:serv_oeste/src/shared/routing/routes.dart';
 
 class AppDependencies {
   final GlobalKey<NavigatorState> navigatorKey;

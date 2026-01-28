@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/features/cliente/domain/entities/cliente_form.dart';
 import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
 import 'package:serv_oeste/features/cliente/presentation/screens/cliente_form_base_screen.dart';
-import 'package:serv_oeste/src/models/cliente/cliente.dart';
-import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
+import 'package:serv_oeste/features/cliente/domain/entities/cliente.dart';
 
 class ClienteUpdateScreen extends StatefulWidget {
   final int id;

@@ -3,15 +3,15 @@ import 'dart:convert';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
-import 'package:serv_oeste/src/clients/dio/server_endpoints.dart';
-import 'package:serv_oeste/src/models/cliente/cliente_request.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
-import 'package:serv_oeste/src/models/page_content.dart';
-import 'package:serv_oeste/src/models/servico/servico.dart';
-import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
-import 'package:serv_oeste/src/models/servico/servico_request.dart';
-import 'package:serv_oeste/src/utils/error_handler.dart';
-import 'package:serv_oeste/src/utils/formatters/formatters.dart';
+import 'package:serv_oeste/core/http/server_endpoints.dart';
+import 'package:serv_oeste/features/cliente/domain/entities/cliente_request.dart';
+import 'package:serv_oeste/features/servico/domain/entities/servico_filter_request.dart';
+import 'package:serv_oeste/features/servico/domain/entities/servico_request.dart';
+import 'package:serv_oeste/shared/models/error/error_entity.dart';
+import 'package:serv_oeste/shared/models/page_content.dart';
+import 'package:serv_oeste/features/servico/domain/entities/servico.dart';
+import 'package:serv_oeste/core/errors/error_handler.dart';
+import 'package:serv_oeste/shared/utils/formatters/formatters.dart';
 
 class ServicoClient {
   final Dio dio;

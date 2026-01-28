@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:serv_oeste/features/auth/data/auth_client.dart';
 import 'package:serv_oeste/features/auth/domain/auth_repository.dart';
-import 'package:serv_oeste/src/models/auth/auth.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
+import 'package:serv_oeste/features/auth/domain/entities/auth.dart';
+import 'package:serv_oeste/shared/models/error/error_entity.dart';
 
 class AuthRepositoryImplementation implements AuthRepository {
   final AuthClient _client;

@@ -3,9 +3,9 @@ import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
 import 'package:serv_oeste/core/services/secure_storage_service.dart';
 import 'package:serv_oeste/features/auth/domain/auth_repository.dart';
-import 'package:serv_oeste/src/logic/base_entity_bloc.dart';
-import 'package:serv_oeste/src/models/auth/auth.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
+import 'package:serv_oeste/shared/bloc/base_entity_bloc.dart';
+import 'package:serv_oeste/features/auth/domain/entities/auth.dart';
+import 'package:serv_oeste/shared/models/error/error_entity.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';

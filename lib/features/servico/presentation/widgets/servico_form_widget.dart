@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
-import 'package:serv_oeste/src/components/formFields/tecnico/tecnico_search_field.dart';
+import 'package:serv_oeste/core/constants/constants.dart';
+import 'package:serv_oeste/features/servico/domain/entities/servico_form.dart';
+import 'package:serv_oeste/shared/widgets/formFields/search_input_field.dart';
+import 'package:serv_oeste/features/tecnico/presentation/widgets/tecnico_search_field.dart';
 import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
-import 'package:serv_oeste/src/models/enums/error_code_key.dart';
-import 'package:serv_oeste/src/models/servico/servico_form.dart';
-import 'package:serv_oeste/src/models/validators/servico_validator.dart';
-import 'package:serv_oeste/src/screens/base_entity_form.dart';
-import 'package:serv_oeste/src/shared/constants/constants.dart';
-import 'package:serv_oeste/src/utils/extensions/string_extensions.dart';
-import 'package:serv_oeste/src/utils/formatters/input_masks.dart';
+import 'package:serv_oeste/shared/models/enums/error_code_key.dart';
+import 'package:serv_oeste/features/servico/domain/validators/servico_validator.dart';
+import 'package:serv_oeste/shared/widgets/screen/base_entity_form.dart';
+import 'package:serv_oeste/shared/utils/extensions/string_extensions.dart';
+import 'package:serv_oeste/shared/utils/formatters/input_masks.dart';
 
 class ServicoFormWidget extends StatefulWidget {
   final String submitText;

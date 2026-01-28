@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:serv_oeste/features/cliente/domain/cliente_repository.dart';
 import 'package:serv_oeste/features/cliente/data/cliente_client.dart';
-import 'package:serv_oeste/src/models/cliente/cliente.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
-import 'package:serv_oeste/src/models/page_content.dart';
+import 'package:serv_oeste/features/cliente/domain/entities/cliente.dart';
+import 'package:serv_oeste/shared/models/error/error_entity.dart';
+import 'package:serv_oeste/shared/models/page_content.dart';
 
 class ClienteRepositoryImplementation implements ClienteRepository {
   final ClienteClient _client;

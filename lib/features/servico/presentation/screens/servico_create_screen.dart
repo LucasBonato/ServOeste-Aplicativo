@@ -3,27 +3,27 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
-import 'package:serv_oeste/src/components/formFields/custom_search_form_field.dart';
-import 'package:serv_oeste/src/components/formFields/field_labels.dart';
-import 'package:serv_oeste/src/components/screen/cards/card_builder_form.dart';
-import 'package:serv_oeste/src/components/screen/filtered_clients_table.dart';
-import 'package:serv_oeste/src/components/screen/table_technical.dart';
+import 'package:serv_oeste/core/constants/constants.dart';
+import 'package:serv_oeste/features/cliente/domain/entities/cliente_form.dart';
+import 'package:serv_oeste/features/cliente/domain/entities/cliente_request.dart';
+import 'package:serv_oeste/features/servico/domain/entities/servico_form.dart';
+import 'package:serv_oeste/features/servico/domain/entities/servico_request.dart';
+import 'package:serv_oeste/shared/widgets/formFields/custom_search_form_field.dart';
+import 'package:serv_oeste/shared/widgets/formFields/field_labels.dart';
+import 'package:serv_oeste/shared/widgets/screen/cards/card_builder_form.dart';
+import 'package:serv_oeste/shared/widgets/screen/filtered_clients_table.dart';
+import 'package:serv_oeste/features/tecnico/presentation/widgets/tecnico_table_modal.dart';
 import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
 import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
-import 'package:serv_oeste/src/models/cliente/cliente.dart';
-import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
-import 'package:serv_oeste/src/models/cliente/cliente_request.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
-import 'package:serv_oeste/src/models/servico/servico_form.dart';
-import 'package:serv_oeste/src/models/servico/servico_request.dart';
-import 'package:serv_oeste/src/models/validators/cliente_validator.dart';
-import 'package:serv_oeste/src/models/validators/servico_validator.dart';
-import 'package:serv_oeste/src/screens/base_form_screen.dart';
+import 'package:serv_oeste/features/cliente/domain/entities/cliente.dart';
+import 'package:serv_oeste/shared/models/error/error_entity.dart';
+import 'package:serv_oeste/features/cliente/domain/validators/cliente_validator.dart';
+import 'package:serv_oeste/features/servico/domain/validators/servico_validator.dart';
+import 'package:serv_oeste/shared/widgets/screen/base_form_screen.dart';
 import 'package:serv_oeste/features/cliente/presentation/widgets/cliente_form_widget.dart';
 import 'package:serv_oeste/features/servico/presentation/widgets/servico_form_widget.dart';
-import 'package:serv_oeste/src/shared/constants/constants.dart';
-import 'package:serv_oeste/src/shared/debouncer.dart';
+import 'package:serv_oeste/shared/utils/debouncer.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class ServicoCreateScreen extends StatefulWidget {
@@ -120,7 +120,7 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return TableTecnicosModal(
+        return TecnicoTableModal(
           especialidadeId: idEspecialidade,
           setValuesAvailabilityTechnicianTable: _setTableValues,
         );

@@ -2,14 +2,14 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:serv_oeste/core/constants/constants.dart';
+import 'package:serv_oeste/features/servico/domain/entities/tecnico_disponivel.dart';
+import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_response.dart';
 import 'package:serv_oeste/features/tecnico/domain/tecnico_repository.dart';
-import 'package:serv_oeste/src/logic/base_entity_bloc.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
-import 'package:serv_oeste/src/models/page_content.dart';
-import 'package:serv_oeste/src/models/servico/tecnico_disponivel.dart';
-import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
-import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
-import 'package:serv_oeste/src/shared/constants/constants.dart';
+import 'package:serv_oeste/shared/bloc/base_entity_bloc.dart';
+import 'package:serv_oeste/shared/models/error/error_entity.dart';
+import 'package:serv_oeste/shared/models/page_content.dart';
+import 'package:serv_oeste/features/tecnico/domain/entities/tecnico.dart';
 
 part 'tecnico_event.dart';
 part 'tecnico_state.dart';

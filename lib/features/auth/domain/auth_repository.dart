@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:serv_oeste/src/models/auth/auth.dart';
-import 'package:serv_oeste/src/models/error/error_entity.dart';
+import 'package:serv_oeste/features/auth/domain/entities/auth.dart';
+import 'package:serv_oeste/shared/models/error/error_entity.dart';
 
 abstract class AuthRepository {
   Future<Either<ErrorEntity, AuthResponse>> login({required String username, required String password});
