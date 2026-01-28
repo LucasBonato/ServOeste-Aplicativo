@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+import 'package:serv_oeste/core/services/secure_storage_service.dart';
 import 'package:serv_oeste/src/clients/auth_client.dart';
 import 'package:serv_oeste/src/clients/dio/auth_interceptor.dart';
 import 'package:serv_oeste/src/clients/dio/dio_interceptor.dart';
@@ -21,13 +22,14 @@ class DioService {
     ),
   );
   final CookieJar _cookieJar = CookieJar();
+  final SecureStorageService _secureStorageService;
 
   bool _authInterceptorsAdded = false;
 
-  DioService() {
+  DioService(this._secureStorageService) {
     _dio.interceptors.add(CookieManager(_cookieJar));
     if (Constants.isDev) {
-      _dio.interceptors.add(DioInterceptor());
+      _dio.interceptors.add(DioInterceptor(_secureStorageService));
     }
   }
 
@@ -40,11 +42,13 @@ class DioService {
     }
 
     _dio.interceptors.addAll([
-      AuthInterceptor(),
+      AuthInterceptor(_secureStorageService),
       TokenRefreshInterceptor(
-          dio: _dio,
-          authClient: authClient,
-          onTokenRefreshFailed: onTokenRefreshFailed),
+        secureStorageService: _secureStorageService,
+        dio: _dio,
+        authClient: authClient,
+        onTokenRefreshFailed: onTokenRefreshFailed,
+      ),
     ]);
 
     _authInterceptorsAdded = true;

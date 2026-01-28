@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
+import 'package:serv_oeste/core/services/flutter_secure_storage_service.dart';
+import 'package:serv_oeste/core/services/secure_storage_service.dart';
 import 'package:serv_oeste/src/clients/auth_client.dart';
 import 'package:serv_oeste/src/clients/cliente_client.dart';
 import 'package:serv_oeste/src/clients/dio/dio_service.dart';
@@ -28,6 +31,7 @@ class AppDependencies {
   late final ServicoClient servicoClient;
   late final EnderecoClient enderecoClient;
   late final UserClient userClient;
+  late final SecureStorageService secureStorageService;
 
   AppDependencies(
     this.navigatorKey
@@ -36,7 +40,9 @@ class AppDependencies {
   }
 
   void _init() {
-    dioService = DioService();
+    secureStorageService = FlutterSecureStorageService(const FlutterSecureStorage());
+
+    dioService = DioService(secureStorageService);
     authClient = AuthClient(dioService.dio);
 
     dioService.addAuthInterceptors(authClient, () {
@@ -55,7 +61,7 @@ class AppDependencies {
 
   List<BlocProvider> buildBlocProviders() {
     return [
-      BlocProvider<AuthBloc>(create: (_) => AuthBloc(authClient)),
+      BlocProvider<AuthBloc>(create: (_) => AuthBloc(authClient, secureStorageService)),
       BlocProvider<ClienteBloc>(create: (_) => ClienteBloc(clienteClient)),
       BlocProvider<TecnicoBloc>(create: (_) => TecnicoBloc(tecnicoClient)),
       BlocProvider<ServicoBloc>(create: (_) => ServicoBloc(servicoClient)),
@@ -68,6 +74,7 @@ class AppDependencies {
     return [
       ChangeNotifierProvider(create: (_) => FiltroServicoProvider()),
       Provider<UserClient>.value(value: userClient),
+      Provider<SecureStorageService>.value(value: secureStorageService),
     ];
   }
 }

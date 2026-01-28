@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/core/services/secure_storage_service.dart';
 import 'package:serv_oeste/src/components/layout/bottom_nav_bar.dart';
 import 'package:serv_oeste/src/components/layout/header.dart';
 import 'package:serv_oeste/src/components/layout/sidebar_navigation.dart';
@@ -18,7 +19,6 @@ import 'package:serv_oeste/src/screens/home.dart';
 import 'package:serv_oeste/src/screens/servico/servico.dart';
 import 'package:serv_oeste/src/screens/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/screens/user/user.dart';
-import 'package:serv_oeste/src/services/secure_storage_service.dart';
 import 'package:serv_oeste/src/utils/jwt_utils.dart';
 
 class BaseLayout extends StatefulWidget {
@@ -42,6 +42,7 @@ class BaseLayoutState extends State<BaseLayout> {
   String? _userRole;
   bool _isInitialized = false;
 
+  late final SecureStorageService _secureStorageService;
   late final ServicoBloc _servicoBloc;
   late final TecnicoBloc _tecnicoBloc;
   late final ClienteBloc _clienteBloc;
@@ -51,6 +52,9 @@ class BaseLayoutState extends State<BaseLayout> {
   @override
   void initState() {
     super.initState();
+
+    _secureStorageService = context.read<SecureStorageService>();
+
     _servicoBloc = context.read<ServicoBloc>();
     _tecnicoBloc = context.read<TecnicoBloc>();
     _clienteBloc = context.read<ClienteBloc>();
@@ -68,7 +72,7 @@ class BaseLayoutState extends State<BaseLayout> {
   }
 
   Future<void> _initializeUserRole() async {
-    final token = await SecureStorageService.getAccessToken();
+    final String? token = await _secureStorageService.getAccessToken();
     if (token != null && token.isNotEmpty) {
       final decodedToken = decodeJwt(token);
       if (decodedToken != null) {

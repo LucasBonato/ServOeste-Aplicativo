@@ -2,21 +2,23 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
-import 'package:serv_oeste/src/services/secure_storage_service.dart';
+import 'package:serv_oeste/core/services/secure_storage_service.dart';
 
 class DioInterceptor extends Interceptor {
   final Logger _logger = Logger(printer: PrettyPrinter(printEmojis: false));
   final JsonEncoder jsonEncoder = const JsonEncoder.withIndent("  ");
 
+  final SecureStorageService _secureStorageService;
+
+  DioInterceptor(this._secureStorageService);
+
   @override
-  Future<void> onRequest(
-      RequestOptions options, RequestInterceptorHandler handler) async {
-    final isAuthRoute = options.path.contains('/auth/login') ||
-        options.path.contains('/auth/refresh');
+  Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+    final isAuthRoute = options.path.contains('/auth/login') || options.path.contains('/auth/refresh');
 
     if (!isAuthRoute) {
-      final token = await SecureStorageService.getAccessToken();
-      if (token != null && token.isNotEmpty) {
+      final String? token = await _secureStorageService.getAccessToken();
+      if (_secureStorageService.hasToken(token)) {
         options.headers['Authorization'] = 'Bearer $token';
       }
     }
@@ -40,8 +42,7 @@ class DioInterceptor extends Interceptor {
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    if (response.requestOptions.path.contains('/auth/refresh') &&
-        response.data != null) {
+    if (response.requestOptions.path.contains('/auth/refresh') && response.data != null) {
       final newToken = response.data['accessToken'];
       if (newToken != null) {
         _analisarToken(newToken, 'Novo token recebido');
@@ -72,8 +73,7 @@ class DioInterceptor extends Interceptor {
       }
 
       final cookies = err.requestOptions.headers['cookie'];
-      if (cookies is String &&
-          _contarOcorrencias(cookies, 'refreshToken') > 1) {
+      if (cookies is String && _contarOcorrencias(cookies, 'refreshToken') > 1) {
         _logger.e('🚨 COOKIES DUPLICADOS DETECTADOS!');
         _logger.e('Cookie header corrompido: $cookies');
       }
@@ -95,10 +95,8 @@ class DioInterceptor extends Interceptor {
   void _limparCookiesDuplicados(RequestOptions options) {
     if (options.headers.containsKey('cookie')) {
       final cookieHeader = options.headers['cookie'] as String?;
-      if (cookieHeader != null &&
-          _contarOcorrencias(cookieHeader, 'refreshToken') > 1) {
-        final firstTokenMatch =
-            RegExp(r'refreshToken=([^;]+)').firstMatch(cookieHeader);
+      if (cookieHeader != null && _contarOcorrencias(cookieHeader, 'refreshToken') > 1) {
+        final firstTokenMatch = RegExp(r'refreshToken=([^;]+)').firstMatch(cookieHeader);
         if (firstTokenMatch != null) {
           final cleanToken = firstTokenMatch.group(1);
           options.headers['cookie'] = 'refreshToken=$cleanToken';
