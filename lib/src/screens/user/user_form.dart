@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
-import 'package:serv_oeste/src/logic/user/user_bloc.dart';
+import 'package:serv_oeste/features/user/presentation/bloc/user_bloc.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/user/user_form.dart';
 import 'package:serv_oeste/src/models/validators/user_validator.dart';

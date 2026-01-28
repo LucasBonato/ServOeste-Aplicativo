@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:serv_oeste/src/components/screen/loading.dart';
-import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
+import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
 
 class TableTecnicosModal extends StatefulWidget {
   final int especialidadeId;

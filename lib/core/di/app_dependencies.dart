@@ -24,13 +24,13 @@ import 'package:serv_oeste/features/endereco/data/endereco_client.dart';
 import 'package:serv_oeste/features/servico/data/servico_client.dart';
 import 'package:serv_oeste/features/tecnico/data/tecnico_client.dart';
 import 'package:serv_oeste/features/user/data/user_client.dart';
-import 'package:serv_oeste/src/logic/auth/auth_bloc.dart';
-import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
-import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
+import 'package:serv_oeste/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
+import 'package:serv_oeste/features/endereco/presentation/bloc/endereco_bloc.dart';
 import 'package:serv_oeste/src/logic/filtro_servico/filtro_servico_provider.dart';
-import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
-import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
-import 'package:serv_oeste/src/logic/user/user_bloc.dart';
+import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
+import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
+import 'package:serv_oeste/features/user/presentation/bloc/user_bloc.dart';
 import 'package:serv_oeste/src/shared/routing/routes.dart';
 
 class AppDependencies {

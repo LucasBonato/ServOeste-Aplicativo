@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:serv_oeste/src/logic/user/user_bloc.dart';
+import 'package:serv_oeste/features/user/presentation/bloc/user_bloc.dart';
 import 'package:serv_oeste/src/models/user/user_form.dart';
 import 'package:serv_oeste/src/screens/user/user_form.dart';
 import 'package:serv_oeste/src/utils/extensions/role_extensions.dart';

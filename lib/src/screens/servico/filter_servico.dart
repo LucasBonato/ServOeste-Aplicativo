@@ -8,7 +8,7 @@ import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.
 import 'package:serv_oeste/src/components/layout/app_bar_form.dart';
 import 'package:serv_oeste/src/components/screen/elevated_form_button.dart';
 import 'package:serv_oeste/src/logic/filtro_servico/filtro_servico_provider.dart';
-import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
+import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/shared/constants/constants.dart';
 import 'package:serv_oeste/src/utils/formatters/formatters.dart';
