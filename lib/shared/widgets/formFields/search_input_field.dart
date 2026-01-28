@@ -75,6 +75,29 @@ class TextFormInputField extends SearchInputField {
   });
 }
 
+class TextSearchFormInputField extends SearchInputField {
+  final String label;
+  final TextInputType keyboardType;
+  final TextEditingController? controller;
+  final void Function(String)? onSuffix;
+
+  TextSearchFormInputField({
+    required super.validator,
+    required super.onChanged,
+    required super.hint,
+    required this.keyboardType,
+    required this.label,
+    super.valueNotifier,
+    super.listenTo,
+    super.shouldExpand = false,
+    super.startNewRow = false,
+    super.enabled = true,
+    super.flex = 1,
+    this.controller,
+    this.onSuffix,
+  });
+}
+
 class DropdownInputField extends SearchInputField {
   final List<String> dropdownValues;
 

@@ -228,7 +228,6 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
         suggestionsBoxDecoration: SuggestionsBoxDecoration(
           constraints: BoxConstraints(
             maxHeight: 200,
-            minWidth: MediaQuery.of(context).size.width * 0.8,
           ),
           elevation: 4,
           color: Colors.white,

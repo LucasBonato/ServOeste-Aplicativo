@@ -73,8 +73,7 @@ class ServicoBloc extends BaseEntityBloc<ServicoEvent, ServicoState> {
 
   Future<void> _fetchServiceSearchMenu(ServicoSearchMenuEvent event, Emitter<ServicoState> emit) async {
     emit(ServicoLoadingState());
-    filterRequest = event.filterRequest ?? filterRequest;
-    filterRequest = filterRequest ?? ServicoFilterRequest();
+    filterRequest = event.filterRequest ?? filterRequest ?? ServicoFilterRequest();
 
     if (filterRequest != null && event.filterRequest != null) {
       filterRequest = _combineFilters(filterRequest!, event.filterRequest!);

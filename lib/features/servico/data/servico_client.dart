@@ -38,27 +38,31 @@ class ServicoClient {
     int size = 10,
   }) async {
     try {
-      final response = await dio.post(ServerEndpoints.servicoFilterEndpoint, data: {
-        'servicoId': servicoFilter.id,
-        'clienteId': servicoFilter.clienteId,
-        'tecnicoId': servicoFilter.tecnicoId,
-        'clienteNome': servicoFilter.clienteNome,
-        'tecnicoNome': servicoFilter.tecnicoNome,
-        'equipamento': servicoFilter.equipamento,
-        'situacao': servicoFilter.situacao,
-        'garantia': servicoFilter.garantia,
-        'filial': servicoFilter.filial,
-        'periodo': servicoFilter.periodo,
-        'dataAtendimentoPrevistoAntes': servicoFilter.dataAtendimentoPrevistoAntes?.toIso8601String(),
-        'dataAtendimentoPrevistoDepois': servicoFilter.dataAtendimentoPrevistoDepois?.toIso8601String(),
-        'dataAtendimentoEfetivoAntes': servicoFilter.dataAtendimentoEfetivoAntes?.toIso8601String(),
-        'dataAtendimentoEfetivoDepois': servicoFilter.dataAtendimentoEfetivoDepois?.toIso8601String(),
-        'dataAberturaAntes': servicoFilter.dataAberturaAntes?.toIso8601String(),
-        'dataAberturaDepois': servicoFilter.dataAberturaDepois?.toIso8601String(),
-      }, queryParameters: {
-        "page": page,
-        "size": size,
-      });
+      final response = await dio.post(
+        ServerEndpoints.servicoFilterEndpoint,
+        data: {
+          'servicoId': servicoFilter.id,
+          'clienteId': servicoFilter.clienteId,
+          'tecnicoId': servicoFilter.tecnicoId,
+          'clienteNome': servicoFilter.clienteNome,
+          'tecnicoNome': servicoFilter.tecnicoNome,
+          'equipamento': servicoFilter.equipamento,
+          'situacao': servicoFilter.situacao != null ? Formatters.mapSituationToEnumSituation(servicoFilter.situacao!) : null,
+          'garantia': servicoFilter.garantia,
+          'filial': servicoFilter.filial,
+          'periodo': servicoFilter.periodo,
+          'dataAtendimentoPrevistoAntes': servicoFilter.dataAtendimentoPrevistoAntes?.toIso8601String(),
+          'dataAtendimentoPrevistoDepois': servicoFilter.dataAtendimentoPrevistoDepois?.toIso8601String(),
+          'dataAtendimentoEfetivoAntes': servicoFilter.dataAtendimentoEfetivoAntes?.toIso8601String(),
+          'dataAtendimentoEfetivoDepois': servicoFilter.dataAtendimentoEfetivoDepois?.toIso8601String(),
+          'dataAberturaAntes': servicoFilter.dataAberturaAntes?.toIso8601String(),
+          'dataAberturaDepois': servicoFilter.dataAberturaDepois?.toIso8601String(),
+        },
+        queryParameters: {
+          "page": page,
+          "size": size,
+        },
+      );
 
       if (response.data != null && response.data is Map<String, dynamic>) {
         return Right(PageContent.fromJson(response.data, (json) => Servico.fromJson(json)));

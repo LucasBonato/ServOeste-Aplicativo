@@ -9,7 +9,15 @@ class BaseFormScreen extends StatelessWidget {
   final double sizeMultiplier;
   final List<Widget>? actions;
 
-  const BaseFormScreen({super.key, required this.title, required this.child, this.shouldActivateEvent = false, this.onBack, this.sizeMultiplier = 1, this.actions});
+  const BaseFormScreen({
+    super.key,
+    required this.title,
+    required this.child,
+    this.shouldActivateEvent = false,
+    this.onBack,
+    this.sizeMultiplier = 1,
+    this.actions,
+  });
 
   @override
   Widget build(BuildContext context) {
