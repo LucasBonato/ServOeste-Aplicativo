@@ -22,8 +22,7 @@ class TecnicoUpdateScreen extends StatefulWidget {
 class _TecnicoUpdateScreenState extends State<TecnicoUpdateScreen> {
   late final TecnicoBloc bloc;
   final TecnicoForm form = TecnicoForm();
-  final ValueNotifier<String> dropDownSituacaoValue =
-      ValueNotifier<String>(Constants.situationTecnicoList.first);
+  final ValueNotifier<String> dropDownSituacaoValue = ValueNotifier<String>(Constants.situationTecnicoList.first);
   final TextEditingController nomeController = TextEditingController();
   final Map<String, String> situationMap = {
     'ATIVO': 'Ativo',
@@ -56,10 +55,8 @@ class _TecnicoUpdateScreenState extends State<TecnicoUpdateScreen> {
       form.setTelefoneFixo("");
     }
 
-    if (tecnico.telefoneCelular != null &&
-        tecnico.telefoneCelular!.isNotEmpty) {
-      form.setTelefoneCelular(
-          Formatters.applyCellPhoneMask(tecnico.telefoneCelular!));
+    if (tecnico.telefoneCelular != null && tecnico.telefoneCelular!.isNotEmpty) {
+      form.setTelefoneCelular(Formatters.applyCellPhoneMask(tecnico.telefoneCelular!));
     } else {
       form.setTelefoneCelular("");
     }
@@ -67,8 +64,7 @@ class _TecnicoUpdateScreenState extends State<TecnicoUpdateScreen> {
     nomeController.text = form.nome.value;
 
     final String tecnicoSituacao = tecnico.situacao ?? '';
-    final String mappedSituacao =
-        situationMap[tecnicoSituacao] ?? 'Situação...';
+    final String mappedSituacao = situationMap[tecnicoSituacao] ?? 'Situação...';
 
     dropDownSituacaoValue.value = mappedSituacao;
     form.setSituacao(mappedSituacao);
@@ -93,9 +89,7 @@ class _TecnicoUpdateScreenState extends State<TecnicoUpdateScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<TecnicoBloc, TecnicoState>(
-      listenWhen: (previous, current) =>
-          current is TecnicoUpdateSuccessState ||
-          current is TecnicoSearchOneSuccessState,
+      listenWhen: (previous, current) => current is TecnicoUpdateSuccessState || current is TecnicoSearchOneSuccessState,
       listener: (context, state) {
         if (state is TecnicoUpdateSuccessState) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -109,9 +103,7 @@ class _TecnicoUpdateScreenState extends State<TecnicoUpdateScreen> {
       },
       child: BlocBuilder<TecnicoBloc, TecnicoState>(
         bloc: bloc,
-        buildWhen: (previous, current) =>
-            current is TecnicoSearchOneSuccessState ||
-            current is TecnicoSearchOneLoadingState,
+        buildWhen: (previous, current) => current is TecnicoSearchOneSuccessState || current is TecnicoSearchOneLoadingState,
         builder: (context, state) {
           return TecnicoFormWidget(
             isSkeleton: state is TecnicoSearchOneLoadingState,
@@ -121,8 +113,7 @@ class _TecnicoUpdateScreenState extends State<TecnicoUpdateScreen> {
             tecnicoForm: form,
             nomeController: nomeController,
             isUpdate: true,
-            successMessage:
-                'Técnico atualizado com sucesso! (Caso ele não esteja atualizado, recarregue a página)',
+            successMessage: "Técnico atualizado com sucesso! (Caso ele não esteja atualizado, recarregue a página)",
             checkersMap: checkersMap,
             situationMap: situationMap,
             isForListScreen: false,
@@ -133,10 +124,13 @@ class _TecnicoUpdateScreenState extends State<TecnicoUpdateScreen> {
 
               form.setNome(nome);
 
-              bloc.add(TecnicoUpdateEvent(
-                  tecnico: Tecnico.fromForm(form), sobrenome: sobrenome));
+              bloc.add(TecnicoUpdateEvent(tecnico: Tecnico.fromForm(form), sobrenome: sobrenome));
 
               form.setNome("$nome $sobrenome");
+
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                bloc.add(TecnicoSearchMenuEvent());
+              });
             },
           );
         },

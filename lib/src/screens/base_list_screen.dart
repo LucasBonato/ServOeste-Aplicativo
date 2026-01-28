@@ -111,7 +111,6 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
       return const EntityNotFound(message: "Nenhum item encontrado.");
     }
 
-    // SE FOR MODO LISTA: Retorna diretamente o ListView.builder (que já é scrollable)
     if (_listStyle == ListStyle.list) {
       return ListView.builder(
         itemCount: items.length,
@@ -119,7 +118,6 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
       );
     }
 
-    // MODO GRID: Mantém a lógica atual com GridListView
     final gridContent = GridListView(
       aspectRatio: aspectRatio,
       dataList: items,
@@ -138,7 +136,6 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
       ),
     );
 
-    // PARA UMA ÚNICA PÁGINA
     if (totalPages <= 1) {
       return SingleChildScrollView(
         child: Column(
@@ -151,7 +148,6 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
       );
     }
 
-    // PARA MÚLTIPLAS PÁGINAS
     return SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,

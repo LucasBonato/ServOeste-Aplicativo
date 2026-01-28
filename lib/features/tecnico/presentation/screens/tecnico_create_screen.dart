@@ -33,8 +33,9 @@ class TecnicoCreateScreen extends StatelessWidget {
       submitText: "Adicionar Técnico",
       bloc: bloc,
       tecnicoForm: tecnicoForm,
-      successMessage: 'Técnico registrado com sucesso! (Caso ele não esteja aparecendo, recarregue a página)',
+      successMessage: "Técnico registrado com sucesso! (Caso ele não esteja aparecendo, recarregue a página)",
       checkersMap: checkersMap,
+      isForListScreen: false,
       situationMap: {},
       onSubmit: () {
         final List<String> nomes = tecnicoForm.nome.value.split(" ");
@@ -43,9 +44,18 @@ class TecnicoCreateScreen extends StatelessWidget {
 
         tecnicoForm.setNome(nome);
 
-        bloc.add(TecnicoRegisterEvent(tecnico: Tecnico.fromForm(tecnicoForm), sobrenome: sobrenome));
+        bloc.add(
+          TecnicoRegisterEvent(
+            tecnico: Tecnico.fromForm(tecnicoForm),
+            sobrenome: sobrenome,
+          ),
+        );
 
         tecnicoForm.setNome("$nome $sobrenome");
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          bloc.add(TecnicoSearchMenuEvent());
+        });
       },
     );
   }
