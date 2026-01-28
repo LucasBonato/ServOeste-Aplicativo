@@ -2,6 +2,7 @@ import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
+import 'package:serv_oeste/features/tecnico/presentation/screens/tecnico_update_screen.dart';
 import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
 import 'package:serv_oeste/src/components/layout/fab_add.dart';
 import 'package:serv_oeste/src/components/layout/fab_remove.dart';
@@ -11,7 +12,6 @@ import 'package:serv_oeste/src/components/screen/error_component.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
 import 'package:serv_oeste/src/screens/base_list_screen.dart';
-import 'package:serv_oeste/src/screens/tecnico/update_tecnico.dart';
 import 'package:serv_oeste/src/shared/constants/constants.dart';
 import 'package:serv_oeste/src/shared/routing/routes.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -30,13 +30,9 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
   late ValueNotifier<String> _situacaoNotifier;
 
   void _setFilterValues() {
-    _idController.text =
-        (_tecnicoBloc.idMenu == null) ? "" : _tecnicoBloc.idMenu.toString();
+    _idController.text = (_tecnicoBloc.idMenu == null) ? "" : _tecnicoBloc.idMenu.toString();
     _nomeController.text = _tecnicoBloc.nomeMenu ?? "";
-    String situacao = (_tecnicoBloc.situacaoMenu != null)
-        ? _tecnicoBloc.situacaoMenu![0].toUpperCase() +
-            _tecnicoBloc.situacaoMenu!.substring(1)
-        : "";
+    String situacao = (_tecnicoBloc.situacaoMenu != null) ? _tecnicoBloc.situacaoMenu![0].toUpperCase() + _tecnicoBloc.situacaoMenu!.substring(1) : "";
     if (situacao != "" && Constants.situationTecnicoList.contains(situacao)) {
       setState(() {
         _situacaoNotifier.value = situacao;
@@ -49,39 +45,34 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
     return ResponsiveSearchInputs(
       onChanged: onSearchFieldChanged,
       fields: [
-        TextInputField(
-            hint: "Procure por Técnicos...",
-            controller: _nomeController,
-            keyboardType: TextInputType.text),
+        TextInputField(hint: "Procure por Técnicos...", controller: _nomeController, keyboardType: TextInputType.text),
         TextInputField(
           hint: "ID...",
           controller: _idController,
           keyboardType: TextInputType.number,
         ),
         DropdownInputField(
-            hint: "Situação...",
-            valueNotifier: _situacaoNotifier,
-            dropdownValues: Constants.situationTecnicoList,
-            onChanged: (situacao) => _tecnicoBloc.add(
-                  TecnicoSearchMenuEvent(
-                    id: int.tryParse(_idController.text),
-                    nome: _nomeController.text,
-                    situacao: situacao,
-                  ),
-                )),
+          hint: "Situação...",
+          valueNotifier: _situacaoNotifier,
+          dropdownValues: Constants.situationTecnicoList,
+          onChanged: (situacao) => _tecnicoBloc.add(
+            TecnicoSearchMenuEvent(
+              id: int.tryParse(_idController.text),
+              nome: _nomeController.text,
+              situacao: situacao,
+            ),
+          ),
+        ),
       ],
     );
   }
 
   @override
-  Widget getUpdateScreen(int id, {int? secondId}) => UpdateTecnico(id: id);
+  Widget getUpdateScreen(int id, {int? secondId}) => TecnicoUpdateScreen(id: id);
 
   @override
   Widget buildDefaultFloatingActionButton() {
-    return FloatingActionButtonAdd(
-        route: Routes.tecnicoCreate,
-        event: () => _tecnicoBloc.add(TecnicoSearchMenuEvent()),
-        tooltip: "Adicionar um Técnico");
+    return FloatingActionButtonAdd(route: Routes.tecnicoCreate, event: () => _tecnicoBloc.add(TecnicoSearchMenuEvent()), tooltip: "Adicionar um Técnico");
   }
 
   @override
@@ -94,11 +85,9 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
   }
 
   @override
-  Widget buildItemCard(TecnicoResponse tecnico, bool isSelected,
-      bool isSelectMode, bool isSkeleton) {
+  Widget buildItemCard(TecnicoResponse tecnico, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return CardTechnician(
-      onDoubleTap: () => onNavigateToUpdateScreen(
-          tecnico.id!, () => _tecnicoBloc.add(TecnicoSearchMenuEvent())),
+      onDoubleTap: () => onNavigateToUpdateScreen(tecnico.id!, () => _tecnicoBloc.add(TecnicoSearchMenuEvent())),
       onLongPress: () => onSelectItemList(tecnico.id!),
       onTap: () {
         if (isSelectMode) {
@@ -135,8 +124,7 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
     _tecnicoBloc.add(TecnicoDisableListEvent(selectedList: selectedIds));
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text(
-            'Técnico desativado com sucesso! (Caso ele não esteja desativado, recarregue a página)'),
+        content: Text('Técnico desativado com sucesso! (Caso ele não esteja desativado, recarregue a página)'),
         backgroundColor: Colors.green,
       ),
     );
@@ -148,10 +136,8 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
     _tecnicoBloc = context.read<TecnicoBloc>();
     _idController = TextEditingController();
     _nomeController = TextEditingController();
-    _situacaoController =
-        SingleSelectController<String>(Constants.situationTecnicoList.first);
-    _situacaoNotifier =
-        ValueNotifier<String>(Constants.situationTecnicoList.first);
+    _situacaoController = SingleSelectController<String>(Constants.situationTecnicoList.first);
+    _situacaoNotifier = ValueNotifier<String>(Constants.situationTecnicoList.first);
 
     _setFilterValues();
   }
@@ -175,13 +161,11 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
                 }
               },
               builder: (context, stateTecnico) {
-                if (stateTecnico is TecnicoInitialState ||
-                    stateTecnico is TecnicoLoadingState) {
+                if (stateTecnico is TecnicoInitialState || stateTecnico is TecnicoLoadingState) {
                   return Skeletonizer(
                     enableSwitchAnimation: true,
                     child: buildGridOfCards(
-                      items: List.generate(
-                          16, (_) => TecnicoResponse()..applySkeletonData()),
+                      items: List.generate(16, (_) => TecnicoResponse()..applySkeletonData()),
                       aspectRatio: 2.1,
                       totalPages: 1,
                       currentPage: 0,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/features/user/presentation/bloc/user_bloc.dart';
 import 'package:serv_oeste/src/models/user/user_form.dart';
-import 'package:serv_oeste/src/screens/user/user_form.dart';
+import 'package:serv_oeste/features/user/presentation/widgets/user_form_widget.dart';
 import 'package:serv_oeste/src/utils/extensions/role_extensions.dart';
 
 class UpdateUserScreen extends StatefulWidget {
@@ -51,7 +51,7 @@ class _UpdateUserScreenState extends State<UpdateUserScreen> {
           });
         }
       },
-      child: UserFormPage(
+      child: UserFormWidget(
         bloc: bloc,
         title: "Editar Usuário",
         submitText: "Atualizar Usuário",

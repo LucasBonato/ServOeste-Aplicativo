@@ -25,22 +25,23 @@ class BaseEntityForm<B extends StateStreamable<S>, S> extends StatefulWidget {
   final void Function(S state)? onError;
   final VoidCallback? onSuccess;
 
-  const BaseEntityForm(
-      {super.key,
-      required this.formKey,
-      required this.buildFields,
-      required this.onSubmit,
-      required this.getSuccessMessage,
-      required this.bloc,
-      required this.submitText,
-      required this.isLoading,
-      required this.isSuccess,
-      required this.isError,
-      this.getErrorMessage,
-      this.onError,
-      this.onSuccess,
-      this.space = 8,
-      this.shouldBuildButton = true});
+  const BaseEntityForm({
+    super.key,
+    required this.formKey,
+    required this.buildFields,
+    required this.onSubmit,
+    required this.getSuccessMessage,
+    required this.bloc,
+    required this.submitText,
+    required this.isLoading,
+    required this.isSuccess,
+    required this.isError,
+    this.getErrorMessage,
+    this.onError,
+    this.onSuccess,
+    this.space = 8,
+    this.shouldBuildButton = true,
+  });
 
   @override
   State<BaseEntityForm<B, S>> createState() => _BaseEntityFormState<B, S>();

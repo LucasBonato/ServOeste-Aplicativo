@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/core/services/secure_storage_service.dart';
+import 'package:serv_oeste/features/servico/presentation/screens/servico_screen.dart';
+import 'package:serv_oeste/features/user/presentation/screens/user_screen.dart';
 import 'package:serv_oeste/src/components/layout/bottom_nav_bar.dart';
 import 'package:serv_oeste/src/components/layout/header.dart';
 import 'package:serv_oeste/src/components/layout/sidebar_navigation.dart';
@@ -13,12 +15,10 @@ import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart'
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
 import 'package:serv_oeste/features/user/presentation/bloc/user_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
-import 'package:serv_oeste/src/screens/auth/login.dart';
-import 'package:serv_oeste/src/screens/cliente/cliente.dart';
+import 'package:serv_oeste/features/auth/presentation/screens/login.dart';
+import 'package:serv_oeste/features/cliente/presentation/screens/cliente_screen.dart';
 import 'package:serv_oeste/src/screens/home.dart';
-import 'package:serv_oeste/src/screens/servico/servico.dart';
-import 'package:serv_oeste/src/screens/tecnico/tecnico.dart';
-import 'package:serv_oeste/src/screens/user/user.dart';
+import 'package:serv_oeste/features/tecnico/presentation/screens/tecnico_screen.dart';
 import 'package:serv_oeste/src/utils/jwt_utils.dart';
 
 class BaseLayout extends StatefulWidget {

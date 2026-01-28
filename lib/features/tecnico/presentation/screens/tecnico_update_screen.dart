@@ -3,23 +3,23 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
-import 'package:serv_oeste/src/screens/tecnico/tecnico_form.dart';
+import 'package:serv_oeste/features/tecnico/presentation/widgets/tecnico_form_widget.dart';
 import 'package:serv_oeste/src/shared/constants/constants.dart';
 import 'package:serv_oeste/src/utils/formatters/formatters.dart';
 
-class UpdateTecnico extends StatefulWidget {
+class TecnicoUpdateScreen extends StatefulWidget {
   final int id;
 
-  const UpdateTecnico({
+  const TecnicoUpdateScreen({
     super.key,
     required this.id,
   });
 
   @override
-  State<UpdateTecnico> createState() => _UpdateTecnicoState();
+  State<TecnicoUpdateScreen> createState() => _TecnicoUpdateScreenState();
 }
 
-class _UpdateTecnicoState extends State<UpdateTecnico> {
+class _TecnicoUpdateScreenState extends State<TecnicoUpdateScreen> {
   late final TecnicoBloc bloc;
   final TecnicoForm form = TecnicoForm();
   final ValueNotifier<String> dropDownSituacaoValue =
@@ -113,7 +113,7 @@ class _UpdateTecnicoState extends State<UpdateTecnico> {
             current is TecnicoSearchOneSuccessState ||
             current is TecnicoSearchOneLoadingState,
         builder: (context, state) {
-          return TecnicoFormPage(
+          return TecnicoFormWidget(
             isSkeleton: state is TecnicoSearchOneLoadingState,
             title: "Consultar/Atualizar Técnico",
             submitText: "Atualizar Técnico",

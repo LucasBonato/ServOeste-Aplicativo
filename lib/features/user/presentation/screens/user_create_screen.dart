@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/features/user/presentation/bloc/user_bloc.dart';
 import 'package:serv_oeste/src/models/user/user_form.dart';
-import 'package:serv_oeste/src/screens/user/user_form.dart';
+import 'package:serv_oeste/features/user/presentation/widgets/user_form_widget.dart';
 import 'package:serv_oeste/src/utils/extensions/role_extensions.dart';
 
 class CreateUserScreen extends StatelessWidget {
@@ -13,7 +13,7 @@ class CreateUserScreen extends StatelessWidget {
     final UserBloc bloc = context.read<UserBloc>();
     final UserForm userForm = UserForm();
 
-    return UserFormPage(
+    return UserFormWidget(
       title: "Adicionar Usuário",
       submitText: "Adicionar Usuário",
       successMessage: "Usuário criado com sucesso!",

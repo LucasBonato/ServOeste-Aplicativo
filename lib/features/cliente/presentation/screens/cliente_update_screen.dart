@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
+import 'package:serv_oeste/features/cliente/presentation/screens/cliente_form_base_screen.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
-import 'package:serv_oeste/src/screens/cliente/cliente_form_screen.dart';
 
-class UpdateCliente extends StatefulWidget {
+class ClienteUpdateScreen extends StatefulWidget {
   final int id;
 
-  const UpdateCliente({
+  const ClienteUpdateScreen({
     super.key,
     required this.id,
   });
 
   @override
-  State<UpdateCliente> createState() => _UpdateClienteState();
+  State<ClienteUpdateScreen> createState() => _ClienteUpdateScreenState();
 }
 
-class _UpdateClienteState extends State<UpdateCliente> {
+class _ClienteUpdateScreenState extends State<ClienteUpdateScreen> {
   late final ClienteBloc bloc;
   final ClienteForm form = ClienteForm();
   final TextEditingController nomeController = TextEditingController();
@@ -75,10 +75,10 @@ class _UpdateClienteState extends State<UpdateCliente> {
             title: "Consultar/Atualizar Cliente",
             submitText: "Atualizar Cliente",
             bloc: bloc,
-            clienteForm: form,
+            form: form,
             nomeController: nomeController,
             isUpdate: true,
-            successMessage: 'Cliente atualizado com sucesso! (Caso ele não esteja atualizado, recarregue a página)',
+            successMessage: "Cliente atualizado com sucesso! (Caso ele não esteja atualizado, recarregue a página)",
             onSubmit: () {
               final List<String> nomesSplit = form.nome.value.split(" ");
               final String nome = nomesSplit.first;
@@ -86,10 +86,12 @@ class _UpdateClienteState extends State<UpdateCliente> {
 
               form.setNome(nome);
 
-              bloc.add(ClienteUpdateEvent(
-                cliente: Cliente.fromForm(form),
-                sobrenome: sobrenome,
-              ));
+              bloc.add(
+                ClienteUpdateEvent(
+                  cliente: Cliente.fromForm(form),
+                  sobrenome: sobrenome,
+                ),
+              );
 
               form.setNome("$nome $sobrenome");
             },

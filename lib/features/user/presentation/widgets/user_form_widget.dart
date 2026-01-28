@@ -9,7 +9,7 @@ import 'package:serv_oeste/src/screens/base_form_screen.dart';
 import 'package:serv_oeste/src/shared/constants/constants.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-class UserFormPage extends StatelessWidget {
+class UserFormWidget extends StatelessWidget {
   final String title;
   final bool isUpdate;
   final bool isSkeleton;
@@ -19,7 +19,7 @@ class UserFormPage extends StatelessWidget {
   final String submitText;
   final void Function() onSubmit;
 
-  const UserFormPage({
+  const UserFormWidget({
     super.key,
     required this.title,
     required this.bloc,

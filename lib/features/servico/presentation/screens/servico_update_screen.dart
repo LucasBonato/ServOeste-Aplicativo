@@ -17,21 +17,21 @@ import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/models/servico/servico_form.dart';
 import 'package:serv_oeste/src/models/validators/servico_validator.dart';
 import 'package:serv_oeste/src/screens/base_form_screen.dart';
-import 'package:serv_oeste/src/screens/cliente/cliente_form.dart';
-import 'package:serv_oeste/src/screens/servico/servico_form.dart';
+import 'package:serv_oeste/features/cliente/presentation/widgets/cliente_form_widget.dart';
+import 'package:serv_oeste/features/servico/presentation/widgets/servico_form_widget.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-class UpdateServico extends StatefulWidget {
+class ServicoUpdateScreen extends StatefulWidget {
   final int id;
   final int clientId;
 
-  const UpdateServico({super.key, required this.id, required this.clientId});
+  const ServicoUpdateScreen({super.key, required this.id, required this.clientId});
 
   @override
-  State<UpdateServico> createState() => _UpdateServicoState();
+  State<ServicoUpdateScreen> createState() => _ServicoUpdateScreenState();
 }
 
-class _UpdateServicoState extends State<UpdateServico> {
+class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
   late final ServicoBloc _servicoBloc;
   late final TecnicoBloc _tecnicoBloc;
   late final ClienteBloc _clienteBloc;
@@ -329,41 +329,43 @@ class _UpdateServicoState extends State<UpdateServico> {
         buildWhen: (previous, current) => current is ServicoSearchOneSuccessState || current is ServicoSearchOneLoadingState,
         builder: (context, state) {
           return BaseFormScreen(
-              shouldActivateEvent: true,
-              sizeMultiplier: 2,
-              title: "Consultar/Atualizar Serviço",
-              actions: [
-                ReportMenuActionButton(servicoBloc: _servicoBloc, clienteBloc: _clienteBloc),
-              ],
-              child: Skeletonizer(
-                  enabled: state is ServicoSearchOneLoadingState,
-                  child: Column(
-                    children: [
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          final bool isMobile = constraints.maxWidth < 950;
-                          return _buildMainFormLayout(isMobile);
-                        },
-                      ),
-                      const SizedBox(height: 24),
-                      ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 750),
-                        child: Column(
-                          children: [
-                            ElevatedFormButton(
-                              text: "Ver Histórico de Atendimento",
-                              onPressed: () => buildDescriptionHistoryDialog(context),
-                            ),
-                            const SizedBox(height: 16),
-                            ElevatedFormButton(
-                              text: "Atualizar Serviço",
-                              onPressed: _updateServico,
-                            ),
-                          ],
+            shouldActivateEvent: true,
+            sizeMultiplier: 2,
+            title: "Consultar/Atualizar Serviço",
+            actions: [
+              ReportMenuActionButton(servicoBloc: _servicoBloc, clienteBloc: _clienteBloc),
+            ],
+            child: Skeletonizer(
+              enabled: state is ServicoSearchOneLoadingState,
+              child: Column(
+                children: [
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final bool isMobile = constraints.maxWidth < 950;
+                      return _buildMainFormLayout(isMobile);
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 750),
+                    child: Column(
+                      children: [
+                        ElevatedFormButton(
+                          text: "Ver Histórico de Atendimento",
+                          onPressed: () => buildDescriptionHistoryDialog(context),
                         ),
-                      ),
-                    ],
-                  )));
+                        const SizedBox(height: 16),
+                        ElevatedFormButton(
+                          text: "Atualizar Serviço",
+                          onPressed: _updateServico,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
         },
       ),
     );

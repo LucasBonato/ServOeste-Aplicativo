@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
+import 'package:serv_oeste/features/cliente/presentation/screens/cliente_form_base_screen.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
-import 'package:serv_oeste/src/screens/cliente/cliente_form_screen.dart';
 
-class CreateCliente extends StatelessWidget {
-  const CreateCliente({super.key});
+class ClienteCreateScreen extends StatelessWidget {
+  const ClienteCreateScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +17,8 @@ class CreateCliente extends StatelessWidget {
       title: "Adicionar Cliente",
       submitText: "Adicionar Cliente",
       bloc: bloc,
-      clienteForm: form,
-      successMessage: 'Cliente registrado com sucesso! (Caso ele não esteja aparecendo, recarregue a página)',
+      form: form,
+      successMessage: "Cliente registrado com sucesso! (Caso ele não esteja aparecendo, recarregue a página)",
       onSubmit: () {
         final List<String> nomesSplit = form.nome.value.split(" ");
         final String nome = nomesSplit.first;
@@ -26,10 +26,12 @@ class CreateCliente extends StatelessWidget {
 
         form.setNome(nome);
 
-        bloc.add(ClienteRegisterEvent(
-          cliente: Cliente.fromForm(form),
-          sobrenome: sobrenome,
-        ));
+        bloc.add(
+          ClienteRegisterEvent(
+            cliente: Cliente.fromForm(form),
+            sobrenome: sobrenome,
+          ),
+        );
 
         form.setNome("$nome $sobrenome");
       },

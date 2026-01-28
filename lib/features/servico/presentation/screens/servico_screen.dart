@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
+import 'package:serv_oeste/features/servico/presentation/screens/servico_update_screen.dart';
 import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
 import 'package:serv_oeste/src/components/layout/fab_remove.dart';
 import 'package:serv_oeste/src/components/layout/responsive_search_inputs.dart';
@@ -11,8 +12,7 @@ import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart'
 import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
 import 'package:serv_oeste/src/screens/base_list_screen.dart';
-import 'package:serv_oeste/src/screens/servico/filter_servico.dart';
-import 'package:serv_oeste/src/screens/servico/update_servico.dart';
+import 'package:serv_oeste/features/servico/presentation/screens/filter_servico.dart';
 import 'package:serv_oeste/src/shared/routing/routes.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -30,10 +30,8 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
 
   void _setFilterValues() {
     if (_servicoBloc.filterRequest != null) {
-      _nomeClienteController.text =
-          _servicoBloc.filterRequest!.clienteNome ?? "";
-      _nomeTecnicoController.text =
-          _servicoBloc.filterRequest!.tecnicoNome ?? "";
+      _nomeClienteController.text = _servicoBloc.filterRequest!.clienteNome ?? "";
+      _nomeTecnicoController.text = _servicoBloc.filterRequest!.tecnicoNome ?? "";
     }
   }
 
@@ -42,23 +40,22 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
       onChanged: onSearchFieldChanged,
       fields: [
         TextInputField(
-            hint: "Nome do Cliente...",
-            controller: _nomeClienteController,
-            keyboardType: TextInputType.text),
+          hint: "Nome do Cliente...",
+          controller: _nomeClienteController,
+          keyboardType: TextInputType.text,
+        ),
         TextInputField(
-            hint: "Nome do Técnico...",
-            controller: _nomeTecnicoController,
-            keyboardType: TextInputType.text),
+          hint: "Nome do Técnico...",
+          controller: _nomeTecnicoController,
+          keyboardType: TextInputType.text,
+        ),
       ],
-      onFilterTap: () => Navigator.of(context, rootNavigator: true)
-          .push(MaterialPageRoute(builder: (context) => FilterService()))
-          .then((_) => onSearchFieldChanged()),
+      onFilterTap: () => Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(builder: (context) => FilterService())).then((_) => onSearchFieldChanged()),
     );
   }
 
   @override
-  Widget getUpdateScreen(int id, {int? secondId}) =>
-      UpdateServico(id: id, clientId: secondId!);
+  Widget getUpdateScreen(int id, {int? secondId}) => ServicoUpdateScreen(id: id, clientId: secondId!);
 
   @override
   Widget buildDefaultFloatingActionButton() {
@@ -94,41 +91,42 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
   }
 
   @override
-  Widget buildItemCard(
-      Servico servico, bool isSelected, bool isSelectMode, bool isSkeleton) {
+  Widget buildItemCard(Servico servico, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return CardService(
-        onDoubleTap: () => onNavigateToUpdateScreen(
-            servico.id, onSearchFieldChanged,
-            secondId: servico.idCliente),
-        onLongPress: () => onSelectItemList(servico.id),
-        onTap: () {
-          if (isSelectMode) {
-            onSelectItemList(servico.id);
-          }
-        },
-        codigo: servico.id,
-        cliente: servico.nomeCliente,
-        tecnico: servico.nomeTecnico,
-        equipamento: servico.equipamento,
-        marca: servico.marca,
-        filial: servico.filial,
-        horario: servico.horarioPrevisto,
-        dataPrevista: servico.dataAtendimentoPrevisto,
-        dataEfetiva: servico.dataAtendimentoEfetivo,
-        dataFechamento: servico.dataFechamento,
-        dataFinalGarantia: servico.dataFimGarantia,
-        status: servico.situacao,
-        isSelected: isSelected,
-        isSkeleton: isSkeleton);
+      onDoubleTap: () => onNavigateToUpdateScreen(servico.id, onSearchFieldChanged, secondId: servico.idCliente),
+      onLongPress: () => onSelectItemList(servico.id),
+      onTap: () {
+        if (isSelectMode) {
+          onSelectItemList(servico.id);
+        }
+      },
+      codigo: servico.id,
+      cliente: servico.nomeCliente,
+      tecnico: servico.nomeTecnico,
+      equipamento: servico.equipamento,
+      marca: servico.marca,
+      filial: servico.filial,
+      horario: servico.horarioPrevisto,
+      dataPrevista: servico.dataAtendimentoPrevisto,
+      dataEfetiva: servico.dataAtendimentoEfetivo,
+      dataFechamento: servico.dataFechamento,
+      dataFinalGarantia: servico.dataFimGarantia,
+      status: servico.situacao,
+      isSelected: isSelected,
+      isSkeleton: isSkeleton,
+    );
   }
 
   @override
   void searchFieldChanged() {
-    _servicoBloc.add(ServicoLoadingEvent(
+    _servicoBloc.add(
+      ServicoLoadingEvent(
         filterRequest: ServicoFilterRequest(
-      clienteNome: _nomeClienteController.text,
-      tecnicoNome: _nomeTecnicoController.text,
-    )));
+          clienteNome: _nomeClienteController.text,
+          tecnicoNome: _nomeTecnicoController.text,
+        ),
+      ),
+    );
   }
 
   @override
@@ -174,8 +172,7 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
                 }
               },
               builder: (context, stateServico) {
-                if (stateServico is ServicoInitialState ||
-                    stateServico is ServicoLoadingState) {
+                if (stateServico is ServicoInitialState || stateServico is ServicoLoadingState) {
                   return Skeletonizer(
                     enableSwitchAnimation: true,
                     child: buildGridOfCards(
@@ -196,8 +193,7 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
                     currentPage: stateServico.currentPage,
                     onPageChanged: (page) {
                       _servicoBloc.add(ServicoLoadingEvent(
-                        filterRequest: _servicoBloc.filterRequest ??
-                            ServicoFilterRequest(),
+                        filterRequest: _servicoBloc.filterRequest ?? ServicoFilterRequest(),
                         page: page - 1,
                         size: 15,
                       ));

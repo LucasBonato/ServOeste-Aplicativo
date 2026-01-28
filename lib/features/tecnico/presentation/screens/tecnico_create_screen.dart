@@ -3,10 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_form.dart';
-import 'package:serv_oeste/src/screens/tecnico/tecnico_form.dart';
+import 'package:serv_oeste/features/tecnico/presentation/widgets/tecnico_form_widget.dart';
 
-class CreateTecnico extends StatelessWidget {
-  const CreateTecnico({super.key});
+class TecnicoCreateScreen extends StatelessWidget {
+  const TecnicoCreateScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class CreateTecnico extends StatelessWidget {
       "Outros": false,
     };
 
-    return TecnicoFormPage(
+    return TecnicoFormWidget(
       title: "Adicionar Técnico",
       submitText: "Adicionar Técnico",
       bloc: bloc,

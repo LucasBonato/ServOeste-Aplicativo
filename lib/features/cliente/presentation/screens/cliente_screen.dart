@@ -10,7 +10,7 @@ import 'package:serv_oeste/src/components/screen/error_component.dart';
 import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/base_list_screen.dart';
-import 'package:serv_oeste/src/screens/cliente/update_cliente.dart';
+import 'package:serv_oeste/features/cliente/presentation/screens/cliente_update_screen.dart';
 import 'package:serv_oeste/src/shared/routing/routes.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -23,9 +23,7 @@ class ClienteScreen extends BaseListScreen<Cliente> {
 
 class _ClienteScreenState extends BaseListScreenState<Cliente> {
   late final ClienteBloc _clienteBloc;
-  late final TextEditingController _nomeController,
-      _telefoneController,
-      _enderecoController;
+  late final TextEditingController _nomeController, _telefoneController, _enderecoController;
 
   void _setFilterValues() {
     _nomeController.text = _clienteBloc.nomeMenu ?? "";
@@ -57,7 +55,7 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
   }
 
   @override
-  Widget getUpdateScreen(int id, {int? secondId}) => UpdateCliente(id: id);
+  Widget getUpdateScreen(int id, {int? secondId}) => ClienteUpdateScreen(id: id);
 
   @override
   Widget buildDefaultFloatingActionButton() {
@@ -78,11 +76,9 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
   }
 
   @override
-  Widget buildItemCard(
-      Cliente cliente, bool isSelected, bool isSelectMode, bool isSkeleton) {
+  Widget buildItemCard(Cliente cliente, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return CardClient(
-      onDoubleTap: () => onNavigateToUpdateScreen(
-          cliente.id!, () => _clienteBloc.add(ClienteSearchMenuEvent())),
+      onDoubleTap: () => onNavigateToUpdateScreen(cliente.id!, () => _clienteBloc.add(ClienteSearchMenuEvent())),
       onLongPress: () => onSelectItemList(cliente.id!),
       onTap: () {
         if (isSelectMode) {
@@ -144,13 +140,11 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
                 }
               },
               builder: (context, stateCliente) {
-                if (stateCliente is ClienteInitialState ||
-                    stateCliente is ClienteLoadingState) {
+                if (stateCliente is ClienteInitialState || stateCliente is ClienteLoadingState) {
                   return Skeletonizer(
                     enableSwitchAnimation: true,
                     child: buildGridOfCards(
-                      items: List.generate(
-                          16, (_) => Cliente()..applySkeletonData()),
+                      items: List.generate(16, (_) => Cliente()..applySkeletonData()),
                       aspectRatio: 1.55,
                       totalPages: 1,
                       currentPage: 0,

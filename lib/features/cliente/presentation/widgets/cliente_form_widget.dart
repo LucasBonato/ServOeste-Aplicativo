@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
+import 'package:serv_oeste/features/endereco/presentation/bloc/endereco_bloc.dart';
 import 'package:serv_oeste/src/components/formFields/cliente/cliente_search_field.dart';
 import 'package:serv_oeste/src/components/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/field_labels.dart';
 import 'package:serv_oeste/src/components/formFields/search_dropdown_form_field.dart';
 import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
-import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
-import 'package:serv_oeste/features/endereco/presentation/bloc/endereco_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente_form.dart';
 import 'package:serv_oeste/src/models/enums/error_code_key.dart';
 import 'package:serv_oeste/src/models/validators/cliente_validator.dart';
@@ -18,7 +18,6 @@ class ClienteFormWidget extends StatelessWidget {
   final ClienteForm clienteForm;
   final ClienteBloc bloc;
   final bool isUpdate;
-  final bool isClientAndService;
   final bool isCreateCliente;
   final bool isJustShowFields;
   final bool shouldBuildButton;
@@ -32,19 +31,18 @@ class ClienteFormWidget extends StatelessWidget {
 
   const ClienteFormWidget({
     super.key,
-    required this.clienteForm,
     required this.bloc,
+    required this.clienteForm,
     required this.submitText,
     required this.onSubmit,
     this.getSuccessMessage,
     this.nomeController,
-    this.isUpdate = false,
-    this.shouldBuildButton = true,
-    this.isClientAndService = false,
-    this.isCreateCliente = false,
-    this.isJustShowFields = false,
     this.formKey,
     this.validator,
+    this.isUpdate = false,
+    this.shouldBuildButton = true,
+    this.isCreateCliente = false,
+    this.isJustShowFields = false,
     this.isForListScreen = false,
   });
 
@@ -66,13 +64,10 @@ class ClienteFormWidget extends StatelessWidget {
       formKey: formKey,
       submitText: submitText,
       isLoading: (state) => state is ClienteLoadingState,
-      isSuccess: (state) => isUpdate
-          ? state is ClienteUpdateSuccessState
-          : state is ClienteRegisterSuccessState,
+      isSuccess: (state) => isUpdate ? state is ClienteUpdateSuccessState : state is ClienteRegisterSuccessState,
       getSuccessMessage: getSuccessMessage,
       isError: (state) => state is ClienteErrorState,
-      getErrorMessage: (state) =>
-          state is ClienteErrorState ? state.error.detail : "Erro desconhecido",
+      getErrorMessage: (state) => state is ClienteErrorState ? state.error.detail : "Erro desconhecido",
       onError: (state) {
         if (state is ClienteErrorState) {
           validator.applyBackendError(state.error);
@@ -97,8 +92,7 @@ class ClienteFormWidget extends StatelessWidget {
           controller: nomeController,
           listenTo: [clienteForm.nome],
           onChanged: clienteForm.setNome,
-          validator:
-              validator.byField(clienteForm, ErrorCodeKey.nomeESobrenome.name),
+          validator: validator.byField(clienteForm, ErrorCodeKey.nomeESobrenome.name),
           enabled: !isJustShowFields,
           isForListScreen: isForListScreen,
         ),
@@ -110,8 +104,7 @@ class ClienteFormWidget extends StatelessWidget {
               child: Text(
                 "Obs. os nomes que aparecerem já estão cadastrados",
                 style: TextStyle(
-                  fontSize: (MediaQuery.of(context).size.width * 0.04)
-                      .clamp(9.0, 13.0),
+                  fontSize: (MediaQuery.of(context).size.width * 0.04).clamp(9.0, 13.0),
                   color: Colors.grey,
                   fontStyle: FontStyle.italic,
                 ),
@@ -126,8 +119,7 @@ class ClienteFormWidget extends StatelessWidget {
           mask: InputMasks.telefoneFixo,
           valueNotifier: clienteForm.telefoneFixo,
           enableValueNotifierSync: false,
-          validator:
-              validator.byField(clienteForm, ErrorCodeKey.telefones.name),
+          validator: validator.byField(clienteForm, ErrorCodeKey.telefones.name),
           onChanged: clienteForm.setTelefoneFixo,
           enabled: !isJustShowFields,
         ),
@@ -140,8 +132,7 @@ class ClienteFormWidget extends StatelessWidget {
           mask: InputMasks.telefoneCelular,
           valueNotifier: clienteForm.telefoneCelular,
           enableValueNotifierSync: false,
-          validator:
-              validator.byField(clienteForm, ErrorCodeKey.telefones.name),
+          validator: validator.byField(clienteForm, ErrorCodeKey.telefones.name),
           onChanged: clienteForm.setTelefoneCelular,
           enabled: !isJustShowFields,
         ),
@@ -169,8 +160,7 @@ class ClienteFormWidget extends StatelessWidget {
                   rightPadding: 4,
                   masks: InputMasks.cep,
                   valueNotifier: clienteForm.cep,
-                  validator:
-                      validator.byField(clienteForm, ErrorCodeKey.cep.name),
+                  validator: validator.byField(clienteForm, ErrorCodeKey.cep.name),
                   onChanged: fetchInformationAboutCep,
                 ),
               ),
@@ -180,8 +170,7 @@ class ClienteFormWidget extends StatelessWidget {
               maxLength: 20,
               controller: municipioController,
               valueNotifier: clienteForm.municipio,
-              validator:
-                  validator.byField(clienteForm, ErrorCodeKey.municipio.name),
+              validator: validator.byField(clienteForm, ErrorCodeKey.municipio.name),
               onChanged: clienteForm.setMunicipio,
               rightPadding: 4,
               leftPadding: 4,
@@ -229,14 +218,11 @@ class ClienteFormWidget extends StatelessWidget {
           keyboardType: TextInputType.text,
           maxLength: 255,
           valueNotifier: clienteForm.complemento,
-          validator:
-              validator.byField(clienteForm, ErrorCodeKey.complemento.name),
+          validator: validator.byField(clienteForm, ErrorCodeKey.complemento.name),
           onChanged: clienteForm.setComplemento,
           enabled: !isJustShowFields,
         ),
-        if (shouldBuildButton)
-          const Padding(
-              padding: EdgeInsets.only(left: 16), child: BuildFieldLabels()),
+        if (shouldBuildButton) const Padding(padding: EdgeInsets.only(left: 16), child: BuildFieldLabels()),
       ],
     );
   }

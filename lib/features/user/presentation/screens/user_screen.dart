@@ -7,8 +7,8 @@ import 'package:serv_oeste/features/user/presentation/bloc/user_bloc.dart';
 import 'package:serv_oeste/src/models/enums/list_style.dart';
 import 'package:serv_oeste/src/models/user/user_response.dart';
 import 'package:serv_oeste/src/screens/base_list_screen.dart';
-import 'package:serv_oeste/src/screens/user/create_user.dart';
-import 'package:serv_oeste/src/screens/user/update_user.dart';
+import 'package:serv_oeste/features/user/presentation/screens/user_create_screen.dart';
+import 'package:serv_oeste/features/user/presentation/screens/user_update_screen.dart';
 import 'package:serv_oeste/src/shared/routing/routes.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -59,13 +59,11 @@ class _UserScreenTestState extends BaseListScreenState<UserResponse> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Confirmar Exclusão'),
-          content:
-              Text('Tem certeza que deseja excluir o usuário "$username"?'),
+          content: Text('Tem certeza que deseja excluir o usuário "$username"?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child:
-                  Text('Cancelar', style: TextStyle(color: Colors.grey[800])),
+              child: Text('Cancelar', style: TextStyle(color: Colors.grey[800])),
             ),
             TextButton(
               onPressed: () {
@@ -82,22 +80,21 @@ class _UserScreenTestState extends BaseListScreenState<UserResponse> {
   }
 
   @override
-  Widget buildDefaultFloatingActionButton() => FloatingActionButtonAdd(
-        route: Routes.userCreate,
-        event: () => _userBloc.add(LoadUsersEvent()),
-        tooltip: "Adicionar Usuário",
-      );
+  Widget buildDefaultFloatingActionButton()
+    => FloatingActionButtonAdd(
+      route: Routes.userCreate,
+      event: () => _userBloc.add(LoadUsersEvent()),
+      tooltip: "Adicionar Usuário",
+    );
 
   @override
-  Widget buildItemCard(
-      UserResponse item, bool isSelected, bool isSelectMode, bool isSkeleton) {
+  Widget buildItemCard(UserResponse item, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return UserCard(
       user: item,
       onEdit: () {
         username = item.username!;
         role = item.role!;
-        onNavigateToUpdateScreen(
-            item.id!, () => _userBloc.add(LoadUsersEvent()));
+        onNavigateToUpdateScreen(item.id!, () => _userBloc.add(LoadUsersEvent()));
       },
       onDelete: () => _onDeleteUser(item.username!),
       showDeleteButton: true,
@@ -105,26 +102,19 @@ class _UserScreenTestState extends BaseListScreenState<UserResponse> {
   }
 
   @override
-  Widget buildSelectionFloatingActionButton(List<int> selectedIds) {
-    throw UnimplementedError();
-  }
+  Widget buildSelectionFloatingActionButton(List<int> selectedIds) => throw UnimplementedError();
 
   @override
   Widget getCreateScreen() => CreateUserScreen();
 
   @override
-  Widget getUpdateScreen(int id, {int? secondId}) =>
-      UpdateUserScreen(id: id, username: username, role: role);
+  Widget getUpdateScreen(int id, {int? secondId}) => UpdateUserScreen(id: id, username: username, role: role);
 
   @override
-  void onDisableItems(List<int> selectedIds) {
-    throw UnimplementedError();
-  }
+  void onDisableItems(List<int> selectedIds) => throw UnimplementedError();
 
   @override
-  void searchFieldChanged() {
-    throw UnimplementedError();
-  }
+  void searchFieldChanged() => throw UnimplementedError();
 
   @override
   void initState() {
@@ -144,8 +134,7 @@ class _UserScreenTestState extends BaseListScreenState<UserResponse> {
           _buildHeaderSection(),
           Expanded(
             child: BlocConsumer<UserBloc, UserState>(
-              listenWhen: (previous, current) =>
-                  current is UserErrorState || current is UserDeletedState,
+              listenWhen: (previous, current) => current is UserErrorState || current is UserDeletedState,
               listener: (context, state) {
                 if (state is UserDeletedState) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -165,13 +154,11 @@ class _UserScreenTestState extends BaseListScreenState<UserResponse> {
                 }
               },
               builder: (context, userState) {
-                if (userState is UserInitialState ||
-                    userState is UserLoadingState) {
+                if (userState is UserInitialState || userState is UserLoadingState) {
                   return Skeletonizer(
                     enableSwitchAnimation: true,
                     child: buildGridOfCards(
-                      items: List.generate(
-                          10, (_) => UserResponse()..applySkeletonData()),
+                      items: List.generate(10, (_) => UserResponse()..applySkeletonData()),
                       aspectRatio: 1,
                       totalPages: 1,
                       currentPage: 0,
@@ -180,9 +167,7 @@ class _UserScreenTestState extends BaseListScreenState<UserResponse> {
                     ),
                   );
                 } else if (userState is UserLoadedState) {
-                  final List<UserResponse> users = userState.users
-                      .where((user) => user.role != "ADMIN")
-                      .toList();
+                  final List<UserResponse> users = userState.users.where((user) => user.role != "ADMIN").toList();
                   return buildGridOfCards(
                     items: users,
                     aspectRatio: 1,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:serv_oeste/core/di/app_dependencies.dart';
-import 'package:serv_oeste/src/screens/auth/login.dart';
+import 'package:serv_oeste/features/auth/presentation/screens/login.dart';
 import 'package:serv_oeste/src/shared/routing/custom_router.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
