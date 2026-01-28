@@ -2,18 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:serv_oeste/core/routing/routes.dart';
+import 'package:serv_oeste/features/servico/domain/entities/servico.dart';
+import 'package:serv_oeste/features/servico/domain/entities/servico_filter_form.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_filter_request.dart';
+import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
 import 'package:serv_oeste/features/servico/presentation/screens/servico_update_screen.dart';
+import 'package:serv_oeste/features/servico/presentation/widgets/servico_card.dart';
+import 'package:serv_oeste/features/servico/presentation/widgets/servico_filter_form_widget.dart';
 import 'package:serv_oeste/shared/widgets/formFields/search_input_field.dart';
 import 'package:serv_oeste/shared/widgets/layout/fab_remove.dart';
 import 'package:serv_oeste/shared/widgets/layout/responsive_search_inputs.dart';
-import 'package:serv_oeste/features/servico/presentation/widgets/servico_card.dart';
+import 'package:serv_oeste/shared/widgets/screen/base_list_screen.dart';
 import 'package:serv_oeste/shared/widgets/screen/error_component.dart';
 import 'package:serv_oeste/shared/widgets/screen/expandable_fab_items.dart';
-import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
-import 'package:serv_oeste/features/servico/domain/entities/servico.dart';
-import 'package:serv_oeste/shared/widgets/screen/base_list_screen.dart';
-import 'package:serv_oeste/features/servico/presentation/screens/filter_servico.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class ServicoScreen extends BaseListScreen<Servico> {
@@ -50,7 +51,20 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
           keyboardType: TextInputType.text,
         ),
       ],
-      onFilterTap: () => Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(builder: (context) => FilterService())).then((_) => onSearchFieldChanged()),
+      onFilterTap: () async {
+        final ServicoFilterForm form = ServicoFilterForm();
+
+        await Navigator.of(context, rootNavigator: true).push(
+          MaterialPageRoute(
+            builder: (context) => ServicoFilterFormWidget(
+              title: "Filtrar Serviços",
+              form: form,
+              bloc: _servicoBloc,
+              submitText: "Filtrar",
+            ),
+          ),
+        );
+      },
     );
   }
 

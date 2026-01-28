@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/shared/widgets/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/shared/widgets/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/shared/widgets/formFields/date_picker_form_field.dart';
 import 'package:serv_oeste/shared/widgets/formFields/dropdown_form_field.dart';
@@ -95,7 +96,19 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
         onChanged: field.onChanged,
         enabled: field.enabled,
       );
-    } else if (field is DropdownInputField) {
+    }
+    else if (field is TextSearchFormInputField) {
+      return CustomSearchTextFormField(
+        hint: field.hint,
+        leftPadding: 4,
+        rightPadding: 4,
+        controller: field.controller,
+        keyboardType: field.keyboardType,
+        onChangedAction: field.onChanged,
+        onSuffixAction: field.onSuffix,
+      );
+    }
+    else if (field is DropdownInputField) {
       return CustomDropdownFormField(
         leftPadding: 4,
         rightPadding: 4,
@@ -109,7 +122,8 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
           field.onChanged?.call(value);
         },
       );
-    } else if (field is DropdownSearchInputField) {
+    }
+    else if (field is DropdownSearchInputField) {
       return CustomSearchDropDownFormField(
         leftPadding: 4,
         rightPadding: 4,
@@ -119,8 +133,10 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
         validator: field.validator,
         onChanged: field.onChanged,
         enabled: field.enabled,
+
       );
-    } else if (field is DatePickerInputField) {
+    }
+    else if (field is DatePickerInputField) {
       return CustomDatePickerFormField(
         label: field.hint,
         hint: "dd/mm/aaaa",

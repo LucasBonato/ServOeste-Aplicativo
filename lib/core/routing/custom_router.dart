@@ -5,7 +5,6 @@ import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart'
 import 'package:serv_oeste/features/cliente/presentation/screens/cliente_create_screen.dart';
 import 'package:serv_oeste/features/cliente/presentation/screens/cliente_update_screen.dart';
 import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
-import 'package:serv_oeste/features/servico/presentation/screens/filter_servico.dart';
 import 'package:serv_oeste/features/servico/presentation/screens/servico_create_screen.dart';
 import 'package:serv_oeste/features/servico/presentation/screens/servico_screen.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
@@ -33,7 +32,6 @@ class CustomRouter {
       Routes.cliente: (_) => const ClienteScreen(),
       Routes.clienteCreate: (_) => const ClienteCreateScreen(),
       Routes.servico: (_) => const ServicoScreen(),
-      Routes.servicoFilter: (_) => const FilterService(),
       Routes.user: (_) => const UserScreen(),
       Routes.userCreate: (_) => const CreateUserScreen(),
     };
