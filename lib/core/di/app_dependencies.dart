@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
+import 'package:serv_oeste/core/routing/routes.dart';
 import 'package:serv_oeste/core/services/flutter_secure_storage_service.dart';
 import 'package:serv_oeste/core/services/secure_storage_service.dart';
 import 'package:serv_oeste/features/auth/data/auth_repository_implementation.dart';
@@ -31,7 +32,6 @@ import 'package:serv_oeste/src/logic/filtro_servico/filtro_servico_provider.dart
 import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
 import 'package:serv_oeste/features/user/presentation/bloc/user_bloc.dart';
-import 'package:serv_oeste/src/shared/routing/routes.dart';
 
 class AppDependencies {
   final GlobalKey<NavigatorState> navigatorKey;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/core/routing/routes.dart';
 import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
 import 'package:serv_oeste/features/cliente/presentation/screens/cliente_create_screen.dart';
 import 'package:serv_oeste/features/cliente/presentation/screens/cliente_update_screen.dart';
@@ -17,7 +18,6 @@ import 'package:serv_oeste/features/cliente/presentation/screens/cliente_screen.
 import 'package:serv_oeste/features/servico/presentation/screens/servico_update_screen.dart';
 import 'package:serv_oeste/features/user/presentation/screens/user_create_screen.dart';
 import 'package:serv_oeste/features/user/presentation/screens/user_screen.dart';
-import 'package:serv_oeste/src/shared/routing/routes.dart';
 
 class CustomRouter {
   static Route<dynamic>? onGenerateRoute(RouteSettings settings, BuildContext context) {

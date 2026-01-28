@@ -2,6 +2,8 @@ import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
+import 'package:serv_oeste/core/constants/constants.dart';
+import 'package:serv_oeste/core/routing/routes.dart';
 import 'package:serv_oeste/features/tecnico/presentation/screens/tecnico_update_screen.dart';
 import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
 import 'package:serv_oeste/src/components/layout/fab_add.dart';
@@ -12,8 +14,6 @@ import 'package:serv_oeste/src/components/screen/error_component.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
 import 'package:serv_oeste/src/models/tecnico/tecnico_response.dart';
 import 'package:serv_oeste/src/screens/base_list_screen.dart';
-import 'package:serv_oeste/src/shared/constants/constants.dart';
-import 'package:serv_oeste/src/shared/routing/routes.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class TecnicoScreen extends BaseListScreen<TecnicoResponse> {

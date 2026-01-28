@@ -1,5 +1,5 @@
+import 'package:serv_oeste/core/constants/constants.dart';
 import 'package:serv_oeste/src/models/servico/servico_form.dart';
-import 'package:serv_oeste/src/shared/constants/constants.dart';
 import 'package:serv_oeste/src/utils/formatters/formatters.dart';
 import 'package:serv_oeste/src/utils/skeleton/skeleton_generator.dart';
 import 'package:serv_oeste/src/utils/skeleton/skeletonizable.dart';

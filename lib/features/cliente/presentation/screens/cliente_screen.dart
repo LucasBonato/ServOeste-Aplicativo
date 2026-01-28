@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
+import 'package:serv_oeste/core/routing/routes.dart';
+import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
+import 'package:serv_oeste/features/cliente/presentation/screens/cliente_update_screen.dart';
 import 'package:serv_oeste/src/components/formFields/search_input_field.dart';
 import 'package:serv_oeste/src/components/layout/fab_add.dart';
 import 'package:serv_oeste/src/components/layout/fab_remove.dart';
 import 'package:serv_oeste/src/components/layout/responsive_search_inputs.dart';
 import 'package:serv_oeste/src/components/screen/cards/card_client.dart';
 import 'package:serv_oeste/src/components/screen/error_component.dart';
-import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/screens/base_list_screen.dart';
-import 'package:serv_oeste/features/cliente/presentation/screens/cliente_update_screen.dart';
-import 'package:serv_oeste/src/shared/routing/routes.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class ClienteScreen extends BaseListScreen<Cliente> {
