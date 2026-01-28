@@ -5,32 +5,44 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:serv_oeste/core/services/flutter_secure_storage_service.dart';
 import 'package:serv_oeste/core/services/secure_storage_service.dart';
-import 'package:serv_oeste/src/clients/auth_client.dart';
-import 'package:serv_oeste/src/clients/cliente_client.dart';
+import 'package:serv_oeste/features/auth/data/auth_repository_implementation.dart';
+import 'package:serv_oeste/features/auth/domain/auth_repository.dart';
+import 'package:serv_oeste/features/cliente/data/cliente_client.dart';
+import 'package:serv_oeste/features/cliente/data/cliente_repository_implementation.dart';
+import 'package:serv_oeste/features/cliente/domain/cliente_repository.dart';
+import 'package:serv_oeste/features/auth/data/auth_client.dart';
+import 'package:serv_oeste/features/endereco/data/endereco_repository_implementation.dart';
+import 'package:serv_oeste/features/endereco/domain/endereco_repository.dart';
+import 'package:serv_oeste/features/servico/data/servico_repository_implementation.dart';
+import 'package:serv_oeste/features/servico/domain/servico_repository.dart';
+import 'package:serv_oeste/features/tecnico/data/tecnico_repository_implementation.dart';
+import 'package:serv_oeste/features/tecnico/domain/tecnico_repository.dart';
+import 'package:serv_oeste/features/user/data/user_repository_implementation.dart';
+import 'package:serv_oeste/features/user/domain/user_repository.dart';
 import 'package:serv_oeste/src/clients/dio/dio_service.dart';
-import 'package:serv_oeste/src/clients/endereco_client.dart';
-import 'package:serv_oeste/src/clients/servico_client.dart';
-import 'package:serv_oeste/src/clients/tecnico_client.dart';
-import 'package:serv_oeste/src/clients/user_client.dart';
-import 'package:serv_oeste/src/logic/auth/auth_bloc.dart';
-import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
-import 'package:serv_oeste/src/logic/endereco/endereco_bloc.dart';
+import 'package:serv_oeste/features/endereco/data/endereco_client.dart';
+import 'package:serv_oeste/features/servico/data/servico_client.dart';
+import 'package:serv_oeste/features/tecnico/data/tecnico_client.dart';
+import 'package:serv_oeste/features/user/data/user_client.dart';
+import 'package:serv_oeste/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
+import 'package:serv_oeste/features/endereco/presentation/bloc/endereco_bloc.dart';
 import 'package:serv_oeste/src/logic/filtro_servico/filtro_servico_provider.dart';
-import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
-import 'package:serv_oeste/src/logic/tecnico/tecnico_bloc.dart';
-import 'package:serv_oeste/src/logic/user/user_bloc.dart';
-import 'package:serv_oeste/src/screens/auth/login.dart';
+import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
+import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
+import 'package:serv_oeste/features/user/presentation/bloc/user_bloc.dart';
+import 'package:serv_oeste/src/shared/routing/routes.dart';
 
 class AppDependencies {
   final GlobalKey<NavigatorState> navigatorKey;
 
   late final DioService dioService;
-  late final AuthClient authClient;
-  late final ClienteClient clienteClient;
-  late final TecnicoClient tecnicoClient;
-  late final ServicoClient servicoClient;
-  late final EnderecoClient enderecoClient;
-  late final UserClient userClient;
+  late final AuthRepository authRepository;
+  late final ClienteRepository clienteRepository;
+  late final TecnicoRepository tecnicoRepository;
+  late final ServicoRepository servicoRepository;
+  late final EnderecoRepository enderecoRepository;
+  late final UserRepository userRepository;
   late final SecureStorageService secureStorageService;
 
   AppDependencies(
@@ -43,37 +55,36 @@ class AppDependencies {
     secureStorageService = FlutterSecureStorageService(const FlutterSecureStorage());
 
     dioService = DioService(secureStorageService);
-    authClient = AuthClient(dioService.dio);
+    authRepository = AuthRepositoryImplementation(AuthClient(dioService.dio));
 
-    dioService.addAuthInterceptors(authClient, () {
-      navigatorKey.currentState?.pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
+    dioService.addAuthInterceptors(authRepository, () {
+      navigatorKey.currentState?.pushNamedAndRemoveUntil(
+        Routes.login,
         (_) => false,
       );
     });
 
-    clienteClient = ClienteClient(dioService.dio);
-    tecnicoClient = TecnicoClient(dioService.dio);
-    servicoClient = ServicoClient(dioService.dio);
-    enderecoClient = EnderecoClient(dioService.dio);
-    userClient = UserClient(dioService.dio);
+    clienteRepository = ClienteRepositoryImplementation(ClienteClient(dioService.dio));
+    tecnicoRepository = TecnicoRepositoryImplementation(TecnicoClient(dioService.dio));
+    servicoRepository = ServicoRepositoryImplementation(ServicoClient(dioService.dio));
+    enderecoRepository = EnderecoRepositoryImplementation(EnderecoClient(dioService.dio));
+    userRepository = UserRepositoryImplementation(UserClient(dioService.dio));
   }
 
   List<BlocProvider> buildBlocProviders() {
     return [
-      BlocProvider<AuthBloc>(create: (_) => AuthBloc(authClient, secureStorageService)),
-      BlocProvider<ClienteBloc>(create: (_) => ClienteBloc(clienteClient)),
-      BlocProvider<TecnicoBloc>(create: (_) => TecnicoBloc(tecnicoClient)),
-      BlocProvider<ServicoBloc>(create: (_) => ServicoBloc(servicoClient)),
-      BlocProvider<EnderecoBloc>(create: (_) => EnderecoBloc(enderecoClient)),
-      BlocProvider<UserBloc>(create: (_) => UserBloc(userClient)),
+      BlocProvider<AuthBloc>(create: (_) => AuthBloc(authRepository, secureStorageService)),
+      BlocProvider<ClienteBloc>(create: (_) => ClienteBloc(clienteRepository)),
+      BlocProvider<TecnicoBloc>(create: (_) => TecnicoBloc(tecnicoRepository)),
+      BlocProvider<ServicoBloc>(create: (_) => ServicoBloc(servicoRepository)),
+      BlocProvider<EnderecoBloc>(create: (_) => EnderecoBloc(enderecoRepository)),
+      BlocProvider<UserBloc>(create: (_) => UserBloc(userRepository)),
     ];
   }
 
   List<SingleChildWidget> buildProviders() {
     return [
       ChangeNotifierProvider(create: (_) => FiltroServicoProvider()),
-      Provider<UserClient>.value(value: userClient),
       Provider<SecureStorageService>.value(value: secureStorageService),
     ];
   }

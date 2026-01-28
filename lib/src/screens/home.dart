@@ -7,10 +7,10 @@ import 'package:serv_oeste/src/components/screen/entity_not_found.dart';
 import 'package:serv_oeste/src/components/screen/error_component.dart';
 import 'package:serv_oeste/src/components/screen/grid_view.dart';
 import 'package:serv_oeste/src/components/screen/loading.dart';
-import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
+import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';
-import 'package:serv_oeste/src/screens/servico/update_servico.dart';
+import 'package:serv_oeste/features/servico/presentation/screens/servico_update_screen.dart';
 import 'package:serv_oeste/src/utils/jwt_utils.dart';
 
 class Home extends StatefulWidget {
@@ -48,7 +48,7 @@ class _HomeState extends State<Home> {
     Navigator.of(context, rootNavigator: true)
         .push(
       MaterialPageRoute(
-        builder: (context) => UpdateServico(id: id, clientId: clientId),
+        builder: (context) => ServicoUpdateScreen(id: id, clientId: clientId),
       ),
     )
         .then(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
-import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
-import 'package:serv_oeste/src/logic/servico/servico_bloc.dart';
+import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
+import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
 import 'package:serv_oeste/src/models/cliente/cliente.dart';
 import 'package:serv_oeste/src/models/servico/servico.dart';
 import 'package:serv_oeste/src/models/servico/servico_filter_request.dart';

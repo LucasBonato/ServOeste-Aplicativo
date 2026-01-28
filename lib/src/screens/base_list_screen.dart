@@ -27,8 +27,7 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
 
   Widget buildSelectionFloatingActionButton(List<int> selectedIds);
 
-  Widget buildItemCard(
-      T item, bool isSelected, bool isSelectMode, bool isSkeleton);
+  Widget buildItemCard(T item, bool isSelected, bool isSelectMode, bool isSkeleton);
 
   void setListStyle(ListStyle listStyle) {
     _listStyle = listStyle;
@@ -38,24 +37,22 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
     _debouncer.execute(searchFieldChanged);
   }
 
-  void onNavigateToUpdateScreen(int id, VoidCallback onSuccess,
-      {int? secondId}) {
+  void onNavigateToUpdateScreen(int id, VoidCallback onSuccess, {int? secondId}) {
     Navigator.of(context, rootNavigator: true)
         .push(
-      MaterialPageRoute(
-        builder: (context) => getUpdateScreen(id, secondId: secondId),
-      ),
-    )
+          MaterialPageRoute(
+            builder: (context) => getUpdateScreen(id, secondId: secondId),
+          ),
+        )
         .then((value) {
-      if (value == true && mounted) {
-        onSuccess();
-      }
-    });
+          if (value == true && mounted) {
+            onSuccess();
+          }
+        });
     context.read<ListaBloc>().add(ListaClearSelectionEvent());
   }
 
-  void onNavigateToCreateScreen(int id, VoidCallback onSuccess,
-      {int? secondId}) {
+  void onNavigateToCreateScreen(int id, VoidCallback onSuccess, {int? secondId}) {
     Navigator.of(context, rootNavigator: true)
         .push(
       MaterialPageRoute(
@@ -80,26 +77,19 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
   }
 
   bool isSelectionMode(ListaState stateLista) {
-    return (stateLista is ListaSelectState)
-        ? stateLista.selectedIds.isNotEmpty
-        : false;
+    return (stateLista is ListaSelectState) ? stateLista.selectedIds.isNotEmpty : false;
   }
 
   bool isItemSelected(int id, ListaState listState) {
-    return (listState is ListaSelectState)
-        ? listState.selectedIds.contains(id)
-        : false;
+    return (listState is ListaSelectState) ? listState.selectedIds.contains(id) : false;
   }
 
   Widget buildFloatingActionButton() {
     return BlocBuilder<ListaBloc, ListaState>(
       builder: (context, state) {
-        final bool hasSelection =
-            state is ListaSelectState && state.selectedIds.isNotEmpty;
+        final bool hasSelection = state is ListaSelectState && state.selectedIds.isNotEmpty;
 
-        return !hasSelection
-            ? buildDefaultFloatingActionButton()
-            : buildSelectionFloatingActionButton(state.selectedIds);
+        return !hasSelection ? buildDefaultFloatingActionButton() : buildSelectionFloatingActionButton(state.selectedIds);
       },
     );
   }
@@ -124,8 +114,7 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
     if (_listStyle == ListStyle.list) {
       return ListView.builder(
         itemCount: items.length,
-        itemBuilder: (context, index) =>
-            buildItemCard(items[index], false, false, isSkeleton),
+        itemBuilder: (context, index) => buildItemCard(items[index], false, false, isSkeleton),
       );
     }
 
@@ -139,10 +128,8 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
       verticalPadding: verticalPadding,
       buildCard: (item) => BlocBuilder<ListaBloc, ListaState>(
         builder: (context, stateLista) {
-          final bool isSelected =
-              isSkeleton ? false : isItemSelected(item.id, stateLista);
-          final bool isSelectMode =
-              isSkeleton ? false : isSelectionMode(stateLista);
+          final bool isSelected = isSkeleton ? false : isItemSelected(item.id, stateLista);
+          final bool isSelectMode = isSkeleton ? false : isSelectionMode(stateLista);
 
           return buildItemCard(item, isSelected, isSelectMode, isSkeleton);
         },

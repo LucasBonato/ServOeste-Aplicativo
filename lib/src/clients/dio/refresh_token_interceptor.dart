@@ -1,25 +1,27 @@
 import 'dart:async';
 
+import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:serv_oeste/core/services/secure_storage_service.dart';
-import 'package:serv_oeste/src/clients/auth_client.dart';
+import 'package:serv_oeste/features/auth/domain/auth_repository.dart';
 import 'package:serv_oeste/src/clients/dio/server_endpoints.dart';
+import 'package:serv_oeste/src/models/auth/auth.dart';
+import 'package:serv_oeste/src/models/error/error_entity.dart';
 
 class TokenRefreshInterceptor extends Interceptor {
   final Dio dio;
-  final AuthClient authClient;
+  final AuthRepository authRepository;
   final VoidCallback? onTokenRefreshFailed;
   final SecureStorageService secureStorageService;
 
   bool _isRefreshing = false;
   final List<({DioException error, ErrorInterceptorHandler handler})> _pendingRequests = [];
-  final Set<String> _processedRequests = {};
 
   TokenRefreshInterceptor({
     required this.secureStorageService,
     required this.dio,
-    required this.authClient,
+    required this.authRepository,
     this.onTokenRefreshFailed,
   });
 
@@ -29,17 +31,10 @@ class TokenRefreshInterceptor extends Interceptor {
       return handler.next(err);
     }
 
-    if (err.response?.statusCode != 401 && err.response?.statusCode != 403) {
+    final int? status = err.response?.statusCode;
+    if (status != 401 && status != 403) {
       return handler.next(err);
     }
-
-    final requestId = '${err.requestOptions.method}:${err.requestOptions.path}:${DateTime.now().millisecondsSinceEpoch}';
-
-    if (_processedRequests.contains(requestId)) {
-      return handler.next(err);
-    }
-
-    _processedRequests.add(requestId);
 
     if (_isRefreshing) {
       _pendingRequests.add((error: err, handler: handler));
@@ -49,89 +44,72 @@ class TokenRefreshInterceptor extends Interceptor {
     _isRefreshing = true;
 
     try {
-      final refreshResult = await authClient.refreshToken();
+      final Either<ErrorEntity, AuthResponse> refreshResult = await authRepository.refreshToken();
 
       if (refreshResult.isRight()) {
-        final newTokens = refreshResult.getOrElse(() => throw Exception('Missing token'));
-        await secureStorageService.saveTokens(newTokens.accessToken, newTokens.refreshToken);
+        final AuthResponse newTokens = refreshResult.getOrElse(() => throw Exception('Missing token'));
+        await secureStorageService.saveTokens(
+          newTokens.accessToken,
+          newTokens.refreshToken,
+        );
 
-        await _retryRequest(err, handler);
+        await _retry(err, handler);
 
         for (final pending in _pendingRequests) {
-          await _retryRequest(pending.error, pending.handler);
+          await _retry(pending.error, pending.handler);
         }
 
         _pendingRequests.clear();
-        _processedRequests.clear();
-        _isRefreshing = false;
 
-        return;
-      } else {
-        await _handleRefreshFailed(handler, err);
       }
-    } catch (e) {
-      await _handleRefreshFailed(handler, err);
-    } finally {
-      if (_isRefreshing) {
-        _isRefreshing = false;
+      else {
+        await _fail(err, handler);
       }
+    }
+    catch (_) {
+      await _fail(err, handler);
+    }
+    finally {
+      _isRefreshing = false;
     }
   }
 
-  Future<void> _retryRequest(DioException err, ErrorInterceptorHandler handler) async {
-    try {
-      final String? newAccessToken = await secureStorageService.getAccessToken();
+  Future<void> _retry(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
+    final String? newAccessToken = await secureStorageService.getAccessToken();
+    if (!secureStorageService.hasToken(newAccessToken)) {
+      throw Exception('Token inválido após refresh');
+    }
 
-      if (!secureStorageService.hasToken(newAccessToken)) {
-        throw Exception('Token inválido após refresh');
-      }
+    final options = err.requestOptions;
 
-      final options = err.requestOptions;
-      options.headers['Authorization'] = 'Bearer $newAccessToken';
-
-      final requestOptions = Options(
+    final Response response = await dio.request(
+      options.path,
+      data: options.data,
+      queryParameters: options.queryParameters,
+      options: Options(
         method: options.method,
-        sendTimeout: options.sendTimeout,
-        receiveTimeout: options.receiveTimeout,
-        extra: options.extra,
-        headers: options.headers,
-        responseType: options.responseType,
+        headers: {
+          ...options.headers,
+          'Authorization': 'Bearer $newAccessToken',
+        },
         contentType: options.contentType,
-        validateStatus: options.validateStatus,
-        receiveDataWhenStatusError: options.receiveDataWhenStatusError,
-        followRedirects: options.followRedirects,
-        maxRedirects: options.maxRedirects,
-        requestEncoder: options.requestEncoder,
-        responseDecoder: options.responseDecoder,
-        listFormat: options.listFormat,
-      );
+        responseType: options.responseType,
+      ),
+    );
 
-      final response = await dio.request(
-        options.path,
-        data: options.data,
-        queryParameters: options.queryParameters,
-        options: requestOptions,
-      );
-
-      handler.resolve(response);
-    } catch (e) {
-      handler.next(err);
-    }
+    handler.resolve(response);
   }
 
-  Future<void> _handleRefreshFailed(ErrorInterceptorHandler handler, DioException err) async {
-    _isRefreshing = false;
+  Future<void> _fail(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
     _pendingRequests.clear();
-    _processedRequests.clear();
-
     await secureStorageService.deleteTokens();
     onTokenRefreshFailed?.call();
-
-    for (final pending in _pendingRequests) {
-      pending.handler.next(pending.error);
-    }
-    _pendingRequests.clear();
-
     handler.next(err);
   }
 }

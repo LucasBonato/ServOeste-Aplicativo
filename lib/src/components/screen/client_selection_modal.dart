@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/src/components/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/src/components/screen/filtered_clients_table.dart';
 import 'package:serv_oeste/src/components/screen/loading.dart';
-import 'package:serv_oeste/src/logic/cliente/cliente_bloc.dart';
+import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
 import 'package:serv_oeste/src/shared/debouncer.dart';
 
 class ClientSelectionModal extends StatefulWidget {

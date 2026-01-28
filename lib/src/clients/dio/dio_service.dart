@@ -4,7 +4,8 @@ import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:serv_oeste/core/services/secure_storage_service.dart';
-import 'package:serv_oeste/src/clients/auth_client.dart';
+import 'package:serv_oeste/features/auth/data/auth_client.dart';
+import 'package:serv_oeste/features/auth/domain/auth_repository.dart';
 import 'package:serv_oeste/src/clients/dio/auth_interceptor.dart';
 import 'package:serv_oeste/src/clients/dio/dio_interceptor.dart';
 import 'package:serv_oeste/src/clients/dio/refresh_token_interceptor.dart';
@@ -34,7 +35,7 @@ class DioService {
   }
 
   void addAuthInterceptors(
-    AuthClient authClient,
+    AuthRepository authRepository,
     VoidCallback? onTokenRefreshFailed,
   ) {
     if (_authInterceptorsAdded) {
@@ -46,7 +47,7 @@ class DioService {
       TokenRefreshInterceptor(
         secureStorageService: _secureStorageService,
         dio: _dio,
-        authClient: authClient,
+        authRepository: authRepository,
         onTokenRefreshFailed: onTokenRefreshFailed,
       ),
     ]);
