@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:serv_oeste/main.dart';
-import 'package:serv_oeste/shared/widgets/layout/base_layout.dart';
+import 'package:serv_oeste/core/navigation/navigation_service.dart';
 import 'package:serv_oeste/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:serv_oeste/features/auth/domain/entities/auth_form.dart';
 import 'package:serv_oeste/shared/models/enums/error_code_key.dart';
@@ -15,11 +14,18 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _authForm = AuthForm();
-  final _validator = AuthValidator();
+  late final NavigationService navigationService;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final AuthForm _authForm = AuthForm();
+  final AuthValidator _validator = AuthValidator();
   bool _isLoading = false;
   bool _obscurePassword = true;
+
+  @override
+  void initState() {
+    super.initState();
+    navigationService = context.read<NavigationService>();
+  }
 
   @override
   void dispose() {
@@ -65,18 +71,17 @@ class _LoginScreenState extends State<LoginScreen> {
               duration: const Duration(seconds: 3),
             ),
           );
-        } else if (state is AuthLoadingState) {
+        }
+        else if (state is AuthLoadingState) {
           setState(() {
             _isLoading = true;
           });
-        } else if (state is AuthLoginSuccessState) {
+        }
+        else if (state is AuthLoginSuccessState) {
           setState(() {
             _isLoading = false;
           });
-          navigatorKey.currentState?.pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const BaseLayout()),
-            (route) => false,
-          );
+          navigationService.goToHome();
         }
       },
       child: Scaffold(
