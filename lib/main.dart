@@ -36,8 +36,8 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       navigatorKey: navigatorKey,
-      home: const LoginScreen(),
-      onGenerateRoute: (settings) => CustomRouter.onGenerateRoute(settings, context),
+      initialRoute: Routes.login,
+      onGenerateRoute: (settings) => CustomRouter.onGenerateRoute(settings),
     );
   }
 }
