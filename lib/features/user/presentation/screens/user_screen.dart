@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/core/routing/args/user_update_args.dart';
 import 'package:serv_oeste/core/routing/routes.dart';
 import 'package:serv_oeste/features/user/domain/entities/user_response.dart';
+import 'package:serv_oeste/features/user/presentation/bloc/user_bloc.dart';
+import 'package:serv_oeste/features/user/presentation/widgets/user_card.dart';
 import 'package:serv_oeste/shared/models/enums/list_style.dart';
 import 'package:serv_oeste/shared/widgets/layout/fab_add.dart';
-import 'package:serv_oeste/features/user/presentation/widgets/user_card.dart';
-import 'package:serv_oeste/shared/widgets/screen/error_component.dart';
-import 'package:serv_oeste/features/user/presentation/bloc/user_bloc.dart';
 import 'package:serv_oeste/shared/widgets/screen/base_list_screen.dart';
-import 'package:serv_oeste/features/user/presentation/screens/user_create_screen.dart';
-import 'package:serv_oeste/features/user/presentation/screens/user_update_screen.dart';
+import 'package:serv_oeste/shared/widgets/screen/error_component.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class UserScreen extends BaseListScreen<UserResponse> {
@@ -80,21 +79,21 @@ class _UserScreenTestState extends BaseListScreenState<UserResponse> {
   }
 
   @override
-  Widget buildDefaultFloatingActionButton()
-    => FloatingActionButtonAdd(
-      route: Routes.userCreate,
-      event: () => _userBloc.add(LoadUsersEvent()),
-      tooltip: "Adicionar Usuário",
-    );
+  Widget buildDefaultFloatingActionButton() => FloatingActionButtonAdd(
+        route: Routes.userCreate,
+        event: () => _userBloc.add(LoadUsersEvent()),
+        tooltip: "Adicionar Usuário",
+      );
 
   @override
   Widget buildItemCard(UserResponse item, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return UserCard(
       user: item,
       onEdit: () {
-        username = item.username!;
-        role = item.role!;
-        onNavigateToUpdateScreen(item.id!, () => _userBloc.add(LoadUsersEvent()));
+        onNavigateToUpdateScreen(
+          UserUpdateArgs(id: item.id!, username: item.username!, role: item.role!),
+          () => _userBloc.add(LoadUsersEvent()),
+        );
       },
       onDelete: () => _onDeleteUser(item.username!),
       showDeleteButton: true,
@@ -105,10 +104,7 @@ class _UserScreenTestState extends BaseListScreenState<UserResponse> {
   Widget buildSelectionFloatingActionButton(List<int> selectedIds) => throw UnimplementedError();
 
   @override
-  Widget getCreateScreen() => CreateUserScreen();
-
-  @override
-  Widget getUpdateScreen(int id, {int? secondId}) => UpdateUserScreen(id: id, username: username, role: role);
+  String getUpdateRoute() => Routes.userUpdate;
 
   @override
   void onDisableItems(List<int> selectedIds) => throw UnimplementedError();

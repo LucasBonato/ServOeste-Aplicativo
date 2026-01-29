@@ -19,9 +19,13 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
 
   void onDisableItems(List<int> selectedIds);
 
-  Widget? getCreateScreen() => null;
+  String? getCreateRoute() => null;
 
-  Widget getUpdateScreen(int id, {int? secondId});
+  TArgs? getCreateRouteArguments<TArgs>(TArgs? args) => args;
+
+  String getUpdateRoute();
+
+  TArgs? getUpdateRouteArguments<TArgs>(TArgs? args) => args;
 
   Widget buildDefaultFloatingActionButton();
 
@@ -37,33 +41,31 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
     _debouncer.execute(searchFieldChanged);
   }
 
-  void onNavigateToUpdateScreen(int id, VoidCallback onSuccess, {int? secondId}) {
+  void onNavigateToUpdateScreen<TArgs>(TArgs args, VoidCallback onSuccess) {
     Navigator.of(context, rootNavigator: true)
-        .push(
-          MaterialPageRoute(
-            builder: (context) => getUpdateScreen(id, secondId: secondId),
-          ),
-        )
-        .then((value) {
-          if (value == true && mounted) {
-            onSuccess();
-          }
-        });
+      .pushNamed(
+        getUpdateRoute(),
+        arguments: getUpdateRouteArguments(args),
+      )
+      .then((value) {
+        if (value == true && mounted) {
+          onSuccess();
+        }
+      });
     context.read<ListaBloc>().add(ListaClearSelectionEvent());
   }
 
-  void onNavigateToCreateScreen(int id, VoidCallback onSuccess, {int? secondId}) {
+  void onNavigateToCreateScreen<TArgs>(TArgs args, VoidCallback onSuccess) {
     Navigator.of(context, rootNavigator: true)
-        .push(
-      MaterialPageRoute(
-        builder: (context) => getCreateScreen()!,
-      ),
-    )
-        .then((value) {
-      if (value == true && mounted) {
-        onSuccess();
-      }
-    });
+      .pushNamed(
+        getCreateRoute()!,
+        arguments: getCreateRouteArguments(args)
+      )
+      .then((value) {
+        if (value == true && mounted) {
+          onSuccess();
+        }
+      });
     context.read<ListaBloc>().add(ListaClearSelectionEvent());
   }
 

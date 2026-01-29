@@ -4,13 +4,15 @@ import 'expandable_fab.dart';
 
 class ExpandableFabItems extends StatelessWidget {
   final String firstHeroTag;
-  final String secondHeroTag;
   final String firstRouterName;
-  final String secondRouterName;
   final String firstTooltip;
-  final String secondTooltip;
   final Widget firstChild;
+  final Object? firstArgs;
+  final String secondHeroTag;
+  final String secondRouterName;
+  final String secondTooltip;
   final Widget secondChild;
+  final Object? secondArgs;
   final void Function() updateList;
 
   const ExpandableFabItems({
@@ -24,6 +26,8 @@ class ExpandableFabItems extends StatelessWidget {
     required this.firstChild,
     required this.secondChild,
     required this.updateList,
+    this.firstArgs,
+    this.secondArgs,
   });
 
   @override
@@ -32,7 +36,7 @@ class ExpandableFabItems extends StatelessWidget {
       distance: 100,
       children: [
         FloatingActionButton(
-          onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed(firstRouterName, arguments: {"isClientAndService": false}).then((value) {
+          onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed(firstRouterName, arguments: firstArgs).then((value) {
             if (value == true) {
               updateList();
             }
@@ -44,7 +48,7 @@ class ExpandableFabItems extends StatelessWidget {
           child: firstChild,
         ),
         FloatingActionButton(
-          onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed(secondRouterName).then((value) {
+          onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed(secondRouterName, arguments: secondArgs).then((value) {
             if (value == true) {
               updateList();
             }

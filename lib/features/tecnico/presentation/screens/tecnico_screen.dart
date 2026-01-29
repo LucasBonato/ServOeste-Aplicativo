@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:serv_oeste/core/constants/constants.dart';
+import 'package:serv_oeste/core/routing/args/tecnico_update_args.dart';
 import 'package:serv_oeste/core/routing/routes.dart';
 import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_response.dart';
-import 'package:serv_oeste/features/tecnico/presentation/screens/tecnico_update_screen.dart';
+import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
+import 'package:serv_oeste/features/tecnico/presentation/widgets/tecnico_card.dart';
 import 'package:serv_oeste/shared/widgets/formFields/search_input_field.dart';
 import 'package:serv_oeste/shared/widgets/layout/fab_add.dart';
 import 'package:serv_oeste/shared/widgets/layout/fab_remove.dart';
 import 'package:serv_oeste/shared/widgets/layout/responsive_search_inputs.dart';
-import 'package:serv_oeste/features/tecnico/presentation/widgets/tecnico_card.dart';
 import 'package:serv_oeste/shared/widgets/screen/base_list_screen.dart';
 import 'package:serv_oeste/shared/widgets/screen/error_component.dart';
-import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class TecnicoScreen extends BaseListScreen<TecnicoResponse> {
@@ -68,7 +68,7 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
   }
 
   @override
-  Widget getUpdateScreen(int id, {int? secondId}) => TecnicoUpdateScreen(id: id);
+  String getUpdateRoute() => Routes.tecnicoUpdate;
 
   @override
   Widget buildDefaultFloatingActionButton() {
@@ -87,7 +87,7 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
   @override
   Widget buildItemCard(TecnicoResponse tecnico, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return TecnicoCard(
-      onDoubleTap: () => onNavigateToUpdateScreen(tecnico.id!, () => _tecnicoBloc.add(TecnicoSearchMenuEvent())),
+      onDoubleTap: () => onNavigateToUpdateScreen(TecnicoUpdateArgs(id: tecnico.id!), () => _tecnicoBloc.add(TecnicoSearchMenuEvent())),
       onLongPress: () => onSelectItemList(tecnico.id!),
       onTap: () {
         if (isSelectMode) {

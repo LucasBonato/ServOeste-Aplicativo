@@ -2,24 +2,24 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/core/navigation/navigation_service.dart';
+import 'package:serv_oeste/core/security/jwt_utils.dart';
 import 'package:serv_oeste/core/services/secure_storage_service.dart';
+import 'package:serv_oeste/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
+import 'package:serv_oeste/features/cliente/presentation/screens/cliente_screen.dart';
+import 'package:serv_oeste/features/home/presentation/screens/home.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_filter_request.dart';
+import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
 import 'package:serv_oeste/features/servico/presentation/screens/servico_screen.dart';
+import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
+import 'package:serv_oeste/features/tecnico/presentation/screens/tecnico_screen.dart';
+import 'package:serv_oeste/features/user/presentation/bloc/user_bloc.dart';
 import 'package:serv_oeste/features/user/presentation/screens/user_screen.dart';
+import 'package:serv_oeste/shared/bloc/list/lista_bloc.dart';
 import 'package:serv_oeste/shared/widgets/layout/bottom_nav_bar.dart';
 import 'package:serv_oeste/shared/widgets/layout/header.dart';
 import 'package:serv_oeste/shared/widgets/layout/sidebar_navigation.dart';
-import 'package:serv_oeste/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
-import 'package:serv_oeste/shared/bloc/list/lista_bloc.dart';
-import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
-import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
-import 'package:serv_oeste/features/user/presentation/bloc/user_bloc.dart';
-import 'package:serv_oeste/features/auth/presentation/screens/login.dart';
-import 'package:serv_oeste/features/cliente/presentation/screens/cliente_screen.dart';
-import 'package:serv_oeste/features/home/presentation/screens/home.dart';
-import 'package:serv_oeste/features/tecnico/presentation/screens/tecnico_screen.dart';
-import 'package:serv_oeste/core/security/jwt_utils.dart';
 
 class BaseLayout extends StatefulWidget {
   final int? initialIndex;
@@ -34,26 +34,28 @@ class BaseLayout extends StatefulWidget {
 }
 
 class BaseLayoutState extends State<BaseLayout> {
-  int _currentIndex = 0;
-  List<GlobalKey<NavigatorState>> _navigatorKeys = [];
-  List<Widget?> _screens = [];
+  String? _userRole;
+  Timer? _authTimer;
 
   int _maxIndex = 4;
-  String? _userRole;
+  int _currentIndex = 0;
   bool _isInitialized = false;
+  List<Widget?> _screens = [];
+  List<GlobalKey<NavigatorState>> _navigatorKeys = [];
 
   late final SecureStorageService _secureStorageService;
+  late final NavigationService _navigationService;
   late final ServicoBloc _servicoBloc;
   late final TecnicoBloc _tecnicoBloc;
   late final ClienteBloc _clienteBloc;
   late final UserBloc _userBloc;
-  Timer? _authTimer;
 
   @override
   void initState() {
     super.initState();
 
     _secureStorageService = context.read<SecureStorageService>();
+    _navigationService = context.read<NavigationService>();
 
     _servicoBloc = context.read<ServicoBloc>();
     _tecnicoBloc = context.read<TecnicoBloc>();
@@ -223,10 +225,7 @@ class BaseLayoutState extends State<BaseLayout> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is UnauthenticatedState || state is AuthLogoutSuccessState) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const LoginScreen()),
-            (route) => false,
-          );
+          _navigationService.goToLogin();
         }
       },
       child: Scaffold(

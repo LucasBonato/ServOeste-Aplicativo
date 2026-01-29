@@ -5,8 +5,8 @@ import 'package:serv_oeste/features/user/presentation/bloc/user_bloc.dart';
 import 'package:serv_oeste/features/user/presentation/widgets/user_form_widget.dart';
 import 'package:serv_oeste/shared/utils/extensions/role_extensions.dart';
 
-class CreateUserScreen extends StatelessWidget {
-  const CreateUserScreen({super.key});
+class UserCreateScreen extends StatelessWidget {
+  const UserCreateScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

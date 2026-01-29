@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/core/routing/args/servico_update_args.dart';
+import 'package:serv_oeste/core/routing/routes.dart';
 import 'package:serv_oeste/core/services/secure_storage_service.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_filter_request.dart';
 import 'package:serv_oeste/shared/widgets/layout/pagination_widget.dart';
@@ -10,7 +12,6 @@ import 'package:serv_oeste/shared/widgets/screen/grid_view.dart';
 import 'package:serv_oeste/shared/widgets/screen/loading.dart';
 import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico.dart';
-import 'package:serv_oeste/features/servico/presentation/screens/servico_update_screen.dart';
 import 'package:serv_oeste/core/security/jwt_utils.dart';
 
 class Home extends StatefulWidget {
@@ -45,17 +46,12 @@ class _HomeState extends State<Home> {
   }
 
   void _onNavigateToUpdateScreen(int id, int clientId) {
-    Navigator.of(context, rootNavigator: true)
-        .push(
-      MaterialPageRoute(
-        builder: (context) => ServicoUpdateScreen(id: id, clientId: clientId),
-      ),
-    )
-        .then(
-      (_) {
+    Navigator.of(context, rootNavigator: true).pushNamed(
+        Routes.servicoUpdate,
+        arguments: ServicoUpdateArgs(id: id, clientId: clientId),
+      ).then((_) {
         _reloadHomeData();
-      },
-    );
+      });
   }
 
   void _reloadHomeData() {
