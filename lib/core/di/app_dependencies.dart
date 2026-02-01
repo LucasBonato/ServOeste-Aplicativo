@@ -1,39 +1,38 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
-import 'package:serv_oeste/core/routing/routes.dart';
+import 'package:serv_oeste/core/http/dio_service.dart';
+import 'package:serv_oeste/core/navigation/navigation_service.dart';
 import 'package:serv_oeste/core/services/flutter_secure_storage_service.dart';
 import 'package:serv_oeste/core/services/secure_storage_service.dart';
+import 'package:serv_oeste/features/auth/data/auth_client.dart';
 import 'package:serv_oeste/features/auth/data/auth_repository_implementation.dart';
 import 'package:serv_oeste/features/auth/domain/auth_repository.dart';
+import 'package:serv_oeste/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:serv_oeste/features/cliente/data/cliente_client.dart';
 import 'package:serv_oeste/features/cliente/data/cliente_repository_implementation.dart';
 import 'package:serv_oeste/features/cliente/domain/cliente_repository.dart';
-import 'package:serv_oeste/features/auth/data/auth_client.dart';
+import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
+import 'package:serv_oeste/features/endereco/data/endereco_client.dart';
 import 'package:serv_oeste/features/endereco/data/endereco_repository_implementation.dart';
 import 'package:serv_oeste/features/endereco/domain/endereco_repository.dart';
+import 'package:serv_oeste/features/endereco/presentation/bloc/endereco_bloc.dart';
+import 'package:serv_oeste/features/servico/data/servico_client.dart';
 import 'package:serv_oeste/features/servico/data/servico_repository_implementation.dart';
 import 'package:serv_oeste/features/servico/domain/servico_repository.dart';
+import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
+import 'package:serv_oeste/features/tecnico/data/tecnico_client.dart';
 import 'package:serv_oeste/features/tecnico/data/tecnico_repository_implementation.dart';
 import 'package:serv_oeste/features/tecnico/domain/tecnico_repository.dart';
+import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
+import 'package:serv_oeste/features/user/data/user_client.dart';
 import 'package:serv_oeste/features/user/data/user_repository_implementation.dart';
 import 'package:serv_oeste/features/user/domain/user_repository.dart';
-import 'package:serv_oeste/core/http/dio_service.dart';
-import 'package:serv_oeste/features/endereco/data/endereco_client.dart';
-import 'package:serv_oeste/features/servico/data/servico_client.dart';
-import 'package:serv_oeste/features/tecnico/data/tecnico_client.dart';
-import 'package:serv_oeste/features/user/data/user_client.dart';
-import 'package:serv_oeste/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
-import 'package:serv_oeste/features/endereco/presentation/bloc/endereco_bloc.dart';
-import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
-import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
 import 'package:serv_oeste/features/user/presentation/bloc/user_bloc.dart';
 
 class AppDependencies {
-  final GlobalKey<NavigatorState> navigatorKey;
+  final NavigationService navigationService;
 
   late final DioService dioService;
   late final AuthRepository authRepository;
@@ -45,7 +44,7 @@ class AppDependencies {
   late final SecureStorageService secureStorageService;
 
   AppDependencies(
-    this.navigatorKey
+    this.navigationService
   ) {
     _init();
   }
@@ -57,10 +56,7 @@ class AppDependencies {
     authRepository = AuthRepositoryImplementation(AuthClient(dioService.dio));
 
     dioService.addAuthInterceptors(authRepository, () {
-      navigatorKey.currentState?.pushNamedAndRemoveUntil(
-        Routes.login,
-        (_) => false,
-      );
+      navigationService.goToLogin();
     });
 
     clienteRepository = ClienteRepositoryImplementation(ClienteClient(dioService.dio));
@@ -84,6 +80,7 @@ class AppDependencies {
   List<SingleChildWidget> buildProviders() {
     return [
       Provider<SecureStorageService>.value(value: secureStorageService),
+      Provider<NavigationService>.value(value: navigationService),
     ];
   }
 }

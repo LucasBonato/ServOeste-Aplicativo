@@ -5,12 +5,12 @@ import 'package:serv_oeste/features/user/presentation/bloc/user_bloc.dart';
 import 'package:serv_oeste/features/user/presentation/widgets/user_form_widget.dart';
 import 'package:serv_oeste/shared/utils/extensions/role_extensions.dart';
 
-class UpdateUserScreen extends StatefulWidget {
+class UserUpdateScreen extends StatefulWidget {
   final int id;
   final String username;
   final String role;
 
-  const UpdateUserScreen({
+  const UserUpdateScreen({
     super.key,
     required this.id,
     required this.username,
@@ -18,10 +18,10 @@ class UpdateUserScreen extends StatefulWidget {
   });
 
   @override
-  State<UpdateUserScreen> createState() => _UpdateUserScreenState();
+  State<UserUpdateScreen> createState() => _UserUpdateScreenState();
 }
 
-class _UpdateUserScreenState extends State<UpdateUserScreen> {
+class _UserUpdateScreenState extends State<UserUpdateScreen> {
   late final UserBloc bloc;
   final UserForm form = UserForm();
 
