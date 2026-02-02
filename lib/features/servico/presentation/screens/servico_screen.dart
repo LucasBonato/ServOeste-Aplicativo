@@ -75,11 +75,8 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
   Widget buildDefaultFloatingActionButton() {
     return ExpandableFabItems(
       firstHeroTag: 'add_service',
-      secondHeroTag: 'add_service_cliente',
       firstRouterName: Routes.servicoCreate,
-      secondRouterName: Routes.servicoCreate,
       firstTooltip: 'Adicionar Serviço',
-      secondTooltip: 'Adicionar Serviço e Cliente',
       firstArgs: ServicoCreateArgs(isClientAndService: false),
       firstChild: Image.asset(
         'assets/addService.png',
@@ -87,6 +84,10 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
         width: 36,
         height: 36,
       ),
+      secondHeroTag: 'add_service_cliente',
+      secondRouterName: Routes.servicoCreate,
+      secondTooltip: 'Adicionar Serviço e Cliente',
+      secondArgs: ServicoCreateArgs(isClientAndService: true),
       secondChild: const Icon(
         Icons.group_add,
         size: 36,
