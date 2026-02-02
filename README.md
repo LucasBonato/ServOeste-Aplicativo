@@ -346,7 +346,7 @@ flowchart TD
   BaseLayout --> Nav1[Navigator Tab 1]
   BaseLayout --> Nav2[Navigator Tab 2]
   BaseLayout --> Nav3[Navigator Tab 3]
-  BaseLayout --> Nav4[Navigator Tab 4 (admin only)]
+  BaseLayout --> Nav4["Navigator Tab 4 (admin only)"]
 ```
 
 ## How to run
