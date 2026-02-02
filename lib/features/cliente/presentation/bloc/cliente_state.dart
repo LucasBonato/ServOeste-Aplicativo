@@ -20,12 +20,14 @@ final class ClienteSearchSuccessState extends ClienteState {
   final int currentPage;
   final int totalPages;
   final int totalElements;
+  final ClienteFilter filter;
 
   ClienteSearchSuccessState({
     required this.clientes,
     required this.currentPage,
     required this.totalPages,
     required this.totalElements,
+    required this.filter,
   });
 }
 

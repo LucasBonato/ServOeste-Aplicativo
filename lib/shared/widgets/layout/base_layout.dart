@@ -6,6 +6,7 @@ import 'package:serv_oeste/core/navigation/navigation_service.dart';
 import 'package:serv_oeste/core/security/jwt_utils.dart';
 import 'package:serv_oeste/core/services/secure_storage_service.dart';
 import 'package:serv_oeste/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:serv_oeste/features/cliente/domain/entities/cliente_filter.dart';
 import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
 import 'package:serv_oeste/features/cliente/presentation/screens/cliente_screen.dart';
 import 'package:serv_oeste/features/home/presentation/screens/home.dart';
@@ -198,7 +199,7 @@ class BaseLayoutState extends State<BaseLayout> {
   }
 
   void _loadCliente() {
-    _clienteBloc.add(ClienteSearchMenuEvent());
+    _clienteBloc.add(ClienteSearchEvent(filter: const ClienteFilter()));
   }
 
   void _loadServico() {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:serv_oeste/core/constants/constants.dart';
+import 'package:serv_oeste/features/cliente/domain/entities/cliente_filter.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente_form.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente_request.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_form.dart';
@@ -103,8 +104,10 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
     _debouncer.execute(
       () => _clienteBloc.add(
         ClienteSearchEvent(
-          nome: _nomeClienteController.text,
-          endereco: _enderecoController.text,
+          filter: ClienteFilter(
+            nome: _nomeClienteController.text,
+            endereco: _enderecoController.text,
+          ),
         ),
       ),
     );

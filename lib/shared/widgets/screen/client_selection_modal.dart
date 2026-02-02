@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/features/cliente/domain/entities/cliente_filter.dart';
 import 'package:serv_oeste/shared/widgets/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/shared/widgets/screen/filtered_clients_table.dart';
 import 'package:serv_oeste/shared/widgets/screen/loading.dart';
@@ -28,11 +29,16 @@ class ClientSelectionModalState extends State<ClientSelectionModal> {
 
   void _onSearchChanged() {
     _debouncer.execute(
-        () => context.read<ClienteBloc>().add(ClienteSearchEvent(
-              nome: widget.nomeController.text,
-              endereco: widget.enderecoController.text,
-            )),
-        delay: const Duration(milliseconds: 500));
+      () => context.read<ClienteBloc>().add(
+            ClienteSearchEvent(
+              filter: ClienteFilter(
+                nome: widget.nomeController.text,
+                endereco: widget.enderecoController.text,
+              ),
+            ),
+          ),
+      delay: const Duration(milliseconds: 500),
+    );
   }
 
   @override
