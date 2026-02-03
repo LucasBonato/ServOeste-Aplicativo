@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_filter.dart';
 import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_response.dart';
 import 'package:serv_oeste/shared/widgets/formFields/search_dropdown_form_field.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
@@ -63,7 +64,7 @@ class _TecnicoSearchFieldState extends State<TecnicoSearchField> {
       _hasInitialFetch = true;
 
       if (widget.isForListScreen) {
-        widget.tecnicoBloc.add(TecnicoSearchMenuEvent(nome: ''));
+        widget.tecnicoBloc.add(TecnicoSearchEvent(filter: const TecnicoFilter()));
       }
     }
   }
@@ -74,25 +75,16 @@ class _TecnicoSearchFieldState extends State<TecnicoSearchField> {
     _debouncer.execute(() {
       widget.onSearchStart?.call();
 
-      if (widget.isForListScreen) {
-        if (name.isEmpty) {
-          widget.tecnicoBloc.add(TecnicoSearchMenuEvent(nome: ''));
-        } else {
-          widget.tecnicoBloc.add(TecnicoSearchMenuEvent(nome: name));
-        }
-      } else {
-        if (name.isEmpty) {
-          widget.tecnicoBloc.add(TecnicoSearchEvent(nome: ''));
-        } else {
-          widget.tecnicoBloc.add(TecnicoSearchEvent(nome: name));
-        }
-      }
+      widget.tecnicoBloc.add(
+        TecnicoSearchEvent(
+          filter: TecnicoFilter(nome: name),
+        ),
+      );
     });
   }
 
   void _handleSelected(String name) {
-    final TecnicoResponse? match = _tecnicos.firstWhereOrNull(
-        (tecnico) => "${tecnico.nome} ${tecnico.sobrenome}" == name);
+    final TecnicoResponse? match = _tecnicos.firstWhereOrNull((tecnico) => "${tecnico.nome} ${tecnico.sobrenome}" == name);
     if (match != null) {
       widget.onSelected?.call(match);
     }
@@ -109,18 +101,14 @@ class _TecnicoSearchFieldState extends State<TecnicoSearchField> {
       final searchLower = searchText.toLowerCase();
       filteredTecnicos = _tecnicos
           .where((tecnico) {
-            final fullName =
-                "${tecnico.nome} ${tecnico.sobrenome}".toLowerCase();
-            return fullName.contains(searchLower) ||
-                tecnico.nome!.toLowerCase().contains(searchLower) ||
-                tecnico.sobrenome!.toLowerCase().contains(searchLower);
+            final fullName = "${tecnico.nome} ${tecnico.sobrenome}".toLowerCase();
+            return fullName.contains(searchLower) || tecnico.nome!.toLowerCase().contains(searchLower) || tecnico.sobrenome!.toLowerCase().contains(searchLower);
           })
           .take(5)
           .toList();
     }
 
-    final names =
-        filteredTecnicos.map((t) => "${t.nome} ${t.sobrenome}").toList();
+    final names = filteredTecnicos.map((t) => "${t.nome} ${t.sobrenome}").toList();
     if (!listEquals(names, _names.value)) {
       _names.value = names;
     }

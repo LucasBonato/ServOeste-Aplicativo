@@ -13,6 +13,7 @@ import 'package:serv_oeste/features/home/presentation/screens/home.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_filter_request.dart';
 import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
 import 'package:serv_oeste/features/servico/presentation/screens/servico_screen.dart';
+import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_filter.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
 import 'package:serv_oeste/features/tecnico/presentation/screens/tecnico_screen.dart';
 import 'package:serv_oeste/features/user/presentation/bloc/user_bloc.dart';
@@ -195,7 +196,7 @@ class BaseLayoutState extends State<BaseLayout> {
   }
 
   void _loadTecnico() {
-    _tecnicoBloc.add(TecnicoSearchMenuEvent());
+    _tecnicoBloc.add(TecnicoSearchEvent(filter: const TecnicoFilter()));
   }
 
   void _loadCliente() {
