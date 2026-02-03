@@ -69,7 +69,6 @@ class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
       emit: emit,
       request: () => _repository.create(event.cliente, event.sobrenome),
       onSuccess: (_) => emit(ClienteRegisterSuccessState()),
-      onError: (error) => emit(ClienteErrorState(error: error)),
     );
   }
 
@@ -78,7 +77,6 @@ class ClienteBloc extends BaseEntityBloc<ClienteEvent, ClienteState> {
       emit: emit,
       request: () => _repository.update(event.cliente, event.sobrenome),
       onSuccess: (_) => emit(ClienteUpdateSuccessState()),
-      onError: (error) => emit(ClienteErrorState(error: error)),
     );
   }
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:serv_oeste/core/constants/constants.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_filter_form.dart';
-import 'package:serv_oeste/features/servico/domain/entities/servico_filter_request.dart';
+import 'package:serv_oeste/features/servico/domain/entities/servico_filter.dart';
 import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
 import 'package:serv_oeste/shared/utils/formatters/input_masks.dart';
 import 'package:serv_oeste/shared/widgets/formFields/custom_search_form_field.dart';
@@ -49,7 +49,7 @@ class ServicoFilterFormWidget extends StatelessWidget {
         isSuccess: (state) => state is ServicoSearchSuccessState,
         isError: (state) => state is ServicoErrorState,
         onSubmit: () async {
-          final ServicoFilterRequest filterRequest = ServicoFilterRequest(
+          final ServicoFilter newFilter = ServicoFilter(
             id: form.codigo.value != null && form.codigo.value! > 0 ? form.codigo.value! : null,
             filial: form.filial.value.isNotEmpty ? form.filial.value : null,
             equipamento: form.equipamento.value.isNotEmpty ? form.equipamento.value : null,
@@ -61,7 +61,7 @@ class ServicoFilterFormWidget extends StatelessWidget {
             periodo: form.periodo.value.isNotEmpty ? form.periodo.value : null,
           );
 
-          bloc.add(ServicoSearchMenuEvent(filterRequest: filterRequest));
+          bloc.add(ServicoSearchEvent(filter: newFilter));
         },
         buildFields: () => [
           Padding(

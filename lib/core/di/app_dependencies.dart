@@ -18,6 +18,7 @@ import 'package:serv_oeste/features/endereco/data/endereco_client.dart';
 import 'package:serv_oeste/features/endereco/data/endereco_repository_implementation.dart';
 import 'package:serv_oeste/features/endereco/domain/endereco_repository.dart';
 import 'package:serv_oeste/features/endereco/presentation/bloc/endereco_bloc.dart';
+import 'package:serv_oeste/features/home/presentation/bloc/home_bloc.dart';
 import 'package:serv_oeste/features/servico/data/servico_client.dart';
 import 'package:serv_oeste/features/servico/data/servico_repository_implementation.dart';
 import 'package:serv_oeste/features/servico/domain/servico_repository.dart';
@@ -72,6 +73,7 @@ class AppDependencies {
       BlocProvider<ClienteBloc>(create: (_) => ClienteBloc(clienteRepository)),
       BlocProvider<TecnicoBloc>(create: (_) => TecnicoBloc(tecnicoRepository)),
       BlocProvider<ServicoBloc>(create: (_) => ServicoBloc(servicoRepository)),
+      BlocProvider<HomeBloc>(create: (_) => HomeBloc(servicoRepository)),
       BlocProvider<EnderecoBloc>(create: (_) => EnderecoBloc(enderecoRepository)),
       BlocProvider<UserBloc>(create: (_) => UserBloc(userRepository)),
     ];

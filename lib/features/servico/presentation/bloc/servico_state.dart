@@ -17,15 +17,17 @@ final class ServicoSearchOneSuccessState extends ServicoState {
 
 final class ServicoSearchSuccessState extends ServicoState {
   final List<Servico> servicos;
+  final ServicoFilter filter;
+  final int totalElements;
   final int currentPage;
   final int totalPages;
-  final int totalElements;
 
   ServicoSearchSuccessState({
     required this.servicos,
     required this.currentPage,
     required this.totalPages,
     required this.totalElements,
+    required this.filter,
   });
 }
 

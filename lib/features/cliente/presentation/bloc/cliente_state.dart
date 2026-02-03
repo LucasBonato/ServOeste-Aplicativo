@@ -17,17 +17,17 @@ final class ClienteSearchOneSuccessState extends ClienteState {
 
 final class ClienteSearchSuccessState extends ClienteState {
   final List<Cliente> clientes;
+  final ClienteFilter filter;
   final int currentPage;
   final int totalPages;
   final int totalElements;
-  final ClienteFilter filter;
 
   ClienteSearchSuccessState({
     required this.clientes,
+    required this.filter,
     required this.currentPage,
     required this.totalPages,
     required this.totalElements,
-    required this.filter,
   });
 }
 

@@ -9,8 +9,9 @@ import 'package:serv_oeste/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente_filter.dart';
 import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
 import 'package:serv_oeste/features/cliente/presentation/screens/cliente_screen.dart';
+import 'package:serv_oeste/features/home/presentation/bloc/home_bloc.dart';
 import 'package:serv_oeste/features/home/presentation/screens/home.dart';
-import 'package:serv_oeste/features/servico/domain/entities/servico_filter_request.dart';
+import 'package:serv_oeste/features/servico/domain/entities/servico_filter.dart';
 import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
 import 'package:serv_oeste/features/servico/presentation/screens/servico_screen.dart';
 import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_filter.dart';
@@ -50,6 +51,7 @@ class BaseLayoutState extends State<BaseLayout> {
   late final ServicoBloc _servicoBloc;
   late final TecnicoBloc _tecnicoBloc;
   late final ClienteBloc _clienteBloc;
+  late final HomeBloc _homeBloc;
   late final UserBloc _userBloc;
 
   @override
@@ -62,6 +64,7 @@ class BaseLayoutState extends State<BaseLayout> {
     _servicoBloc = context.read<ServicoBloc>();
     _tecnicoBloc = context.read<TecnicoBloc>();
     _clienteBloc = context.read<ClienteBloc>();
+    _homeBloc = context.read<HomeBloc>();
     _userBloc = context.read<UserBloc>();
 
     _currentIndex = widget.initialIndex ?? 0;
@@ -178,33 +181,27 @@ class BaseLayoutState extends State<BaseLayout> {
     tabLoadAction[index]?.call();
   }
 
-  void _loadHome() {
-    DateTime today = DateTime.now();
-    DateTime startOfDay = DateTime(today.year, today.month, today.day);
-    DateTime week = startOfDay.add(Duration(days: 7));
-
-    context.read<ServicoBloc>().add(
-          ServicoInitialLoadingEvent(
-            filterRequest: ServicoFilterRequest(
-              dataAtendimentoPrevistoAntes: startOfDay,
-              dataAtendimentoPrevistoDepois: week,
-            ),
-            page: 0,
-            size: 10,
-          ),
-        );
-  }
+  void _loadHome() => _homeBloc.add(HomeSearchEvent(page: 0));
 
   void _loadTecnico() {
-    _tecnicoBloc.add(TecnicoSearchEvent(filter: const TecnicoFilter()));
+    final TecnicoFilter filter = (_tecnicoBloc.state is TecnicoSearchSuccessState)
+        ? (_tecnicoBloc.state as TecnicoSearchSuccessState).filter
+        : const TecnicoFilter();
+    _tecnicoBloc.add(TecnicoSearchEvent(filter: filter));
   }
 
   void _loadCliente() {
-    _clienteBloc.add(ClienteSearchEvent(filter: const ClienteFilter()));
+    final ClienteFilter filter = (_clienteBloc.state is ClienteSearchSuccessState)
+        ? (_clienteBloc.state as ClienteSearchSuccessState).filter
+        : const ClienteFilter();
+    _clienteBloc.add(ClienteSearchEvent(filter: filter));
   }
 
   void _loadServico() {
-    _servicoBloc.add(ServicoSearchMenuEvent());
+    final ServicoFilter filter = (_servicoBloc.state is ServicoSearchSuccessState)
+        ? (_servicoBloc.state as ServicoSearchSuccessState).filter
+        : const ServicoFilter();
+    _servicoBloc.add(ServicoSearchEvent(filter: filter));
   }
 
   void _loadUser() {
