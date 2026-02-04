@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_filter.dart';
 import 'package:serv_oeste/features/servico/domain/servico_repository.dart';
 import 'package:serv_oeste/shared/bloc/base_entity_bloc.dart';
-import 'package:meta/meta.dart';
 import 'package:serv_oeste/shared/models/error/error_entity.dart';
 import 'package:serv_oeste/shared/models/page_content.dart';
 

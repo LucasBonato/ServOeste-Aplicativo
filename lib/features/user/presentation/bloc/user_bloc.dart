@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 import 'package:serv_oeste/features/user/domain/entities/user_response.dart';
 import 'package:serv_oeste/features/user/domain/user_repository.dart';
 import 'package:serv_oeste/shared/bloc/base_entity_bloc.dart';

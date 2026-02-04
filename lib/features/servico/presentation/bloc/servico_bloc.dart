@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_filter.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_request.dart';
 import 'package:serv_oeste/features/servico/domain/servico_repository.dart';
