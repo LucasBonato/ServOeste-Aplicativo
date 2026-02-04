@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/features/cliente/domain/entities/cliente_filter.dart';
 import 'package:serv_oeste/shared/widgets/formFields/search_dropdown_form_field.dart';
 import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente.dart';
@@ -20,7 +21,6 @@ class ClienteSearchField extends StatefulWidget {
   final String? Function([String?])? validator;
   final bool Function()? enabledCalculator;
   final String? tooltipMessage;
-  final bool isForListScreen;
 
   const ClienteSearchField({
     super.key,
@@ -36,7 +36,6 @@ class ClienteSearchField extends StatefulWidget {
     this.onSearchStart,
     this.listenTo,
     this.enabledCalculator,
-    this.isForListScreen = false,
   });
 
   @override
@@ -56,11 +55,7 @@ class _ClienteSearchFieldState extends State<ClienteSearchField> {
 
       widget.onSearchStart?.call();
 
-      if (widget.isForListScreen) {
-        widget.clienteBloc.add(ClienteSearchMenuEvent(nome: name));
-      } else {
-        widget.clienteBloc.add(ClienteSearchEvent(nome: name));
-      }
+      widget.clienteBloc.add(ClienteSearchEvent(filter: ClienteFilter(nome: name)));
     });
   }
 

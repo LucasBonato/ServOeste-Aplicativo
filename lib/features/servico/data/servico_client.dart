@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:serv_oeste/core/http/server_endpoints.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente_request.dart';
-import 'package:serv_oeste/features/servico/domain/entities/servico_filter_request.dart';
+import 'package:serv_oeste/features/servico/domain/entities/servico_filter.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_request.dart';
 import 'package:serv_oeste/shared/models/error/error_entity.dart';
 import 'package:serv_oeste/shared/models/page_content.dart';
@@ -33,7 +33,7 @@ class ServicoClient {
   }
 
   Future<Either<ErrorEntity, PageContent<Servico>>> getServicosByFilter(
-    ServicoFilterRequest servicoFilter, {
+    ServicoFilter servicoFilter, {
     int page = 0,
     int size = 10,
   }) async {

@@ -27,7 +27,6 @@ class ClienteFormWidget extends StatelessWidget {
   final String Function(ClienteState)? getSuccessMessage;
   final GlobalKey<FormState>? formKey;
   final void Function() onSubmit;
-  final bool isForListScreen;
 
   const ClienteFormWidget({
     super.key,
@@ -43,7 +42,6 @@ class ClienteFormWidget extends StatelessWidget {
     this.shouldBuildButton = true,
     this.isCreateCliente = false,
     this.isJustShowFields = false,
-    this.isForListScreen = false,
   });
 
   @override
@@ -94,7 +92,6 @@ class ClienteFormWidget extends StatelessWidget {
           onChanged: clienteForm.setNome,
           validator: validator.byField(clienteForm, ErrorCodeKey.nomeESobrenome.name),
           enabled: !isJustShowFields,
-          isForListScreen: isForListScreen,
         ),
         if (isCreateCliente && !isJustShowFields)
           SizedBox(

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:serv_oeste/core/routing/args/cliente_update_args.dart';
 import 'package:serv_oeste/core/routing/routes.dart';
+import 'package:serv_oeste/features/cliente/domain/entities/cliente_filter.dart';
 import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
 import 'package:serv_oeste/shared/widgets/formFields/search_input_field.dart';
 import 'package:serv_oeste/shared/widgets/layout/fab_add.dart';
@@ -24,12 +25,6 @@ class ClienteScreen extends BaseListScreen<Cliente> {
 class _ClienteScreenState extends BaseListScreenState<Cliente> {
   late final ClienteBloc _clienteBloc;
   late final TextEditingController _nomeController, _telefoneController, _enderecoController;
-
-  void _setFilterValues() {
-    _nomeController.text = _clienteBloc.nomeMenu ?? "";
-    _telefoneController.text = _clienteBloc.telefoneMenu ?? "";
-    _enderecoController.text = _clienteBloc.enderecoMenu ?? "";
-  }
 
   Widget _buildSearchInputs() {
     return ResponsiveSearchInputs(
@@ -61,7 +56,7 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
   Widget buildDefaultFloatingActionButton() {
     return FloatingActionButtonAdd(
       route: Routes.clienteCreate,
-      event: () => _clienteBloc.add(ClienteSearchMenuEvent()),
+      event: () => _clienteBloc.add(ClienteSearchEvent(filter: const ClienteFilter())),
       tooltip: "Adicionar um Cliente",
     );
   }
@@ -78,7 +73,7 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
   @override
   Widget buildItemCard(Cliente cliente, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return ClienteCard(
-      onDoubleTap: () => onNavigateToUpdateScreen(ClienteUpdateArgs(id: cliente.id!), () => _clienteBloc.add(ClienteSearchMenuEvent())),
+      onDoubleTap: () => onNavigateToUpdateScreen(ClienteUpdateArgs(id: cliente.id!), () => _clienteBloc.add(ClienteSearchEvent(filter: const ClienteFilter()))),
       onLongPress: () => onSelectItemList(cliente.id!),
       onTap: () {
         if (isSelectMode) {
@@ -98,10 +93,12 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
   @override
   void searchFieldChanged() {
     _clienteBloc.add(
-      ClienteSearchMenuEvent(
-        nome: _nomeController.text,
-        telefone: _telefoneController.text,
-        endereco: _enderecoController.text,
+      ClienteSearchEvent(
+        filter: ClienteFilter(
+          nome: _nomeController.text,
+          telefone: _telefoneController.text,
+          endereco: _enderecoController.text,
+        ),
       ),
     );
   }
@@ -118,7 +115,6 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
     _nomeController = TextEditingController();
     _telefoneController = TextEditingController();
     _enderecoController = TextEditingController();
-    _setFilterValues();
   }
 
   @override
@@ -131,12 +127,23 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
           _buildSearchInputs(),
           Expanded(
             child: BlocConsumer<ClienteBloc, ClienteState>(
-              listenWhen: (previous, current) => current is ClienteErrorState,
+              listenWhen: (previous, current) => current is ClienteErrorState ||
+                  (
+                      current is ClienteSearchSuccessState &&
+                      previous is ClienteSearchSuccessState &&
+                      current.filter != previous.filter
+                  ),
               listener: (context, state) {
                 if (state is ClienteErrorState) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     Logger().e(state.error.detail);
                   });
+                }
+                if (state is ClienteSearchSuccessState) {
+                  final ClienteFilter filter = state.filter;
+                  _nomeController.text = filter.nome ?? "";
+                  _telefoneController.text = filter.telefone ?? "";
+                  _enderecoController.text = filter.endereco ?? "";
                 }
               },
               builder: (context, stateCliente) {
@@ -152,17 +159,16 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
                       isSkeleton: true,
                     ),
                   );
-                } else if (stateCliente is ClienteSearchSuccessState) {
+                }
+                else if (stateCliente is ClienteSearchSuccessState) {
                   return buildGridOfCards(
                     items: stateCliente.clientes,
                     aspectRatio: 1.55,
                     totalPages: stateCliente.totalPages,
                     currentPage: stateCliente.currentPage,
                     onPageChanged: (page) {
-                      _clienteBloc.add(ClienteLoadingEvent(
-                        nome: _clienteBloc.nomeMenu,
-                        telefone: _clienteBloc.telefoneMenu,
-                        endereco: _clienteBloc.enderecoMenu,
+                      _clienteBloc.add(ClienteSearchEvent(
+                        filter: stateCliente.filter,
                         page: page - 1,
                         size: 20,
                       ));

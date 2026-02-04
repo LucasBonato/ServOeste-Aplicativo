@@ -7,7 +7,7 @@ import 'package:serv_oeste/core/routing/args/servico_update_args.dart';
 import 'package:serv_oeste/core/routing/routes.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_filter_form.dart';
-import 'package:serv_oeste/features/servico/domain/entities/servico_filter_request.dart';
+import 'package:serv_oeste/features/servico/domain/entities/servico_filter.dart';
 import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
 import 'package:serv_oeste/features/servico/presentation/widgets/servico_card.dart';
 import 'package:serv_oeste/shared/widgets/formFields/search_input_field.dart';
@@ -30,13 +30,6 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
   late final TextEditingController _nomeClienteController;
   late final TextEditingController _nomeTecnicoController;
 
-  void _setFilterValues() {
-    if (_servicoBloc.filterRequest != null) {
-      _nomeClienteController.text = _servicoBloc.filterRequest!.clienteNome ?? "";
-      _nomeTecnicoController.text = _servicoBloc.filterRequest!.tecnicoNome ?? "";
-    }
-  }
-
   Widget _buildSearchInputs() {
     return ResponsiveSearchInputs(
       onChanged: onSearchFieldChanged,
@@ -55,15 +48,13 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
       onFilterTap: () async {
         final ServicoFilterForm form = ServicoFilterForm();
 
-        await Navigator.of(context, rootNavigator: true).pushNamed(
-          Routes.servicoFilter,
-          arguments: ServicoFilterFormArgs(
-            form: form,
-            bloc: _servicoBloc,
-            submitText: "Filtrar",
-            title: "Filtrar Serviços",
-          )
-        );
+        await Navigator.of(context, rootNavigator: true).pushNamed(Routes.servicoFilter,
+            arguments: ServicoFilterFormArgs(
+              form: form,
+              bloc: _servicoBloc,
+              submitText: "Filtrar",
+              title: "Filtrar Serviços",
+            ));
       },
     );
   }
@@ -139,8 +130,8 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
   @override
   void searchFieldChanged() {
     _servicoBloc.add(
-      ServicoLoadingEvent(
-        filterRequest: ServicoFilterRequest(
+      ServicoSearchEvent(
+        filter: ServicoFilter(
           clienteNome: _nomeClienteController.text,
           tecnicoNome: _nomeTecnicoController.text,
         ),
@@ -168,8 +159,6 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
     _servicoBloc = context.read<ServicoBloc>();
     _nomeClienteController = TextEditingController();
     _nomeTecnicoController = TextEditingController();
-
-    _setFilterValues();
   }
 
   @override
@@ -182,12 +171,22 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
           _buildSearchInputs(),
           Expanded(
             child: BlocConsumer<ServicoBloc, ServicoState>(
-              listenWhen: (previous, current) => current is ServicoErrorState,
+              listenWhen: (previous, current) => current is ServicoErrorState ||
+                  (
+                    current is ServicoSearchSuccessState &&
+                    previous is ServicoSearchSuccessState &&
+                    current.filter != previous.filter
+                  ),
               listener: (context, state) {
                 if (state is ServicoErrorState) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     Logger().e(state.error.detail);
                   });
+                }
+                if (state is ServicoSearchSuccessState) {
+                  final ServicoFilter filter = state.filter;
+                  _nomeClienteController.text = filter.clienteNome ?? "";
+                  _nomeTecnicoController.text = filter.tecnicoNome ?? "";
                 }
               },
               builder: (context, stateServico) {
@@ -211,11 +210,13 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
                     totalPages: stateServico.totalPages,
                     currentPage: stateServico.currentPage,
                     onPageChanged: (page) {
-                      _servicoBloc.add(ServicoLoadingEvent(
-                        filterRequest: _servicoBloc.filterRequest ?? ServicoFilterRequest(),
-                        page: page - 1,
-                        size: 15,
-                      ));
+                      _servicoBloc.add(
+                        ServicoSearchEvent(
+                          filter: stateServico.filter,
+                          page: page - 1,
+                          size: 15,
+                        ),
+                      );
                     },
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: MediaQuery.of(context).size.width > 1400

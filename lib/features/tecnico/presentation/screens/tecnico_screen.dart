@@ -5,6 +5,7 @@ import 'package:logger/logger.dart';
 import 'package:serv_oeste/core/constants/constants.dart';
 import 'package:serv_oeste/core/routing/args/tecnico_update_args.dart';
 import 'package:serv_oeste/core/routing/routes.dart';
+import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_filter.dart';
 import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_response.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
 import 'package:serv_oeste/features/tecnico/presentation/widgets/tecnico_card.dart';
@@ -29,18 +30,6 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
   late SingleSelectController<String> _situacaoController;
   late ValueNotifier<String> _situacaoNotifier;
 
-  void _setFilterValues() {
-    _idController.text = (_tecnicoBloc.idMenu == null) ? "" : _tecnicoBloc.idMenu.toString();
-    _nomeController.text = _tecnicoBloc.nomeMenu ?? "";
-    String situacao = (_tecnicoBloc.situacaoMenu != null) ? _tecnicoBloc.situacaoMenu![0].toUpperCase() + _tecnicoBloc.situacaoMenu!.substring(1) : "";
-    if (situacao != "" && Constants.situationTecnicoList.contains(situacao)) {
-      setState(() {
-        _situacaoNotifier.value = situacao;
-        _situacaoController = SingleSelectController<String>(situacao);
-      });
-    }
-  }
-
   Widget _buildSearchInputs() {
     return ResponsiveSearchInputs(
       onChanged: onSearchFieldChanged,
@@ -56,10 +45,12 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
           valueNotifier: _situacaoNotifier,
           dropdownValues: Constants.situationTecnicoList,
           onChanged: (situacao) => _tecnicoBloc.add(
-            TecnicoSearchMenuEvent(
-              id: int.tryParse(_idController.text),
-              nome: _nomeController.text,
-              situacao: situacao,
+            TecnicoSearchEvent(
+              filter: TecnicoFilter(
+                id: int.tryParse(_idController.text),
+                nome: _nomeController.text,
+                situacao: situacao,
+              ),
             ),
           ),
         ),
@@ -72,7 +63,11 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
 
   @override
   Widget buildDefaultFloatingActionButton() {
-    return FloatingActionButtonAdd(route: Routes.tecnicoCreate, event: () => _tecnicoBloc.add(TecnicoSearchMenuEvent()), tooltip: "Adicionar um Técnico");
+    return FloatingActionButtonAdd(
+      route: Routes.tecnicoCreate,
+      event: () => _tecnicoBloc.add(TecnicoSearchEvent(filter: const TecnicoFilter())),
+      tooltip: "Adicionar um Técnico",
+    );
   }
 
   @override
@@ -87,7 +82,7 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
   @override
   Widget buildItemCard(TecnicoResponse tecnico, bool isSelected, bool isSelectMode, bool isSkeleton) {
     return TecnicoCard(
-      onDoubleTap: () => onNavigateToUpdateScreen(TecnicoUpdateArgs(id: tecnico.id!), () => _tecnicoBloc.add(TecnicoSearchMenuEvent())),
+      onDoubleTap: () => onNavigateToUpdateScreen(TecnicoUpdateArgs(id: tecnico.id!), () => _tecnicoBloc.add(TecnicoSearchEvent(filter: const TecnicoFilter()))),
       onLongPress: () => onSelectItemList(tecnico.id!),
       onTap: () {
         if (isSelectMode) {
@@ -111,10 +106,12 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
     final id = idText.isEmpty ? null : int.tryParse(idText);
 
     _tecnicoBloc.add(
-      TecnicoSearchMenuEvent(
-        nome: _nomeController.text,
-        id: id,
-        situacao: _situacaoNotifier.value,
+      TecnicoSearchEvent(
+        filter: TecnicoFilter(
+          nome: _nomeController.text,
+          id: id,
+          situacao: _situacaoNotifier.value,
+        ),
       ),
     );
   }
@@ -138,8 +135,6 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
     _nomeController = TextEditingController();
     _situacaoController = SingleSelectController<String>(Constants.situationTecnicoList.first);
     _situacaoNotifier = ValueNotifier<String>(Constants.situationTecnicoList.first);
-
-    _setFilterValues();
   }
 
   @override
@@ -152,12 +147,30 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
           _buildSearchInputs(),
           Expanded(
             child: BlocConsumer<TecnicoBloc, TecnicoState>(
-              listenWhen: (previous, current) => current is TecnicoErrorState,
+              listenWhen: (previous, current) => current is TecnicoErrorState ||
+                  (
+                      current is TecnicoSearchSuccessState &&
+                      previous is TecnicoSearchSuccessState &&
+                      current.filter != previous.filter
+                  ),
               listener: (context, state) {
                 if (state is TecnicoErrorState) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     Logger().e(state.error.detail);
                   });
+                }
+                if (state is TecnicoSearchSuccessState) {
+                  final TecnicoFilter filter = state.filter;
+
+                  _idController.text = filter.id?.toString()?? "";
+                  _nomeController.text = filter.nome?? "";
+                  String situacao = (filter.situacao != null) ? filter.situacao![0].toUpperCase() + filter.situacao!.substring(1) : "";
+                  if (situacao != "" && Constants.situationTecnicoList.contains(situacao)) {
+                    setState(() {
+                      _situacaoNotifier.value = situacao;
+                      _situacaoController = SingleSelectController<String>(situacao);
+                    });
+                  }
                 }
               },
               builder: (context, stateTecnico) {
@@ -184,11 +197,8 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
                     totalPages: stateTecnico.totalPages,
                     currentPage: stateTecnico.currentPage,
                     onPageChanged: (page) {
-                      _tecnicoBloc.add(TecnicoLoadingEvent(
-                        id: _tecnicoBloc.idMenu,
-                        nome: _tecnicoBloc.nomeMenu,
-                        situacao: _tecnicoBloc.situacaoMenu,
-                        equipamento: null,
+                      _tecnicoBloc.add(TecnicoSearchEvent(
+                        filter: stateTecnico.filter,
                         page: page - 1,
                         size: 20,
                       ));
