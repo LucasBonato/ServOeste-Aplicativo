@@ -200,7 +200,6 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
                       _tecnicoBloc.add(TecnicoSearchEvent(
                         filter: stateTecnico.filter,
                         page: page - 1,
-                        size: 20,
                       ));
                     },
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

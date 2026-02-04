@@ -25,7 +25,7 @@ final class TecnicoSearchEvent extends TecnicoEvent {
   TecnicoSearchEvent({
     required this.filter,
     this.page = 0,
-    this.size = 20,
+    this.size = 24,
   });
 }
 

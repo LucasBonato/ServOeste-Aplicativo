@@ -170,7 +170,6 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
                       _clienteBloc.add(ClienteSearchEvent(
                         filter: stateCliente.filter,
                         page: page - 1,
-                        size: 20,
                       ));
                     },
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

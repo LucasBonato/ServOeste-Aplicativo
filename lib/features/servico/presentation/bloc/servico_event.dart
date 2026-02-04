@@ -17,7 +17,7 @@ final class ServicoSearchEvent extends ServicoEvent {
   ServicoSearchEvent({
     required this.filter,
     this.page = 0,
-    this.size = 15,
+    this.size = 12,
   });
 }
 

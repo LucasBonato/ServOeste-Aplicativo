@@ -214,7 +214,6 @@ class _ServicoScreenState extends BaseListScreenState<Servico> {
                         ServicoSearchEvent(
                           filter: stateServico.filter,
                           page: page - 1,
-                          size: 15,
                         ),
                       );
                     },
