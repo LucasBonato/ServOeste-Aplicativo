@@ -87,8 +87,6 @@ class Formatters {
     List<String> dates =
         dateRegex.allMatches(history).map((m) => m.group(1)!).toList();
 
-    dates = dates.reversed.toList();
-
     String textWithoutDates = history.replaceAll(dateRegex, '').trim();
 
     List<String> blocks = textWithoutDates
