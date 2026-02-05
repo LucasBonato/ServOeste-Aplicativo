@@ -2,17 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/core/routing/args/servico_update_args.dart';
 import 'package:serv_oeste/core/routing/routes.dart';
+import 'package:serv_oeste/core/security/jwt_utils.dart';
 import 'package:serv_oeste/core/services/secure_storage_service.dart';
-import 'package:serv_oeste/features/servico/domain/entities/servico_filter_request.dart';
-import 'package:serv_oeste/shared/widgets/layout/pagination_widget.dart';
+import 'package:serv_oeste/features/home/presentation/bloc/home_bloc.dart';
+import 'package:serv_oeste/features/servico/domain/entities/servico.dart';
 import 'package:serv_oeste/features/servico/presentation/widgets/servico_card.dart';
+import 'package:serv_oeste/shared/widgets/layout/pagination_widget.dart';
 import 'package:serv_oeste/shared/widgets/screen/entity_not_found.dart';
 import 'package:serv_oeste/shared/widgets/screen/error_component.dart';
 import 'package:serv_oeste/shared/widgets/screen/grid_view.dart';
 import 'package:serv_oeste/shared/widgets/screen/loading.dart';
-import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
-import 'package:serv_oeste/features/servico/domain/entities/servico.dart';
-import 'package:serv_oeste/core/security/jwt_utils.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -22,13 +21,15 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  String? _userName;
   late final SecureStorageService _secureStorageService;
+  late final HomeBloc _homeBloc;
+  String? _userName;
 
   @override
   void initState() {
     super.initState();
     _secureStorageService = context.read<SecureStorageService>();
+    _homeBloc = context.read<HomeBloc>();
     _extractUserInfo();
   }
 
@@ -54,22 +55,7 @@ class _HomeState extends State<Home> {
       });
   }
 
-  void _reloadHomeData() {
-    DateTime today = DateTime.now();
-    DateTime startOfDay = DateTime(today.year, today.month, today.day);
-    DateTime week = startOfDay.add(Duration(days: 7));
-
-    context.read<ServicoBloc>().add(
-          ServicoInitialLoadingEvent(
-            filterRequest: ServicoFilterRequest(
-              dataAtendimentoPrevistoAntes: startOfDay,
-              dataAtendimentoPrevistoDepois: week,
-            ),
-            page: 0,
-            size: 10,
-          ),
-        );
-  }
+  void _reloadHomeData({int page = 0}) => _homeBloc.add(HomeSearchEvent(page: page));
 
   @override
   Widget build(BuildContext context) {
@@ -141,19 +127,20 @@ class _HomeState extends State<Home> {
             ),
           ),
           const SizedBox(height: 10),
-          BlocBuilder<ServicoBloc, ServicoState>(
-            builder: (context, stateServico) {
-              if (stateServico is ServicoInitialState || stateServico is ServicoLoadingState) {
+          BlocBuilder<HomeBloc, HomeState>(
+            builder: (context, stateHome) {
+              if (stateHome is HomeInitialState || stateHome is HomeLoadingState) {
                 return const Loading();
-              } else if (stateServico is ServicoSearchSuccessState) {
-                if (stateServico.servicos.isEmpty) {
+              }
+              else if (stateHome is HomeSearchSuccessState) {
+                if (stateHome.servicos.isEmpty) {
                   return const EntityNotFound(message: "Nenhum serviço agendado para essa semana", icon: Icons.calendar_today);
                 }
                 return Column(
                   children: [
                     GridListView(
                       aspectRatio: .9,
-                      dataList: stateServico.servicos,
+                      dataList: stateHome.servicos,
                       buildCard: (dynamic servico) => ServicoCard(
                         onDoubleTap: () => _onNavigateToUpdateScreen(servico.id, servico.idCliente),
                         cliente: (servico as Servico).nomeCliente,
@@ -170,29 +157,13 @@ class _HomeState extends State<Home> {
                         status: servico.situacao,
                       ),
                     ),
-                    if (stateServico.totalPages > 1)
+                    if (stateHome.totalPages > 1)
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 16.0),
                         child: PaginationWidget(
-                          currentPage: stateServico.currentPage + 1,
-                          totalPages: stateServico.totalPages,
-                          onPageChanged: (page) {
-                            DateTime today = DateTime.now();
-
-                            DateTime startOfDay = DateTime(today.year, today.month, today.day);
-                            DateTime week = startOfDay.add(Duration(days: 7));
-
-                            context.read<ServicoBloc>().add(
-                                  ServicoInitialLoadingEvent(
-                                    filterRequest: ServicoFilterRequest(
-                                      dataAtendimentoPrevistoAntes: startOfDay,
-                                      dataAtendimentoPrevistoDepois: week,
-                                    ),
-                                    page: page - 1,
-                                    size: 10,
-                                  ),
-                                );
-                          },
+                          currentPage: stateHome.currentPage + 1,
+                          totalPages: stateHome.totalPages,
+                          onPageChanged: (page) => _reloadHomeData(page: page - 1),
                         ),
                       ),
                   ],

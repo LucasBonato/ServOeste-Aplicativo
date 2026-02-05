@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
-import 'package:serv_oeste/features/servico/domain/entities/servico_filter_request.dart';
+import 'package:flutter/foundation.dart';
+import 'package:serv_oeste/features/servico/domain/entities/servico_filter.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_request.dart';
 import 'package:serv_oeste/features/servico/domain/servico_repository.dart';
 import 'package:serv_oeste/shared/bloc/base_entity_bloc.dart';
@@ -14,8 +14,6 @@ part 'servico_state.dart';
 
 class ServicoBloc extends BaseEntityBloc<ServicoEvent, ServicoState> {
   final ServicoRepository _servicoRepository;
-  ServicoFilterRequest? filterRequest;
-  bool isFirstRequest = true;
 
   @override
   ServicoState loadingState() => ServicoLoadingState();
@@ -24,83 +22,12 @@ class ServicoBloc extends BaseEntityBloc<ServicoEvent, ServicoState> {
   ServicoState errorState(ErrorEntity error) => ServicoErrorState(error: error);
 
   ServicoBloc(this._servicoRepository) : super(ServicoInitialState()) {
-    on<ServicoLoadingEvent>(_fetchAllServicesWithFilter);
-    on<ServicoInitialLoadingEvent>(_fetchAllServicesInitial);
-    on<ServicoSearchMenuEvent>(_fetchServiceSearchMenu);
     on<ServicoSearchOneEvent>(_fetchOneService);
+    on<ServicoSearchEvent>(_fetchAllServices);
     on<ServicoRegisterEvent>(_registerService);
     on<ServicoRegisterPlusClientEvent>(_registerServicePlusClient);
     on<ServicoUpdateEvent>(_updateService);
     on<ServicoDisableListEvent>(_deleteService);
-  }
-
-  Future<void> _fetchAllServicesWithFilter(
-      ServicoLoadingEvent event, Emitter<ServicoState> emit) async {
-    emit(ServicoLoadingState());
-    filterRequest = _combineFilters(
-        filterRequest ?? ServicoFilterRequest(), event.filterRequest);
-
-    await handleRequest<PageContent<Servico>>(
-      emit: emit,
-      request: () => _servicoRepository.getServicosByFilter(
-        filterRequest!,
-        page: event.page,
-        size: event.size,
-      ),
-      onSuccess: (PageContent<Servico> pageServicos) =>
-          emit(ServicoSearchSuccessState(
-        servicos: pageServicos.content,
-        currentPage: pageServicos.page.page,
-        totalPages: pageServicos.page.totalPages,
-        totalElements: pageServicos.page.totalElements,
-      )),
-    );
-  }
-
-  Future<void> _fetchAllServicesInitial(
-      ServicoInitialLoadingEvent event, Emitter<ServicoState> emit) async {
-    await handleRequest<PageContent<Servico>>(
-      emit: emit,
-      request: () => _servicoRepository.getServicosByFilter(
-        event.filterRequest,
-        page: event.page,
-        size: event.size,
-      ),
-      onSuccess: (PageContent<Servico> pageServicos) =>
-          emit(ServicoSearchSuccessState(
-        servicos: pageServicos.content,
-        currentPage: pageServicos.page.page,
-        totalPages: pageServicos.page.totalPages,
-        totalElements: pageServicos.page.totalElements,
-      )),
-    );
-  }
-
-  Future<void> _fetchServiceSearchMenu(
-      ServicoSearchMenuEvent event, Emitter<ServicoState> emit) async {
-    emit(ServicoLoadingState());
-    filterRequest =
-        event.filterRequest ?? filterRequest ?? ServicoFilterRequest();
-
-    if (filterRequest != null && event.filterRequest != null) {
-      filterRequest = _combineFilters(filterRequest!, event.filterRequest!);
-    }
-
-    await handleRequest<PageContent<Servico>>(
-      emit: emit,
-      request: () => _servicoRepository.getServicosByFilter(
-        filterRequest!,
-        page: event.page,
-        size: event.size,
-      ),
-      onSuccess: (PageContent<Servico> pageServicos) =>
-          emit(ServicoSearchSuccessState(
-        servicos: pageServicos.content,
-        currentPage: pageServicos.page.page,
-        totalPages: pageServicos.page.totalPages,
-        totalElements: pageServicos.page.totalElements,
-      )),
-    );
   }
 
   Future<void> _fetchOneService(
@@ -109,8 +36,32 @@ class ServicoBloc extends BaseEntityBloc<ServicoEvent, ServicoState> {
       emit: emit,
       loading: ServicoSearchOneLoadingState(),
       request: () => _servicoRepository.getServicoById(event.id),
-      onSuccess: (Servico? servico) =>
-          emit(ServicoSearchOneSuccessState(servico: servico!)),
+      onSuccess: (Servico? servico) {
+        if (servico != null) {
+          emit(ServicoSearchOneSuccessState(servico: servico));
+        }
+      },
+    );
+  }
+
+  Future<void> _fetchAllServices(
+      ServicoSearchEvent event, Emitter<ServicoState> emit) async {
+    await handleRequest<PageContent<Servico>>(
+      emit: emit,
+      request: () => _servicoRepository.getServicosByFilter(
+        filter: event.filter,
+        page: event.page,
+        size: event.size,
+      ),
+      onSuccess: (PageContent<Servico> pageServicos) => emit(
+        ServicoSearchSuccessState(
+          servicos: pageServicos.content,
+          currentPage: pageServicos.page.page,
+          totalPages: pageServicos.page.totalPages,
+          totalElements: pageServicos.page.totalElements,
+          filter: event.filter,
+        ),
+      ),
     );
   }
 
@@ -145,93 +96,23 @@ class ServicoBloc extends BaseEntityBloc<ServicoEvent, ServicoState> {
 
   Future<void> _deleteService(
       ServicoDisableListEvent event, Emitter<ServicoState> emit) async {
+    ServicoFilter? currentFilter;
+
+    if (state is ServicoSearchSuccessState) {
+      final ServicoSearchSuccessState currentState =
+          (state as ServicoSearchSuccessState);
+      currentFilter = currentState.filter;
+    }
+
     await handleRequest(
       emit: emit,
       request: () =>
           _servicoRepository.disableListOfServico(event.selectedList),
-      onSuccess: (_) => emit(ServicoUpdateSuccessState()),
-    );
-    await _fetchServiceSearchMenu(ServicoSearchMenuEvent(), emit);
-  }
-
-  ServicoFilterRequest _combineFilters(
-      ServicoFilterRequest oldFilter, ServicoFilterRequest newFilter) {
-    int? id;
-    int? clienteId;
-    int? tecnicoId;
-    String? periodo;
-    String? equipamento;
-    String? marca;
-    String? situacao;
-    String? garantia;
-    String? filial;
-    DateTime? dataAtendimentoPrevistoAntes;
-    DateTime? dataAtendimentoPrevistoDepois;
-    DateTime? dataAtendimentoEfetivoAntes;
-    DateTime? dataAtendimentoEfetivoDepois;
-    DateTime? dataAberturaAntes;
-    DateTime? dataAberturaDepois;
-
-    if (isFirstRequest) {
-      id = newFilter.id;
-      clienteId = newFilter.clienteId;
-      tecnicoId = newFilter.tecnicoId;
-      periodo = newFilter.periodo;
-      equipamento = newFilter.equipamento;
-      marca = newFilter.marca;
-      situacao = newFilter.situacao;
-      garantia = newFilter.garantia;
-      filial = newFilter.filial;
-      dataAtendimentoPrevistoAntes = newFilter.dataAtendimentoPrevistoAntes;
-      dataAtendimentoPrevistoDepois = newFilter.dataAtendimentoPrevistoDepois;
-      dataAtendimentoEfetivoAntes = newFilter.dataAtendimentoEfetivoAntes;
-      dataAtendimentoEfetivoDepois = newFilter.dataAtendimentoEfetivoDepois;
-      dataAberturaAntes = newFilter.dataAberturaAntes;
-      dataAberturaDepois = newFilter.dataAberturaDepois;
-      isFirstRequest = false;
-    } else {
-      id = newFilter.id ?? oldFilter.id;
-      clienteId = newFilter.clienteId ?? oldFilter.clienteId;
-      tecnicoId = newFilter.tecnicoId ?? oldFilter.tecnicoId;
-      periodo = newFilter.periodo ?? oldFilter.periodo;
-      equipamento = newFilter.equipamento ?? oldFilter.equipamento;
-      marca = newFilter.marca ?? oldFilter.marca;
-      situacao = newFilter.situacao ?? oldFilter.situacao;
-      garantia = newFilter.garantia ?? oldFilter.garantia;
-      filial = newFilter.filial ?? oldFilter.filial;
-      dataAtendimentoPrevistoAntes = newFilter.dataAtendimentoPrevistoAntes ??
-          oldFilter.dataAtendimentoPrevistoAntes;
-      dataAtendimentoPrevistoDepois = newFilter.dataAtendimentoPrevistoDepois ??
-          oldFilter.dataAtendimentoPrevistoDepois;
-      dataAtendimentoEfetivoAntes = newFilter.dataAtendimentoEfetivoAntes ??
-          oldFilter.dataAtendimentoEfetivoAntes;
-      dataAtendimentoEfetivoDepois = newFilter.dataAtendimentoEfetivoDepois ??
-          oldFilter.dataAtendimentoEfetivoDepois;
-      dataAberturaAntes =
-          newFilter.dataAberturaAntes ?? oldFilter.dataAberturaAntes;
-      dataAberturaDepois =
-          newFilter.dataAberturaDepois ?? oldFilter.dataAberturaDepois;
-      isFirstRequest = true;
-    }
-
-    return ServicoFilterRequest(
-      id: id,
-      clienteId: clienteId,
-      tecnicoId: tecnicoId,
-      clienteNome: newFilter.clienteNome ?? oldFilter.clienteNome,
-      tecnicoNome: newFilter.tecnicoNome ?? oldFilter.tecnicoNome,
-      equipamento: equipamento,
-      marca: marca,
-      situacao: situacao,
-      garantia: garantia,
-      filial: filial,
-      periodo: periodo,
-      dataAtendimentoPrevistoAntes: dataAtendimentoPrevistoAntes,
-      dataAtendimentoPrevistoDepois: dataAtendimentoPrevistoDepois,
-      dataAtendimentoEfetivoAntes: dataAtendimentoEfetivoAntes,
-      dataAtendimentoEfetivoDepois: dataAtendimentoEfetivoDepois,
-      dataAberturaAntes: dataAberturaAntes,
-      dataAberturaDepois: dataAberturaDepois,
+      onSuccess: (_) {
+        if (currentFilter != null) {
+          add(ServicoSearchEvent(filter: currentFilter));
+        }
+      },
     );
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
-import 'package:serv_oeste/features/servico/domain/entities/servico_filter_request.dart';
+import 'package:serv_oeste/features/servico/domain/entities/servico_filter.dart';
 import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
 import 'package:serv_oeste/shared/pdfs/orcamento_pdf.dart';
 import 'package:serv_oeste/shared/pdfs/recibo_pdf.dart';
@@ -32,10 +32,10 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
   Future<List<Servico>> _fetchHistoricoEquipamento(
       Servico servicoAtual, Cliente cliente) async {
     try {
-      final filterRequest = ServicoFilterRequest(
-        clienteId: servicoAtual.idCliente,
-        marca: servicoAtual.marca,
+      final filterRequest = ServicoFilter(
         equipamento: servicoAtual.equipamento,
+        marca: servicoAtual.marca,
+        clienteId: servicoAtual.idCliente,
       );
 
       Logger().d("FILTRO PARA ServicoClient:");
@@ -43,8 +43,7 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
       Logger().d("  • marca: ${filterRequest.marca}");
       Logger().d("  • equipamento: ${filterRequest.equipamento}");
 
-      widget.servicoBloc
-          .add(ServicoSearchMenuEvent(filterRequest: filterRequest));
+      widget.servicoBloc.add(ServicoSearchEvent(filter: filterRequest));
 
       await widget.servicoBloc.stream.firstWhere((state) {
         return state is ServicoSearchSuccessState || state is ServicoErrorState;
@@ -90,11 +89,19 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
         widget.servicoBloc.state as ServicoErrorState;
       }
 
-      widget.servicoBloc.add(ServicoSearchOneEvent(id: servicoAtual.id));
+      widget.servicoBloc.add(ServicoSearchEvent(
+        filter: ServicoFilter(),
+        page: 0,
+      ));
 
       return result;
     } catch (e) {
-      widget.servicoBloc.add(ServicoSearchOneEvent(id: servicoAtual.id));
+      widget.servicoBloc.add(ServicoSearchEvent(
+        filter: ServicoFilter(),
+        page: 0,
+      ));
+
+      Logger().e("Erro ao buscar histórico: $e");
       return [];
     }
   }

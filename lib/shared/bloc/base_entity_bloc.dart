@@ -4,19 +4,19 @@ import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:serv_oeste/shared/models/error/error_entity.dart';
 
-abstract class BaseEntityBloc<Event, State> extends Bloc<Event, State> {
+abstract class BaseEntityBloc<TEvent, TState> extends Bloc<TEvent, TState> {
   BaseEntityBloc(super.initialState);
 
-  State loadingState();
+  TState loadingState();
 
-  State errorState(ErrorEntity error);
+  TState errorState(ErrorEntity error);
 
   Future<void> handleRequest<T>({
-    required Emitter<State> emit,
+    required Emitter<TState> emit,
     required Future<Either<ErrorEntity, T>> Function() request,
     required FutureOr<void> Function(T result) onSuccess,
     void Function(ErrorEntity error)? onError,
-    State? loading,
+    TState? loading,
   }) async {
     emit(loading ?? loadingState());
     final Either<ErrorEntity, T> result = await request();

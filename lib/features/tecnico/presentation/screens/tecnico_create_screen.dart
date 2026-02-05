@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_filter.dart';
 import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_form.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
 import 'package:serv_oeste/features/tecnico/domain/entities/tecnico.dart';
@@ -54,7 +55,7 @@ class TecnicoCreateScreen extends StatelessWidget {
         tecnicoForm.setNome("$nome $sobrenome");
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          bloc.add(TecnicoSearchMenuEvent());
+          bloc.add(TecnicoSearchEvent(filter: const TecnicoFilter()));
         });
       },
     );

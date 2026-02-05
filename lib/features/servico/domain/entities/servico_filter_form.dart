@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:serv_oeste/features/servico/domain/entities/servico_filter_request.dart';
+import 'package:serv_oeste/features/servico/domain/entities/servico_filter.dart';
 
 class ServicoFilterForm extends ChangeNotifier {
   ValueNotifier<String> equipamento = ValueNotifier("");
@@ -69,7 +69,7 @@ class ServicoFilterForm extends ChangeNotifier {
     notifyListeners();
   }
 
-  static ServicoFilterForm fromRequest(ServicoFilterRequest? filterRequest) {
+  static ServicoFilterForm fromRequest(ServicoFilter? filterRequest) {
     if (filterRequest == null) return ServicoFilterForm();
 
     final ServicoFilterForm form = ServicoFilterForm();

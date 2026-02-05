@@ -1,4 +1,4 @@
-class ServicoFilterRequest {
+class ServicoFilter {
   final int? id;
   final int? clienteId;
   final int? tecnicoId;
@@ -17,7 +17,7 @@ class ServicoFilterRequest {
   final DateTime? dataAberturaAntes;
   final DateTime? dataAberturaDepois;
 
-  ServicoFilterRequest({
+  const ServicoFilter({
     this.id,
     this.clienteId,
     this.tecnicoId,
@@ -37,7 +37,7 @@ class ServicoFilterRequest {
     this.dataAberturaDepois,
   });
 
-  ServicoFilterRequest copyWith({
+  ServicoFilter copyWith({
     int? id,
     int? clienteId,
     int? tecnicoId,
@@ -56,7 +56,7 @@ class ServicoFilterRequest {
     DateTime? dataAberturaAntes,
     DateTime? dataAberturaDepois,
   }) {
-    return ServicoFilterRequest(
+    return ServicoFilter(
       id: id ?? this.id,
       clienteId: clienteId ?? this.clienteId,
       tecnicoId: tecnicoId ?? this.tecnicoId,
@@ -98,4 +98,49 @@ class ServicoFilterRequest {
       'dataAberturaDepois': dataAberturaDepois?.toIso8601String(),
     };
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! ServicoFilter) return false;
+
+    return other.id == id &&
+      other.clienteId == clienteId &&
+      other.tecnicoId == tecnicoId &&
+      other.clienteNome == clienteNome &&
+      other.tecnicoNome == tecnicoNome &&
+      other.equipamento == equipamento &&
+      other.marca == marca &&
+      other.situacao == situacao &&
+      other.garantia == garantia &&
+      other.filial == filial &&
+      other.periodo == periodo &&
+      other.dataAtendimentoPrevistoAntes == dataAtendimentoPrevistoAntes &&
+      other.dataAtendimentoPrevistoDepois == dataAtendimentoPrevistoDepois &&
+      other.dataAtendimentoEfetivoAntes == dataAtendimentoEfetivoAntes &&
+      other.dataAtendimentoEfetivoDepois == dataAtendimentoEfetivoDepois &&
+      other.dataAberturaAntes == dataAberturaAntes &&
+      other.dataAberturaDepois == dataAberturaDepois;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    clienteId,
+    tecnicoId,
+    clienteNome,
+    tecnicoNome,
+    equipamento,
+    marca,
+    situacao,
+    garantia,
+    filial,
+    periodo,
+    dataAtendimentoPrevistoAntes,
+    dataAtendimentoPrevistoDepois,
+    dataAtendimentoEfetivoAntes,
+    dataAtendimentoEfetivoDepois,
+    dataAberturaAntes,
+    dataAberturaDepois,
+  );
 }

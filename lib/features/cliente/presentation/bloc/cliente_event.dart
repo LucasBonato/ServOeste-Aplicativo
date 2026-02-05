@@ -3,22 +3,6 @@ part of 'cliente_bloc.dart';
 @immutable
 sealed class ClienteEvent {}
 
-final class ClienteLoadingEvent extends ClienteEvent {
-  final String? nome;
-  final String? telefone;
-  final String? endereco;
-  final int page;
-  final int size;
-
-  ClienteLoadingEvent({
-    this.nome,
-    this.telefone,
-    this.endereco,
-    this.page = 0,
-    this.size = 20,
-  });
-}
-
 final class ClienteSearchOneEvent extends ClienteEvent {
   final int id;
 
@@ -26,19 +10,15 @@ final class ClienteSearchOneEvent extends ClienteEvent {
 }
 
 final class ClienteSearchEvent extends ClienteEvent {
-  final String? nome;
-  final String? telefone;
-  final String? endereco;
+  final ClienteFilter filter;
+  final int page;
+  final int size;
 
-  ClienteSearchEvent({this.nome, this.telefone, this.endereco});
-}
-
-final class ClienteSearchMenuEvent extends ClienteEvent {
-  final String? nome;
-  final String? telefone;
-  final String? endereco;
-
-  ClienteSearchMenuEvent({this.nome, this.telefone, this.endereco});
+  ClienteSearchEvent({
+    required this.filter,
+    this.page = 0,
+    this.size = 24,
+  });
 }
 
 final class RestoreClienteStateEvent extends ClienteEvent {

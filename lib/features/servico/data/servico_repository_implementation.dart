@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente_request.dart';
 import 'package:serv_oeste/features/servico/data/servico_client.dart';
-import 'package:serv_oeste/features/servico/domain/entities/servico_filter_request.dart';
+import 'package:serv_oeste/features/servico/domain/entities/servico_filter.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_request.dart';
 import 'package:serv_oeste/features/servico/domain/servico_repository.dart';
 import 'package:serv_oeste/shared/models/error/error_entity.dart';
@@ -37,10 +37,8 @@ class ServicoRepositoryImplementation implements ServicoRepository {
 
   @override
   Future<Either<ErrorEntity, PageContent<Servico>>> getServicosByFilter(
-      ServicoFilterRequest servicoFilter,
-      {int page = 0,
-      int size = 10}) {
-    return _client.getServicosByFilter(servicoFilter, page: page, size: size);
+      {required ServicoFilter filter, int page = 0, int size = 10}) {
+    return _client.getServicosByFilter(filter, page: page, size: size);
   }
 
   @override

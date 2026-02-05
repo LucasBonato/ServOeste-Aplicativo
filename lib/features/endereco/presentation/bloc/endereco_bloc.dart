@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 import 'package:serv_oeste/features/endereco/domain/endereco_repository.dart';
 import 'package:serv_oeste/shared/bloc/base_entity_bloc.dart';
 import 'package:serv_oeste/features/endereco/domain/entities/endereco.dart';

@@ -23,12 +23,14 @@ final class TecnicoSearchAvailabilitySuccessState extends TecnicoState {
 
 final class TecnicoSearchSuccessState extends TecnicoState {
   final List<TecnicoResponse> tecnicos;
+  final TecnicoFilter filter;
   final int currentPage;
   final int totalPages;
   final int totalElements;
 
   TecnicoSearchSuccessState({
     required this.tecnicos,
+    required this.filter,
     required this.currentPage,
     required this.totalPages,
     required this.totalElements,

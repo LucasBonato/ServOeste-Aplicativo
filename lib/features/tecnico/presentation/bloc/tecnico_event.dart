@@ -3,28 +3,6 @@ part of 'tecnico_bloc.dart';
 @immutable
 sealed class TecnicoEvent {}
 
-final class TecnicoLoadingEvent extends TecnicoEvent {
-  final int? id;
-  final String? nome;
-  final String? telefoneFixo;
-  final String? telefoneCelular;
-  final String? situacao;
-  final String? equipamento;
-  final int page;
-  final int size;
-
-  TecnicoLoadingEvent({
-    this.id,
-    this.nome,
-    this.telefoneFixo,
-    this.telefoneCelular,
-    this.situacao,
-    this.equipamento,
-    this.page = 0,
-    this.size = 20,
-  });
-}
-
 final class TecnicoSearchOneEvent extends TecnicoEvent {
   final int id;
 
@@ -40,21 +18,15 @@ final class TecnicoAvailabilitySearchEvent extends TecnicoEvent {
 }
 
 final class TecnicoSearchEvent extends TecnicoEvent {
-  final int? id;
-  final String? nome;
-  final String? situacao;
-  final String? equipamento;
+  final TecnicoFilter filter;
+  final int page;
+  final int size;
 
-  TecnicoSearchEvent({this.id, this.nome, this.situacao, this.equipamento});
-}
-
-final class TecnicoSearchMenuEvent extends TecnicoEvent {
-  final int? id;
-  final String? nome;
-  final String? situacao;
-  final String? equipamento;
-
-  TecnicoSearchMenuEvent({this.id, this.nome, this.situacao, this.equipamento});
+  TecnicoSearchEvent({
+    required this.filter,
+    this.page = 0,
+    this.size = 24,
+  });
 }
 
 final class TecnicoRegisterEvent extends TecnicoEvent {
