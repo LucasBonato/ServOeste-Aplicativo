@@ -10,35 +10,39 @@ Future<void> generateReciboPDF({
   required Servico servico,
   required Cliente cliente,
 }) async {
-  final pdf = await PDFBase.createDocument();
-  final logo = await imageFromAssetBundle('assets/servOeste.png');
-  final outputFileName = 'recibo_${servico.id}.pdf';
+  try {
+    final pdf = await PDFBase.createDocument();
+    final logo = await imageFromAssetBundle('assets/servOeste.png');
+    final outputFileName = 'recibo_${servico.id}.pdf';
 
-  pdf.addPage(
-    pw.Page(
-      pageFormat: PdfPageFormat.a4,
-      margin: const pw.EdgeInsets.all(20),
-      build: (pw.Context context) {
-        return pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            PDFBase.buildHeader(logo),
-            pw.SizedBox(height: 20),
-            PDFBase.buildTitle('RECIBO - Nº ${servico.id}'),
-            pw.SizedBox(height: 10),
-            _buildAtendimentoInfo(servico, cliente),
-            _buildGarantiaFields(servico),
-            _buildPagamentoField(servico),
-          ],
-        );
-      },
-    ),
-  );
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(20),
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              PDFBase.buildHeader(logo),
+              pw.SizedBox(height: 20),
+              PDFBase.buildTitle('RECIBO - Nº ${servico.id}'),
+              pw.SizedBox(height: 10),
+              _buildAtendimentoInfo(servico, cliente),
+              _buildGarantiaFields(servico),
+              _buildPagamentoField(servico),
+            ],
+          );
+        },
+      ),
+    );
 
-  await PDFBase.savePdfAutomatically(
-    pdf: pdf,
-    fileName: outputFileName,
-  );
+    await PDFBase.savePdfAutomatically(
+      pdf: pdf,
+      fileName: outputFileName,
+    );
+  } catch (e) {
+    throw Exception("Erro ao gerar PDF do recibo: $e");
+  }
 }
 
 pw.Widget _buildAtendimentoInfo(Servico servico, Cliente cliente) {
@@ -93,7 +97,8 @@ pw.Widget _buildPagamentoField(Servico servico) {
         children: [
           pw.Padding(
             padding: const pw.EdgeInsets.all(8),
-            child: pw.Text('Forma de pagamento: ${servico.formaPagamento ?? ''}'),
+            child:
+                pw.Text('Forma de pagamento: ${servico.formaPagamento ?? ''}'),
           ),
         ],
       ),

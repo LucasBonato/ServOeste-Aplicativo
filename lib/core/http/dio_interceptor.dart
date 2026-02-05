@@ -13,8 +13,10 @@ class DioInterceptor extends Interceptor {
   DioInterceptor(this._secureStorageService);
 
   @override
-  Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    final isAuthRoute = options.path.contains('/auth/login') || options.path.contains('/auth/refresh');
+  Future<void> onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
+    final isAuthRoute = options.path.contains('/auth/login') ||
+        options.path.contains('/auth/refresh');
 
     if (!isAuthRoute) {
       final String? token = await _secureStorageService.getAccessToken();
@@ -42,7 +44,8 @@ class DioInterceptor extends Interceptor {
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    if (response.requestOptions.path.contains('/auth/refresh') && response.data != null) {
+    if (response.requestOptions.path.contains('/auth/refresh') &&
+        response.data != null) {
       final newToken = response.data['accessToken'];
       if (newToken != null) {
         _analisarToken(newToken, 'Novo token recebido');
@@ -64,17 +67,16 @@ class DioInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     if (err.response?.statusCode == 401) {
-      _logger.w('⚠️ 401 Unauthorized detectado');
-
       final authHeader = err.requestOptions.headers['Authorization'];
+
       if (authHeader is String && authHeader.startsWith('Bearer ')) {
         final token = authHeader.substring(7);
         _analisarToken(token, 'Token que causou 401');
       }
 
       final cookies = err.requestOptions.headers['cookie'];
-      if (cookies is String && _contarOcorrencias(cookies, 'refreshToken') > 1) {
-        _logger.e('🚨 COOKIES DUPLICADOS DETECTADOS!');
+      if (cookies is String &&
+          _contarOcorrencias(cookies, 'refreshToken') > 1) {
         _logger.e('Cookie header corrompido: $cookies');
       }
     }
@@ -95,8 +97,10 @@ class DioInterceptor extends Interceptor {
   void _limparCookiesDuplicados(RequestOptions options) {
     if (options.headers.containsKey('cookie')) {
       final cookieHeader = options.headers['cookie'] as String?;
-      if (cookieHeader != null && _contarOcorrencias(cookieHeader, 'refreshToken') > 1) {
-        final firstTokenMatch = RegExp(r'refreshToken=([^;]+)').firstMatch(cookieHeader);
+      if (cookieHeader != null &&
+          _contarOcorrencias(cookieHeader, 'refreshToken') > 1) {
+        final firstTokenMatch =
+            RegExp(r'refreshToken=([^;]+)').firstMatch(cookieHeader);
         if (firstTokenMatch != null) {
           final cleanToken = firstTokenMatch.group(1);
           options.headers['cookie'] = 'refreshToken=$cleanToken';

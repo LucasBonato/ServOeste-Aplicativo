@@ -29,15 +29,22 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
 
   bool _menuIsOpen = false;
 
-  Future<List<Servico>> _fetchHistoricoEquipamento(Servico servicoAtual, Cliente cliente) async {
+  Future<List<Servico>> _fetchHistoricoEquipamento(
+      Servico servicoAtual, Cliente cliente) async {
     try {
       final filterRequest = ServicoFilterRequest(
-        equipamento: servicoAtual.equipamento,
-        marca: servicoAtual.marca,
         clienteId: servicoAtual.idCliente,
+        marca: servicoAtual.marca,
+        equipamento: servicoAtual.equipamento,
       );
 
-      widget.servicoBloc.add(ServicoSearchMenuEvent(filterRequest: filterRequest));
+      Logger().d("FILTRO PARA ServicoClient:");
+      Logger().d("  • clienteId: ${filterRequest.clienteId}");
+      Logger().d("  • marca: ${filterRequest.marca}");
+      Logger().d("  • equipamento: ${filterRequest.equipamento}");
+
+      widget.servicoBloc
+          .add(ServicoSearchMenuEvent(filterRequest: filterRequest));
 
       await widget.servicoBloc.stream.firstWhere((state) {
         return state is ServicoSearchSuccessState || state is ServicoErrorState;
@@ -46,33 +53,48 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
       List<Servico> result = [];
 
       if (widget.servicoBloc.state is ServicoSearchSuccessState) {
-        final List<Servico> response = (widget.servicoBloc.state as ServicoSearchSuccessState).servicos;
+        final List<Servico> response =
+            (widget.servicoBloc.state as ServicoSearchSuccessState).servicos;
+
+        Logger().d("RESULTADO DA BUSCA:");
+        Logger().d("Total de serviços retornados: ${response.length}");
 
         final filtered = response.where((servico) {
-          final marcaAtual = servicoAtual.marca.toLowerCase().replaceAll(' ', '');
-          final marcaServico = servico.marca.toLowerCase().replaceAll(' ', '');
-          final equipamentoAtual = servicoAtual.equipamento.toLowerCase().replaceAll(' ', '');
-          final equipamentoServico = servico.equipamento.toLowerCase().replaceAll(' ', '');
+          if (servico.id == servicoAtual.id) {
+            return false;
+          }
 
-          return marcaAtual == marcaServico && equipamentoAtual == equipamentoServico;
+          final marcaAtual =
+              servicoAtual.marca.toLowerCase().replaceAll(' ', '');
+          final marcaServico = servico.marca.toLowerCase().replaceAll(' ', '');
+          final equipamentoAtual =
+              servicoAtual.equipamento.toLowerCase().replaceAll(' ', '');
+          final equipamentoServico =
+              servico.equipamento.toLowerCase().replaceAll(' ', '');
+
+          final bool marcaMatch = marcaAtual == marcaServico;
+          final bool equipamentoMatch = equipamentoAtual == equipamentoServico;
+          final bool clienteMatch = servico.idCliente == servicoAtual.idCliente;
+
+          return marcaMatch && equipamentoMatch && clienteMatch;
         }).toList();
 
+        filtered.sort((a, b) {
+          final dateA = a.dataAtendimentoAbertura ?? DateTime(1900);
+          final dateB = b.dataAtendimentoAbertura ?? DateTime(1900);
+          return dateB.compareTo(dateA);
+        });
+
         result = filtered;
+      } else if (widget.servicoBloc.state is ServicoErrorState) {
+        widget.servicoBloc.state as ServicoErrorState;
       }
 
-      widget.servicoBloc.add(ServicoLoadingEvent(
-        filterRequest: ServicoFilterRequest(),
-        page: 0,
-      ));
+      widget.servicoBloc.add(ServicoSearchOneEvent(id: servicoAtual.id));
 
       return result;
     } catch (e) {
-      widget.servicoBloc.add(ServicoLoadingEvent(
-        filterRequest: ServicoFilterRequest(),
-        page: 0,
-      ));
-
-      Logger().e("Erro ao buscar histórico: $e");
+      widget.servicoBloc.add(ServicoSearchOneEvent(id: servicoAtual.id));
       return [];
     }
   }
@@ -149,10 +171,28 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
       final ClienteState clienteState = context.read<ClienteBloc>().state;
 
       if (servicoState is! ServicoSearchOneSuccessState) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                  "Serviço não carregado. Estado atual: ${servicoState.runtimeType}"),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
         return;
       }
 
       if (clienteState is! ClienteSearchOneSuccessState) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                  "Cliente não carregado. Estado atual: ${clienteState.runtimeType}"),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
         return;
       }
 
@@ -164,9 +204,19 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
         clienteOriginal,
       );
 
-      widget.servicoBloc.add(ServicoSearchOneEvent(id: servicoOriginal.id));
+      await widget.servicoBloc.stream
+          .firstWhere(
+        (state) =>
+            state is ServicoSearchOneSuccessState || state is ServicoErrorState,
+      )
+          .catchError((error) {
+        return ServicoErrorState(error: error);
+      });
 
-      await widget.servicoBloc.stream.firstWhere((state) => state is ServicoSearchOneSuccessState || state is ServicoErrorState);
+      final currentState = widget.servicoBloc.state;
+      if (currentState is ServicoSearchOneSuccessState) {
+        servicoOriginal = currentState.servico;
+      }
 
       switch (value) {
         case 'gerarOrcamento':
@@ -190,8 +240,6 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
           break;
       }
     } catch (e) {
-      Logger().e("Erro ao gerar PDF: $e");
-
       if (servicoOriginal != null) {
         widget.servicoBloc.add(ServicoSearchOneEvent(id: servicoOriginal.id));
       }
@@ -199,7 +247,7 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Erro ao gerar PDF: $e"),
+            content: Text("Erro ao gerar PDF: ${e.toString()}"),
             backgroundColor: Colors.red,
           ),
         );

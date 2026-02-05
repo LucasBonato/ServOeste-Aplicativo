@@ -14,12 +14,14 @@ class ServicoRepositoryImplementation implements ServicoRepository {
   ServicoRepositoryImplementation(this._client);
 
   @override
-  Future<Either<ErrorEntity, void>> createServicoComClienteExistente(ServicoRequest servico) {
+  Future<Either<ErrorEntity, void>> createServicoComClienteExistente(
+      ServicoRequest servico) {
     return _client.createServicoComClienteExistente(servico);
   }
 
   @override
-  Future<Either<ErrorEntity, void>> createServicoComClienteNaoExistente(ServicoRequest servico, ClienteRequest cliente) {
+  Future<Either<ErrorEntity, void>> createServicoComClienteNaoExistente(
+      ServicoRequest servico, ClienteRequest cliente) {
     return _client.createServicoComClienteNaoExistente(servico, cliente);
   }
 
@@ -34,7 +36,10 @@ class ServicoRepositoryImplementation implements ServicoRepository {
   }
 
   @override
-  Future<Either<ErrorEntity, PageContent<Servico>>> getServicosByFilter(ServicoFilterRequest servicoFilter, {int page = 0, int size = 10}) {
+  Future<Either<ErrorEntity, PageContent<Servico>>> getServicosByFilter(
+      ServicoFilterRequest servicoFilter,
+      {int page = 0,
+      int size = 10}) {
     return _client.getServicosByFilter(servicoFilter, page: page, size: size);
   }
 

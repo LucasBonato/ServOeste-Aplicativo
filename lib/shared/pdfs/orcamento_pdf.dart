@@ -9,37 +9,41 @@ Future<void> generateOrcamentoPDF({
   required Servico servico,
   required Cliente cliente,
 }) async {
-  final pdf = await PDFBase.createDocument();
-  final logo = await imageFromAssetBundle('assets/servOeste.png');
-  final outputFileName = 'orcamento_${servico.id}.pdf';
+  try {
+    final pdf = await PDFBase.createDocument();
+    final logo = await imageFromAssetBundle('assets/servOeste.png');
+    final outputFileName = 'orcamento_${servico.id}.pdf';
 
-  pdf.addPage(
-    pw.Page(
-      pageFormat: PdfPageFormat.a4,
-      margin: const pw.EdgeInsets.all(20),
-      build: (pw.Context context) {
-        return pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            PDFBase.buildHeader(logo),
-            pw.SizedBox(height: 20),
-            PDFBase.buildTitle('ORÇAMENTO - Nº ${servico.id}'),
-            pw.SizedBox(height: 10),
-            _buildAtendimentoInfo(servico, cliente),
-            pw.SizedBox(height: 20),
-            _buildGarantiaTerms(),
-            pw.SizedBox(height: 30),
-            _buildSignatureField(),
-          ],
-        );
-      },
-    ),
-  );
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(20),
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              PDFBase.buildHeader(logo),
+              pw.SizedBox(height: 20),
+              PDFBase.buildTitle('ORÇAMENTO - Nº ${servico.id}'),
+              pw.SizedBox(height: 10),
+              _buildAtendimentoInfo(servico, cliente),
+              pw.SizedBox(height: 20),
+              _buildGarantiaTerms(),
+              pw.SizedBox(height: 30),
+              _buildSignatureField(),
+            ],
+          );
+        },
+      ),
+    );
 
-  await PDFBase.savePdfAutomatically(
-    pdf: pdf,
-    fileName: outputFileName,
-  );
+    await PDFBase.savePdfAutomatically(
+      pdf: pdf,
+      fileName: outputFileName,
+    );
+  } catch (e) {
+    throw Exception("Erro ao gerar PDF do orçamento: $e");
+  }
 }
 
 pw.Widget _buildAtendimentoInfo(Servico servico, Cliente cliente) {

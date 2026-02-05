@@ -293,7 +293,7 @@ class Formatters {
       for (final entry in invertedEntries) {
         final situation = entry['situacao'] ?? '';
         final description = entry['descricao'] ?? '';
-        final date = entry['data'] ?? '';
+        final date = formatDateForHistory(entry['data']);
 
         if (date.isNotEmpty) {
           buffer.write('$date - $situation');

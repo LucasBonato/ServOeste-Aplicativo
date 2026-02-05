@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
 import 'package:serv_oeste/core/constants/constants.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente_form.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente_request.dart';
@@ -128,7 +125,8 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
     );
   }
 
-  void _setTableValues(String nomeTecnico, String data, String periodo, int idTecnico) {
+  void _setTableValues(
+      String nomeTecnico, String data, String periodo, int idTecnico) {
     _nomeTecnicoController.text = nomeTecnico;
     _servicoForm.setNomeTecnico(nomeTecnico);
     _servicoForm.setDataAtendimentoPrevisto(data);
@@ -137,10 +135,6 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
   }
 
   void _onAddService() {
-    final servicoRequest = ServicoRequest.fromServicoForm(servico: _servicoForm);
-
-    Logger().i('ServicoRequest to JSON: ${servicoRequest.toJson()}');
-    Logger().i('JSON string: ${jsonEncode(servicoRequest.toJson())}');
     if (isClientAndService) {
       List<String> nomes = _clienteForm.nome.value.split(" ");
       _clienteForm.setNome(nomes.first);
@@ -149,7 +143,8 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
       _servicoBloc.add(
         ServicoRegisterPlusClientEvent(
           servico: ServicoRequest.fromServicoForm(servico: _servicoForm),
-          cliente: ClienteRequest.fromClienteForm(cliente: _clienteForm, sobrenome: sobrenomeCliente),
+          cliente: ClienteRequest.fromClienteForm(
+              cliente: _clienteForm, sobrenome: sobrenomeCliente),
         ),
       );
       _clienteForm.setNome("${nomes.first} $sobrenomeCliente");
@@ -165,7 +160,9 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<ServicoBloc, ServicoState>(
-      listenWhen: (previous, current) => current is ServicoRegisterSuccessState || current is ServicoErrorState,
+      listenWhen: (previous, current) =>
+          current is ServicoRegisterSuccessState ||
+          current is ServicoErrorState,
       listener: (context, state) {
         if (state is ServicoRegisterSuccessState) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -195,7 +192,9 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
         }
       },
       child: BaseFormScreen(
-        title: isClientAndService ? "Adicionar Cliente/Serviço" : "Adicionar Serviço",
+        title: isClientAndService
+            ? "Adicionar Cliente/Serviço"
+            : "Adicionar Serviço",
         shouldActivateEvent: false,
         sizeMultiplier: 2,
         child: Skeletonizer(
@@ -212,14 +211,20 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
                 builder: (context, equipamentoSelecionado, child) {
                   return _buildButton(
                     'Verificar disponibilidade',
-                    equipamentoSelecionado.isNotEmpty ? Color(0xFF007BFF) : Colors.grey.withValues(alpha: 0.5),
-                    equipamentoSelecionado.isNotEmpty ? _onShowAvailabilityTechnicianTable : () {},
+                    equipamentoSelecionado.isNotEmpty
+                        ? Color(0xFF007BFF)
+                        : Colors.grey.withValues(alpha: 0.5),
+                    equipamentoSelecionado.isNotEmpty
+                        ? _onShowAvailabilityTechnicianTable
+                        : () {},
                   );
                 },
               ),
               const SizedBox(height: 16),
               _buildButton(
-                isClientAndService ? 'Adicionar Cliente/Serviço' : 'Adicionar Serviço',
+                isClientAndService
+                    ? 'Adicionar Cliente/Serviço'
+                    : 'Adicionar Serviço',
                 Color(0xFF007BFF),
                 _onAddService,
               ),
@@ -233,17 +238,21 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
   Widget _buildMainFormLayout(bool isMobile) {
     final Widget clienteSection = Column(
       children: [
-        CardBuilderForm(title: "Pesquise um Cliente", child: _buildClientForm()),
+        CardBuilderForm(
+            title: "Pesquise um Cliente", child: _buildClientForm()),
         if (!isClientAndService)
           Padding(
             padding: const EdgeInsets.only(top: 12),
-            child: CardBuilderForm(title: "Selecione um Cliente", child: _buildFilteredClientsTable()),
+            child: CardBuilderForm(
+                title: "Selecione um Cliente",
+                child: _buildFilteredClientsTable()),
           ),
         const SizedBox(height: 8),
         BuildFieldLabels(isClientAndService: isClientAndService),
       ],
     );
-    final Widget servicoSection = CardBuilderForm(title: "Serviço", child: _buildServiceForm());
+    final Widget servicoSection =
+        CardBuilderForm(title: "Serviço", child: _buildServiceForm());
 
     if (isMobile) {
       return Column(
@@ -294,7 +303,8 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
               .map((cliente) => {
                     'id': cliente.id.toString(),
                     'nome': cliente.nome ?? '',
-                    'endereco': '${cliente.municipio ?? ''} - ${cliente.bairro ?? ''} - ${cliente.endereco ?? ''}',
+                    'endereco':
+                        '${cliente.municipio ?? ''} - ${cliente.bairro ?? ''} - ${cliente.endereco ?? ''}',
                   })
               .toList();
           _isDataLoaded = true;
@@ -308,7 +318,11 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
     );
   }
 
-  Widget buildSearchField({required String hint, TextEditingController? controller, TextInputType? keyboardType}) => CustomSearchTextFormField(
+  Widget buildSearchField(
+          {required String hint,
+          TextEditingController? controller,
+          TextInputType? keyboardType}) =>
+      CustomSearchTextFormField(
         hint: hint,
         leftPadding: 4,
         rightPadding: 4,
@@ -356,7 +370,8 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
       isClientAndService: isClientAndService,
       onSubmit: () {},
       submitText: "",
-      successMessage: 'Serviço registrado com sucesso! (Caso ele não esteja aparecendo, recarregue a página)',
+      successMessage:
+          'Serviço registrado com sucesso! (Caso ele não esteja aparecendo, recarregue a página)',
     );
   }
 
