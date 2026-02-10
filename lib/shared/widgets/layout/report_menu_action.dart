@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
@@ -26,8 +27,90 @@ class ReportMenuActionButton extends StatefulWidget {
 
 class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
   bool _isGeneratingPDF = false;
-
   bool _menuIsOpen = false;
+  bool _shouldCancelOperation = false;
+  int? _currentServicoId;
+
+  Future<Servico?> _getCurrentServico() async {
+    try {
+      final servicoState = widget.servicoBloc.state;
+      
+      if (servicoState is ServicoSearchOneSuccessState) {
+        return servicoState.servico;
+      }
+      
+      if (_currentServicoId != null) {
+        widget.servicoBloc.add(ServicoSearchOneEvent(id: _currentServicoId!));
+        
+        final completer = Completer<Servico?>();
+        final subscription = widget.servicoBloc.stream.listen((state) {
+          if (state is ServicoSearchOneSuccessState) {
+            if (!completer.isCompleted) {
+              completer.complete(state.servico);
+            }
+          } else if (state is ServicoErrorState) {
+            if (!completer.isCompleted) {
+              completer.complete(null);
+            }
+          }
+        });
+
+        Future.delayed(const Duration(seconds: 3), () {
+          if (!completer.isCompleted) {
+            completer.complete(null);
+          }
+        });
+
+        final servico = await completer.future;
+        await subscription.cancel();
+        return servico;
+      }
+      
+      return null;
+    } catch (e) {
+      Logger().e("Erro ao obter serviço atual: $e");
+      return null;
+    }
+  }
+
+  Future<Cliente?> _getCurrentCliente(int clienteId) async {
+    try {
+      final clienteState = widget.clienteBloc.state;
+      
+      if (clienteState is ClienteSearchOneSuccessState && 
+          clienteState.cliente.id == clienteId) {
+        return clienteState.cliente;
+      }
+      
+      widget.clienteBloc.add(ClienteSearchOneEvent(id: clienteId));
+      
+      final completer = Completer<Cliente?>();
+      final subscription = widget.clienteBloc.stream.listen((state) {
+        if (state is ClienteSearchOneSuccessState) {
+          if (!completer.isCompleted) {
+            completer.complete(state.cliente);
+          }
+        } else if (state is ClienteErrorState) {
+          if (!completer.isCompleted) {
+            completer.complete(null);
+          }
+        }
+      });
+
+      Future.delayed(const Duration(seconds: 3), () {
+        if (!completer.isCompleted) {
+          completer.complete(null);
+        }
+      });
+
+      final cliente = await completer.future;
+      await subscription.cancel();
+      return cliente;
+    } catch (e) {
+      Logger().e("Erro ao obter cliente atual: $e");
+      return null;
+    }
+  }
 
   Future<List<Servico>> _fetchHistoricoEquipamento(
       Servico servicoAtual, Cliente cliente) async {
@@ -38,26 +121,36 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
         clienteId: servicoAtual.idCliente,
       );
 
-      Logger().d("FILTRO PARA ServicoClient:");
-      Logger().d("  • clienteId: ${filterRequest.clienteId}");
-      Logger().d("  • marca: ${filterRequest.marca}");
-      Logger().d("  • equipamento: ${filterRequest.equipamento}");
-
       widget.servicoBloc.add(ServicoSearchEvent(filter: filterRequest));
 
-      await widget.servicoBloc.stream.firstWhere((state) {
-        return state is ServicoSearchSuccessState || state is ServicoErrorState;
+      final completer = Completer<ServicoState>();
+      final subscription = widget.servicoBloc.stream.listen((state) {
+        if (state is ServicoSearchSuccessState || state is ServicoErrorState) {
+          if (!completer.isCompleted) {
+            completer.complete(state);
+          }
+        }
       });
+
+      final timeoutFuture = Future.delayed(const Duration(seconds: 10), () {
+        if (!completer.isCompleted) {
+          completer.completeError(TimeoutException("Tempo excedido ao buscar histórico"));
+        }
+      });
+
+      ServicoState state;
+      try {
+        state = await completer.future;
+      } finally {
+        await subscription.cancel();
+        timeoutFuture.ignore();
+      }
 
       List<Servico> result = [];
 
-      if (widget.servicoBloc.state is ServicoSearchSuccessState) {
-        final List<Servico> response =
-            (widget.servicoBloc.state as ServicoSearchSuccessState).servicos;
-
-        Logger().d("RESULTADO DA BUSCA:");
-        Logger().d("Total de serviços retornados: ${response.length}");
-
+      if (state is ServicoSearchSuccessState) {
+        final List<Servico> response = state.servicos;
+        
         final filtered = response.where((servico) {
           if (servico.id == servicoAtual.id) {
             return false;
@@ -85,22 +178,15 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
         });
 
         result = filtered;
-      } else if (widget.servicoBloc.state is ServicoErrorState) {
-        widget.servicoBloc.state as ServicoErrorState;
+      } else if (state is ServicoErrorState) {
+        Logger().e("Erro ao buscar histórico: ${state.error}");
       }
 
-      widget.servicoBloc.add(ServicoSearchEvent(
-        filter: ServicoFilter(),
-        page: 0,
-      ));
-
       return result;
+    } on TimeoutException catch (e) {
+      Logger().e("Timeout ao buscar histórico: ${e.message}");
+      return [];
     } catch (e) {
-      widget.servicoBloc.add(ServicoSearchEvent(
-        filter: ServicoFilter(),
-        page: 0,
-      ));
-
       Logger().e("Erro ao buscar histórico: $e");
       return [];
     }
@@ -166,63 +252,59 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
   }
 
   Future<void> _handleMenuSelection(String value) async {
+    if (!mounted) return;
+
     setState(() {
       _isGeneratingPDF = true;
+      _shouldCancelOperation = false;
     });
 
     Servico? servicoOriginal;
     Cliente? clienteOriginal;
 
     try {
-      final ServicoState servicoState = context.read<ServicoBloc>().state;
-      final ClienteState clienteState = context.read<ClienteBloc>().state;
-
-      if (servicoState is! ServicoSearchOneSuccessState) {
+      servicoOriginal = await _getCurrentServico();
+      
+      if (servicoOriginal == null) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                  "Serviço não carregado. Estado atual: ${servicoState.runtimeType}"),
+            const SnackBar(
+              content: Text("Não foi possível carregar o serviço"),
               backgroundColor: Colors.red,
             ),
           );
         }
         return;
       }
-
-      if (clienteState is! ClienteSearchOneSuccessState) {
+      
+      _currentServicoId = servicoOriginal.id;
+      
+      clienteOriginal = await _getCurrentCliente(servicoOriginal.idCliente);
+      
+      if (clienteOriginal == null) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                  "Cliente não carregado. Estado atual: ${clienteState.runtimeType}"),
+            const SnackBar(
+              content: Text("Não foi possível carregar o cliente"),
               backgroundColor: Colors.red,
             ),
           );
         }
         return;
       }
-
-      servicoOriginal = servicoState.servico;
-      clienteOriginal = clienteState.cliente;
 
       final List<Servico> historico = await _fetchHistoricoEquipamento(
         servicoOriginal,
         clienteOriginal,
       );
 
-      await widget.servicoBloc.stream
-          .firstWhere(
-        (state) =>
-            state is ServicoSearchOneSuccessState || state is ServicoErrorState,
-      )
-          .catchError((error) {
-        return ServicoErrorState(error: error);
-      });
+      if (!mounted || _shouldCancelOperation) {
+        return;
+      }
 
-      final currentState = widget.servicoBloc.state;
-      if (currentState is ServicoSearchOneSuccessState) {
-        servicoOriginal = currentState.servico;
+      if (_currentServicoId != null) {
+        widget.servicoBloc.add(ServicoSearchOneEvent(id: _currentServicoId!));
+        await Future.delayed(const Duration(milliseconds: 100));
       }
 
       switch (value) {
@@ -247,11 +329,7 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
           break;
       }
     } catch (e) {
-      if (servicoOriginal != null) {
-        widget.servicoBloc.add(ServicoSearchOneEvent(id: servicoOriginal.id));
-      }
-
-      if (mounted) {
+      if (mounted && !_shouldCancelOperation) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("Erro ao gerar PDF: ${e.toString()}"),
@@ -260,12 +338,40 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
         );
       }
     } finally {
+      if (!_shouldCancelOperation && _currentServicoId != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            widget.servicoBloc.add(ServicoSearchOneEvent(id: _currentServicoId!));
+          }
+        });
+      }
+
       if (mounted) {
         setState(() {
           _isGeneratingPDF = false;
         });
       }
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        final servicoState = widget.servicoBloc.state;
+        if (servicoState is ServicoSearchOneSuccessState) {
+          _currentServicoId = servicoState.servico.id;
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _shouldCancelOperation = true;
+    super.dispose();
   }
 
   @override
@@ -287,10 +393,5 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
               onPressed: _showMenu,
             ),
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }
