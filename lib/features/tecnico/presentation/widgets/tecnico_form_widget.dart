@@ -26,6 +26,7 @@ class TecnicoFormWidget extends StatelessWidget {
   final bool isUpdate;
   final bool isSkeleton;
   final bool isForListScreen;
+  final bool shouldActivateEvent;
 
   const TecnicoFormWidget({
     super.key,
@@ -41,6 +42,7 @@ class TecnicoFormWidget extends StatelessWidget {
     this.isUpdate = false,
     this.isSkeleton = false,
     this.isForListScreen = false,
+    this.shouldActivateEvent = false,
   });
 
   @override
@@ -51,7 +53,7 @@ class TecnicoFormWidget extends StatelessWidget {
 
     return BaseFormScreen(
       title: title,
-      shouldActivateEvent: isUpdate,
+      shouldActivateEvent: shouldActivateEvent,
       child: Skeletonizer(
         enabled: isSkeleton,
         child: BaseEntityForm<TecnicoBloc, TecnicoState>(

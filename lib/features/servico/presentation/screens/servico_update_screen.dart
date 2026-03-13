@@ -1,32 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucid_validation/lucid_validation.dart';
+import 'package:serv_oeste/features/cliente/domain/entities/cliente.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente_form.dart';
+import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
+import 'package:serv_oeste/features/cliente/presentation/widgets/cliente_form_widget.dart';
+import 'package:serv_oeste/features/servico/domain/entities/servico.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_form.dart';
+import 'package:serv_oeste/features/servico/domain/validators/servico_validator.dart';
+import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
+import 'package:serv_oeste/features/servico/presentation/widgets/servico_form_widget.dart';
+import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
+import 'package:serv_oeste/shared/models/error/error_entity.dart';
 import 'package:serv_oeste/shared/widgets/formFields/field_labels.dart';
 import 'package:serv_oeste/shared/widgets/layout/report_menu_action.dart';
+import 'package:serv_oeste/shared/widgets/screen/base_form_screen.dart';
 import 'package:serv_oeste/shared/widgets/screen/cards/card_builder_form.dart';
 import 'package:serv_oeste/shared/widgets/screen/client_selection_modal.dart';
 import 'package:serv_oeste/shared/widgets/screen/elevated_form_button.dart';
 import 'package:serv_oeste/shared/widgets/screen/history_service_table.dart';
-import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
-import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
-import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
-import 'package:serv_oeste/features/cliente/domain/entities/cliente.dart';
-import 'package:serv_oeste/shared/models/error/error_entity.dart';
-import 'package:serv_oeste/features/servico/domain/entities/servico.dart';
-import 'package:serv_oeste/features/servico/domain/validators/servico_validator.dart';
-import 'package:serv_oeste/shared/widgets/screen/base_form_screen.dart';
-import 'package:serv_oeste/features/cliente/presentation/widgets/cliente_form_widget.dart';
-import 'package:serv_oeste/features/servico/presentation/widgets/servico_form_widget.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class ServicoUpdateScreen extends StatefulWidget {
   final int id;
   final int clientId;
 
-  const ServicoUpdateScreen(
-      {super.key, required this.id, required this.clientId});
+  const ServicoUpdateScreen({super.key, required this.id, required this.clientId});
 
   @override
   State<ServicoUpdateScreen> createState() => _ServicoUpdateScreenState();
@@ -41,8 +40,7 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
   late TextEditingController _nomeClienteController;
   late TextEditingController _enderecoController;
 
-  late ServicoValidator _servicoUpdateValidator =
-      ServicoValidator(isUpdate: true);
+  late ServicoValidator _servicoUpdateValidator = ServicoValidator(isUpdate: true);
 
   final ServicoForm _servicoUpdateForm = ServicoForm();
   final ClienteForm _clienteUpdateForm = ClienteForm();
@@ -54,12 +52,7 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
     int? convertedId = int.tryParse(id);
 
     if (convertedId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("ID inválido. Por favor, selecione um serviço."),
-          backgroundColor: Colors.red,
-        ),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("ID inválido. Por favor, selecione um serviço."), backgroundColor: Colors.red));
       return;
     }
 
@@ -77,13 +70,9 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
 
     List<String> enderecoParts = cliente.endereco?.split(',') ?? [];
 
-    _clienteUpdateForm
-        .setRua(enderecoParts.isNotEmpty ? enderecoParts.first.trim() : '');
-    _clienteUpdateForm
-        .setNumero(enderecoParts.length > 1 ? enderecoParts[1].trim() : '');
-    _clienteUpdateForm.setComplemento(enderecoParts.length > 2
-        ? enderecoParts.sublist(2).join(',').trim()
-        : '');
+    _clienteUpdateForm.setRua(enderecoParts.isNotEmpty ? enderecoParts.first.trim() : '');
+    _clienteUpdateForm.setNumero(enderecoParts.length > 1 ? enderecoParts[1].trim() : '');
+    _clienteUpdateForm.setComplemento(enderecoParts.length > 2 ? enderecoParts.sublist(2).join(',').trim() : '');
 
     _servicoUpdateForm.setIdCliente(cliente.id);
     _servicoUpdateForm.setNomeCliente(cliente.nome ?? '');
@@ -103,8 +92,7 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
     _clienteFormKey.currentState?.validate();
     _servicoFormKey.currentState?.validate();
 
-    final ValidationResult response =
-        _servicoUpdateValidator.validate(_servicoUpdateForm);
+    final ValidationResult response = _servicoUpdateValidator.validate(_servicoUpdateForm);
     return response.isValid;
   }
 
@@ -124,13 +112,7 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
     _servicoFormKey.currentState?.validate();
     _servicoUpdateValidator.cleanExternalErrors();
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          "[ERROR] Informação(ões) inválida(s) ao Atualizar o Serviço.",
-        ),
-      ),
-    );
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("[ERROR] Informação(ões) inválida(s) ao Atualizar o Serviço.",),),);
   }
 
   void _showClientSelectionModal(BuildContext context) {
@@ -138,11 +120,7 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          content: ClientSelectionModal(
-            nomeController: _nomeClienteController,
-            enderecoController: _enderecoController,
-            onClientSelected: _getSelectedClientById,
-          ),
+          content: ClientSelectionModal(nomeController: _nomeClienteController, enderecoController: _enderecoController, onClientSelected: _getSelectedClientById,),
         );
       },
     );
@@ -170,49 +148,32 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
       nameTecnicoController: _nomeTecnicoController,
       submitText: "",
       onSubmit: () {},
-      successMessage:
-          'Serviço atualizado com sucesso! (Caso ele não esteja atualizado, recarregue a página)',
+      successMessage: 'Serviço atualizado com sucesso! (Caso ele não esteja atualizado, recarregue a página)',
       isUpdate: true,
     );
   }
 
   Widget _buildMainFormLayout(bool isMobile) {
-    final Widget serviceForm =
-        CardBuilderForm(title: "Serviço", child: _buildServiceForm());
+    final Widget serviceForm = CardBuilderForm(title: "Serviço", child: _buildServiceForm());
 
     final List<Widget> children = [
       CardBuilderForm(title: "Cliente", child: _buildClientForm()),
       const SizedBox(height: 12),
-      ElevatedFormButton(
-          text: "Alterar Cliente",
-          onPressed: () => _showClientSelectionModal(context)),
-      if (isMobile) ...[
-        const SizedBox(height: 12),
-        serviceForm,
-      ],
+      ElevatedFormButton(text: "Alterar Cliente", onPressed: () => _showClientSelectionModal(context)),
+      if (isMobile) ...[const SizedBox(height: 12), serviceForm],
       const SizedBox(height: 8),
       BuildFieldLabels(isClientAndService: false),
     ];
 
     if (isMobile) {
-      return Column(
-        children: children,
-      );
+      return Column(children: children);
     }
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          flex: 3,
-          child: Column(
-            children: children,
-          ),
-        ),
+        Expanded(flex: 3, child: Column(children: children)),
         const SizedBox(width: 16),
-        Expanded(
-          flex: 4,
-          child: serviceForm,
-        ),
+        Expanded(flex: 4, child: serviceForm),
       ],
     );
   }
@@ -220,9 +181,7 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
   Future<dynamic> buildDescriptionHistoryDialog(BuildContext context) {
     return showDialog(
       context: context,
-      builder: (context) => ServiceHistoryTable(
-        historico: _servicoUpdateForm.historico.value,
-      ),
+      builder: (context) => ServiceHistoryTable(historico: _servicoUpdateForm.historico.value),
     );
   }
 
@@ -237,10 +196,7 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
     _tecnicoBloc = context.read<TecnicoBloc>();
     _clienteBloc = context.read<ClienteBloc>();
 
-    _servicoUpdateValidator = ServicoValidator(
-      isUpdate: true,
-      isFieldEnabled: _isServicoFieldEnabled,
-    );
+    _servicoUpdateValidator = ServicoValidator(isUpdate: true, isFieldEnabled: _isServicoFieldEnabled);
 
     _servicoBloc.add(ServicoSearchOneEvent(id: widget.id));
     _clienteBloc.add(ClienteSearchOneEvent(id: widget.clientId));
@@ -261,7 +217,7 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
         'Compra',
         'Orçamento aprovado',
         'Aguardando cliente retirar',
-        'Não retira há 3 meses'
+        'Não retira há 3 meses',
       ],
       "dataFinalGarantia": [
         'Aguardando agendamento',
@@ -274,22 +230,10 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
         'Compra',
         'Orçamento aprovado',
         'Aguardando cliente retirar',
-        'Não retira há 3 meses'
+        'Não retira há 3 meses',
       ],
-      "valor": [
-        'Aguardando agendamento',
-        'Aguardando atendimento',
-        'Cancelado',
-        'Sem defeito',
-        'Aguardando orçamento',
-      ],
-      "valorPecas": [
-        'Aguardando agendamento',
-        'Aguardando atendimento',
-        'Cancelado',
-        'Sem defeito',
-        'Aguardando orçamento',
-      ],
+      "valor": ['Aguardando agendamento', 'Aguardando atendimento', 'Cancelado', 'Sem defeito', 'Aguardando orçamento'],
+      "valorPecas": ['Aguardando agendamento', 'Aguardando atendimento', 'Cancelado', 'Sem defeito', 'Aguardando orçamento'],
       "formaPagamento": [
         'Aguardando agendamento',
         'Aguardando atendimento',
@@ -313,10 +257,7 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
     return MultiBlocListener(
       listeners: [
         BlocListener<ServicoBloc, ServicoState>(
-          listenWhen: (previous, current) =>
-              current is ServicoSearchOneSuccessState ||
-              current is ServicoUpdateSuccessState ||
-              current is ServicoErrorState,
+          listenWhen: (previous, current) => current is ServicoSearchOneSuccessState || current is ServicoUpdateSuccessState || current is ServicoErrorState,
           listener: (context, state) {
             if (state is ServicoUpdateSuccessState) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -340,18 +281,13 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
         ),
       ],
       child: BlocBuilder<ServicoBloc, ServicoState>(
-        buildWhen: (previous, current) =>
-            current is ServicoSearchOneSuccessState ||
-            current is ServicoSearchOneLoadingState,
+        buildWhen: (previous, current) => current is ServicoSearchOneSuccessState || current is ServicoSearchOneLoadingState,
         builder: (context, state) {
           return BaseFormScreen(
-            shouldActivateEvent: true,
+            shouldActivateEvent: false,
             sizeMultiplier: 2,
             title: "Consultar/Atualizar Serviço",
-            actions: [
-              ReportMenuActionButton(
-                  servicoBloc: _servicoBloc, clienteBloc: _clienteBloc),
-            ],
+            actions: [ReportMenuActionButton(servicoBloc: _servicoBloc, clienteBloc: _clienteBloc)],
             child: Skeletonizer(
               enabled: state is ServicoSearchOneLoadingState,
               child: Column(
@@ -367,16 +303,9 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
                     constraints: const BoxConstraints(maxWidth: 750),
                     child: Column(
                       children: [
-                        ElevatedFormButton(
-                          text: "Ver Histórico de Atendimento",
-                          onPressed: () =>
-                              buildDescriptionHistoryDialog(context),
-                        ),
+                        ElevatedFormButton(text: "Ver Histórico de Atendimento", onPressed: () => buildDescriptionHistoryDialog(context)),
                         const SizedBox(height: 16),
-                        ElevatedFormButton(
-                          text: "Atualizar Serviço",
-                          onPressed: _updateServico,
-                        ),
+                        ElevatedFormButton(text: "Atualizar Serviço", onPressed: _updateServico),
                       ],
                     ),
                   ),

@@ -8,17 +8,16 @@ import 'package:serv_oeste/features/user/presentation/widgets/user_card.dart';
 import 'package:serv_oeste/shared/models/enums/list_style.dart';
 import 'package:serv_oeste/shared/widgets/layout/fab_add.dart';
 import 'package:serv_oeste/shared/widgets/screen/base_list_screen.dart';
-import 'package:serv_oeste/shared/widgets/screen/error_component.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class UserScreen extends BaseListScreen<UserResponse> {
   const UserScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() => _UserScreenTestState();
+  BaseListScreenState<UserResponse, UserState> createState() => _UserScreenTestState();
 }
 
-class _UserScreenTestState extends BaseListScreenState<UserResponse> {
+class _UserScreenTestState extends BaseListScreenState<UserResponse, UserState> {
   late final UserBloc _userBloc;
   late String username;
   late String role;
@@ -52,6 +51,18 @@ class _UserScreenTestState extends BaseListScreenState<UserResponse> {
     );
   }
 
+  Widget _buildSuccessGrid(UserLoadedState userState) {
+    return  buildGridOfCards(
+      items: userState.users,
+      aspectRatio: 1,
+      totalPages: userState.totalPages,
+      currentPage: userState.currentPage,
+      onPageChanged: (page) {
+        _userBloc.add(LoadUsersEvent(page: page - 1));
+      },
+    );
+  }
+
   void _onDeleteUser(String username) {
     showDialog(
       context: context,
@@ -80,10 +91,10 @@ class _UserScreenTestState extends BaseListScreenState<UserResponse> {
 
   @override
   Widget buildDefaultFloatingActionButton() => FloatingActionButtonAdd(
-        route: Routes.userCreate,
-        event: () => _userBloc.add(LoadUsersEvent()),
-        tooltip: "Adicionar Usuário",
-      );
+    route: Routes.userCreate,
+    event: () => _userBloc.add(LoadUsersEvent()),
+    tooltip: "Adicionar Usuário",
+  );
 
   @override
   Widget buildItemCard(UserResponse item, bool isSelected, bool isSelectMode, bool isSkeleton) {
@@ -150,8 +161,11 @@ class _UserScreenTestState extends BaseListScreenState<UserResponse> {
                 }
               },
               builder: (context, userState) {
-                if (userState is UserInitialState || userState is UserLoadingState) {
-                  return Skeletonizer(
+                return buildWithStateCache(
+                  state: userState,
+                  isLoading: (state) => state is UserInitialState || state is UserLoadingState,
+                  isSuccess: (state) => state is UserLoadedState,
+                  buildSkeleton: () => Skeletonizer(
                     enableSwitchAnimation: true,
                     child: buildGridOfCards(
                       items: List.generate(10, (_) => UserResponse()..applySkeletonData()),
@@ -161,20 +175,9 @@ class _UserScreenTestState extends BaseListScreenState<UserResponse> {
                       onPageChanged: (_) {},
                       isSkeleton: true,
                     ),
-                  );
-                } else if (userState is UserLoadedState) {
-                  final List<UserResponse> users = userState.users.where((user) => user.role != "ADMIN").toList();
-                  return buildGridOfCards(
-                    items: users,
-                    aspectRatio: 1,
-                    totalPages: userState.totalPages,
-                    currentPage: userState.currentPage,
-                    onPageChanged: (page) {
-                      _userBloc.add(LoadUsersEvent(page: page - 1));
-                    },
-                  );
-                }
-                return const ErrorComponent();
+                  ),
+                  buildSuccess: () => _buildSuccessGrid(userState as UserLoadedState),
+                );
               },
             ),
           ),

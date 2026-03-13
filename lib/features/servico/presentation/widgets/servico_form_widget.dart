@@ -113,7 +113,6 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
       "dataPagamentoComissao": [
         'Aguardando agendamento',
         'Aguardando atendimento',
-        'Cancelado',
         'Sem defeito',
         'Aguardando orçamento',
         'Aguardando aprovação do cliente',

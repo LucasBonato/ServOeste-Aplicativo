@@ -13,6 +13,7 @@ class UserFormWidget extends StatelessWidget {
   final String title;
   final bool isUpdate;
   final bool isSkeleton;
+  final bool shouldActivateEvent;
   final UserBloc bloc;
   final UserForm userForm;
   final String successMessage;
@@ -29,6 +30,7 @@ class UserFormWidget extends StatelessWidget {
     required this.onSubmit,
     this.isUpdate = false,
     this.isSkeleton = false,
+    this.shouldActivateEvent = false,
   });
 
   @override
@@ -38,7 +40,7 @@ class UserFormWidget extends StatelessWidget {
 
     return BaseFormScreen(
       title: title,
-      shouldActivateEvent: isUpdate,
+      shouldActivateEvent: shouldActivateEvent,
       child: Skeletonizer(
         enabled: isSkeleton,
         child: BaseEntityForm<UserBloc, UserState>(

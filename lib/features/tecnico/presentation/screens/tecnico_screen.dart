@@ -14,17 +14,16 @@ import 'package:serv_oeste/shared/widgets/layout/fab_add.dart';
 import 'package:serv_oeste/shared/widgets/layout/fab_remove.dart';
 import 'package:serv_oeste/shared/widgets/layout/responsive_search_inputs.dart';
 import 'package:serv_oeste/shared/widgets/screen/base_list_screen.dart';
-import 'package:serv_oeste/shared/widgets/screen/error_component.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class TecnicoScreen extends BaseListScreen<TecnicoResponse> {
   const TecnicoScreen({super.key});
 
   @override
-  BaseListScreenState<TecnicoResponse> createState() => _TecnicoScreenState();
+  BaseListScreenState<TecnicoResponse, TecnicoState> createState() => _TecnicoScreenState();
 }
 
-class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
+class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse, TecnicoState> {
   late final TecnicoBloc _tecnicoBloc;
   late TextEditingController _idController, _nomeController;
   late SingleSelectController<String> _situacaoController;
@@ -55,6 +54,37 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildSuccessGrid(TecnicoSearchSuccessState stateTecnico) {
+    return buildGridOfCards(
+      items: stateTecnico.tecnicos,
+      aspectRatio: 2.1,
+      totalPages: stateTecnico.totalPages,
+      currentPage: stateTecnico.currentPage,
+      onPageChanged: (page) {
+        _tecnicoBloc.add(TecnicoSearchEvent(
+          filter: stateTecnico.filter,
+          page: page - 1,
+        ));
+      },
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: MediaQuery.of(context).size.width > 1300
+            ? 4
+            : MediaQuery.of(context).size.width > 900
+              ? 3
+              : MediaQuery.of(context).size.width > 450
+                ? 2
+                : 1,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 2.1,
+      ),
+      mainAxisSpacing: 12,
+      crossAxisSpacing: 12,
+      horizontalPadding: 16,
+      verticalPadding: 10,
     );
   }
 
@@ -174,8 +204,11 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
                 }
               },
               builder: (context, stateTecnico) {
-                if (stateTecnico is TecnicoInitialState || stateTecnico is TecnicoLoadingState) {
-                  return Skeletonizer(
+                return buildWithStateCache(
+                  state: stateTecnico,
+                  isLoading: (state) => state is TecnicoInitialState || state is TecnicoLoadingState,
+                  isSuccess: (state) => state is TecnicoSearchSuccessState,
+                  buildSkeleton: () => Skeletonizer(
                     enableSwitchAnimation: true,
                     child: buildGridOfCards(
                       items: List.generate(16, (_) => TecnicoResponse()..applySkeletonData()),
@@ -189,38 +222,9 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse> {
                       horizontalPadding: 16,
                       verticalPadding: 10,
                     ),
-                  );
-                } else if (stateTecnico is TecnicoSearchSuccessState) {
-                  return buildGridOfCards(
-                    items: stateTecnico.tecnicos,
-                    aspectRatio: 2.1,
-                    totalPages: stateTecnico.totalPages,
-                    currentPage: stateTecnico.currentPage,
-                    onPageChanged: (page) {
-                      _tecnicoBloc.add(TecnicoSearchEvent(
-                        filter: stateTecnico.filter,
-                        page: page - 1,
-                      ));
-                    },
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: MediaQuery.of(context).size.width > 1300
-                          ? 4
-                          : MediaQuery.of(context).size.width > 900
-                              ? 3
-                              : MediaQuery.of(context).size.width > 450
-                                  ? 2
-                                  : 1,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                      childAspectRatio: 2.1,
-                    ),
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    horizontalPadding: 16,
-                    verticalPadding: 10,
-                  );
-                }
-                return const ErrorComponent();
+                  ),
+                  buildSuccess: () => _buildSuccessGrid(stateTecnico as TecnicoSearchSuccessState),
+                );
               },
             ),
           ),

@@ -71,6 +71,7 @@ class _ClienteUpdateScreenState extends State<ClienteUpdateScreen> {
         buildWhen: (previous, current) => current is ClienteSearchOneSuccessState || current is ClienteSearchOneLoadingState,
         builder: (context, state) {
           return ClienteFormScreen(
+            shouldActivateEvent: false,
             isSkeleton: state is ClienteSearchOneLoadingState,
             title: "Consultar/Atualizar Cliente",
             submitText: "Atualizar Cliente",

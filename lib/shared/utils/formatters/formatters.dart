@@ -7,9 +7,7 @@ class Formatters {
     if (phone == null || phone.isEmpty) {
       return isCell ? '(   )          -' : '(   )          -';
     }
-    return isCell
-        ? Formatters.applyCellPhoneMask(phone)
-        : Formatters.applyPhoneMask(phone);
+    return isCell ? Formatters.applyCellPhoneMask(phone) : Formatters.applyPhoneMask(phone);
   }
 
   static String applyPhoneMask(String phone) {
@@ -24,11 +22,7 @@ class Formatters {
 
   static String transformPhoneMask(String phone) {
     if (phone.length < 14 || phone.length > 15) return "";
-    return phone
-        .replaceAll("(", "")
-        .replaceAll(")", "")
-        .replaceAll(" ", "")
-        .replaceAll("-", "");
+    return phone.replaceAll("(", "").replaceAll(")", "").replaceAll(" ", "").replaceAll("-", "");
   }
 
   static String formatDatePdf(DateTime? date) {
@@ -84,15 +78,11 @@ class Formatters {
     List<Map<String, String>> entries = [];
 
     final dateRegex = RegExp(r'\[(.*?)\]');
-    List<String> dates =
-        dateRegex.allMatches(history).map((m) => m.group(1)!).toList();
+    List<String> dates = dateRegex.allMatches(history).map((m) => m.group(1)!).toList();
 
     String textWithoutDates = history.replaceAll(dateRegex, '').trim();
 
-    List<String> blocks = textWithoutDates
-        .split(' - ')
-        .where((p) => p.trim().isNotEmpty && p.trim() != '-')
-        .toList();
+    List<String> blocks = textWithoutDates.split(' - ').where((p) => p.trim().isNotEmpty && p.trim() != '-').toList();
 
     List<Map<String, String>> temporaryEntries = [];
 
@@ -105,10 +95,7 @@ class Formatters {
           String description = parts[0].trim();
           String situation = parts[1].trim();
 
-          temporaryEntries.add({
-            'situacao': situation,
-            'descricao': description,
-          });
+          temporaryEntries.add({'situacao': situation, 'descricao': description});
         }
       } else if (currentBlock.contains("ABERTURA:")) {
         String situation = currentBlock;
@@ -119,10 +106,7 @@ class Formatters {
           i++;
         }
 
-        temporaryEntries.add({
-          'situacao': situation,
-          'descricao': description,
-        });
+        temporaryEntries.add({'situacao': situation, 'descricao': description});
       } else if (currentBlock.toUpperCase().contains("AGUARDANDO") ||
           currentBlock.toUpperCase().contains("CANCELADO") ||
           currentBlock.toUpperCase().contains("RESOLVIDO") ||
@@ -138,10 +122,7 @@ class Formatters {
           i++;
         }
 
-        temporaryEntries.add({
-          'situacao': situation,
-          'descricao': description,
-        });
+        temporaryEntries.add({'situacao': situation, 'descricao': description});
       } else if (temporaryEntries.isNotEmpty) {
         int lastIndex = temporaryEntries.length - 1;
         if (temporaryEntries[lastIndex]['descricao']!.isEmpty) {
@@ -157,11 +138,7 @@ class Formatters {
         date = Formatters.convertUsToBrDate(dates[i]);
       }
 
-      entries.add({
-        'situacao': temporaryEntries[i]['situacao']!,
-        'descricao': temporaryEntries[i]['descricao']!,
-        'data': date,
-      });
+      entries.add({'situacao': temporaryEntries[i]['situacao']!, 'descricao': temporaryEntries[i]['descricao']!, 'data': date});
     }
 
     entries.sort((a, b) {
@@ -240,17 +217,12 @@ class Formatters {
   }
 
   static String formatToCurrency(double value) {
-    final NumberFormat formatter =
-        NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
+    final NumberFormat formatter = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
     return formatter.format(value);
   }
 
   static double parseCurrencyToDouble(String formattedValue) {
-    String cleanedValue = formattedValue
-        .replaceAll("R\$", "")
-        .replaceAll(".", "")
-        .replaceAll(",", ".")
-        .trim();
+    String cleanedValue = formattedValue.replaceAll("R\$", "").replaceAll(".", "").replaceAll(",", ".").trim();
 
     return double.tryParse(cleanedValue) ?? 0.0;
   }
@@ -260,8 +232,7 @@ class Formatters {
       return null;
     }
 
-    String cleanedValue =
-        value.replaceAll(RegExp(r'[^\d,]'), '').replaceAll(',', '.');
+    String cleanedValue = value.replaceAll(RegExp(r'[^\d,]'), '').replaceAll(',', '.');
 
     double? parsedValue = double.tryParse(cleanedValue);
     return parsedValue;
@@ -317,12 +288,7 @@ class Formatters {
     }
   }
 
-  static double getResponsiveFontSize(
-    double containerWidth, {
-    required double min,
-    required double max,
-    required double factor,
-  }) {
+  static double getResponsiveFontSize(double containerWidth, {required double min, required double max, required double factor}) {
     final double calculatedSize = containerWidth * factor;
     return calculatedSize.clamp(min, max);
   }
@@ -342,37 +308,21 @@ class Formatters {
 
   static ServiceStatus mapStringStatusToEnumStatus(String status) {
     return switch (status) {
-      "AGUARDANDO_AGENDAMENTO" ||
-      "Aguardando agendamento" =>
-        ServiceStatus.aguardandoAgendamento,
-      "AGUARDANDO_ATENDIMENTO" ||
-      "Aguardando atendimento" =>
-        ServiceStatus.aguardandoAtendimento,
-      "AGUARDANDO_APROVACAO" ||
-      "Aguardando aprovação do cliente" =>
-        ServiceStatus.aguardandoAprovacaoCliente,
-      "AGUARDANDO_CLIENTE_RETIRAR" ||
-      "Aguardando cliente retirar" =>
-        ServiceStatus.aguardandoClienteRetirar,
-      "AGUARDANDO_ORCAMENTO" ||
-      "Aguardando orçamento" =>
-        ServiceStatus.aguardandoOrcamento,
+      "AGUARDANDO_AGENDAMENTO" || "Aguardando agendamento" => ServiceStatus.aguardandoAgendamento,
+      "AGUARDANDO_ATENDIMENTO" || "Aguardando atendimento" => ServiceStatus.aguardandoAtendimento,
+      "AGUARDANDO_APROVACAO" || "Aguardando aprovação do cliente" => ServiceStatus.aguardandoAprovacaoCliente,
+      "AGUARDANDO_CLIENTE_RETIRAR" || "Aguardando cliente retirar" => ServiceStatus.aguardandoClienteRetirar,
+      "AGUARDANDO_ORCAMENTO" || "Aguardando orçamento" => ServiceStatus.aguardandoOrcamento,
       "CANCELADO" || "Cancelado" => ServiceStatus.cancelado,
       "COMPRA" || "Compra" => ServiceStatus.compra,
       "CORTESIA" || "Cortesia" => ServiceStatus.cortesia,
       "GARANTIA" || "Garantia" => ServiceStatus.garantia,
-      "NAO_APROVADO" ||
-      "Não aprovado pelo cliente" =>
-        ServiceStatus.naoAprovadoPeloCliente,
-      "NAO_RETIRA_3_MESES" ||
-      "Não retira há 3 meses" =>
-        ServiceStatus.naoRetira3Meses,
-      "ORCAMENTO_APROVADO" ||
-      "Orçamento aprovado" =>
-        ServiceStatus.orcamentoAprovado,
+      "NAO_APROVADO" || "Não aprovado pelo cliente" => ServiceStatus.naoAprovadoPeloCliente,
+      "NAO_RETIRA_3_MESES" || "Não retira há 3 meses" => ServiceStatus.naoRetira3Meses,
+      "ORCAMENTO_APROVADO" || "Orçamento aprovado" => ServiceStatus.orcamentoAprovado,
       "RESOLVIDO" || "Resolvido" => ServiceStatus.resolvido,
       "SEM_DEFEITO" || "Sem defeito" => ServiceStatus.semDefeito,
-      _ => ServiceStatus.aguardandoAgendamento
+      _ => ServiceStatus.aguardandoAgendamento,
     };
   }
 
@@ -392,7 +342,7 @@ class Formatters {
       "Orçamento aprovado" => "ORCAMENTO_APROVADO",
       "Resolvido" => "RESOLVIDO",
       "Sem defeito" => "SEM_DEFEITO",
-      _ => "AGUARDANDO_AGENDAMENTO"
+      _ => "AGUARDANDO_AGENDAMENTO",
     };
   }
 }

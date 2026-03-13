@@ -3,15 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:serv_oeste/core/routing/args/cliente_update_args.dart';
 import 'package:serv_oeste/core/routing/routes.dart';
+import 'package:serv_oeste/features/cliente/domain/entities/cliente.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente_filter.dart';
 import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
+import 'package:serv_oeste/features/cliente/presentation/widgets/cliente_card.dart';
 import 'package:serv_oeste/shared/widgets/formFields/search_input_field.dart';
 import 'package:serv_oeste/shared/widgets/layout/fab_add.dart';
 import 'package:serv_oeste/shared/widgets/layout/fab_remove.dart';
 import 'package:serv_oeste/shared/widgets/layout/responsive_search_inputs.dart';
-import 'package:serv_oeste/features/cliente/presentation/widgets/cliente_card.dart';
-import 'package:serv_oeste/shared/widgets/screen/error_component.dart';
-import 'package:serv_oeste/features/cliente/domain/entities/cliente.dart';
 import 'package:serv_oeste/shared/widgets/screen/base_list_screen.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -19,10 +18,10 @@ class ClienteScreen extends BaseListScreen<Cliente> {
   const ClienteScreen({super.key});
 
   @override
-  BaseListScreenState<Cliente> createState() => _ClienteScreenState();
+  BaseListScreenState<Cliente, ClienteState> createState() => _ClienteScreenState();
 }
 
-class _ClienteScreenState extends BaseListScreenState<Cliente> {
+class _ClienteScreenState extends BaseListScreenState<Cliente, ClienteState> {
   late final ClienteBloc _clienteBloc;
   late final TextEditingController _nomeController, _telefoneController, _enderecoController;
 
@@ -46,6 +45,33 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
           keyboardType: TextInputType.phone,
         ),
       ],
+    );
+  }
+
+  Widget _buildSuccessGrid(ClienteSearchSuccessState stateCliente) {
+    return buildGridOfCards(
+      items: stateCliente.clientes,
+      aspectRatio: 1.55,
+      totalPages: stateCliente.totalPages,
+      currentPage: stateCliente.currentPage,
+      onPageChanged: (page) {
+        _clienteBloc.add(ClienteSearchEvent(
+          filter: stateCliente.filter,
+          page: page - 1,
+        ));
+      },
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: MediaQuery.of(context).size.width > 1400
+            ? 4
+            : MediaQuery.of(context).size.width > 1100
+              ? 3
+              : MediaQuery.of(context).size.width > 600
+                ? 2
+                : 1,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 1.55,
+      ),
     );
   }
 
@@ -147,8 +173,11 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
                 }
               },
               builder: (context, stateCliente) {
-                if (stateCliente is ClienteInitialState || stateCliente is ClienteLoadingState) {
-                  return Skeletonizer(
+                return buildWithStateCache(
+                  state: stateCliente,
+                  isLoading: (state) => state is ClienteInitialState || state is ClienteLoadingState,
+                  isSuccess: (state) => state is ClienteSearchSuccessState,
+                  buildSkeleton: () => Skeletonizer(
                     enableSwitchAnimation: true,
                     child: buildGridOfCards(
                       items: List.generate(16, (_) => Cliente()..applySkeletonData()),
@@ -158,35 +187,9 @@ class _ClienteScreenState extends BaseListScreenState<Cliente> {
                       onPageChanged: (_) {},
                       isSkeleton: true,
                     ),
-                  );
-                }
-                else if (stateCliente is ClienteSearchSuccessState) {
-                  return buildGridOfCards(
-                    items: stateCliente.clientes,
-                    aspectRatio: 1.55,
-                    totalPages: stateCliente.totalPages,
-                    currentPage: stateCliente.currentPage,
-                    onPageChanged: (page) {
-                      _clienteBloc.add(ClienteSearchEvent(
-                        filter: stateCliente.filter,
-                        page: page - 1,
-                      ));
-                    },
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: MediaQuery.of(context).size.width > 1400
-                          ? 4
-                          : MediaQuery.of(context).size.width > 1100
-                              ? 3
-                              : MediaQuery.of(context).size.width > 600
-                                  ? 2
-                                  : 1,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                      childAspectRatio: 1.55,
-                    ),
-                  );
-                }
-                return const ErrorComponent();
+                  ),
+                  buildSuccess: () => _buildSuccessGrid(stateCliente as ClienteSearchSuccessState),
+                );
               },
             ),
           ),

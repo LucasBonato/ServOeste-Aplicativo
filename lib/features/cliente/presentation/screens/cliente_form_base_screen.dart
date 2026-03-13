@@ -15,6 +15,7 @@ class ClienteFormScreen extends StatelessWidget {
   final TextEditingController? nomeController;
   final bool isUpdate;
   final bool isSkeleton;
+  final bool shouldActivateEvent;
 
   const ClienteFormScreen({
     super.key,
@@ -27,13 +28,14 @@ class ClienteFormScreen extends StatelessWidget {
     this.nomeController,
     this.isUpdate = false,
     this.isSkeleton = false,
+    this.shouldActivateEvent = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return BaseFormScreen(
       title: title,
-      shouldActivateEvent: isUpdate,
+      shouldActivateEvent: shouldActivateEvent,
       child: Skeletonizer(
         enabled: isSkeleton,
         child: ClienteFormWidget(

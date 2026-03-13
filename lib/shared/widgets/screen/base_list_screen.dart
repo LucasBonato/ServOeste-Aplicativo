@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/shared/models/enums/list_style.dart';
 import 'package:serv_oeste/shared/widgets/layout/pagination_widget.dart';
 import 'package:serv_oeste/shared/widgets/screen/entity_not_found.dart';
+import 'package:serv_oeste/shared/widgets/screen/error_component.dart';
 import 'package:serv_oeste/shared/widgets/screen/grid_view.dart';
 import 'package:serv_oeste/shared/bloc/list/lista_bloc.dart';
 import 'package:serv_oeste/shared/utils/debouncer.dart';
@@ -11,9 +12,10 @@ abstract class BaseListScreen<T> extends StatefulWidget {
   const BaseListScreen({super.key});
 }
 
-abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
+abstract class BaseListScreenState<T, TState> extends State<BaseListScreen<T>> {
   final Debouncer _debouncer = Debouncer();
   ListStyle _listStyle = ListStyle.grid;
+  Widget? _cachedSuccessWidget;
 
   void searchFieldChanged();
 
@@ -32,6 +34,23 @@ abstract class BaseListScreenState<T> extends State<BaseListScreen<T>> {
   Widget buildSelectionFloatingActionButton(List<int> selectedIds);
 
   Widget buildItemCard(T item, bool isSelected, bool isSelectMode, bool isSkeleton);
+
+  Widget buildWithStateCache({
+    required TState state,
+    required bool Function(TState) isLoading,
+    required bool Function(TState) isSuccess,
+    required Widget Function() buildSkeleton,
+    required Widget Function() buildSuccess,
+  }) {
+    if (isLoading(state)) {
+      return buildSkeleton();
+    }
+    if (isSuccess(state)) {
+      _cachedSuccessWidget = buildSuccess();
+      return _cachedSuccessWidget!;
+    }
+    return _cachedSuccessWidget ?? const ErrorComponent();
+  }
 
   void setListStyle(ListStyle listStyle) {
     _listStyle = listStyle;
