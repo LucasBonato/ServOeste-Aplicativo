@@ -181,7 +181,7 @@ class ServiceHistoryTable extends StatelessWidget {
           }
 
           return Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
                 flex: 2,
