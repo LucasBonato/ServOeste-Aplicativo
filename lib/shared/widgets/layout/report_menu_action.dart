@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_filter.dart';
@@ -34,14 +33,14 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
   Future<Servico?> _getCurrentServico() async {
     try {
       final servicoState = widget.servicoBloc.state;
-      
+
       if (servicoState is ServicoSearchOneSuccessState) {
         return servicoState.servico;
       }
-      
+
       if (_currentServicoId != null) {
         widget.servicoBloc.add(ServicoSearchOneEvent(id: _currentServicoId!));
-        
+
         final completer = Completer<Servico?>();
         final subscription = widget.servicoBloc.stream.listen((state) {
           if (state is ServicoSearchOneSuccessState) {
@@ -65,7 +64,7 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
         await subscription.cancel();
         return servico;
       }
-      
+
       return null;
     } catch (e) {
       Logger().e("Erro ao obter serviço atual: $e");
@@ -76,14 +75,14 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
   Future<Cliente?> _getCurrentCliente(int clienteId) async {
     try {
       final clienteState = widget.clienteBloc.state;
-      
-      if (clienteState is ClienteSearchOneSuccessState && 
+
+      if (clienteState is ClienteSearchOneSuccessState &&
           clienteState.cliente.id == clienteId) {
         return clienteState.cliente;
       }
-      
+
       widget.clienteBloc.add(ClienteSearchOneEvent(id: clienteId));
-      
+
       final completer = Completer<Cliente?>();
       final subscription = widget.clienteBloc.stream.listen((state) {
         if (state is ClienteSearchOneSuccessState) {
@@ -150,7 +149,7 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
 
       if (state is ServicoSearchSuccessState) {
         final List<Servico> response = state.servicos;
-        
+
         final filtered = response.where((servico) {
           if (servico.id == servicoAtual.id) {
             return false;
@@ -264,7 +263,7 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
 
     try {
       servicoOriginal = await _getCurrentServico();
-      
+
       if (servicoOriginal == null) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -276,11 +275,11 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
         }
         return;
       }
-      
+
       _currentServicoId = servicoOriginal.id;
-      
+
       clienteOriginal = await _getCurrentCliente(servicoOriginal.idCliente);
-      
+
       if (clienteOriginal == null) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -357,7 +356,7 @@ class _ReportMenuActionButtonState extends State<ReportMenuActionButton> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         final servicoState = widget.servicoBloc.state;

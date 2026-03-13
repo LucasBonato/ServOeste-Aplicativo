@@ -11,7 +11,7 @@ class ServiceHistoryTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final entradas = Formatters.parseServiceHistory(historico);
+    final List<Map<String, String>> entradas = Formatters.parseServiceHistory(historico);
 
     return Dialog(
       shape: RoundedRectangleBorder(
@@ -19,14 +19,14 @@ class ServiceHistoryTable extends StatelessWidget {
       ),
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.5,
+          maxWidth: MediaQuery.of(context).size.width * 0.8,
           maxHeight: MediaQuery.of(context).size.height * 0.6,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
             Container(
-              width: MediaQuery.of(context).size.width * 0.5,
+              width: MediaQuery.of(context).size.width,
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Color(0xFFF3F3FA),
@@ -93,13 +93,12 @@ class ServiceHistoryTable extends StatelessWidget {
       return Center(
         child: Text(
           "Nenhum histórico disponível",
-          style:
-              TextStyle(color: Colors.grey[600], fontStyle: FontStyle.italic),
+          style: TextStyle(color: Colors.grey[600], fontStyle: FontStyle.italic),
         ),
       );
     }
 
-    final entradasInvertidas = entradas.reversed.toList();
+    final List<Map<String, String>> entradasInvertidas = entradas.reversed.toList();
 
     return ListView(
       shrinkWrap: true,
@@ -126,51 +125,82 @@ class ServiceHistoryTable extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 2,
-            child: Text(
-              entrada['situacao'] ?? '',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF007BFF),
-              ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final bool isMobile = constraints.maxWidth < 360;
+
+          final Text situacaoText = Text(
+            entrada['situacao'] ?? '',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF007BFF),
             ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Text(
-                entrada['descricao'] ?? '',
+          );
+
+          final Text descricaoText = Text(
+            entrada['descricao'] ?? '',
+            style: TextStyle(
+              fontSize: 14,
+              height: 1.4,
+            ),
+          );
+
+          final Widget dataWidget = Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.calendar_today, size: 12),
+              const SizedBox(width: 4),
+              Text(
+                entrada['data'] ?? "",
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontSize: 14,
-                  height: 1.4,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+            ],
+          );
+
+          if (isMobile) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.calendar_today, size: 12),
-                const SizedBox(width: 4),
-                Text(
-                  entrada['data'] ?? '',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(child: situacaoText),
+                    const SizedBox(width: 8),
+                    dataWidget
+                  ],
                 ),
+                const SizedBox(height: 6),
+                descricaoText
               ],
-            ),
-          ),
-        ],
+            );
+          }
+
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 2,
+                child: situacaoText,
+              ),
+              Expanded(
+                flex: 3,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: descricaoText,
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: dataWidget,
+              ),
+            ],
+          );
+        },
       ),
     );
   }
