@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:drop_down_search_field/drop_down_search_field.dart';
 import 'package:flutter/material.dart';
 
@@ -17,6 +19,9 @@ class CustomSearchDropDownFormField extends StatefulWidget {
   final String? Function([String?])? validator;
   final Widget Function(BuildContext, String)? itemWidgetBuilder;
   final ValueNotifier<String?>? valueNotifier;
+  final VoidCallback? onTap;
+  final FutureOr<List<String>> Function(String)? suggestionsCallback;
+
 
   const CustomSearchDropDownFormField({
     super.key,
@@ -35,6 +40,8 @@ class CustomSearchDropDownFormField extends StatefulWidget {
     required this.label,
     required this.dropdownValues,
     this.valueNotifier,
+    this.onTap,
+    this.suggestionsCallback
   });
 
   @override
@@ -143,7 +150,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
             widget.onChanged!(value);
             widget.valueNotifier?.value = value;
           },
-          onTap: () {},
+          onTap: widget.onTap,
           decoration: InputDecoration(
             counterText: widget.hide ? null : "",
             labelText: widget.label,
@@ -186,12 +193,15 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
           ),
         ),
         suggestionsCallback: (query) async {
+          if (widget.suggestionsCallback != null) {
+            return await widget.suggestionsCallback!(query);
+          }
+
           if (query.isEmpty) {
             return widget.dropdownValues;
           }
           return widget.dropdownValues
-              .where((element) =>
-                  element.toLowerCase().contains(query.toLowerCase()))
+              .where((element) => element.toLowerCase().contains(query.toLowerCase()))
               .toList();
         },
         onSuggestionSelected: (String? suggestion) {

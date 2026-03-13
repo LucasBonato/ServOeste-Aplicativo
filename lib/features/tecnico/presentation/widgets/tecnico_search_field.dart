@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_filter.dart';
 import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_response.dart';
-import 'package:serv_oeste/shared/widgets/formFields/search_dropdown_form_field.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
 import 'package:serv_oeste/shared/utils/debouncer.dart';
+import 'package:serv_oeste/shared/widgets/formFields/search_dropdown_form_field.dart';
 
 class TecnicoSearchField extends StatefulWidget {
   final TecnicoBloc tecnicoBloc;
@@ -139,6 +139,31 @@ class _TecnicoSearchFieldState extends State<TecnicoSearchField> {
             onChanged: _handleChange,
             onSelected: _handleSelected,
             validator: widget.validator,
+            onTap: () {
+              if (_tecnicos.isEmpty) {
+                widget.tecnicoBloc.add(
+                  TecnicoSearchEvent(filter: const TecnicoFilter()),
+                );
+              }
+            },
+            suggestionsCallback: (query) async {
+              widget.tecnicoBloc.add(
+                TecnicoSearchEvent(
+                  filter: TecnicoFilter(nome: query),
+                ),
+              );
+
+              final state = await widget.tecnicoBloc.stream.firstWhere(
+                    (state) => state is TecnicoSearchSuccessState,
+              );
+
+              final tecnicos = (state as TecnicoSearchSuccessState).tecnicos;
+
+              return tecnicos
+                  .take(5)
+                  .map((t) => "${t.nome} ${t.sobrenome}")
+                  .toList();
+            },
           );
         },
       ),
