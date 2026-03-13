@@ -37,11 +37,11 @@ class FilteredClientsTable extends StatelessWidget {
                         return DataRow(
                           cells: [
                             DataCell(
-                              Text(cliente['nome']!),
+                              Text(cliente['nome']!, overflow: TextOverflow.ellipsis,),
                               onDoubleTap: () => onClientSelected(cliente['id']!),
                             ),
                             DataCell(
-                              Text(cliente['endereco']!),
+                              Text(cliente['endereco']!, overflow: TextOverflow.fade,),
                               onDoubleTap: () => onClientSelected(cliente['id']!),
                             ),
                           ],

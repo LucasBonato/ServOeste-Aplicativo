@@ -1,36 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/core/constants/constants.dart';
+import 'package:serv_oeste/features/cliente/domain/entities/cliente.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente_filter.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente_form.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente_request.dart';
+import 'package:serv_oeste/features/cliente/domain/validators/cliente_validator.dart';
+import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
+import 'package:serv_oeste/features/cliente/presentation/widgets/cliente_form_widget.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_form.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_request.dart';
+import 'package:serv_oeste/features/servico/domain/validators/servico_validator.dart';
+import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
+import 'package:serv_oeste/features/servico/presentation/widgets/servico_form_widget.dart';
+import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
+import 'package:serv_oeste/features/tecnico/presentation/widgets/tecnico_table_modal.dart';
+import 'package:serv_oeste/shared/models/error/error_entity.dart';
+import 'package:serv_oeste/shared/utils/debouncer.dart';
 import 'package:serv_oeste/shared/widgets/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/shared/widgets/formFields/field_labels.dart';
+import 'package:serv_oeste/shared/widgets/screen/base_form_screen.dart';
 import 'package:serv_oeste/shared/widgets/screen/cards/card_builder_form.dart';
 import 'package:serv_oeste/shared/widgets/screen/filtered_clients_table.dart';
-import 'package:serv_oeste/features/tecnico/presentation/widgets/tecnico_table_modal.dart';
-import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';
-import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
-import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
-import 'package:serv_oeste/features/cliente/domain/entities/cliente.dart';
-import 'package:serv_oeste/shared/models/error/error_entity.dart';
-import 'package:serv_oeste/features/cliente/domain/validators/cliente_validator.dart';
-import 'package:serv_oeste/features/servico/domain/validators/servico_validator.dart';
-import 'package:serv_oeste/shared/widgets/screen/base_form_screen.dart';
-import 'package:serv_oeste/features/cliente/presentation/widgets/cliente_form_widget.dart';
-import 'package:serv_oeste/features/servico/presentation/widgets/servico_form_widget.dart';
-import 'package:serv_oeste/shared/utils/debouncer.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class ServicoCreateScreen extends StatefulWidget {
   final bool isClientAndService;
 
-  const ServicoCreateScreen({
-    super.key,
-    this.isClientAndService = true,
-  });
+  const ServicoCreateScreen({super.key, this.isClientAndService = true});
 
   @override
   State<ServicoCreateScreen> createState() => _ServicoCreateScreenState();
@@ -59,6 +56,8 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
   final GlobalKey<FormState> _clienteFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _servicoFormKey = GlobalKey<FormState>();
 
+  List<Map<String, String>> filteredClients = [];
+
   @override
   void initState() {
     super.initState();
@@ -73,10 +72,7 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
   }
 
   void _getClienteById(String id) {
-    final clienteSelecionado = _clientes.firstWhere(
-      (cliente) => cliente.id.toString() == id,
-      orElse: () => Cliente(),
-    );
+    final clienteSelecionado = _clientes.firstWhere((cliente) => cliente.id.toString() == id, orElse: () => Cliente());
 
     if (clienteSelecionado.id != null) {
       _nomeClienteController.text = clienteSelecionado.nome ?? '';
@@ -87,11 +83,7 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
         isClientAndService = false;
       });
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Cliente não encontrado.'),
-        ),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cliente não encontrado.')));
     }
   }
 
@@ -101,10 +93,7 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
     _debouncer.execute(
       () => _clienteBloc.add(
         ClienteSearchEvent(
-          filter: ClienteFilter(
-            nome: _nomeClienteController.text,
-            endereco: _enderecoController.text,
-          ),
+          filter: ClienteFilter(nome: _nomeClienteController.text, endereco: _enderecoController.text),
         ),
       ),
     );
@@ -120,16 +109,12 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return TecnicoTableModal(
-          especialidadeId: idEspecialidade,
-          setValuesAvailabilityTechnicianTable: _setTableValues,
-        );
+        return TecnicoTableModal(especialidadeId: idEspecialidade, setValuesAvailabilityTechnicianTable: _setTableValues);
       },
     );
   }
 
-  void _setTableValues(
-      String nomeTecnico, String data, String periodo, int idTecnico) {
+  void _setTableValues(String nomeTecnico, String data, String periodo, int idTecnico) {
     _nomeTecnicoController.text = nomeTecnico;
     _servicoForm.setNomeTecnico(nomeTecnico);
     _servicoForm.setDataAtendimentoPrevisto(data);
@@ -146,26 +131,19 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
       _servicoBloc.add(
         ServicoRegisterPlusClientEvent(
           servico: ServicoRequest.fromServicoForm(servico: _servicoForm),
-          cliente: ClienteRequest.fromClienteForm(
-              cliente: _clienteForm, sobrenome: sobrenomeCliente),
+          cliente: ClienteRequest.fromClienteForm(cliente: _clienteForm, sobrenome: sobrenomeCliente),
         ),
       );
       _clienteForm.setNome("${nomes.first} $sobrenomeCliente");
     } else {
-      _servicoBloc.add(
-        ServicoRegisterEvent(
-          servico: ServicoRequest.fromServicoForm(servico: _servicoForm),
-        ),
-      );
+      _servicoBloc.add(ServicoRegisterEvent(servico: ServicoRequest.fromServicoForm(servico: _servicoForm)));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<ServicoBloc, ServicoState>(
-      listenWhen: (previous, current) =>
-          current is ServicoRegisterSuccessState ||
-          current is ServicoErrorState,
+      listenWhen: (previous, current) => current is ServicoRegisterSuccessState || current is ServicoErrorState,
       listener: (context, state) {
         if (state is ServicoRegisterSuccessState) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -195,42 +173,32 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
         }
       },
       child: BaseFormScreen(
-        title: isClientAndService
-            ? "Adicionar Cliente/Serviço"
-            : "Adicionar Serviço",
+        title: isClientAndService ? "Adicionar Cliente/Serviço" : "Adicionar Serviço",
         shouldActivateEvent: false,
         sizeMultiplier: 2,
         child: Skeletonizer(
           enabled: false,
           child: Column(
             children: [
-              LayoutBuilder(builder: (context, constraints) {
-                bool isMobile = constraints.maxWidth < 950;
-                return _buildMainFormLayout(isMobile);
-              }),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  bool isMobile = constraints.maxWidth < 950;
+                  return _buildMainFormLayout(isMobile);
+                },
+              ),
               const SizedBox(height: 48),
               ValueListenableBuilder<String>(
                 valueListenable: _servicoForm.equipamento,
                 builder: (context, equipamentoSelecionado, child) {
                   return _buildButton(
                     'Verificar disponibilidade',
-                    equipamentoSelecionado.isNotEmpty
-                        ? Color(0xFF007BFF)
-                        : Colors.grey.withValues(alpha: 0.5),
-                    equipamentoSelecionado.isNotEmpty
-                        ? _onShowAvailabilityTechnicianTable
-                        : () {},
+                    equipamentoSelecionado.isNotEmpty ? Color(0xFF007BFF) : Colors.grey.withValues(alpha: 0.5),
+                    equipamentoSelecionado.isNotEmpty ? _onShowAvailabilityTechnicianTable : () {},
                   );
                 },
               ),
               const SizedBox(height: 16),
-              _buildButton(
-                isClientAndService
-                    ? 'Adicionar Cliente/Serviço'
-                    : 'Adicionar Serviço',
-                Color(0xFF007BFF),
-                _onAddService,
-              ),
+              _buildButton(isClientAndService ? 'Adicionar Cliente/Serviço' : 'Adicionar Serviço', Color(0xFF007BFF), _onAddService),
             ],
           ),
         ),
@@ -241,30 +209,20 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
   Widget _buildMainFormLayout(bool isMobile) {
     final Widget clienteSection = Column(
       children: [
-        CardBuilderForm(
-            title: "Pesquise um Cliente", child: _buildClientForm()),
+        CardBuilderForm(title: "Pesquise um Cliente", child: _buildClientForm()),
         if (!isClientAndService)
           Padding(
             padding: const EdgeInsets.only(top: 12),
-            child: CardBuilderForm(
-                title: "Selecione um Cliente",
-                child: _buildFilteredClientsTable()),
+            child: CardBuilderForm(title: "Selecione um Cliente", child: _buildFilteredClientsTable()),
           ),
         const SizedBox(height: 8),
         BuildFieldLabels(isClientAndService: isClientAndService),
       ],
     );
-    final Widget servicoSection =
-        CardBuilderForm(title: "Serviço", child: _buildServiceForm());
+    final Widget servicoSection = CardBuilderForm(title: "Serviço", child: _buildServiceForm());
 
     if (isMobile) {
-      return Column(
-        children: [
-          clienteSection,
-          const SizedBox(height: 16),
-          servicoSection,
-        ],
-      );
+      return Column(children: [clienteSection, const SizedBox(height: 16), servicoSection]);
     }
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -284,14 +242,9 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
           minimumSize: const Size(600, 50),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
-        child: Text(
-          text,
-          style: const TextStyle(fontSize: 18, color: Colors.white),
-        ),
+        child: Text(text, style: const TextStyle(fontSize: 18, color: Colors.white)),
       ),
     );
   }
@@ -299,40 +252,33 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
   Widget _buildFilteredClientsTable() {
     return BlocBuilder<ClienteBloc, ClienteState>(
       builder: (context, state) {
-        late List<Map<String, String>> filteredClients = [];
         if (state is ClienteSearchSuccessState && !_isDataLoaded) {
           _clientes = state.clientes;
           filteredClients = state.clientes
-              .map((cliente) => {
-                    'id': cliente.id.toString(),
-                    'nome': cliente.nome ?? '',
-                    'endereco':
-                        '${cliente.municipio ?? ''} - ${cliente.bairro ?? ''} - ${cliente.endereco ?? ''}',
-                  })
+              .map(
+                (cliente) => {
+                  'id': cliente.id.toString(),
+                  'nome': cliente.nome ?? '',
+                  'endereco': '${cliente.municipio ?? ''} - ${cliente.bairro ?? ''} - ${cliente.endereco ?? ''}',
+                },
+              )
               .toList();
           _isDataLoaded = true;
         }
 
-        return FilteredClientsTable(
-          clientesFiltrados: filteredClients,
-          onClientSelected: _getClienteById,
-        );
+        return FilteredClientsTable(clientesFiltrados: filteredClients, onClientSelected: _getClienteById);
       },
     );
   }
 
-  Widget buildSearchField(
-          {required String hint,
-          TextEditingController? controller,
-          TextInputType? keyboardType}) =>
-      CustomSearchTextFormField(
-        hint: hint,
-        leftPadding: 4,
-        rightPadding: 4,
-        controller: controller,
-        keyboardType: keyboardType,
-        onChangedAction: (value) => _onSearchFieldChanged(),
-      );
+  Widget buildSearchField({required String hint, TextEditingController? controller, TextInputType? keyboardType}) => CustomSearchTextFormField(
+    hint: hint,
+    leftPadding: 4,
+    rightPadding: 4,
+    controller: controller,
+    keyboardType: keyboardType,
+    onChangedAction: (value) => _onSearchFieldChanged(),
+  );
 
   Widget _buildClientForm() {
     if (isClientAndService) {
@@ -349,15 +295,9 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
     }
     return Column(
       children: [
-        buildSearchField(
-          hint: "Nome do Cliente",
-          controller: _nomeClienteController,
-        ),
+        buildSearchField(hint: "Nome do Cliente", controller: _nomeClienteController),
         const SizedBox(height: 12),
-        buildSearchField(
-          hint: "Endereço",
-          controller: _enderecoController,
-        ),
+        buildSearchField(hint: "Endereço", controller: _enderecoController),
       ],
     );
   }
@@ -373,8 +313,7 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
       isClientAndService: isClientAndService,
       onSubmit: () {},
       submitText: "",
-      successMessage:
-          'Serviço registrado com sucesso! (Caso ele não esteja aparecendo, recarregue a página)',
+      successMessage: 'Serviço registrado com sucesso! (Caso ele não esteja aparecendo, recarregue a página)',
     );
   }
 
