@@ -6,7 +6,7 @@ import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:serv_oeste/core/constants/constants.dart';
 import 'package:serv_oeste/core/http/refresh_token_interceptor.dart';
 import 'package:serv_oeste/core/http/server_endpoints.dart';
-import 'package:serv_oeste/core/services/secure_storage_service.dart';
+import 'package:serv_oeste/shared/services/secure_storage_service.dart';
 import 'package:serv_oeste/features/auth/domain/auth_repository.dart';
 import 'package:serv_oeste/core/http/auth_interceptor.dart';
 import 'package:serv_oeste/core/http/dio_interceptor.dart';

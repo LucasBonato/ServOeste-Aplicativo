@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
-import 'package:serv_oeste/core/services/secure_storage_service.dart';
+import 'package:serv_oeste/shared/services/secure_storage_service.dart';
 
 class DioInterceptor extends Interceptor {
   final Logger _logger = Logger(printer: PrettyPrinter(printEmojis: false));

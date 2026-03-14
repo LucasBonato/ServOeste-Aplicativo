@@ -68,11 +68,10 @@ class Servico implements Skeletonizable {
         idTecnico = servicoForm.getIdTecnico()!,
         equipamento = servicoForm.equipamento.value,
         filial = servicoForm.filial.value,
-        horarioPrevisto =
-            servicoForm.horario.value.toUpperCase().replaceAll("Ã", "A"),
+        horarioPrevisto = servicoForm.horario.value.toUpperCase().replaceAll("Ã", "A"),
         marca = servicoForm.marca.value,
         situacao = servicoForm.situacao.value,
-        descricao = servicoForm.descricao.value,
+        descricao = servicoForm.historico.value,
         garantia = (servicoForm.getGarantia() == Constants.garantias.first ||
                 servicoForm.getGarantia() == Constants.garantias.last)
             ? servicoForm.getGarantia() == Constants.garantias.first

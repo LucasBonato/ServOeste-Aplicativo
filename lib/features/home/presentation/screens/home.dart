@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/core/routing/args/servico_update_args.dart';
 import 'package:serv_oeste/core/routing/routes.dart';
 import 'package:serv_oeste/core/security/jwt_utils.dart';
-import 'package:serv_oeste/core/services/secure_storage_service.dart';
+import 'package:serv_oeste/shared/services/secure_storage_service.dart';
 import 'package:serv_oeste/features/home/presentation/bloc/home_bloc.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico.dart';
 import 'package:serv_oeste/features/servico/presentation/widgets/servico_card.dart';
@@ -141,7 +141,7 @@ class _HomeState extends State<Home> {
                     GridListView(
                       aspectRatio: .9,
                       dataList: stateHome.servicos,
-                      buildCard: (dynamic servico) => ServicoCard(
+                      buildCard: (servico) => ServicoCard(
                         onDoubleTap: () => _onNavigateToUpdateScreen(servico.id, servico.idCliente),
                         cliente: (servico as Servico).nomeCliente,
                         codigo: servico.id,

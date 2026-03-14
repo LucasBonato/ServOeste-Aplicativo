@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/core/navigation/navigation_service.dart';
 import 'package:serv_oeste/core/security/jwt_utils.dart';
-import 'package:serv_oeste/core/services/secure_storage_service.dart';
+import 'package:serv_oeste/shared/services/secure_storage_service.dart';
 import 'package:serv_oeste/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente_filter.dart';
 import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart';

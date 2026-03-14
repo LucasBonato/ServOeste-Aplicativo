@@ -35,13 +35,13 @@ class ServicoForm extends ChangeNotifier {
   double valorComissaoNumerico = 0.0;
 
   void setForm(Servico servico) {
-    id.value = servico.idCliente;
-    idCliente.value = servico.idCliente;
+    id.value ??= servico.id;
+    idCliente.value ??= servico.idCliente;
     nomeCliente.value = servico.nomeCliente;
     equipamento.value = servico.equipamento;
     marca.value = servico.marca;
     nomeTecnico.value = servico.nomeTecnico ?? "";
-    idTecnico.value = servico.idTecnico;
+    idTecnico.value ??= servico.idTecnico;
     filial.value = servico.filial;
     situacao.value = servico.situacao.convertEnumStatusToString();
     horario.value = servico.horarioPrevisto.convertToHorarioString();
@@ -66,16 +66,13 @@ class ServicoForm extends ChangeNotifier {
       dataFechamento.value = Formatters.applyDateMask(servico.dataFechamento!);
     }
     if (servico.dataPagamentoComissao != null) {
-      dataPagamentoComissao.value =
-          Formatters.applyDateMask(servico.dataPagamentoComissao!);
+      dataPagamentoComissao.value = Formatters.applyDateMask(servico.dataPagamentoComissao!);
     }
     if (servico.dataInicioGarantia != null) {
-      dataInicioGarantia.value =
-          Formatters.applyDateMask(servico.dataInicioGarantia!);
+      dataInicioGarantia.value = Formatters.applyDateMask(servico.dataInicioGarantia!);
     }
     if (servico.dataFimGarantia != null) {
-      dataFinalGarantia.value =
-          Formatters.applyDateMask(servico.dataFimGarantia!);
+      dataFinalGarantia.value = Formatters.applyDateMask(servico.dataFimGarantia!);
     }
     if (servico.garantia != null) {
       garantia.value = (servico.garantia!)

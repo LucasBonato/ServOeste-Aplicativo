@@ -36,10 +36,6 @@ class Formatters {
     return DateFormat('dd/MM/yyyy').format(date);
   }
 
-  static DateTime transformDateMask(String dateString) {
-    return DateFormat('dd/MM/yyyy').parseStrict(dateString);
-  }
-
   static String formatDateForHistory(dynamic date) {
     if (date == null) return "Não informado";
 
@@ -66,7 +62,7 @@ class Formatters {
     if (history.trim().isEmpty) return [];
 
     final lineRegex = RegExp(
-      r'\[(\d{2}/\d{2}/\d{4})\]\s*-\s*([^\-\n]+?)\s*-\s*(.*?)(?=\n*\[\d{2}/\d{2}/\d{4}\]|\s*$)',
+      r'\[(\d{2}/\d{2}/\d{2,4})\]\s*-\s*([^\-\n]+?)\s*-\s*(.*?)(?=\s*\[\d{2}/\d{2}/\d{2,4}\]|\s*$)',
       dotAll: true,
     );
 
@@ -107,7 +103,7 @@ class Formatters {
   }
 
   static DateTime? extractDateFromDescription(String? description) {
-    if (description == null) return null;
+    if (description == null || description.isEmpty) return null;
 
     try {
       final regex = RegExp(r'(\d{1,2}/\d{1,2}/\d{2,4})');
@@ -182,16 +178,6 @@ class Formatters {
 
     double? parsedValue = double.tryParse(cleanedValue);
     return parsedValue;
-  }
-
-  static double parseToDouble(String value) {
-    if (value.isEmpty) return 0.0;
-
-    String sanitizedValue = value.replaceAll(RegExp(r'[^\d,]'), '');
-
-    sanitizedValue = sanitizedValue.replaceAll(',', '.');
-
-    return double.tryParse(sanitizedValue) ?? 0.0;
   }
 
   static String formatDescriptionForPDF(String? history) {
