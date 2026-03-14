@@ -288,7 +288,7 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
             sizeMultiplier: 2,
             title: "Consultar/Atualizar Serviço",
             actions: [
-              if (state is ServicoSearchOneSuccessState)
+              if (state is ServicoSearchOneSuccessState && _servicoUpdateForm.getIdCliente() != null)
                 ReportMenuActionButton(
                   servico: Servico.fromForm(_servicoUpdateForm),
                   cliente: Cliente.fromForm(_clienteUpdateForm)

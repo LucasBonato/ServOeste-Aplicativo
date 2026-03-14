@@ -36,10 +36,6 @@ class Formatters {
     return DateFormat('dd/MM/yyyy').format(date);
   }
 
-  static DateTime transformDateMask(String dateString) {
-    return DateFormat('dd/MM/yyyy').parseStrict(dateString);
-  }
-
   static String formatDateForHistory(dynamic date) {
     if (date == null) return "Não informado";
 
@@ -182,16 +178,6 @@ class Formatters {
 
     double? parsedValue = double.tryParse(cleanedValue);
     return parsedValue;
-  }
-
-  static double parseToDouble(String value) {
-    if (value.isEmpty) return 0.0;
-
-    String sanitizedValue = value.replaceAll(RegExp(r'[^\d,]'), '');
-
-    sanitizedValue = sanitizedValue.replaceAll(',', '.');
-
-    return double.tryParse(sanitizedValue) ?? 0.0;
   }
 
   static String formatDescriptionForPDF(String? history) {

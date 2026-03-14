@@ -141,7 +141,7 @@ class _HomeState extends State<Home> {
                     GridListView(
                       aspectRatio: .9,
                       dataList: stateHome.servicos,
-                      buildCard: (dynamic servico) => ServicoCard(
+                      buildCard: (servico) => ServicoCard(
                         onDoubleTap: () => _onNavigateToUpdateScreen(servico.id, servico.idCliente),
                         cliente: (servico as Servico).nomeCliente,
                         codigo: servico.id,
