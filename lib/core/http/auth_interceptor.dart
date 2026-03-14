@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:serv_oeste/core/services/secure_storage_service.dart';
+import 'package:serv_oeste/shared/services/secure_storage_service.dart';
 
 class AuthInterceptor extends Interceptor {
   final SecureStorageService _secureStorageService;

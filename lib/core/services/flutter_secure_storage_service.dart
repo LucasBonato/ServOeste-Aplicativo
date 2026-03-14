@@ -1,5 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:serv_oeste/core/services/secure_storage_service.dart';
+import 'package:serv_oeste/shared/services/secure_storage_service.dart';
 
 class FlutterSecureStorageService implements SecureStorageService {
   final FlutterSecureStorage _storage;

@@ -66,7 +66,7 @@ class Formatters {
     if (history.trim().isEmpty) return [];
 
     final lineRegex = RegExp(
-      r'\[(\d{2}/\d{2}/\d{4})\]\s*-\s*([^\-\n]+?)\s*-\s*(.*?)(?=\n*\[\d{2}/\d{2}/\d{4}\]|\s*$)',
+      r'\[(\d{2}/\d{2}/\d{2,4})\]\s*-\s*([^\-\n]+?)\s*-\s*(.*?)(?=\s*\[\d{2}/\d{2}/\d{2,4}\]|\s*$)',
       dotAll: true,
     );
 
@@ -107,7 +107,7 @@ class Formatters {
   }
 
   static DateTime? extractDateFromDescription(String? description) {
-    if (description == null) return null;
+    if (description == null || description.isEmpty) return null;
 
     try {
       final regex = RegExp(r'(\d{1,2}/\d{1,2}/\d{2,4})');

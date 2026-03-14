@@ -66,16 +66,13 @@ class ServicoForm extends ChangeNotifier {
       dataFechamento.value = Formatters.applyDateMask(servico.dataFechamento!);
     }
     if (servico.dataPagamentoComissao != null) {
-      dataPagamentoComissao.value =
-          Formatters.applyDateMask(servico.dataPagamentoComissao!);
+      dataPagamentoComissao.value = Formatters.applyDateMask(servico.dataPagamentoComissao!);
     }
     if (servico.dataInicioGarantia != null) {
-      dataInicioGarantia.value =
-          Formatters.applyDateMask(servico.dataInicioGarantia!);
+      dataInicioGarantia.value = Formatters.applyDateMask(servico.dataInicioGarantia!);
     }
     if (servico.dataFimGarantia != null) {
-      dataFinalGarantia.value =
-          Formatters.applyDateMask(servico.dataFimGarantia!);
+      dataFinalGarantia.value = Formatters.applyDateMask(servico.dataFimGarantia!);
     }
     if (servico.garantia != null) {
       garantia.value = (servico.garantia!)

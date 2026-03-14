@@ -5,7 +5,8 @@ import 'package:provider/single_child_widget.dart';
 import 'package:serv_oeste/core/http/dio_service.dart';
 import 'package:serv_oeste/core/navigation/navigation_service.dart';
 import 'package:serv_oeste/core/services/flutter_secure_storage_service.dart';
-import 'package:serv_oeste/core/services/secure_storage_service.dart';
+import 'package:serv_oeste/shared/services/report_service.dart';
+import 'package:serv_oeste/shared/services/secure_storage_service.dart';
 import 'package:serv_oeste/features/auth/data/auth_client.dart';
 import 'package:serv_oeste/features/auth/data/auth_repository_implementation.dart';
 import 'package:serv_oeste/features/auth/domain/auth_repository.dart';
@@ -43,6 +44,7 @@ class AppDependencies {
   late final EnderecoRepository enderecoRepository;
   late final UserRepository userRepository;
   late final SecureStorageService secureStorageService;
+  late final ReportService reportService;
 
   AppDependencies(
     this.navigationService
@@ -65,6 +67,7 @@ class AppDependencies {
     servicoRepository = ServicoRepositoryImplementation(ServicoClient(dioService.dio));
     enderecoRepository = EnderecoRepositoryImplementation(EnderecoClient(dioService.dio));
     userRepository = UserRepositoryImplementation(UserClient(dioService.dio));
+    reportService = ReportService(servicoRepository);
   }
 
   List<BlocProvider> buildBlocProviders() {
@@ -82,6 +85,7 @@ class AppDependencies {
   List<SingleChildWidget> buildProviders() {
     return [
       Provider<SecureStorageService>.value(value: secureStorageService),
+      Provider<ReportService>.value(value: reportService),
       Provider<NavigationService>.value(value: navigationService),
     ];
   }

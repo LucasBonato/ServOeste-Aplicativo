@@ -13,7 +13,7 @@ import 'package:serv_oeste/features/servico/presentation/widgets/servico_form_wi
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
 import 'package:serv_oeste/shared/models/error/error_entity.dart';
 import 'package:serv_oeste/shared/widgets/formFields/field_labels.dart';
-import 'package:serv_oeste/shared/widgets/layout/report_menu_action.dart';
+import 'package:serv_oeste/shared/widgets/layout/report_menu_action_button.dart';
 import 'package:serv_oeste/shared/widgets/screen/base_form_screen.dart';
 import 'package:serv_oeste/shared/widgets/screen/cards/card_builder_form.dart';
 import 'package:serv_oeste/shared/widgets/screen/client_selection_modal.dart';
@@ -287,7 +287,13 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
             shouldActivateEvent: false,
             sizeMultiplier: 2,
             title: "Consultar/Atualizar Serviço",
-            actions: [ReportMenuActionButton(servicoBloc: _servicoBloc, clienteBloc: _clienteBloc)],
+            actions: [
+              if (state is ServicoSearchOneSuccessState)
+                ReportMenuActionButton(
+                  servico: Servico.fromForm(_servicoUpdateForm),
+                  cliente: Cliente.fromForm(_clienteUpdateForm)
+                )
+            ],
             child: Skeletonizer(
               enabled: state is ServicoSearchOneLoadingState,
               child: Column(
