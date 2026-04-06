@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
 import 'package:serv_oeste/core/routing/args/cliente_update_args.dart';
 import 'package:serv_oeste/core/routing/routes.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente.dart';
@@ -18,12 +17,15 @@ class ClienteScreen extends BaseListScreen<Cliente> {
   const ClienteScreen({super.key});
 
   @override
-  BaseListScreenState<Cliente, ClienteState> createState() => _ClienteScreenState();
+  BaseListScreenState<Cliente, ClienteState> createState() =>
+      _ClienteScreenState();
 }
 
 class _ClienteScreenState extends BaseListScreenState<Cliente, ClienteState> {
   late final ClienteBloc _clienteBloc;
-  late final TextEditingController _nomeController, _telefoneController, _enderecoController;
+  late final TextEditingController _nomeController,
+      _telefoneController,
+      _enderecoController;
 
   Widget _buildSearchInputs() {
     return ResponsiveSearchInputs(
@@ -55,19 +57,18 @@ class _ClienteScreenState extends BaseListScreenState<Cliente, ClienteState> {
       totalPages: stateCliente.totalPages,
       currentPage: stateCliente.currentPage,
       onPageChanged: (page) {
-        _clienteBloc.add(ClienteSearchEvent(
-          filter: stateCliente.filter,
-          page: page - 1,
-        ));
+        _clienteBloc.add(
+          ClienteSearchEvent(filter: stateCliente.filter, page: page - 1),
+        );
       },
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: MediaQuery.of(context).size.width > 1400
             ? 4
             : MediaQuery.of(context).size.width > 1100
-              ? 3
-              : MediaQuery.of(context).size.width > 600
-                ? 2
-                : 1,
+            ? 3
+            : MediaQuery.of(context).size.width > 600
+            ? 2
+            : 1,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
         childAspectRatio: 1.55,
@@ -82,7 +83,8 @@ class _ClienteScreenState extends BaseListScreenState<Cliente, ClienteState> {
   Widget buildDefaultFloatingActionButton() {
     return FloatingActionButtonAdd(
       route: Routes.clienteCreate,
-      event: () => _clienteBloc.add(ClienteSearchEvent(filter: const ClienteFilter())),
+      event: () =>
+          _clienteBloc.add(ClienteSearchEvent(filter: const ClienteFilter())),
       tooltip: "Adicionar um Cliente",
     );
   }
@@ -97,9 +99,18 @@ class _ClienteScreenState extends BaseListScreenState<Cliente, ClienteState> {
   }
 
   @override
-  Widget buildItemCard(Cliente cliente, bool isSelected, bool isSelectMode, bool isSkeleton) {
+  Widget buildItemCard(
+    Cliente cliente,
+    bool isSelected,
+    bool isSelectMode,
+    bool isSkeleton,
+  ) {
     return ClienteCard(
-      onDoubleTap: () => onNavigateToUpdateScreen(ClienteUpdateArgs(id: cliente.id!), () => _clienteBloc.add(ClienteSearchEvent(filter: const ClienteFilter()))),
+      onDoubleTap: () => onNavigateToUpdateScreen(
+        ClienteUpdateArgs(id: cliente.id!),
+        () =>
+            _clienteBloc.add(ClienteSearchEvent(filter: const ClienteFilter())),
+      ),
       onLongPress: () => onSelectItemList(cliente.id!),
       onTap: () {
         if (isSelectMode) {
@@ -153,16 +164,23 @@ class _ClienteScreenState extends BaseListScreenState<Cliente, ClienteState> {
           _buildSearchInputs(),
           Expanded(
             child: BlocConsumer<ClienteBloc, ClienteState>(
-              listenWhen: (previous, current) => current is ClienteErrorState ||
-                  (
-                      current is ClienteSearchSuccessState &&
+              listenWhen: (previous, current) =>
+                  current is ClienteErrorState ||
+                  (current is ClienteSearchSuccessState &&
                       previous is ClienteSearchSuccessState &&
-                      current.filter != previous.filter
-                  ),
+                      current.filter != previous.filter),
               listener: (context, state) {
                 if (state is ClienteErrorState) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    Logger().e(state.error.detail);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          state.error.errors['cliente']?.first ??
+                              "Erro ao excluir clientes",
+                        ),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
                   });
                 }
                 if (state is ClienteSearchSuccessState) {
@@ -175,12 +193,17 @@ class _ClienteScreenState extends BaseListScreenState<Cliente, ClienteState> {
               builder: (context, stateCliente) {
                 return buildWithStateCache(
                   state: stateCliente,
-                  isLoading: (state) => state is ClienteInitialState || state is ClienteLoadingState,
+                  isLoading: (state) =>
+                      state is ClienteInitialState ||
+                      state is ClienteLoadingState,
                   isSuccess: (state) => state is ClienteSearchSuccessState,
                   buildSkeleton: () => Skeletonizer(
                     enableSwitchAnimation: true,
                     child: buildGridOfCards(
-                      items: List.generate(16, (_) => Cliente()..applySkeletonData()),
+                      items: List.generate(
+                        16,
+                        (_) => Cliente()..applySkeletonData(),
+                      ),
                       aspectRatio: 1.55,
                       totalPages: 1,
                       currentPage: 0,
@@ -188,7 +211,9 @@ class _ClienteScreenState extends BaseListScreenState<Cliente, ClienteState> {
                       isSkeleton: true,
                     ),
                   ),
-                  buildSuccess: () => _buildSuccessGrid(stateCliente as ClienteSearchSuccessState),
+                  buildSuccess: () => _buildSuccessGrid(
+                    stateCliente as ClienteSearchSuccessState,
+                  ),
                 );
               },
             ),

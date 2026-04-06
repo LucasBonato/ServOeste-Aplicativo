@@ -72,7 +72,10 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
   }
 
   void _getClienteById(String id) {
-    final clienteSelecionado = _clientes.firstWhere((cliente) => cliente.id.toString() == id, orElse: () => Cliente());
+    final clienteSelecionado = _clientes.firstWhere(
+      (cliente) => cliente.id.toString() == id,
+      orElse: () => Cliente(),
+    );
 
     if (clienteSelecionado.id != null) {
       _nomeClienteController.text = clienteSelecionado.nome ?? '';
@@ -83,7 +86,9 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
         isClientAndService = false;
       });
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cliente não encontrado.')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Cliente não encontrado.')));
     }
   }
 
@@ -93,7 +98,10 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
     _debouncer.execute(
       () => _clienteBloc.add(
         ClienteSearchEvent(
-          filter: ClienteFilter(nome: _nomeClienteController.text, endereco: _enderecoController.text),
+          filter: ClienteFilter(
+            nome: _nomeClienteController.text,
+            endereco: _enderecoController.text,
+          ),
         ),
       ),
     );
@@ -109,12 +117,20 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return TecnicoTableModal(especialidadeId: idEspecialidade, setValuesAvailabilityTechnicianTable: _setTableValues);
+        return TecnicoTableModal(
+          especialidadeId: idEspecialidade,
+          setValuesAvailabilityTechnicianTable: _setTableValues,
+        );
       },
     );
   }
 
-  void _setTableValues(String nomeTecnico, String data, String periodo, int idTecnico) {
+  void _setTableValues(
+    String nomeTecnico,
+    String data,
+    String periodo,
+    int idTecnico,
+  ) {
     _nomeTecnicoController.text = nomeTecnico;
     _servicoForm.setNomeTecnico(nomeTecnico);
     _servicoForm.setDataAtendimentoPrevisto(data);
@@ -131,21 +147,33 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
       _servicoBloc.add(
         ServicoRegisterPlusClientEvent(
           servico: ServicoRequest.fromServicoForm(servico: _servicoForm),
-          cliente: ClienteRequest.fromClienteForm(cliente: _clienteForm, sobrenome: sobrenomeCliente),
+          cliente: ClienteRequest.fromClienteForm(
+            cliente: _clienteForm,
+            sobrenome: sobrenomeCliente,
+          ),
         ),
       );
       _clienteForm.setNome("${nomes.first} $sobrenomeCliente");
     } else {
-      _servicoBloc.add(ServicoRegisterEvent(servico: ServicoRequest.fromServicoForm(servico: _servicoForm)));
+      _servicoBloc.add(
+        ServicoRegisterEvent(
+          servico: ServicoRequest.fromServicoForm(servico: _servicoForm),
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<ServicoBloc, ServicoState>(
-      listenWhen: (previous, current) => current is ServicoRegisterSuccessState || current is ServicoErrorState,
+      listenWhen: (previous, current) =>
+          current is ServicoRegisterSuccessState ||
+          current is ServicoErrorState,
       listener: (context, state) {
         if (state is ServicoRegisterSuccessState) {
+          _clienteBloc.add(ClienteClearSearchEvent());
+          _tecnicoBloc.add(TecnicoClearSearchEvent());
+
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted && Navigator.of(context).canPop()) {
               Navigator.of(context).pop(true);
@@ -173,7 +201,9 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
         }
       },
       child: BaseFormScreen(
-        title: isClientAndService ? "Adicionar Cliente/Serviço" : "Adicionar Serviço",
+        title: isClientAndService
+            ? "Adicionar Cliente/Serviço"
+            : "Adicionar Serviço",
         shouldActivateEvent: false,
         sizeMultiplier: 2,
         child: Skeletonizer(
@@ -192,13 +222,23 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
                 builder: (context, equipamentoSelecionado, child) {
                   return _buildButton(
                     'Verificar disponibilidade',
-                    equipamentoSelecionado.isNotEmpty ? Color(0xFF007BFF) : Colors.grey.withValues(alpha: 0.5),
-                    equipamentoSelecionado.isNotEmpty ? _onShowAvailabilityTechnicianTable : () {},
+                    equipamentoSelecionado.isNotEmpty
+                        ? Color(0xFF007BFF)
+                        : Colors.grey.withValues(alpha: 0.5),
+                    equipamentoSelecionado.isNotEmpty
+                        ? _onShowAvailabilityTechnicianTable
+                        : () {},
                   );
                 },
               ),
               const SizedBox(height: 16),
-              _buildButton(isClientAndService ? 'Adicionar Cliente/Serviço' : 'Adicionar Serviço', Color(0xFF007BFF), _onAddService),
+              _buildButton(
+                isClientAndService
+                    ? 'Adicionar Cliente/Serviço'
+                    : 'Adicionar Serviço',
+                Color(0xFF007BFF),
+                _onAddService,
+              ),
             ],
           ),
         ),
@@ -209,20 +249,31 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
   Widget _buildMainFormLayout(bool isMobile) {
     final Widget clienteSection = Column(
       children: [
-        CardBuilderForm(title: "Pesquise um Cliente", child: _buildClientForm()),
+        CardBuilderForm(
+          title: "Pesquise um Cliente",
+          child: _buildClientForm(),
+        ),
         if (!isClientAndService)
           Padding(
             padding: const EdgeInsets.only(top: 12),
-            child: CardBuilderForm(title: "Selecione um Cliente", child: _buildFilteredClientsTable()),
+            child: CardBuilderForm(
+              title: "Selecione um Cliente",
+              child: _buildFilteredClientsTable(),
+            ),
           ),
         const SizedBox(height: 8),
         BuildFieldLabels(isClientAndService: isClientAndService),
       ],
     );
-    final Widget servicoSection = CardBuilderForm(title: "Serviço", child: _buildServiceForm());
+    final Widget servicoSection = CardBuilderForm(
+      title: "Serviço",
+      child: _buildServiceForm(),
+    );
 
     if (isMobile) {
-      return Column(children: [clienteSection, const SizedBox(height: 16), servicoSection]);
+      return Column(
+        children: [clienteSection, const SizedBox(height: 16), servicoSection],
+      );
     }
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -244,7 +295,10 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
           minimumSize: const Size(600, 50),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
-        child: Text(text, style: const TextStyle(fontSize: 18, color: Colors.white)),
+        child: Text(
+          text,
+          style: const TextStyle(fontSize: 18, color: Colors.white),
+        ),
       ),
     );
   }
@@ -259,19 +313,27 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
                 (cliente) => {
                   'id': cliente.id.toString(),
                   'nome': cliente.nome ?? '',
-                  'endereco': '${cliente.municipio ?? ''} - ${cliente.bairro ?? ''} - ${cliente.endereco ?? ''}',
+                  'endereco':
+                      '${cliente.municipio ?? ''} - ${cliente.bairro ?? ''} - ${cliente.endereco ?? ''}',
                 },
               )
               .toList();
           _isDataLoaded = true;
         }
 
-        return FilteredClientsTable(clientesFiltrados: filteredClients, onClientSelected: _getClienteById);
+        return FilteredClientsTable(
+          clientesFiltrados: filteredClients,
+          onClientSelected: _getClienteById,
+        );
       },
     );
   }
 
-  Widget buildSearchField({required String hint, TextEditingController? controller, TextInputType? keyboardType}) => CustomSearchTextFormField(
+  Widget buildSearchField({
+    required String hint,
+    TextEditingController? controller,
+    TextInputType? keyboardType,
+  }) => CustomSearchTextFormField(
     hint: hint,
     leftPadding: 4,
     rightPadding: 4,
@@ -295,7 +357,10 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
     }
     return Column(
       children: [
-        buildSearchField(hint: "Nome do Cliente", controller: _nomeClienteController),
+        buildSearchField(
+          hint: "Nome do Cliente",
+          controller: _nomeClienteController,
+        ),
         const SizedBox(height: 12),
         buildSearchField(hint: "Endereço", controller: _enderecoController),
       ],
@@ -313,7 +378,8 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
       isClientAndService: isClientAndService,
       onSubmit: () {},
       submitText: "",
-      successMessage: 'Serviço registrado com sucesso! (Caso ele não esteja aparecendo, recarregue a página)',
+      successMessage:
+          'Serviço registrado com sucesso! (Caso ele não esteja aparecendo, recarregue a página)',
     );
   }
 

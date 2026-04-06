@@ -32,15 +32,21 @@ class TecnicoBloc extends BaseEntityBloc<TecnicoEvent, TecnicoState> {
     on<TecnicoRegisterEvent>(_registerTecnico);
     on<TecnicoUpdateEvent>(_updateTecnico);
     on<TecnicoDisableListEvent>(_deleteListTecnicos);
+    on<TecnicoClearSearchEvent>(_clearSearch);
   }
 
-  Future<void> _fetchAllTecnicos(TecnicoSearchEvent event, Emitter<TecnicoState> emit) async {
+  Future<void> _fetchAllTecnicos(
+    TecnicoSearchEvent event,
+    Emitter<TecnicoState> emit,
+  ) async {
     await handleRequest<PageContent<TecnicoResponse>>(
       emit: emit,
       request: () => _tecnicoRepository.fetchListByFilter(
         id: event.filter.id,
         nome: event.filter.nome,
-        situacao: (isFirstRequest) ? Constants.situationTecnicoList.first.toLowerCase() : event.filter.situacao?.toLowerCase(),
+        situacao: (isFirstRequest)
+            ? Constants.situationTecnicoList.first.toLowerCase()
+            : event.filter.situacao?.toLowerCase(),
         page: event.page,
         size: event.size,
       ),
@@ -57,7 +63,10 @@ class TecnicoBloc extends BaseEntityBloc<TecnicoEvent, TecnicoState> {
     isFirstRequest = false;
   }
 
-  Future<void> _fetchOneTecnico(TecnicoSearchOneEvent event, Emitter<TecnicoState> emit) async {
+  Future<void> _fetchOneTecnico(
+    TecnicoSearchOneEvent event,
+    Emitter<TecnicoState> emit,
+  ) async {
     await handleRequest<Tecnico?>(
       emit: emit,
       loading: TecnicoSearchOneLoadingState(),
@@ -70,15 +79,27 @@ class TecnicoBloc extends BaseEntityBloc<TecnicoEvent, TecnicoState> {
     );
   }
 
-  Future<void> _fetchAvailability(TecnicoAvailabilitySearchEvent event, Emitter<TecnicoState> emit) async {
+  Future<void> _fetchAvailability(
+    TecnicoAvailabilitySearchEvent event,
+    Emitter<TecnicoState> emit,
+  ) async {
     await handleRequest<List<TecnicoDisponivel>>(
       emit: emit,
-      request: () => _tecnicoRepository.fetchListAvailabilityBySpecialityId(event.idEspecialidade),
-      onSuccess: (List<TecnicoDisponivel> tecnicosDisponiveis) => emit(TecnicoSearchAvailabilitySuccessState(tecnicosDisponiveis: tecnicosDisponiveis)),
+      request: () => _tecnicoRepository.fetchListAvailabilityBySpecialityId(
+        event.idEspecialidade,
+      ),
+      onSuccess: (List<TecnicoDisponivel> tecnicosDisponiveis) => emit(
+        TecnicoSearchAvailabilitySuccessState(
+          tecnicosDisponiveis: tecnicosDisponiveis,
+        ),
+      ),
     );
   }
 
-  Future<void> _registerTecnico(TecnicoRegisterEvent event, Emitter<TecnicoState> emit) async {
+  Future<void> _registerTecnico(
+    TecnicoRegisterEvent event,
+    Emitter<TecnicoState> emit,
+  ) async {
     event.tecnico.sobrenome = event.sobrenome;
     await handleRequest(
       emit: emit,
@@ -87,7 +108,10 @@ class TecnicoBloc extends BaseEntityBloc<TecnicoEvent, TecnicoState> {
     );
   }
 
-  Future<void> _updateTecnico(TecnicoUpdateEvent event, Emitter<TecnicoState> emit) async {
+  Future<void> _updateTecnico(
+    TecnicoUpdateEvent event,
+    Emitter<TecnicoState> emit,
+  ) async {
     event.tecnico.sobrenome = event.sobrenome;
     await handleRequest(
       emit: emit,
@@ -96,7 +120,10 @@ class TecnicoBloc extends BaseEntityBloc<TecnicoEvent, TecnicoState> {
     );
   }
 
-  Future<void> _deleteListTecnicos(TecnicoDisableListEvent event, Emitter<TecnicoState> emit) async {
+  Future<void> _deleteListTecnicos(
+    TecnicoDisableListEvent event,
+    Emitter<TecnicoState> emit,
+  ) async {
     TecnicoFilter? currentFilter;
 
     if (state is TecnicoSearchSuccessState) {
@@ -110,7 +137,26 @@ class TecnicoBloc extends BaseEntityBloc<TecnicoEvent, TecnicoState> {
         if (currentFilter != null) {
           add(TecnicoSearchEvent(filter: currentFilter));
         }
-      }
+      },
     );
+  }
+
+  Future<void> _clearSearch(
+    TecnicoClearSearchEvent event,
+    Emitter<TecnicoState> emit,
+  ) async {
+    if (event.shouldEmitInitial) {
+      emit(TecnicoInitialState());
+    } else {
+      emit(
+        TecnicoSearchSuccessState(
+          tecnicos: [],
+          currentPage: 0,
+          totalPages: 0,
+          totalElements: 0,
+          filter: TecnicoFilter(),
+        ),
+      );
+    }
   }
 }

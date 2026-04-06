@@ -3,6 +3,12 @@ part of 'tecnico_bloc.dart';
 @immutable
 sealed class TecnicoEvent {}
 
+final class TecnicoClearSearchEvent extends TecnicoEvent {
+  final bool shouldEmitInitial;
+
+  TecnicoClearSearchEvent({this.shouldEmitInitial = true});
+}
+
 final class TecnicoSearchOneEvent extends TecnicoEvent {
   final int id;
 
@@ -12,9 +18,7 @@ final class TecnicoSearchOneEvent extends TecnicoEvent {
 final class TecnicoAvailabilitySearchEvent extends TecnicoEvent {
   final int idEspecialidade;
 
-  TecnicoAvailabilitySearchEvent({
-    required this.idEspecialidade,
-  });
+  TecnicoAvailabilitySearchEvent({required this.idEspecialidade});
 }
 
 final class TecnicoSearchEvent extends TecnicoEvent {
@@ -22,11 +26,7 @@ final class TecnicoSearchEvent extends TecnicoEvent {
   final int page;
   final int size;
 
-  TecnicoSearchEvent({
-    required this.filter,
-    this.page = 0,
-    this.size = 24,
-  });
+  TecnicoSearchEvent({required this.filter, this.page = 0, this.size = 24});
 }
 
 final class TecnicoRegisterEvent extends TecnicoEvent {

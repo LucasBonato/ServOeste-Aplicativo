@@ -3,6 +3,12 @@ part of 'cliente_bloc.dart';
 @immutable
 sealed class ClienteEvent {}
 
+final class ClienteClearSearchEvent extends ClienteEvent {
+  final bool shouldEmitInitial;
+
+  ClienteClearSearchEvent({this.shouldEmitInitial = true});
+}
+
 final class ClienteSearchOneEvent extends ClienteEvent {
   final int id;
 
@@ -14,11 +20,7 @@ final class ClienteSearchEvent extends ClienteEvent {
   final int page;
   final int size;
 
-  ClienteSearchEvent({
-    required this.filter,
-    this.page = 0,
-    this.size = 24,
-  });
+  ClienteSearchEvent({required this.filter, this.page = 0, this.size = 24});
 }
 
 final class RestoreClienteStateEvent extends ClienteEvent {
