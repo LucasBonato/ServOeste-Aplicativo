@@ -89,6 +89,7 @@ class ServicoForm extends ChangeNotifier {
           ? Constants.garantias.first
           : Constants.garantias.last;
     }
+    descricao.value = "";
     historico.value = servico.descricao ?? "";
     notifyListeners();
   }

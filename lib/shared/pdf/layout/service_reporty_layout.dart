@@ -12,7 +12,7 @@ class ServiceReportLayout {
     required Servico servico,
     required Cliente cliente,
     required pw.ImageProvider logo,
-    List<pw.Widget> extraSections = const []
+    List<pw.Widget> extraSections = const [],
   }) {
     return [
       PdfHeader(logo),
@@ -20,9 +20,9 @@ class ServiceReportLayout {
       PdfTitle(title),
       pw.SizedBox(height: 10),
       PdfClientServiceTable(servico: servico, cliente: cliente),
-      PdfDescriptionSection(servico.descricao),
+      PdfDescriptionSection(servico.historico),
       pw.SizedBox(height: 20),
-      ...extraSections
+      ...extraSections,
     ];
   }
 }

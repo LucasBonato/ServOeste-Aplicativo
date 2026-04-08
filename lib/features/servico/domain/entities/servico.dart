@@ -16,6 +16,7 @@ class Servico implements Skeletonizable {
   String? nomeTecnico;
   String? horarioPrevisto;
   String? descricao;
+  String? historico;
   String? formaPagamento;
   bool? garantia;
   double? valor;
@@ -49,6 +50,7 @@ class Servico implements Skeletonizable {
     this.horarioPrevisto,
     this.dataAtendimentoPrevisto,
     this.descricao,
+    this.historico,
     this.dataFechamento,
     this.garantia,
     this.formaPagamento,
@@ -63,91 +65,95 @@ class Servico implements Skeletonizable {
   });
 
   Servico.fromForm(ServicoForm servicoForm)
-      : id = servicoForm.getId()!,
-        idCliente = servicoForm.getIdCliente()!,
-        idTecnico = servicoForm.getIdTecnico()!,
-        equipamento = servicoForm.equipamento.value,
-        filial = servicoForm.filial.value,
-        horarioPrevisto = servicoForm.horario.value.toUpperCase().replaceAll("Ã", "A"),
-        marca = servicoForm.marca.value,
-        situacao = servicoForm.situacao.value,
-        descricao = servicoForm.historico.value,
-        garantia = (servicoForm.getGarantia() == Constants.garantias.first ||
-                servicoForm.getGarantia() == Constants.garantias.last)
-            ? servicoForm.getGarantia() == Constants.garantias.first
-            : null,
-        formaPagamento = servicoForm.formaPagamento.value.isEmpty
-            ? null
-            : servicoForm.formaPagamento.value,
-        valor = Formatters.parseDouble(servicoForm.valor.value),
-        valorComissao = Formatters.parseDouble(servicoForm.valorComissao.value),
-        valorPecas = Formatters.parseDouble(servicoForm.valorPecas.value),
-        dataAtendimentoPrevistoString =
-            servicoForm.dataAtendimentoPrevisto.value,
-        dataAtendimentoEfetivoString =
-            (servicoForm.dataAtendimentoEfetivo.value.isEmpty)
-                ? null
-                : servicoForm.dataAtendimentoEfetivo.value,
-        dataAtendimentoAberturaString =
-            (servicoForm.dataAtendimentoAbertura.value.isEmpty)
-                ? null
-                : servicoForm.dataAtendimentoAbertura.value,
-        dataFechamentoString = (servicoForm.dataFechamento.value.isEmpty)
-            ? null
-            : servicoForm.dataFechamento.value,
-        dataPagamentoComissaoString =
-            (servicoForm.dataPagamentoComissao.value.isEmpty)
-                ? null
-                : servicoForm.dataPagamentoComissao.value,
-        dataInicioGarantiaString =
-            (servicoForm.dataInicioGarantia.value.isEmpty)
-                ? null
-                : servicoForm.dataInicioGarantia.value,
-        dataFimGarantiaString = (servicoForm.dataFinalGarantia.value.isEmpty)
-            ? null
-            : servicoForm.dataFinalGarantia.value,
-        nomeCliente = servicoForm.nomeCliente.value,
-        nomeTecnico = servicoForm.nomeTecnico.value;
+    : id = servicoForm.getId()!,
+      idCliente = servicoForm.getIdCliente()!,
+      idTecnico = servicoForm.getIdTecnico()!,
+      equipamento = servicoForm.equipamento.value,
+      filial = servicoForm.filial.value,
+      horarioPrevisto = servicoForm.horario.value.toUpperCase().replaceAll(
+        "Ã",
+        "A",
+      ),
+      marca = servicoForm.marca.value,
+      situacao = servicoForm.situacao.value,
+      descricao = servicoForm.descricao.value,
+      historico = servicoForm.historico.value,
+      garantia =
+          (servicoForm.getGarantia() == Constants.garantias.first ||
+              servicoForm.getGarantia() == Constants.garantias.last)
+          ? servicoForm.getGarantia() == Constants.garantias.first
+          : null,
+      formaPagamento = servicoForm.formaPagamento.value.isEmpty
+          ? null
+          : servicoForm.formaPagamento.value,
+      valor = Formatters.parseDouble(servicoForm.valor.value),
+      valorComissao = Formatters.parseDouble(servicoForm.valorComissao.value),
+      valorPecas = Formatters.parseDouble(servicoForm.valorPecas.value),
+      dataAtendimentoPrevistoString = servicoForm.dataAtendimentoPrevisto.value,
+      dataAtendimentoEfetivoString =
+          (servicoForm.dataAtendimentoEfetivo.value.isEmpty)
+          ? null
+          : servicoForm.dataAtendimentoEfetivo.value,
+      dataAtendimentoAberturaString =
+          (servicoForm.dataAtendimentoAbertura.value.isEmpty)
+          ? null
+          : servicoForm.dataAtendimentoAbertura.value,
+      dataFechamentoString = (servicoForm.dataFechamento.value.isEmpty)
+          ? null
+          : servicoForm.dataFechamento.value,
+      dataPagamentoComissaoString =
+          (servicoForm.dataPagamentoComissao.value.isEmpty)
+          ? null
+          : servicoForm.dataPagamentoComissao.value,
+      dataInicioGarantiaString = (servicoForm.dataInicioGarantia.value.isEmpty)
+          ? null
+          : servicoForm.dataInicioGarantia.value,
+      dataFimGarantiaString = (servicoForm.dataFinalGarantia.value.isEmpty)
+          ? null
+          : servicoForm.dataFinalGarantia.value,
+      nomeCliente = servicoForm.nomeCliente.value,
+      nomeTecnico = servicoForm.nomeTecnico.value;
 
   factory Servico.fromJson(Map<String, dynamic> json) => Servico(
-        id: json["id"],
-        idCliente: json["idCliente"],
-        idTecnico: json["idTecnico"],
-        nomeCliente: json["nomeCliente"],
-        nomeTecnico: json["nomeTecnico"],
-        equipamento: json["equipamento"],
-        filial: json["filial"],
-        horarioPrevisto: json["horarioPrevisto"],
-        marca: json["marca"],
-        descricao: json["descricao"],
-        situacao: json["situacao"],
-        garantia: json["garantia"],
-        formaPagamento: json["formaPagamento"],
-        valor: json["valor"],
-        valorPecas: json["valorPecas"],
-        valorComissao: json["valorComissao"],
-        dataInicioGarantia: json["dataInicioGarantia"] != null
-            ? DateTime.parse(json["dataInicioGarantia"])
-            : null,
-        dataFimGarantia: json["dataFimGarantia"] != null
-            ? DateTime.parse(json["dataFimGarantia"])
-            : null,
-        dataPagamentoComissao: json["dataPagamentoComissao"] != null
-            ? DateTime.parse(json["dataPagamentoComissao"])
-            : null,
-        dataAtendimentoPrevisto: json["dataAtendimentoPrevisto"] != null
-            ? DateTime.parse(json["dataAtendimentoPrevisto"])
-            : null,
-        dataFechamento: json["dataFechamento"] != null
-            ? DateTime.parse(json["dataFechamento"])
-            : null,
-        dataAtendimentoEfetivo: json["dataAtendimentoEfetiva"] != null
-            ? DateTime.parse(json["dataAtendimentoEfetiva"])
-            : null,
-        dataAtendimentoAbertura: json["dataAtendimentoAbertura"] != null
-            ? DateTime.parse(json["dataAtendimentoAbertura"])
-            : null,
-      );
+    id: json["id"],
+    idCliente: json["idCliente"],
+    idTecnico: json["idTecnico"],
+    nomeCliente: json["nomeCliente"],
+    nomeTecnico: json["nomeTecnico"],
+    equipamento: json["equipamento"],
+    filial: json["filial"],
+    horarioPrevisto: json["horarioPrevisto"],
+    marca: json["marca"],
+    descricao: json["descricao"],
+    historico: json["historico"],
+    situacao: json["situacao"],
+    garantia: json["garantia"],
+    formaPagamento: json["formaPagamento"],
+    valor: json["valor"],
+    valorPecas: json["valorPecas"],
+    valorComissao: json["valorComissao"],
+    dataInicioGarantia: json["dataInicioGarantia"] != null
+        ? DateTime.parse(json["dataInicioGarantia"])
+        : null,
+    dataFimGarantia: json["dataFimGarantia"] != null
+        ? DateTime.parse(json["dataFimGarantia"])
+        : null,
+    dataPagamentoComissao: json["dataPagamentoComissao"] != null
+        ? DateTime.parse(json["dataPagamentoComissao"])
+        : null,
+    dataAtendimentoPrevisto: json["dataAtendimentoPrevisto"] != null
+        ? DateTime.parse(json["dataAtendimentoPrevisto"])
+        : null,
+    dataFechamento: json["dataFechamento"] != null
+        ? DateTime.parse(json["dataFechamento"])
+        : null,
+    dataAtendimentoEfetivo: json["dataAtendimentoEfetiva"] != null
+        ? DateTime.parse(json["dataAtendimentoEfetiva"])
+        : null,
+    dataAtendimentoAbertura: json["dataAtendimentoAbertura"] != null
+        ? DateTime.parse(json["dataAtendimentoAbertura"])
+        : null,
+  );
 
   factory Servico.skeleton() {
     return Servico(

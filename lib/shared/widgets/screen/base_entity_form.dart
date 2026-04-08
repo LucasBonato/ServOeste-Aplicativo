@@ -48,9 +48,16 @@ class BaseEntityForm<B extends StateStreamable<S>, S> extends StatefulWidget {
   State<BaseEntityForm<B, S>> createState() => _BaseEntityFormState<B, S>();
 }
 
-class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEntityForm<B, S>> {
-  Widget _buildFormContent(BuildContext context, bool isLargeScreen, List<Object> currentFields) {
-    final fields = isLargeScreen ? _buildLargeScreenFormFields(currentFields) : _buildSmallScreenFormFields(currentFields);
+class _BaseEntityFormState<B extends StateStreamable<S>, S>
+    extends State<BaseEntityForm<B, S>> {
+  Widget _buildFormContent(
+    BuildContext context,
+    bool isLargeScreen,
+    List<Object> currentFields,
+  ) {
+    final fields = isLargeScreen
+        ? _buildLargeScreenFormFields(currentFields)
+        : _buildSmallScreenFormFields(currentFields);
 
     final button = widget.shouldBuildButton
         ? [
@@ -61,7 +68,9 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
                   constraints: const BoxConstraints(maxWidth: 650),
                   child: ElevatedFormButton(
                     text: widget.submitText,
-                    onPressed: widget.isLoading(context.read<B>().state) ? null : widget.onSubmit,
+                    onPressed: widget.isLoading(context.read<B>().state)
+                        ? null
+                        : widget.onSubmit,
                   ),
                 );
               },
@@ -96,8 +105,7 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
         onChanged: field.onChanged,
         enabled: field.enabled,
       );
-    }
-    else if (field is TextSearchFormInputField) {
+    } else if (field is TextSearchFormInputField) {
       return CustomSearchTextFormField(
         hint: field.hint,
         leftPadding: 4,
@@ -107,8 +115,7 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
         onChangedAction: field.onChanged,
         onSuffixAction: field.onSuffix,
       );
-    }
-    else if (field is DropdownInputField) {
+    } else if (field is DropdownInputField) {
       return CustomDropdownFormField(
         leftPadding: 4,
         rightPadding: 4,
@@ -122,8 +129,7 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
           field.onChanged?.call(value);
         },
       );
-    }
-    else if (field is DropdownSearchInputField) {
+    } else if (field is DropdownSearchInputField) {
       return CustomSearchDropDownFormField(
         leftPadding: 4,
         rightPadding: 4,
@@ -133,10 +139,8 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
         validator: field.validator,
         onChanged: field.onChanged,
         enabled: field.enabled,
-
       );
-    }
-    else if (field is DatePickerInputField) {
+    } else if (field is DatePickerInputField) {
       return CustomDatePickerFormField(
         label: field.hint,
         hint: "dd/mm/aaaa",
@@ -175,7 +179,9 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
           flushRow();
         }
         if (field is Wrap && field.children.length > 1) {
-          currentRow = field.children.map((input) => Expanded(child: input)).toList();
+          currentRow = field.children
+              .map((input) => Expanded(child: input))
+              .toList();
           flushRow();
           continue;
         }
@@ -188,7 +194,11 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
       Widget formField = _buildFormField(field);
 
       if (field.listenTo != null && field.listenTo!.isNotEmpty) {
-        formField = AnimatedBuilder(animation: Listenable.merge(field.listenTo!), builder: (context, child) => child!, child: formField);
+        formField = AnimatedBuilder(
+          animation: Listenable.merge(field.listenTo!),
+          builder: (context, child) => child!,
+          child: formField,
+        );
       }
 
       if (field.startNewRow && currentRow.isNotEmpty) {
@@ -223,12 +233,9 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
     return [
       for (final List<Widget> row in rows)
         if (row.length > 1)
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: row,
-          )
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: row)
         else
-          ...row
+          ...row,
     ];
   }
 
@@ -263,7 +270,9 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
             Navigator.pop(context, true);
           }
 
-          final successMessage = widget.getSuccessMessage?.call(state) ?? 'Operação realizada com sucesso!';
+          final successMessage =
+              widget.getSuccessMessage?.call(state) ??
+              'Operação realizada com sucesso!';
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -271,16 +280,14 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S> extends State<BaseEn
               backgroundColor: Colors.green,
             ),
           );
-        }
-        else if (widget.isError(state)) {
+        } else if (widget.isError(state)) {
           widget.onError?.call(state);
 
-          final errorMessage = widget.getErrorMessage?.call(state) ?? "Erro ao realizar operação";
+          final errorMessage =
+              widget.getErrorMessage?.call(state) ??
+              "Erro ao realizar operação";
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(errorMessage),
-              backgroundColor: Colors.red,
-            ),
+            SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
           );
         }
       },

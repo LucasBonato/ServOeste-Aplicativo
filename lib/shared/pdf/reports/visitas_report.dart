@@ -27,7 +27,9 @@ class VisitasReport extends PdfReport {
   Future<pw.Document> build() async {
     final pw.Document document = await PdfDocumentFactory.create();
 
-    final historicoFiltrado = historicoServicos.where((s) => s.id != servico.id).toList();
+    final historicoFiltrado = historicoServicos
+        .where((s) => s.id != servico.id)
+        .toList();
 
     final primeirosServicos = historicoFiltrado.length > 3
         ? historicoFiltrado.sublist(0, 3)
@@ -39,10 +41,7 @@ class VisitasReport extends PdfReport {
       sections.add(
         pw.Text(
           '*ESTE É O PRIMEIRO SERVIÇO DO CLIENTE PARA ESTE EQUIPAMENTO.',
-          style: pw.TextStyle(
-            fontSize: 10,
-            fontStyle: pw.FontStyle.italic,
-          ),
+          style: pw.TextStyle(fontSize: 10, fontStyle: pw.FontStyle.italic),
         ),
       );
     }
@@ -55,10 +54,7 @@ class VisitasReport extends PdfReport {
       sections.add(
         pw.Text(
           '*Mostrando 3 serviços mais recentes de ${historicoFiltrado.length}',
-          style: pw.TextStyle(
-            fontSize: 8,
-            fontStyle: pw.FontStyle.italic,
-          ),
+          style: pw.TextStyle(fontSize: 8, fontStyle: pw.FontStyle.italic),
         ),
       );
     }
@@ -80,7 +76,6 @@ class VisitasReport extends PdfReport {
     return document;
   }
 
-
   pw.Widget _buildHistoricoEquipamento(List<Servico> historico) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -88,10 +83,7 @@ class VisitasReport extends PdfReport {
         pw.SizedBox(height: 15),
         pw.Text(
           'HISTÓRICO DESTE EQUIPAMENTO',
-          style: pw.TextStyle(
-            fontSize: 12,
-            fontWeight: pw.FontWeight.bold,
-          ),
+          style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
         ),
         pw.SizedBox(height: 10),
         for (var servico in historico) _buildHistoricoTable(servico),
@@ -100,8 +92,9 @@ class VisitasReport extends PdfReport {
   }
 
   pw.Widget _buildHistoricoTable(Servico servico) {
-    DateTime? effectiveDate =
-    Formatters.extractDateFromDescription(servico.descricao);
+    DateTime? effectiveDate = Formatters.extractDateFromDescription(
+      servico.historico,
+    );
 
     if (effectiveDate == null && servico.dataAtendimentoPrevisto != null) {
       effectiveDate = servico.dataAtendimentoPrevisto;
@@ -170,16 +163,14 @@ class VisitasReport extends PdfReport {
               right: pw.BorderSide(),
               bottom: pw.BorderSide(),
             ),
-            columnWidths: {
-              0: const pw.FlexColumnWidth(2),
-            },
+            columnWidths: {0: const pw.FlexColumnWidth(2)},
             children: [
               pw.TableRow(
                 children: [
                   pw.Padding(
                     padding: const pw.EdgeInsets.all(8),
                     child: pw.Text(
-                      Formatters.formatDescriptionForPDF(servico.descricao),
+                      Formatters.formatDescriptionForPDF(servico.historico),
                       style: const pw.TextStyle(fontSize: 10),
                     ),
                   ),

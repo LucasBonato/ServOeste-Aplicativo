@@ -289,6 +289,22 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
             return widget.successMessage;
           },
           isError: (state) => state is ServicoErrorState,
+          getErrorMessage: (state) {
+            if (state is ServicoErrorState) {
+              final error = state.error;
+              if (error.errors.isNotEmpty) {
+                final firstFieldError = error.errors.entries.first;
+                final messages = firstFieldError.value;
+                if (messages.isNotEmpty) {
+                  return messages.first;
+                }
+              }
+              return error.title.isNotEmpty
+                  ? error.title
+                  : "Erro ao realizar operação";
+            }
+            return "Erro ao realizar operação";
+          },
           onError: (state) {
             if (state is ServicoErrorState) {
               validator.applyBackendError(state.error);

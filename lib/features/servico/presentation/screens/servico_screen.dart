@@ -21,7 +21,8 @@ class ServicoScreen extends BaseListScreen<Servico> {
   const ServicoScreen({super.key});
 
   @override
-  BaseListScreenState<Servico, ServicoState> createState() => _ServicoScreenState();
+  BaseListScreenState<Servico, ServicoState> createState() =>
+      _ServicoScreenState();
 }
 
 class _ServicoScreenState extends BaseListScreenState<Servico, ServicoState> {
@@ -33,15 +34,28 @@ class _ServicoScreenState extends BaseListScreenState<Servico, ServicoState> {
     return ResponsiveSearchInputs(
       onChanged: onSearchFieldChanged,
       fields: [
-        TextInputField(hint: "Nome do Cliente...", controller: _nomeClienteController, keyboardType: TextInputType.text),
-        TextInputField(hint: "Nome do Técnico...", controller: _nomeTecnicoController, keyboardType: TextInputType.text),
+        TextInputField(
+          hint: "Nome do Cliente...",
+          controller: _nomeClienteController,
+          keyboardType: TextInputType.text,
+        ),
+        TextInputField(
+          hint: "Nome do Técnico...",
+          controller: _nomeTecnicoController,
+          keyboardType: TextInputType.text,
+        ),
       ],
       onFilterTap: () async {
         final ServicoFilterForm form = ServicoFilterForm();
 
         await Navigator.of(context, rootNavigator: true).pushNamed(
           Routes.servicoFilter,
-          arguments: ServicoFilterFormArgs(form: form, bloc: _servicoBloc, submitText: "Filtrar", title: "Filtrar Serviços"),
+          arguments: ServicoFilterFormArgs(
+            form: form,
+            bloc: _servicoBloc,
+            submitText: "Filtrar",
+            title: "Filtrar Serviços",
+          ),
         );
       },
     );
@@ -54,16 +68,18 @@ class _ServicoScreenState extends BaseListScreenState<Servico, ServicoState> {
       totalPages: stateServico.totalPages,
       currentPage: stateServico.currentPage,
       onPageChanged: (page) {
-        _servicoBloc.add(ServicoSearchEvent(filter: stateServico.filter, page: page - 1));
+        _servicoBloc.add(
+          ServicoSearchEvent(filter: stateServico.filter, page: page - 1),
+        );
       },
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: MediaQuery.of(context).size.width > 1400
             ? 4
             : MediaQuery.of(context).size.width > 1000
-              ? 3
-              : MediaQuery.of(context).size.width > 500
-                ? 2
-                : 1,
+            ? 3
+            : MediaQuery.of(context).size.width > 500
+            ? 2
+            : 1,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
         childAspectRatio: 1,
@@ -81,7 +97,12 @@ class _ServicoScreenState extends BaseListScreenState<Servico, ServicoState> {
       firstRouterName: Routes.servicoCreate,
       firstTooltip: 'Adicionar Serviço',
       firstArgs: ServicoCreateArgs(isClientAndService: false),
-      firstChild: Image.asset('assets/addService.png', fit: BoxFit.contain, width: 36, height: 36),
+      firstChild: Image.asset(
+        'assets/addService.png',
+        fit: BoxFit.contain,
+        width: 36,
+        height: 36,
+      ),
       secondHeroTag: 'add_service_cliente',
       secondRouterName: Routes.servicoCreate,
       secondTooltip: 'Adicionar Serviço e Cliente',
@@ -101,9 +122,17 @@ class _ServicoScreenState extends BaseListScreenState<Servico, ServicoState> {
   }
 
   @override
-  Widget buildItemCard(Servico servico, bool isSelected, bool isSelectMode, bool isSkeleton) {
+  Widget buildItemCard(
+    Servico servico,
+    bool isSelected,
+    bool isSelectMode,
+    bool isSkeleton,
+  ) {
     return ServicoCard(
-      onDoubleTap: () => onNavigateToUpdateScreen(ServicoUpdateArgs(id: servico.id, clientId: servico.idCliente), onSearchFieldChanged),
+      onDoubleTap: () => onNavigateToUpdateScreen(
+        ServicoUpdateArgs(id: servico.id, clientId: servico.idCliente),
+        onSearchFieldChanged,
+      ),
       onLongPress: () => onSelectItemList(servico.id),
       onTap: () {
         if (isSelectMode) {
@@ -131,7 +160,10 @@ class _ServicoScreenState extends BaseListScreenState<Servico, ServicoState> {
   void searchFieldChanged() {
     _servicoBloc.add(
       ServicoSearchEvent(
-        filter: ServicoFilter(clienteNome: _nomeClienteController.text, tecnicoNome: _nomeTecnicoController.text),
+        filter: ServicoFilter(
+          clienteNome: _nomeClienteController.text,
+          tecnicoNome: _nomeTecnicoController.text,
+        ),
       ),
     );
   }
@@ -140,13 +172,14 @@ class _ServicoScreenState extends BaseListScreenState<Servico, ServicoState> {
   void onDisableItems(List<int> selectedIds) {
     _servicoBloc.add(ServicoDisableListEvent(selectedList: selectedIds));
 
-    ScaffoldMessenger.of(context)
-        .showSnackBar(
-          const SnackBar(
-            content: Text('Serviço deletado com sucesso! (Caso ele não esteja deletado, recarregue a página)'),
-            backgroundColor: Colors.green,
-          ),
-        );
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Serviço deletado com sucesso! (Caso ele não esteja deletado, recarregue a página e aguarde um momento)',
+        ),
+        backgroundColor: Colors.green,
+      ),
+    );
   }
 
   @override
@@ -167,12 +200,11 @@ class _ServicoScreenState extends BaseListScreenState<Servico, ServicoState> {
           _buildSearchInputs(),
           Expanded(
             child: BlocConsumer<ServicoBloc, ServicoState>(
-              listenWhen: (previous, current) => current is ServicoErrorState ||
-                (
-                  current is ServicoSearchSuccessState &&
-                  previous is ServicoSearchSuccessState &&
-                  current.filter != previous.filter
-                ),
+              listenWhen: (previous, current) =>
+                  current is ServicoErrorState ||
+                  (current is ServicoSearchSuccessState &&
+                      previous is ServicoSearchSuccessState &&
+                      current.filter != previous.filter),
               listener: (context, state) {
                 if (state is ServicoErrorState) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -188,7 +220,9 @@ class _ServicoScreenState extends BaseListScreenState<Servico, ServicoState> {
               builder: (context, stateServico) {
                 return buildWithStateCache(
                   state: stateServico,
-                  isLoading: (state) => state is ServicoInitialState || stateServico is ServicoLoadingState,
+                  isLoading: (state) =>
+                      state is ServicoInitialState ||
+                      stateServico is ServicoLoadingState,
                   isSuccess: (state) => state is ServicoSearchSuccessState,
                   buildSkeleton: () => Skeletonizer(
                     enableSwitchAnimation: true,
@@ -201,7 +235,9 @@ class _ServicoScreenState extends BaseListScreenState<Servico, ServicoState> {
                       isSkeleton: true,
                     ),
                   ),
-                  buildSuccess: () => _buildSuccessGrid(stateServico as ServicoSearchSuccessState)
+                  buildSuccess: () => _buildSuccessGrid(
+                    stateServico as ServicoSearchSuccessState,
+                  ),
                 );
               },
             ),

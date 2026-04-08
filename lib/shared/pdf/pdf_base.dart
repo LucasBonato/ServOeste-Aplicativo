@@ -6,7 +6,9 @@ import 'package:serv_oeste/shared/utils/formatters/formatters.dart';
 
 class PDFBase {
   static pw.Widget buildClientServiceTable(Servico servico, Cliente cliente) {
-    final DateTime? effectiveDate = Formatters.extractDateFromDescription(servico.descricao);
+    final DateTime? effectiveDate = Formatters.extractDateFromDescription(
+      servico.historico,
+    );
 
     return pw.Table(
       border: pw.TableBorder.all(color: PdfColors.black, width: 0.5),
@@ -49,27 +51,25 @@ class PDFBase {
       children: [
         pw.Padding(
           padding: const pw.EdgeInsets.all(8),
-          child: pw.Text(
-            leftText,
-            style: const pw.TextStyle(fontSize: 10),
-          ),
+          child: pw.Text(leftText, style: const pw.TextStyle(fontSize: 10)),
         ),
         pw.Padding(
           padding: const pw.EdgeInsets.all(8),
-          child: pw.Text(
-            rightText,
-            style: const pw.TextStyle(fontSize: 10),
-          ),
+          child: pw.Text(rightText, style: const pw.TextStyle(fontSize: 10)),
         ),
       ],
     );
   }
 
   static String _formatDate(DateTime? date) {
-    return date != null ? Formatters.formatDateForHistory(date) : "Não informado.";
+    return date != null
+        ? Formatters.formatDateForHistory(date)
+        : "Não informado.";
   }
 
   static String _formatHorario(String? horario) {
-    return horario != null ? Formatters.formatScheduleTime(horario) : "Não informado.";
+    return horario != null
+        ? Formatters.formatScheduleTime(horario)
+        : "Não informado.";
   }
 }

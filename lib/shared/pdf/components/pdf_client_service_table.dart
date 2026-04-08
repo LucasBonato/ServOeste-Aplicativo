@@ -8,14 +8,13 @@ class PdfClientServiceTable extends pw.StatelessWidget {
   final Servico servico;
   final Cliente cliente;
 
-  PdfClientServiceTable({
-    required this.servico,
-    required this.cliente,
-  });
+  PdfClientServiceTable({required this.servico, required this.cliente});
 
   @override
   pw.Widget build(pw.Context context) {
-    final DateTime? effectiveDate = Formatters.extractDateFromDescription(servico.descricao);
+    final DateTime? effectiveDate = Formatters.extractDateFromDescription(
+      servico.historico,
+    );
 
     return pw.Table(
       border: pw.TableBorder.all(color: PdfColors.black, width: 0.5),
@@ -45,26 +44,35 @@ class PdfClientServiceTable extends pw.StatelessWidget {
           'Endereço: ${cliente.endereco ?? ''}',
           'Valor: ${Formatters.formatValuePdf(servico.valor)}',
         ),
-        _row(
-          'Equipamento: ${servico.equipamento}',
-          'Marca: ${servico.marca}',
-        ),
+        _row('Equipamento: ${servico.equipamento}', 'Marca: ${servico.marca}'),
       ],
     );
   }
 
   pw.TableRow _row(String left, String right) {
-    return pw.TableRow(children: [
-      pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text(left, style: const pw.TextStyle(fontSize: 10))),
-      pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text(right, style: const pw.TextStyle(fontSize: 10))),
-    ]);
+    return pw.TableRow(
+      children: [
+        pw.Padding(
+          padding: const pw.EdgeInsets.all(8),
+          child: pw.Text(left, style: const pw.TextStyle(fontSize: 10)),
+        ),
+        pw.Padding(
+          padding: const pw.EdgeInsets.all(8),
+          child: pw.Text(right, style: const pw.TextStyle(fontSize: 10)),
+        ),
+      ],
+    );
   }
 
   String _formatDate(DateTime? date) {
-    return date != null ? Formatters.formatDateForHistory(date) : "Não informado.";
+    return date != null
+        ? Formatters.formatDateForHistory(date)
+        : "Não informado.";
   }
 
   String _formatHorario(String? horario) {
-    return horario != null ? Formatters.formatScheduleTime(horario) : "Não informado.";
+    return horario != null
+        ? Formatters.formatScheduleTime(horario)
+        : "Não informado.";
   }
 }

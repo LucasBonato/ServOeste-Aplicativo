@@ -26,20 +26,17 @@ class ReportMenuActionButton extends StatelessWidget {
       onSelected: (type) => reportService.generate(
         type: type,
         servico: servico,
-        cliente: cliente
+        cliente: cliente,
       ),
       itemBuilder: (BuildContext context) => const [
         PopupMenuItem(
           value: ReportType.orcamento,
-          child: Text("Gerar Orçamento")
+          child: Text("Gerar Orçamento"),
         ),
-        PopupMenuItem(
-          value: ReportType.recibo,
-          child: Text("Gerar Recibo")
-        ),
+        PopupMenuItem(value: ReportType.recibo, child: Text("Gerar Recibo")),
         PopupMenuItem(
           value: ReportType.visitas,
-          child: Text("Gerar Relátorio de Visitas")
+          child: Text("Gerar Relátorio de Visitas"),
         ),
       ],
     );

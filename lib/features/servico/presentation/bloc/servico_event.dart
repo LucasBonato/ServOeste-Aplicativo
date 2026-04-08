@@ -14,11 +14,7 @@ final class ServicoSearchEvent extends ServicoEvent {
   final int page;
   final int size;
 
-  ServicoSearchEvent({
-    required this.filter,
-    this.page = 0,
-    this.size = 12,
-  });
+  ServicoSearchEvent({required this.filter, this.page = 0, this.size = 12});
 }
 
 final class ServicoRegisterEvent extends ServicoEvent {
@@ -31,7 +27,10 @@ final class ServicoRegisterPlusClientEvent extends ServicoEvent {
   final ClienteRequest cliente;
   final ServicoRequest servico;
 
-  ServicoRegisterPlusClientEvent({required this.cliente, required this.servico});
+  ServicoRegisterPlusClientEvent({
+    required this.cliente,
+    required this.servico,
+  });
 }
 
 final class ServicoUpdateEvent extends ServicoEvent {

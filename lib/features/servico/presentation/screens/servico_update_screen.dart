@@ -130,14 +130,6 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
     _servicoUpdateValidator.applyBackendError(error);
     _servicoFormKey.currentState?.validate();
     _servicoUpdateValidator.cleanExternalErrors();
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          "[ERROR] Informação(ões) inválida(s) ao Atualizar o Serviço.",
-        ),
-      ),
-    );
   }
 
   void _showClientSelectionModal(BuildContext context) {
