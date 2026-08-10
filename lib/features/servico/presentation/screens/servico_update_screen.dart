@@ -185,7 +185,7 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
       CardBuilderForm(title: "Cliente", child: _buildClientForm()),
       const SizedBox(height: 12),
       ElevatedFormButton(
-        text: "Alterar Cliente",
+        text: "Trocar Cliente",
         onPressed: () => _showClientSelectionModal(context),
       ),
       if (isMobile) ...[const SizedBox(height: 12), serviceForm],
