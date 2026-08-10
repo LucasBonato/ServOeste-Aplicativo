@@ -250,7 +250,7 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
     final Widget clienteSection = Column(
       children: [
         CardBuilderForm(
-          title: "Pesquise um Cliente",
+          title: "Adicione um Cliente",
           child: _buildClientForm(),
         ),
         if (!isClientAndService)
