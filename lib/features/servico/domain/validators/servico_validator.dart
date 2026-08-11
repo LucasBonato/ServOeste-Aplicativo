@@ -1,10 +1,12 @@
 import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_form.dart';
 import 'package:serv_oeste/shared/models/enums/error_code_key.dart';
+import 'package:serv_oeste/shared/utils/formatters/formatters.dart';
 import 'package:serv_oeste/shared/validation/validator.dart';
 
 class ServicoValidator extends LucidValidator<ServicoForm>
     with BackendErrorsValidator {
+  final ServicoForm servicoForm;
   final bool isUpdate;
   final List<String> situacoesOpcionais = [
     "Orçamento aprovado",
@@ -14,7 +16,11 @@ class ServicoValidator extends LucidValidator<ServicoForm>
 
   bool Function(String fieldName)? isFieldEnabled;
 
-  ServicoValidator({this.isUpdate = false, this.isFieldEnabled}) {
+  ServicoValidator({
+    required this.servicoForm,
+    this.isUpdate = false,
+    this.isFieldEnabled,
+  }) {
     _initializeRules();
   }
 
@@ -76,7 +82,19 @@ class ServicoValidator extends LucidValidator<ServicoForm>
           (servico) => servico.descricao.value,
           key: ErrorCodeKey.descricao.name,
         )
-        .when((servico) => _shouldValidateField(ErrorCodeKey.descricao.name))
+        .when(
+          (servico) =>
+              _shouldValidateField(ErrorCodeKey.descricao.name) &&
+              isUpdate &&
+              ![
+                'Aguardando aprovação do cliente',
+                'Compra',
+                'Orçamento aprovado',
+                'Aguardando cliente retirar',
+                'Não retira há 3 meses',
+                'Garantia',
+              ].contains(servico.situacao.value),
+        )
         .must(
           (descricao) => descricao != "",
           "O campo 'descrição' é obrigatório!",
@@ -104,7 +122,6 @@ class ServicoValidator extends LucidValidator<ServicoForm>
                 'Aguardando atendimento',
                 'Cancelado',
                 'Sem defeito',
-                'Aguardando orçamento',
               ].contains(servico.situacao.value),
         )
         .must(
@@ -127,7 +144,6 @@ class ServicoValidator extends LucidValidator<ServicoForm>
                 'Aguardando atendimento',
                 'Cancelado',
                 'Sem defeito',
-                'Aguardando orçamento',
               ].contains(servico.situacao.value),
         )
         .must(
@@ -159,6 +175,40 @@ class ServicoValidator extends LucidValidator<ServicoForm>
           "Data efetiva é obrigatória",
           ErrorCodeKey.dataAtendimentoEfetivo.name,
         )
+        .must(
+          (dataAtendimentoEfetivo) {
+            final dataEfetiva = Formatters.parseDate(dataAtendimentoEfetivo);
+
+            if (dataEfetiva == null) return true;
+
+            final hoje = DateTime(
+              DateTime.now().year,
+              DateTime.now().month,
+              DateTime.now().day,
+            );
+
+            return !dataEfetiva.isAfter(hoje);
+          },
+          "Data efetiva não pode ser posterior à data atual",
+          ErrorCodeKey.dataAtendimentoEfetivo.name,
+        )
+        .must(
+          (dataAtendimentoEfetivo) {
+            final dataEfetiva = Formatters.parseDate(dataAtendimentoEfetivo);
+
+            final dataAbertura = Formatters.parseDate(
+              servicoForm.dataAtendimentoAbertura.value,
+            );
+
+            if (dataEfetiva == null || dataAbertura == null) {
+              return true;
+            }
+
+            return !dataEfetiva.isBefore(dataAbertura);
+          },
+          "Data efetiva não pode ser anterior à data de abertura",
+          ErrorCodeKey.dataAtendimentoEfetivo.name,
+        )
         .customValidExternalErrors(
           externalErrors,
           ErrorCodeKey.dataAtendimentoEfetivo.name,
@@ -177,7 +227,6 @@ class ServicoValidator extends LucidValidator<ServicoForm>
                 'Aguardando atendimento',
                 'Cancelado',
                 'Sem defeito',
-                'Aguardando orçamento',
                 'Aguardando aprovação do cliente',
                 'Não aprovado pelo cliente',
                 'Compra',
@@ -209,7 +258,6 @@ class ServicoValidator extends LucidValidator<ServicoForm>
                 'Aguardando atendimento',
                 'Cancelado',
                 'Sem defeito',
-                'Aguardando orçamento',
                 'Aguardando aprovação do cliente',
                 'Não aprovado pelo cliente',
                 'Compra',
@@ -240,9 +288,9 @@ class ServicoValidator extends LucidValidator<ServicoForm>
               ![
                 'Aguardando agendamento',
                 'Aguardando atendimento',
-                'Cancelado',
                 'Sem defeito',
-                'Aguardando orçamento',
+                'Cancelado',
+                'Aguardando aprovação do cliente',
                 'Não aprovado pelo cliente',
                 'Compra',
               ].contains(servico.situacao.value),
@@ -295,7 +343,6 @@ class ServicoValidator extends LucidValidator<ServicoForm>
               ![
                 'Aguardando agendamento',
                 'Aguardando atendimento',
-                'Aguardando orçamento',
                 'Aguardando aprovação do cliente',
                 'Orçamento aprovado',
                 'Aguardando cliente retirar',

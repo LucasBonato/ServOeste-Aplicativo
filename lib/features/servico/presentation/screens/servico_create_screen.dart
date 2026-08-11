@@ -51,7 +51,8 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
   final ClienteValidator _clienteValidator = ClienteValidator();
 
   final ServicoForm _servicoForm = ServicoForm();
-  final ServicoValidator _servicoValidator = ServicoValidator();
+
+  late final ServicoValidator _servicoValidator;
 
   final GlobalKey<FormState> _clienteFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _servicoFormKey = GlobalKey<FormState>();
@@ -62,13 +63,18 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
   void initState() {
     super.initState();
     isClientAndService = widget.isClientAndService;
+
     _clientes = [];
+
     _nomeTecnicoController = TextEditingController();
     _nomeClienteController = TextEditingController();
     _enderecoController = TextEditingController();
+
     _servicoBloc = context.read<ServicoBloc>();
     _clienteBloc = context.read<ClienteBloc>();
     _tecnicoBloc = context.read<TecnicoBloc>();
+
+    _servicoValidator = ServicoValidator(servicoForm: _servicoForm);
   }
 
   void _getClienteById(String id) {
@@ -250,7 +256,7 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
     final Widget clienteSection = Column(
       children: [
         CardBuilderForm(
-          title: "Pesquise um Cliente",
+          title: "Adicione um Cliente",
           child: _buildClientForm(),
         ),
         if (!isClientAndService)

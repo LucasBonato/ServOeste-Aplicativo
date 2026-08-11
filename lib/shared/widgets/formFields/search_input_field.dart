@@ -134,6 +134,8 @@ class DropdownSearchInputField extends SearchInputField {
 
 class DatePickerInputField extends SearchInputField {
   final List<MaskTextInputFormatter>? mask;
+  final bool allowPastDates;
+  final bool allowFutureDates;
 
   DatePickerInputField({
     required super.valueNotifier,
@@ -145,6 +147,8 @@ class DatePickerInputField extends SearchInputField {
     super.flex = 1,
     super.validator,
     super.listenTo,
+    this.allowPastDates = false,
+    this.allowFutureDates = true,
     this.mask,
   });
 }

@@ -63,6 +63,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
     validator =
         widget.validator ??
         ServicoValidator(
+          servicoForm: widget.form,
           isUpdate: widget.isUpdate,
           isFieldEnabled: isFieldEnabled,
         );
@@ -82,28 +83,24 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
         'Aguardando atendimento',
         'Cancelado',
         'Sem defeito',
-        'Aguardando orçamento',
       ],
       "valorPecas": [
         'Aguardando agendamento',
         'Aguardando atendimento',
         'Cancelado',
         'Sem defeito',
-        'Aguardando orçamento',
       ],
       "formaPagamento": [
         'Aguardando agendamento',
         'Aguardando atendimento',
         'Cancelado',
         'Sem defeito',
-        'Aguardando orçamento',
         'Não aprovado pelo cliente',
         'Compra',
       ],
       "dataFechamento": [
         'Aguardando agendamento',
         'Aguardando atendimento',
-        'Aguardando orçamento',
         'Aguardando aprovação do cliente',
         'Orçamento aprovado',
         'Aguardando cliente retirar',
@@ -114,7 +111,6 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
         'Aguardando agendamento',
         'Aguardando atendimento',
         'Sem defeito',
-        'Aguardando orçamento',
         'Aguardando aprovação do cliente',
         'Não aprovado pelo cliente',
         'Compra',
@@ -124,7 +120,6 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
         'Aguardando atendimento',
         'Cancelado',
         'Sem defeito',
-        'Aguardando orçamento',
         'Aguardando aprovação do cliente',
         'Não aprovado pelo cliente',
         'Compra',
@@ -137,7 +132,6 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
         'Aguardando atendimento',
         'Cancelado',
         'Sem defeito',
-        'Aguardando orçamento',
         'Aguardando aprovação do cliente',
         'Não aprovado pelo cliente',
         'Compra',
@@ -176,12 +170,11 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
     return switch (situacao) {
       'Aguardando agendamento' => 0,
       'Aguardando atendimento' => 1,
-      'Cancelado' || 'Sem defeito' || 'Aguardando orçamento' => 2,
-      'Aguardando aprovação do cliente' => 3,
-      'Compra' || 'Não aprovado pelo cliente' || 'Orçamento aprovado' => 4,
-      'Aguardando cliente retirar' => 5,
-      'Não retira há 3 meses' => 6,
-      'Resolvido' || 'Cortesia' || 'Garantia' => 7,
+      'Cancelado' || 'Sem defeito || Aguardando aprovação do cliente' => 2,
+      'Compra' || 'Não aprovado pelo cliente' || 'Orçamento aprovado' => 3,
+      'Aguardando cliente retirar' => 4,
+      'Resolvido || Não retira há 3 meses' => 5,
+      'Cortesia' || 'Garantia' => 6,
       _ => -1,
     };
   }
@@ -406,6 +399,17 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                 shouldExpand: true,
                 enabled: isFieldEnabled("filial"),
               ),
+              DropdownInputField(
+                hint: "Situação*",
+                dropdownValues: Constants.situationServiceList,
+                valueNotifier: widget.form.situacao,
+                validator: validator.byField(
+                  widget.form,
+                  ErrorCodeKey.situacao.name,
+                ),
+                onChanged: handleSituationChange,
+                enabled: isFieldEnabled("situacao"),
+              ),
               DatePickerInputField(
                 startNewRow: true,
                 shouldExpand: widget.isUpdate,
@@ -417,6 +421,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                 ),
                 onChanged: widget.form.setDataAtendimentoPrevisto,
                 enabled: isFieldEnabled("dataAtendimentoPrevisto"),
+                allowPastDates: true,
               ),
               if (widget.isUpdate) ...[
                 DatePickerInputField(
@@ -429,6 +434,8 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                   ),
                   onChanged: widget.form.setDataAtendimentoEfetivo,
                   enabled: isFieldEnabled("dataAtendimentoEfetivo"),
+                  allowPastDates: true,
+                  allowFutureDates: false,
                 ),
                 TextFormInputField(
                   hint: "9.999,99",
@@ -500,6 +507,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                   ),
                   hint: "Data Pgto. comissão",
                   enabled: isFieldEnabled("dataPagamentoComissao"),
+                  allowPastDates: true,
                 ),
                 DatePickerInputField(
                   shouldExpand: true,
@@ -511,17 +519,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                   ),
                   hint: "Data Fechamento*",
                   enabled: isFieldEnabled("dataFechamento"),
-                ),
-                DropdownInputField(
-                  hint: "Situação*",
-                  dropdownValues: Constants.situationServiceList,
-                  valueNotifier: widget.form.situacao,
-                  validator: validator.byField(
-                    widget.form,
-                    ErrorCodeKey.situacao.name,
-                  ),
-                  onChanged: handleSituationChange,
-                  enabled: isFieldEnabled("situacao"),
+                  allowPastDates: true,
                 ),
                 DatePickerInputField(
                   startNewRow: true,
@@ -534,6 +532,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                   ),
                   onChanged: widget.form.setDataInicioGarantia,
                   enabled: isFieldEnabled("dataInicioGarantia"),
+                  allowPastDates: true,
                 ),
                 DatePickerInputField(
                   shouldExpand: true,
@@ -545,6 +544,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                   ),
                   onChanged: widget.form.setDataFinalGarantia,
                   enabled: isFieldEnabled("dataFinalGarantia"),
+                  allowPastDates: true,
                 ),
               ],
               TextFormInputField(

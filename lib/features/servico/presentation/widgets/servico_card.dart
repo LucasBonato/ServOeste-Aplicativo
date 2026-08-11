@@ -48,13 +48,11 @@ class ServicoCard extends StatelessWidget {
       case ServiceStatus.aguardandoAgendamento:
         return Colors.blue;
       case ServiceStatus.aguardandoAprovacaoCliente:
-        return const Color.fromARGB(255, 179, 162, 14);
+        return const Color(0xFFB3A20E);
       case ServiceStatus.aguardandoAtendimento:
-        return const Color.fromARGB(255, 247, 203, 59);
-      case ServiceStatus.aguardandoClienteRetirar:
-        return const Color.fromARGB(255, 219, 170, 8);
-      case ServiceStatus.aguardandoOrcamento:
         return Colors.orange;
+      case ServiceStatus.aguardandoClienteRetirar:
+        return const Color(0xFFF6CF4F);
       case ServiceStatus.cancelado:
         return Colors.red;
       case ServiceStatus.compra:
@@ -62,7 +60,7 @@ class ServicoCard extends StatelessWidget {
       case ServiceStatus.cortesia:
         return Colors.tealAccent;
       case ServiceStatus.garantia:
-        return const Color.fromARGB(255, 18, 1, 255);
+        return const Color(0xFF1201FF);
       case ServiceStatus.naoAprovadoPeloCliente:
         return Colors.redAccent;
       case ServiceStatus.naoRetira3Meses:
@@ -70,7 +68,7 @@ class ServicoCard extends StatelessWidget {
       case ServiceStatus.orcamentoAprovado:
         return Colors.green;
       case ServiceStatus.resolvido:
-        return const Color.fromARGB(255, 47, 87, 2);
+        return const Color(0xFF2F5702);
       case ServiceStatus.semDefeito:
         return Colors.blueAccent;
     }
@@ -166,8 +164,8 @@ class ServicoCard extends StatelessWidget {
                       color: isSelected
                           ? Colors.black
                           : (hovered
-                              ? Colors.black38
-                              : const Color(0xFFEAE6E5)),
+                                ? Colors.black38
+                                : const Color(0xFFEAE6E5)),
                       width: 1.5,
                     ),
                     boxShadow: [
@@ -248,9 +246,7 @@ class ServicoCard extends StatelessWidget {
                       const SizedBox(height: 3),
                       if (dataPrevista != null && dataEfetiva == null)
                         Padding(
-                          padding: EdgeInsets.only(
-                            left: paddingLeftLarge,
-                          ),
+                          padding: EdgeInsets.only(left: paddingLeftLarge),
                           child: Text(
                             "Data Prevista: ${Formatters.applyDateMask(dataPrevista!)} - ${Formatters.formatScheduleTime(horario!)}",
                             style: TextStyle(
@@ -261,9 +257,7 @@ class ServicoCard extends StatelessWidget {
                         ),
                       if (dataEfetiva != null)
                         Padding(
-                          padding: EdgeInsets.only(
-                            left: paddingLeftLarge,
-                          ),
+                          padding: EdgeInsets.only(left: paddingLeftLarge),
                           child: Text(
                             "Data Efetiva: ${Formatters.applyDateMask(dataEfetiva!)} - ${Formatters.formatScheduleTime(horario!)}",
                             style: TextStyle(
@@ -304,8 +298,10 @@ class ServicoCard extends StatelessWidget {
                       Align(
                         alignment: Alignment.center,
                         child: Padding(
-                          padding:
-                              EdgeInsets.only(left: paddingLeftSmall, top: 5),
+                          padding: EdgeInsets.only(
+                            left: paddingLeftSmall,
+                            top: 5,
+                          ),
                           child: SizedBox(
                             width: constraints.maxWidth * 0.45,
                             child: Text(
@@ -314,8 +310,10 @@ class ServicoCard extends StatelessWidget {
                                 fontSize: statusSize,
                                 fontWeight: FontWeight.bold,
                                 color: _getStatusColor(
-                                    Formatters.mapStringStatusToEnumStatus(
-                                        status)),
+                                  Formatters.mapStringStatusToEnumStatus(
+                                    status,
+                                  ),
+                                ),
                               ),
                               maxLines: 3,
                               textAlign: TextAlign.center,

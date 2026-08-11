@@ -44,9 +44,7 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
   late TextEditingController _nomeClienteController;
   late TextEditingController _enderecoController;
 
-  late ServicoValidator _servicoUpdateValidator = ServicoValidator(
-    isUpdate: true,
-  );
+  late ServicoValidator _servicoUpdateValidator;
 
   final ServicoForm _servicoUpdateForm = ServicoForm();
   final ClienteForm _clienteUpdateForm = ClienteForm();
@@ -185,7 +183,7 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
       CardBuilderForm(title: "Cliente", child: _buildClientForm()),
       const SizedBox(height: 12),
       ElevatedFormButton(
-        text: "Alterar Cliente",
+        text: "Trocar Cliente",
         onPressed: () => _showClientSelectionModal(context),
       ),
       if (isMobile) ...[const SizedBox(height: 12), serviceForm],
@@ -226,6 +224,7 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
     _clienteBloc = context.read<ClienteBloc>();
 
     _servicoUpdateValidator = ServicoValidator(
+      servicoForm: _servicoUpdateForm,
       isUpdate: true,
       isFieldEnabled: _isServicoFieldEnabled,
     );
@@ -243,7 +242,6 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
         'Aguardando atendimento',
         'Cancelado',
         'Sem defeito',
-        'Aguardando orçamento',
         'Aguardando aprovação do cliente',
         'Não aprovado pelo cliente',
         'Compra',
@@ -256,7 +254,6 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
         'Aguardando atendimento',
         'Cancelado',
         'Sem defeito',
-        'Aguardando orçamento',
         'Aguardando aprovação do cliente',
         'Não aprovado pelo cliente',
         'Compra',
@@ -269,21 +266,18 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
         'Aguardando atendimento',
         'Cancelado',
         'Sem defeito',
-        'Aguardando orçamento',
       ],
       "valorPecas": [
         'Aguardando agendamento',
         'Aguardando atendimento',
         'Cancelado',
         'Sem defeito',
-        'Aguardando orçamento',
       ],
       "formaPagamento": [
         'Aguardando agendamento',
         'Aguardando atendimento',
         'Cancelado',
         'Sem defeito',
-        'Aguardando orçamento',
         'Não aprovado pelo cliente',
         'Compra',
       ],

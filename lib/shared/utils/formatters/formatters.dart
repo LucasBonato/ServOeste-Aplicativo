@@ -7,7 +7,9 @@ class Formatters {
     if (phone == null || phone.isEmpty) {
       return isCell ? '(   )          -' : '(   )          -';
     }
-    return isCell ? Formatters.applyCellPhoneMask(phone) : Formatters.applyPhoneMask(phone);
+    return isCell
+        ? Formatters.applyCellPhoneMask(phone)
+        : Formatters.applyPhoneMask(phone);
   }
 
   static String applyPhoneMask(String phone) {
@@ -22,7 +24,11 @@ class Formatters {
 
   static String transformPhoneMask(String phone) {
     if (phone.length < 14 || phone.length > 15) return "";
-    return phone.replaceAll("(", "").replaceAll(")", "").replaceAll(" ", "").replaceAll("-", "");
+    return phone
+        .replaceAll("(", "")
+        .replaceAll(")", "")
+        .replaceAll(" ", "")
+        .replaceAll("-", "");
   }
 
   static String formatDatePdf(DateTime? date) {
@@ -51,11 +57,16 @@ class Formatters {
     if (usDate.isEmpty) return '';
 
     final parts = usDate.split('/');
-    if (parts.length == 3) {
-      return '${parts[1]}/${parts[0]}/${parts[2]}';
+
+    if (parts.length != 3) {
+      return usDate;
     }
 
-    return usDate;
+    final month = parts[0];
+    final day = parts[1];
+    final year = parts[2];
+
+    return '$day/$month/$year';
   }
 
   static List<Map<String, String>> parseServiceHistory(String history) {
@@ -69,21 +80,18 @@ class Formatters {
     final List<Map<String, String>> entries = [];
 
     for (final match in lineRegex.allMatches(history)) {
-      final String date      = match.group(1)!.trim();
-      final String situacao  = match.group(2)!.trim();
+      final String date = convertUsToBrDate(match.group(1)!.trim());
+      final String situacao = match.group(2)!.trim();
       final String descricao = match.group(3)!.trim();
 
-      entries.add({
-        'data':      date,
-        'situacao':  situacao,
-        'descricao': descricao,
-      });
+      entries.add({'data': date, 'situacao': situacao, 'descricao': descricao});
     }
 
     entries.sort((a, b) {
       try {
-        final DateTime dateA = _parseBrDate(a['data']!);
-        final DateTime dateB = _parseBrDate(b['data']!);
+        final DateTime dateA = parseDate(a['data']!)!;
+        final DateTime dateB = parseDate(b['data']!)!;
+
         return dateA.compareTo(dateB);
       } catch (_) {
         return 0;
@@ -93,13 +101,26 @@ class Formatters {
     return entries;
   }
 
-  static DateTime _parseBrDate(String date) {
-    final parts = date.split('/');
-    return DateTime(
-      int.parse(parts[2]),
-      int.parse(parts[1]),
-      int.parse(parts[0]),
-    );
+  static DateTime? parseDate(String? date) {
+    if (date == null || date.trim().isEmpty) {
+      return null;
+    }
+
+    try {
+      final parts = date.split('/');
+
+      if (parts.length != 3) {
+        return null;
+      }
+
+      final day = int.parse(parts[0]);
+      final month = int.parse(parts[1]);
+      final year = int.parse(parts[2]);
+
+      return DateTime(year, month, day);
+    } catch (_) {
+      return null;
+    }
   }
 
   static DateTime? extractDateFromDescription(String? description) {
@@ -159,12 +180,19 @@ class Formatters {
   }
 
   static String formatToCurrency(double value) {
-    final NumberFormat formatter = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
+    final NumberFormat formatter = NumberFormat.currency(
+      locale: 'pt_BR',
+      symbol: 'R\$',
+    );
     return formatter.format(value);
   }
 
   static double parseCurrencyToDouble(String formattedValue) {
-    String cleanedValue = formattedValue.replaceAll("R\$", "").replaceAll(".", "").replaceAll(",", ".").trim();
+    String cleanedValue = formattedValue
+        .replaceAll("R\$", "")
+        .replaceAll(".", "")
+        .replaceAll(",", ".")
+        .trim();
 
     return double.tryParse(cleanedValue) ?? 0.0;
   }
@@ -174,7 +202,9 @@ class Formatters {
       return null;
     }
 
-    String cleanedValue = value.replaceAll(RegExp(r'[^\d,]'), '').replaceAll(',', '.');
+    String cleanedValue = value
+        .replaceAll(RegExp(r'[^\d,]'), '')
+        .replaceAll(',', '.');
 
     double? parsedValue = double.tryParse(cleanedValue);
     return parsedValue;
@@ -196,7 +226,7 @@ class Formatters {
       for (final entry in invertedEntries) {
         final situation = entry['situacao'] ?? '';
         final description = entry['descricao'] ?? '';
-        final date = formatDateForHistory(entry['data']);
+        final date = entry['data'] ?? '';
 
         if (date.isNotEmpty) {
           buffer.write('$date - $situation');
@@ -220,7 +250,12 @@ class Formatters {
     }
   }
 
-  static double getResponsiveFontSize(double containerWidth, {required double min, required double max, required double factor}) {
+  static double getResponsiveFontSize(
+    double containerWidth, {
+    required double min,
+    required double max,
+    required double factor,
+  }) {
     final double calculatedSize = containerWidth * factor;
     return calculatedSize.clamp(min, max);
   }
@@ -240,18 +275,24 @@ class Formatters {
 
   static ServiceStatus mapStringStatusToEnumStatus(String status) {
     return switch (status) {
-      "AGUARDANDO_AGENDAMENTO" || "Aguardando agendamento" => ServiceStatus.aguardandoAgendamento,
-      "AGUARDANDO_ATENDIMENTO" || "Aguardando atendimento" => ServiceStatus.aguardandoAtendimento,
-      "AGUARDANDO_APROVACAO" || "Aguardando aprovação do cliente" => ServiceStatus.aguardandoAprovacaoCliente,
-      "AGUARDANDO_CLIENTE_RETIRAR" || "Aguardando cliente retirar" => ServiceStatus.aguardandoClienteRetirar,
-      "AGUARDANDO_ORCAMENTO" || "Aguardando orçamento" => ServiceStatus.aguardandoOrcamento,
+      "AGUARDANDO_AGENDAMENTO" ||
+      "Aguardando agendamento" => ServiceStatus.aguardandoAgendamento,
+      "AGUARDANDO_ATENDIMENTO" ||
+      "Aguardando atendimento" => ServiceStatus.aguardandoAtendimento,
+      "AGUARDANDO_APROVACAO" || "Aguardando aprovação do cliente" =>
+        ServiceStatus.aguardandoAprovacaoCliente,
+      "AGUARDANDO_CLIENTE_RETIRAR" ||
+      "Aguardando cliente retirar" => ServiceStatus.aguardandoClienteRetirar,
       "CANCELADO" || "Cancelado" => ServiceStatus.cancelado,
       "COMPRA" || "Compra" => ServiceStatus.compra,
       "CORTESIA" || "Cortesia" => ServiceStatus.cortesia,
       "GARANTIA" || "Garantia" => ServiceStatus.garantia,
-      "NAO_APROVADO" || "Não aprovado pelo cliente" => ServiceStatus.naoAprovadoPeloCliente,
-      "NAO_RETIRA_3_MESES" || "Não retira há 3 meses" => ServiceStatus.naoRetira3Meses,
-      "ORCAMENTO_APROVADO" || "Orçamento aprovado" => ServiceStatus.orcamentoAprovado,
+      "NAO_APROVADO" ||
+      "Não aprovado pelo cliente" => ServiceStatus.naoAprovadoPeloCliente,
+      "NAO_RETIRA_3_MESES" ||
+      "Não retira há 3 meses" => ServiceStatus.naoRetira3Meses,
+      "ORCAMENTO_APROVADO" ||
+      "Orçamento aprovado" => ServiceStatus.orcamentoAprovado,
       "RESOLVIDO" || "Resolvido" => ServiceStatus.resolvido,
       "SEM_DEFEITO" || "Sem defeito" => ServiceStatus.semDefeito,
       _ => ServiceStatus.aguardandoAgendamento,
@@ -264,7 +305,6 @@ class Formatters {
       "Aguardando atendimento" => "AGUARDANDO_ATENDIMENTO",
       "Aguardando aprovação do cliente" => "AGUARDANDO_APROVACAO",
       "Aguardando cliente retirar" => "AGUARDANDO_CLIENTE_RETIRAR",
-      "Aguardando orçamento" => "AGUARDANDO_ORCAMENTO",
       "Cancelado" => "CANCELADO",
       "Compra" => "COMPRA",
       "Cortesia" => "CORTESIA",

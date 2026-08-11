@@ -7,15 +7,12 @@ class Constants {
     'Técnico': 'TECHNICIAN',
   };
 
-  static const List<String> roleUserDisplayList = [
-    'Balcão',
-    'Técnico',
-  ];
+  static const List<String> roleUserDisplayList = ['Balcão', 'Técnico'];
 
   static const List<String> situationTecnicoList = [
     "Ativo",
     "Licença",
-    "Desativado"
+    "Desativado",
   ];
 
   static const List<String> situationServiceList = [
@@ -23,14 +20,13 @@ class Constants {
     'Aguardando atendimento',
     'Cancelado',
     'Sem defeito',
-    'Aguardando orçamento',
     'Aguardando aprovação do cliente',
     'Compra',
     'Não aprovado pelo cliente',
     'Orçamento aprovado',
     'Aguardando cliente retirar',
-    'Não retira há 3 meses',
     'Resolvido',
+    'Não retira há 3 meses',
     'Garantia',
     'Cortesia',
   ];
@@ -79,15 +75,9 @@ class Constants {
     'Fora do período de garantia',
   ];
 
-  static const List<String> filiais = [
-    "Osasco",
-    "Carapicuíba",
-  ];
+  static const List<String> filiais = ["Osasco", "Carapicuíba"];
 
-  static const List<String> horarioPrevisto = [
-    "Manhã",
-    "Tarde",
-  ];
+  static const List<String> horarioPrevisto = ["Manhã", "Tarde"];
 
   static const List<String> formasPagamento = [
     "Pix",

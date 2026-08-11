@@ -43,23 +43,22 @@ The status values used by the UI are defined in `lib/core/constants/constants.da
 ```mermaid
 flowchart TD
     1[Aguardando agendamento] --> 2[Aguardando atendimento]
-    2 -->|Problema identificado| 3[Aguardando orçamento]
-    2 -->|Sem defeito| 3.1["Sem defeito (fim)"]
-    2 -->|Cancelado| 3.2["Cancelado (fim)"]
+    2 -->|Sem defeito| 3["Sem defeito (fim)"]
+    2 -->|Cancelado| 3.1["Cancelado (fim)"]
 
     3 --> 4[Aguardando aprovação do cliente]
+
     4 -->|Não aprovado| 5.1["Não aprovado pelo cliente (fim)"]
     4 -->|Compra| 5.2["Compra (fim)"]
     4 -->|Aprovado| 5.3[Orçamento aprovado]
 
-    5.3 --> 6[Aguardando cliente retirar]
-    6 -->|Não retira há 3 meses| 7.1[Não retira há 3 meses]
-    6 -->|Garantia| 7.2[Garantia]
+    5 --> 6[Aguardando cliente retirar]
 
-    7.2 -->|Cortesia| 8[Cortesia]
-    7.2 -->|Resolvido| 9["Resolvido (fim)"]
-    8 --> 9["Resolvido (fim)"]
-    7.1 --> 9["Resolvido (fim)"]
+    6 -->|Resolvido| 7["Resolvido (fim)"]
+    6 -->|Não retira há 3 meses| 7.1["Não retira há 3 meses (fim)"]
+
+    7 -->|Cortesia| 8.1[Cortesia]
+    7 -->|Garantia| 8.2[Garantia]
 ```
 
 ## Tech stack
@@ -67,7 +66,7 @@ flowchart TD
 ### Runtime
 
 | Category                  | Choice                                      | Evidence in repo                                                       |
-|---------------------------|---------------------------------------------|------------------------------------------------------------------------|
+| ------------------------- | ------------------------------------------- | ---------------------------------------------------------------------- |
 | Language                  | Dart (`>=3.3.0 <4.0.0`)                     | `pubspec.yaml`                                                         |
 | Flutter channel           | `stable`                                    | `.metadata`                                                            |
 | State management          | `bloc` + `flutter_bloc`                     | `lib/features/**/presentation/bloc/*_bloc.dart`                        |
@@ -202,7 +201,7 @@ There are two form patterns:
 The backend base URL and endpoint paths are defined in `lib/core/http/server_endpoints.dart`.
 
 | Item             | Value                                                                       |
-|------------------|-----------------------------------------------------------------------------|
+| ---------------- | --------------------------------------------------------------------------- |
 | Base URL         | `http://localhost:8080/api/`                                                |
 | Auth endpoints   | `auth/login`, `auth/refresh`, `auth/logout`                                 |
 | Domain endpoints | `user`, `tecnico`, `cliente`, `servico`, `endereco` (plus `find` endpoints) |
@@ -219,7 +218,7 @@ The backend base URL and endpoint paths are defined in `lib/core/http/server_end
 ### Interceptors
 
 | Interceptor                 | Added by                                        | Purpose                                                                                   |
-|-----------------------------|-------------------------------------------------|-------------------------------------------------------------------------------------------|
+| --------------------------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | `CookieManager`             | `DioService` constructor                        | attaches cookie jar to all requests                                                       |
 | `DioInterceptor` (dev only) | `DioService` constructor when `Constants.isDev` | request/response logging and cookie header cleanup                                        |
 | `AuthInterceptor`           | `DioService.addAuthInterceptors`                | injects `Authorization: Bearer <accessToken>` if available                                |
@@ -305,7 +304,7 @@ The app uses named routes with a single router entrypoint:
 ### Routes map
 
 | Route constant         | Path             | Screen/widget             | Arguments                                                 |
-|------------------------|------------------|---------------------------|-----------------------------------------------------------|
+| ---------------------- | ---------------- | ------------------------- | --------------------------------------------------------- |
 | `Routes.home`          | `/home`          | `BaseLayout`              | none                                                      |
 | `Routes.login`         | `/login`         | `LoginScreen`             | none                                                      |
 | `Routes.tecnico`       | `/tecnico`       | `TecnicoScreen`           | none                                                      |
@@ -372,9 +371,8 @@ flutter run
 No environment-variable based configuration is implemented in this repository (no dotenv usage). Configuration points present in code:
 
 | Key                | Location                              | Notes                                       |
-|--------------------|---------------------------------------|---------------------------------------------|
+| ------------------ | ------------------------------------- | ------------------------------------------- |
 | API base URL       | `lib/core/http/server_endpoints.dart` | `ServerEndpoints.baseUrl`                   |
 | Dev logging toggle | `lib/core/constants/constants.dart`   | `Constants.isDev` controls `DioInterceptor` |
 
 ---
-

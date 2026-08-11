@@ -3,7 +3,6 @@ enum ServiceStatus {
   aguardandoAtendimento("Aguardando atendimento"),
   aguardandoAprovacaoCliente("Aguardando aprovação do cliente"),
   aguardandoClienteRetirar("Aguardando cliente retirar"),
-  aguardandoOrcamento("Aguardando orçamento"),
   cancelado("Cancelado"),
   compra("Compra"),
   cortesia("Cortesia"),

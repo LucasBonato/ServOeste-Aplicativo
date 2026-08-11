@@ -154,6 +154,8 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
         validator: field.validator,
         onChanged: field.onChanged,
         enabled: field.enabled,
+        allowPastDates: field.allowPastDates,
+        allowFutureDates: field.allowFutureDates,
       );
     }
     return const SizedBox.shrink();
