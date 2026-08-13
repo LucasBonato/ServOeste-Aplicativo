@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente_filter.dart';
+import 'package:serv_oeste/shared/utils/formatters/formatters.dart';
 import 'package:serv_oeste/shared/widgets/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/shared/widgets/screen/filtered_clients_table.dart';
 import 'package:serv_oeste/shared/widgets/screen/loading.dart';
@@ -26,23 +27,38 @@ class ClientSelectionModal extends StatefulWidget {
 class ClientSelectionModalState extends State<ClientSelectionModal> {
   final Debouncer _debouncer = Debouncer();
   List<Map<String, String>> _clientesFiltrados = [];
+  late final TextEditingController _nomePesquisaController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _nomePesquisaController = TextEditingController(
+      text: Formatters.formatFirstName(widget.nomeController.text),
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _onSearchChanged();
+    });
+  }
 
   void _onSearchChanged() {
     _debouncer.execute(
       () => context.read<ClienteBloc>().add(
-            ClienteSearchEvent(
-              filter: ClienteFilter(
-                nome: widget.nomeController.text,
-                endereco: widget.enderecoController.text,
-              ),
-            ),
+        ClienteSearchEvent(
+          filter: ClienteFilter(
+            nome: _nomePesquisaController.text,
+            endereco: widget.enderecoController.text,
           ),
+        ),
+      ),
       delay: const Duration(milliseconds: 500),
     );
   }
 
   @override
   void dispose() {
+    _nomePesquisaController.dispose();
     super.dispose();
   }
 
@@ -57,7 +73,7 @@ class ClientSelectionModalState extends State<ClientSelectionModal> {
             hint: "Nome do Cliente",
             leftPadding: 0,
             rightPadding: 0,
-            controller: widget.nomeController,
+            controller: _nomePesquisaController,
             onChangedAction: (value) => _onSearchChanged(),
           ),
           const SizedBox(height: 12),
@@ -79,11 +95,7 @@ class ClientSelectionModalState extends State<ClientSelectionModal> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.search,
-                          size: 80,
-                          color: Colors.grey[400],
-                        ),
+                        Icon(Icons.search, size: 80, color: Colors.grey[400]),
                         const SizedBox(height: 10),
                         Text(
                           "Pesquise um cliente",
@@ -98,11 +110,13 @@ class ClientSelectionModalState extends State<ClientSelectionModal> {
                 }
                 if (state is ClienteSearchSuccessState) {
                   _clientesFiltrados = state.clientes
-                      .map((cliente) => {
-                            'id': cliente.id.toString(),
-                            'nome': cliente.nome ?? '',
-                            'endereco': cliente.endereco ?? '',
-                          })
+                      .map(
+                        (cliente) => {
+                          'id': cliente.id.toString(),
+                          'nome': cliente.nome ?? '',
+                          'endereco': cliente.endereco ?? '',
+                        },
+                      )
                       .toList();
 
                   if (_clientesFiltrados.isEmpty) {

@@ -3,6 +3,14 @@ import 'package:logger/logger.dart';
 import 'package:serv_oeste/shared/models/enums/service_status.dart';
 
 class Formatters {
+  static String formatFirstName(String? name) {
+    if (name == null || name.trim().isEmpty) {
+      return '';
+    }
+
+    return name.trim().split(RegExp(r'\s+')).first;
+  }
+
   static String formatPhonePdf(String? phone, {required bool isCell}) {
     if (phone == null || phone.isEmpty) {
       return isCell ? '(   )          -' : '(   )          -';
