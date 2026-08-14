@@ -48,10 +48,6 @@ class TokenRefreshInterceptor extends Interceptor {
 
       if (refreshResult.isRight()) {
         final AuthResponse newTokens = refreshResult.getOrElse(() => throw Exception('Missing token'));
-        // await secureStorageService.saveTokens(
-        //   newTokens.accessToken,
-        //   newTokens.refreshToken,
-        // );
         await secureStorageService.updateAccessToken(newTokens.accessToken);
 
         await _retry(err, handler);
