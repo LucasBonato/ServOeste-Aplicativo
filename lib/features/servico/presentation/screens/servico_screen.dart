@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
+import 'package:serv_oeste/core/observability/app_logger.dart';
 import 'package:serv_oeste/core/routing/args/servico_create_args.dart';
 import 'package:serv_oeste/core/routing/args/servico_filter_form_args.dart';
 import 'package:serv_oeste/core/routing/args/servico_update_args.dart';
@@ -208,7 +208,7 @@ class _ServicoScreenState extends BaseListScreenState<Servico, ServicoState> {
               listener: (context, state) {
                 if (state is ServicoErrorState) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    Logger().e(state.error.detail);
+                    AppLogger.error(state.error.detail);
                   });
                 }
                 if (state is ServicoSearchSuccessState) {

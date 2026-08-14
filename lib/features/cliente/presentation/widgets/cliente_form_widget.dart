@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/core/constants/constants.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente_form.dart';
@@ -65,7 +65,7 @@ class ClienteFormWidget extends StatelessWidget {
       isSuccess: (state) => isUpdate ? state is ClienteUpdateSuccessState : state is ClienteRegisterSuccessState,
       getSuccessMessage: getSuccessMessage,
       isError: (state) => state is ClienteErrorState,
-      getErrorMessage: (state) => state is ClienteErrorState ? state.error.detail : "Erro desconhecido",
+      getErrorMessage: (state) => state is ClienteErrorState ? state.error.fullDetail : "Erro desconhecido",
       onError: (state) {
         if (state is ClienteErrorState) {
           validator.applyBackendError(state.error);

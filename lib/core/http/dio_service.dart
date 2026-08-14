@@ -4,6 +4,7 @@ import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:serv_oeste/core/constants/constants.dart';
+import 'package:serv_oeste/core/http/otel_interceptor.dart';
 import 'package:serv_oeste/core/http/refresh_token_interceptor.dart';
 import 'package:serv_oeste/core/http/server_endpoints.dart';
 import 'package:serv_oeste/shared/services/secure_storage_service.dart';
@@ -27,6 +28,7 @@ class DioService {
   bool _authInterceptorsAdded = false;
 
   DioService(this._secureStorageService) {
+    _dio.interceptors.add(OtelInterceptor());
     _dio.interceptors.add(CookieManager(_cookieJar));
     if (Constants.isDev) {
       _dio.interceptors.add(DioInterceptor(_secureStorageService));

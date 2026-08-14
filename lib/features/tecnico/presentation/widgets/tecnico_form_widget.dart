@@ -68,7 +68,7 @@ class TecnicoFormWidget extends StatelessWidget {
             return successMessage;
           },
           isError: (state) => state is TecnicoErrorState,
-          getErrorMessage: (state) => state is TecnicoErrorState ? state.error.detail : "Erro desconhecido",
+          getErrorMessage: (state) => state is TecnicoErrorState ? state.error.fullDetail : "Erro desconhecido",
           onError: (state) {
             if (state is TecnicoErrorState) {
               validator.applyBackendError(state.error);

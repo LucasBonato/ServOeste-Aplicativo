@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:serv_oeste/core/observability/tracing.dart';
 import 'package:serv_oeste/features/auth/data/auth_client.dart';
 import 'package:serv_oeste/features/auth/domain/auth_repository.dart';
 import 'package:serv_oeste/features/auth/domain/entities/auth.dart';
@@ -11,16 +12,26 @@ class AuthRepositoryImplementation implements AuthRepository {
 
   @override
   Future<Either<ErrorEntity, AuthResponse>> login({required String username, required String password}) {
-    return _client.login(username: username, password: password);
+    return Tracing.trace(
+      'auth.login',
+      attributes: {'auth.username': username},
+      fn: () => _client.login(username: username, password: password),
+    );
   }
 
   @override
   Future<Either<ErrorEntity, void>> logout({required String accessToken, required String refreshToken}) {
-    return _client.logout(accessToken: accessToken, refreshToken: refreshToken);
+    return Tracing.trace(
+      'auth.logout',
+      fn: () => _client.logout(accessToken: accessToken, refreshToken: refreshToken),
+    );
   }
 
   @override
   Future<Either<ErrorEntity, AuthResponse>> refreshToken() {
-    return _client.refreshToken();
+    return Tracing.trace(
+      'auth.refresh_token',
+      fn: () => _client.refreshToken(),
+    );
   }
 }

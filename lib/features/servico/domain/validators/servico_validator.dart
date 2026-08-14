@@ -367,8 +367,8 @@ class ServicoValidator extends LucidValidator<ServicoForm>
   }
 
   @override
-  ValidationResult validate(ServicoForm entity) {
-    final result = super.validate(entity);
+  ValidationResult validate(ServicoForm entity, {List<String>? ruleSets}) {
+    final result = super.validate(entity, ruleSets: ruleSets);
 
     return result;
   }
