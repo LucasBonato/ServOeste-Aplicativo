@@ -35,10 +35,8 @@ class TecnicoForm extends ChangeNotifier {
   }
 
   void setConhecimentos(List<int> conhecimentos) {
-    if (conhecimentos.isNotEmpty) {
-      this.conhecimentos.value = conhecimentos;
-      notifyListeners();
-    }
+    this.conhecimentos.value = List<int>.from(conhecimentos);
+    notifyListeners();
   }
 
   void addConhecimentos(int conhecimento) {

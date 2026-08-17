@@ -20,6 +20,7 @@ import 'package:serv_oeste/features/tecnico/presentation/screens/tecnico_screen.
 import 'package:serv_oeste/features/user/presentation/bloc/user_bloc.dart';
 import 'package:serv_oeste/features/user/presentation/screens/user_screen.dart';
 import 'package:serv_oeste/shared/bloc/list/lista_bloc.dart';
+import 'package:serv_oeste/shared/services/specialty_cache.dart';
 import 'package:serv_oeste/shared/widgets/layout/bottom_nav_bar.dart';
 import 'package:serv_oeste/shared/widgets/layout/header.dart';
 import 'package:serv_oeste/shared/widgets/layout/sidebar_navigation.dart';
@@ -226,7 +227,10 @@ class BaseLayoutState extends State<BaseLayout> {
 
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is UnauthenticatedState || state is AuthLogoutSuccessState) {
+        if (state is UnauthenticatedState) {
+          context.read<SpecialtyCache>().clear();
+          _navigationService.goToLogin();
+        } else if (state is AuthLogoutSuccessState) {
           _navigationService.goToLogin();
         }
       },

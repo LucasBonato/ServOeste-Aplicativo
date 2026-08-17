@@ -40,7 +40,7 @@ class Constants {
     'Itapevi',
   ];
 
-  static const List<String> equipamentos = [
+  static const List<String> equipamentosFallback = [
     'Adega',
     'Air Fryer',
     'Bebedouro',

@@ -13,6 +13,7 @@ class TokenRefreshInterceptor extends Interceptor {
   final Dio dio;
   final AuthRepository authRepository;
   final VoidCallback? onTokenRefreshFailed;
+  final VoidCallback? onSessionCleared;
   final SecureStorageService secureStorageService;
 
   bool _isRefreshing = false;
@@ -23,6 +24,7 @@ class TokenRefreshInterceptor extends Interceptor {
     required this.dio,
     required this.authRepository,
     this.onTokenRefreshFailed,
+    this.onSessionCleared,
   });
 
   @override
@@ -109,6 +111,7 @@ class TokenRefreshInterceptor extends Interceptor {
   ) async {
     _pendingRequests.clear();
     await secureStorageService.deleteTokens();
+    onSessionCleared?.call();
     onTokenRefreshFailed?.call();
     handler.next(err);
   }

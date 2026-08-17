@@ -20,4 +20,6 @@ class ServerEndpoints {
   static const String servicoMaisClienteEndpoint = "servico/cliente";
 
   static const String enderecoEndpoint = "endereco";
+
+  static const String especialidadesEndpoint = "especialidades";
 }

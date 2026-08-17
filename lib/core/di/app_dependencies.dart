@@ -28,6 +28,10 @@ import 'package:serv_oeste/features/tecnico/data/tecnico_client.dart';
 import 'package:serv_oeste/features/tecnico/data/tecnico_repository_implementation.dart';
 import 'package:serv_oeste/features/tecnico/domain/tecnico_repository.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
+import 'package:serv_oeste/features/specialty/data/specialty_client.dart';
+import 'package:serv_oeste/features/specialty/data/specialty_repository_implementation.dart';
+import 'package:serv_oeste/features/specialty/domain/specialty_repository.dart';
+import 'package:serv_oeste/shared/services/specialty_cache.dart';
 import 'package:serv_oeste/features/user/data/user_client.dart';
 import 'package:serv_oeste/features/user/data/user_repository_implementation.dart';
 import 'package:serv_oeste/features/user/domain/user_repository.dart';
@@ -43,6 +47,8 @@ class AppDependencies {
   late final ServicoRepository servicoRepository;
   late final EnderecoRepository enderecoRepository;
   late final UserRepository userRepository;
+  late final SpecialtyRepository specialtyRepository;
+  late final SpecialtyCache specialtyCache;
   late final SecureStorageService secureStorageService;
   late final ReportService reportService;
 
@@ -58,9 +64,18 @@ class AppDependencies {
     dioService = DioService(secureStorageService);
     authRepository = AuthRepositoryImplementation(AuthClient(dioService.dio));
 
-    dioService.addAuthInterceptors(authRepository, () {
-      navigationService.goToLogin();
-    });
+    specialtyRepository = SpecialtyRepositoryImplementation(SpecialtyClient(dioService.dio));
+    specialtyCache = SpecialtyCache(specialtyRepository);
+
+    dioService.addAuthInterceptors(
+      authRepository,
+      () {
+        navigationService.goToLogin();
+      },
+      onSessionCleared: () {
+        specialtyCache.clear();
+      },
+    );
 
     clienteRepository = ClienteRepositoryImplementation(ClienteClient(dioService.dio));
     tecnicoRepository = TecnicoRepositoryImplementation(TecnicoClient(dioService.dio));
@@ -72,7 +87,7 @@ class AppDependencies {
 
   List<BlocProvider> buildBlocProviders() {
     return [
-      BlocProvider<AuthBloc>(create: (_) => AuthBloc(authRepository, secureStorageService)),
+      BlocProvider<AuthBloc>(create: (_) => AuthBloc(authRepository, secureStorageService, specialtyCache)),
       BlocProvider<ClienteBloc>(create: (_) => ClienteBloc(clienteRepository)),
       BlocProvider<TecnicoBloc>(create: (_) => TecnicoBloc(tecnicoRepository)),
       BlocProvider<ServicoBloc>(create: (_) => ServicoBloc(servicoRepository)),
@@ -87,6 +102,7 @@ class AppDependencies {
       Provider<SecureStorageService>.value(value: secureStorageService),
       Provider<ReportService>.value(value: reportService),
       Provider<NavigationService>.value(value: navigationService),
+      Provider<SpecialtyCache>.value(value: specialtyCache),
     ];
   }
 }

@@ -35,8 +35,9 @@ class DioService {
 
   void addAuthInterceptors(
     AuthRepository authRepository,
-    VoidCallback? onTokenRefreshFailed,
-  ) {
+    VoidCallback? onTokenRefreshFailed, {
+    VoidCallback? onSessionCleared,
+  }) {
     if (_authInterceptorsAdded) {
       return;
     }
@@ -48,6 +49,7 @@ class DioService {
         dio: _dio,
         authRepository: authRepository,
         onTokenRefreshFailed: onTokenRefreshFailed,
+        onSessionCleared: onSessionCleared,
       ),
     ]);
 
