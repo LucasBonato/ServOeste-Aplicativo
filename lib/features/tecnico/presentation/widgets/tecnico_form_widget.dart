@@ -21,6 +21,7 @@ class TecnicoFormWidget extends StatelessWidget {
   final String submitText;
   final String successMessage;
   final Map<String, bool> checkersMap;
+  final Map<String, int> conhecimentoIdsByLabel;
   final TextEditingController? nomeController;
   final Map<String, String> situationMap;
   final bool isUpdate;
@@ -37,6 +38,7 @@ class TecnicoFormWidget extends StatelessWidget {
     required this.submitText,
     required this.successMessage,
     required this.checkersMap,
+    required this.conhecimentoIdsByLabel,
     required this.situationMap,
     this.nomeController,
     this.isUpdate = false,
@@ -76,12 +78,11 @@ class TecnicoFormWidget extends StatelessWidget {
             }
           },
           onSubmit: () async {
-            checkersMap.forEach((label, isChecked) {
-              int idConhecimento = (checkersMap.keys.toList().indexOf(label) + 1);
+            tecnicoForm.setConhecimentos([]);
+            conhecimentoIdsByLabel.forEach((label, idConhecimento) {
+              final bool isChecked = checkersMap[label] ?? false;
               if (isChecked) {
                 tecnicoForm.addConhecimentos(idConhecimento);
-              } else {
-                tecnicoForm.removeConhecimentos(idConhecimento);
               }
             });
 

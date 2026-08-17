@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:serv_oeste/core/constants/constants.dart';
+
+
 import 'package:serv_oeste/features/cliente/domain/entities/cliente.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente_filter.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente_form.dart';
@@ -16,6 +17,7 @@ import 'package:serv_oeste/features/servico/presentation/widgets/servico_form_wi
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
 import 'package:serv_oeste/features/tecnico/presentation/widgets/tecnico_table_modal.dart';
 import 'package:serv_oeste/shared/models/error/error_entity.dart';
+import 'package:serv_oeste/shared/services/specialty_cache.dart';
 import 'package:serv_oeste/shared/utils/debouncer.dart';
 import 'package:serv_oeste/shared/widgets/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/shared/widgets/formFields/field_labels.dart';
@@ -116,8 +118,11 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
   void _onShowAvailabilityTechnicianTable() {
     final String equipamentoSelected = _servicoForm.equipamento.value;
     int idEspecialidade = 12;
-    if (Constants.equipamentos.contains(equipamentoSelected)) {
-      idEspecialidade = Constants.equipamentos.indexOf(equipamentoSelected) + 1;
+    final int? idFromCache = context
+        .read<SpecialtyCache>()
+        .idByConhecimento(equipamentoSelected);
+    if (idFromCache != null) {
+      idEspecialidade = idFromCache;
     }
 
     showDialog(

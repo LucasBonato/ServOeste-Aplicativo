@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:serv_oeste/core/constants/constants.dart';
+
 import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_filter.dart';
 import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_form.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
 import 'package:serv_oeste/features/tecnico/presentation/widgets/tecnico_form_widget.dart';
 import 'package:serv_oeste/features/tecnico/domain/entities/tecnico.dart';
+import 'package:serv_oeste/shared/services/specialty_cache.dart';
 import 'package:serv_oeste/shared/utils/formatters/formatters.dart';
 
 class TecnicoUpdateScreen extends StatefulWidget {
@@ -23,30 +24,24 @@ class TecnicoUpdateScreen extends StatefulWidget {
 class _TecnicoUpdateScreenState extends State<TecnicoUpdateScreen> {
   late final TecnicoBloc bloc;
   final TecnicoForm form = TecnicoForm();
-  final ValueNotifier<String> dropDownSituacaoValue = ValueNotifier<String>(Constants.situationTecnicoList.first);
   final TextEditingController nomeController = TextEditingController();
   final Map<String, String> situationMap = {
     'ATIVO': 'Ativo',
     'LICENCA': 'Licença',
     'DESATIVADO': 'Desativado',
   };
-  final Map<String, bool> checkersMap = {
-    "Adega": false,
-    "Air Fryer": false,
-    "Bebedouro": false,
-    "Climatizador": false,
-    "Cooler": false,
-    "Frigobar": false,
-    "Geladeira": false,
-    "Lava Louça": false,
-    "Lava Roupa": false,
-    "Microondas": false,
-    "Purificador": false,
-    "Secadora": false,
-    "Outros": false,
-  };
+  Map<String, bool> checkersMap = {};
+  Map<String, int> conhecimentoIdsByLabel = {};
+  Tecnico? _loadedTecnico;
 
-  void _fillForm(Tecnico tecnico) {
+  void _applyTecnico(Tecnico tecnico) {
+    final SpecialtyCache cache = context.read<SpecialtyCache>();
+    final Map<String, int> ids = Map<String, int>.from(cache.activeIdByConhecimento);
+    final Map<String, bool> linked = <String, bool>{
+      for (final String label in cache.activeConhecimentosOrderedWithOutros()) label: false,
+    };
+
+    form.setConhecimentos([]);
     form.setId(widget.id);
     form.setNome("${tecnico.nome} ${tecnico.sobrenome}");
 
@@ -67,16 +62,29 @@ class _TecnicoUpdateScreenState extends State<TecnicoUpdateScreen> {
     final String tecnicoSituacao = tecnico.situacao ?? '';
     final String mappedSituacao = situationMap[tecnicoSituacao] ?? 'Situação...';
 
-    dropDownSituacaoValue.value = mappedSituacao;
     form.setSituacao(mappedSituacao);
 
     if (tecnico.especialidades != null) {
       for (Especialidade especialidade in tecnico.especialidades!) {
-        if (checkersMap.keys.contains(especialidade.conhecimento)) {
-          checkersMap[especialidade.conhecimento] = true;
-          form.addConhecimentos(especialidade.id);
-        }
+        ids[especialidade.conhecimento] = especialidade.id;
+        linked.putIfAbsent(especialidade.conhecimento, () => false);
+        linked[especialidade.conhecimento] = true;
+        form.addConhecimentos(especialidade.id);
       }
+    }
+
+    conhecimentoIdsByLabel = ids;
+    checkersMap = linked;
+  }
+
+  Future<void> _ensureCatalog() async {
+    final SpecialtyCache cache = context.read<SpecialtyCache>();
+    if (!cache.hasData) {
+      await cache.refresh();
+    }
+    if (!mounted) return;
+    if (_loadedTecnico != null) {
+      setState(() => _applyTecnico(_loadedTecnico!));
     }
   }
 
@@ -85,6 +93,7 @@ class _TecnicoUpdateScreenState extends State<TecnicoUpdateScreen> {
     super.initState();
     bloc = context.read<TecnicoBloc>();
     bloc.add(TecnicoSearchOneEvent(id: widget.id));
+    WidgetsBinding.instance.addPostFrameCallback((_) => _ensureCatalog());
   }
 
   @override
@@ -99,7 +108,8 @@ class _TecnicoUpdateScreenState extends State<TecnicoUpdateScreen> {
             }
           });
         } else if (state is TecnicoSearchOneSuccessState) {
-          _fillForm(state.tecnico);
+          _loadedTecnico = state.tecnico;
+          setState(() => _applyTecnico(state.tecnico));
         }
       },
       child: BlocBuilder<TecnicoBloc, TecnicoState>(
@@ -116,6 +126,7 @@ class _TecnicoUpdateScreenState extends State<TecnicoUpdateScreen> {
             isUpdate: true,
             successMessage: "Técnico atualizado com sucesso! (Caso ele não esteja atualizado, recarregue a página)",
             checkersMap: checkersMap,
+            conhecimentoIdsByLabel: conhecimentoIdsByLabel,
             situationMap: situationMap,
             isForListScreen: false,
             onSubmit: () {
