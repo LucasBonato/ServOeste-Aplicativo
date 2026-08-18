@@ -43,8 +43,9 @@ The status values used by the UI are defined in `lib/core/constants/constants.da
 ```mermaid
 flowchart TD
     1[Aguardando agendamento] --> 2[Aguardando atendimento]
-    2 -->|Sem defeito| 3["Sem defeito (fim)"]
-    2 -->|Cancelado| 3.1["Cancelado (fim)"]
+    2 -->|Problema identificado| 3[Aguardando orçamento]
+    2 -->|Sem defeito| 3.1["Sem defeito (fim)"]
+    2 -->|Cancelado| 3.2["Cancelado (fim)"]
 
     3 --> 4[Aguardando aprovação do cliente]
 
@@ -353,7 +354,7 @@ flowchart TD
 
 ### Prerequisites
 
-This client expects a backend API reachable at `ServerEndpoints.baseUrl` (default: `http://localhost:8080/api/`). The value is hardcoded in `lib/core/http/server_endpoints.dart`.
+This client expects a backend API reachable at `ServerEndpoints.baseUrl` (default: `http://localhost:8080/api/`, configurable via the `API_URL` variable in `.env`).
 
 ### Install dependencies
 
@@ -364,29 +365,38 @@ flutter pub get
 ### Run
 
 ```bash
-flutter run
+flutter run --dart-define-from-file=.env
 ```
 
 ### Configuration
 
-No environment-variable based configuration is implemented (no dotenv); runtime config is passed via `--dart-define` flags. Configuration points:
+Build-time configuration lives in a .env file at the project root (copy .env.example to .env and adjust the values). The file is read by Flutter's native --dart-define-from-file flag â€” values are compiled into the binary, so it works on all platforms (mobile, desktop) and needs no runtime file handling.
 
-| Key                | Location                              | Notes                                       |
-| ------------------ | ------------------------------------- | ------------------------------------------- |
-| API base URL       | `lib/core/http/server_endpoints.dart` | `ServerEndpoints.baseUrl`                   |
-| Dev logging toggle | `lib/core/constants/constants.dart`   | `Constants.isDev` controls `DioInterceptor` |
-| OTel endpoint      | `lib/core/observability/otel_config.dart` | `OTEL_EXPORTER_OTLP_ENDPOINT` (default `http://localhost:4318`) |
-| OTel sampler       | `lib/core/observability/otel_config.dart` | `OTEL_TRACES_SAMPLER`: `always_on`/`always_off`/`traceidratio`/`parentbased`/`parentbased_traceidratio` (default `always_on`) |
-| OTel sampler ratio | `lib/core/observability/otel_config.dart` | `OTEL_TRACES_SAMPLER_RATIO` (0.0-1.0, used by `traceidratio`/`parentbased_traceidratio`, default `1.0`) |
-| OTel log printing  | `lib/core/observability/otel_config.dart` | `OTEL_LOG_PRINT` (`true`/`false`, captures `print()`) |
+| Key                       | Default                          | Notes |
+|---------------------------|----------------------------------|-------|
+| API_URL                 | http://localhost:8080/api/     | Backend base URL (ServerEndpoints.baseUrl) |
+| OTEL_EXPORTER_OTLP_ENDPOINT | http://localhost:4318       | OTLP/HTTP endpoint of the traces/logs/metrics collector |
+| OTEL_LOG_LEVEL          | '' (all)                       | Minimum severity for exported log records (	race/debug/info/warn/error/atal/
+one) |
+| OTEL_TRACES_SAMPLER     | lways_on                      | lways_on/lways_off/	raceidratio/parentbased/parentbased_traceidratio |
+| OTEL_TRACES_SAMPLER_RATIO | 1.0                          | Sampling ratio for the ratio samplers (0.0-1.0) |
+| OTEL_LOG_PRINT          | 	rue                           | Capture print() calls as OTel logs |
+| Dev logging toggle        | lib/core/constants/constants.dart | Constants.isDev controls DioInterceptor (not env-driven) |
 
-Example (export to the local Aspire dashboard, OTLP/HTTP on host port 4318):
+Run:
 
-```bash
-flutter run --dart-define=OTEL_LOG_LEVEL=debug --dart-define=OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318
-```
+`ash
+flutter run --dart-define-from-file=.env
+`
 
-Telemetry (traces, logs, metrics) is exported via OTLP/HTTP and visible in the Aspire dashboard (`http://localhost:18888`).
+Build (values are compiled into the executable):
+
+`ash
+flutter build windows --dart-define-from-file=.env   # desktop
+flutter build apk --dart-define-from-file=.env        # android
+`
+
+Individual --dart-define=KEY=value flags still win over the file for that key. Telemetry (traces, logs, metrics) is exported via OTLP/HTTP and visible in the Aspire dashboard (http://localhost:18888).
 
 ### Trace correlation with the backend
 
