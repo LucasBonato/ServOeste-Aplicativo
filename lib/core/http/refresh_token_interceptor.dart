@@ -48,10 +48,7 @@ class TokenRefreshInterceptor extends Interceptor {
 
       if (refreshResult.isRight()) {
         final AuthResponse newTokens = refreshResult.getOrElse(() => throw Exception('Missing token'));
-        await secureStorageService.saveTokens(
-          newTokens.accessToken,
-          newTokens.refreshToken,
-        );
+        await secureStorageService.updateAccessToken(newTokens.accessToken);
 
         await _retry(err, handler);
 
@@ -85,16 +82,19 @@ class TokenRefreshInterceptor extends Interceptor {
 
     final options = err.requestOptions;
 
+    final headers = Map<String, dynamic>.from(options.headers)
+      ..remove('Authorization')
+      ..remove('authorization');
+
+    headers["Authorization"] = "Bearer $newAccessToken";
+
     final Response response = await dio.request(
       options.path,
       data: options.data,
       queryParameters: options.queryParameters,
       options: Options(
         method: options.method,
-        headers: {
-          ...options.headers,
-          'Authorization': 'Bearer $newAccessToken',
-        },
+        headers: headers,
         contentType: options.contentType,
         responseType: options.responseType,
       ),
