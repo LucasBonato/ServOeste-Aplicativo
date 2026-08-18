@@ -67,7 +67,7 @@ class ReportService {
             clienteId: servicoAtual.idCliente
           );
           final result = await servicoRepository.getServicosByFilter(filter: filter, page: 0, size: 100);
-          return result.fold(
+          return await result.fold(
             (ErrorEntity error) {
               AppLogger.error("Erro ao buscar histórico: ${error.title}");
               return [];

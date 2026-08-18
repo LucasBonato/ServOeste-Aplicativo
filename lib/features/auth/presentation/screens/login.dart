@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/core/navigation/navigation_service.dart';
+import 'package:serv_oeste/core/observability/app_logger.dart';
 import 'package:serv_oeste/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:serv_oeste/features/auth/domain/entities/auth_form.dart';
 import 'package:serv_oeste/shared/models/enums/error_code_key.dart';
@@ -87,7 +88,13 @@ class _LoginScreenState extends State<LoginScreen> {
             try {
               await specialtyCache.warmUp();
             } catch (e, st) {
-              debugPrint('Specialty warm-up failed: $e\n$st');
+              AppLogger.debug(
+                "Specialty warm-up failed",
+                attributes: {
+                  "error": e,
+                  "stacktrace": st
+                }
+              );
             }
             if (!context.mounted) return;
             navigationService.goToHome();
