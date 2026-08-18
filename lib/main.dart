@@ -43,10 +43,6 @@ Future<void> main() async {
       await OTel.runWithPrintInterceptionAsync(() async {
         WidgetsFlutterBinding.ensureInitialized();
 
-        // Route SDK self-diagnostics to the console outside the
-        // print-interception bridge. Otherwise every OTelLog.debug(...)
-        // ('[DEBUG] ...' text) becomes an exported INFO-level log record
-        // in the dashboard.
         OTelLog.logFunction = otelConsoleLog;
 
         await OTel.initialize(

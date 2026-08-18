@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 
 import 'package:dartastic_opentelemetry/dartastic_opentelemetry.dart';
 
@@ -35,13 +35,40 @@ abstract final class Tracing {
       fn: (_) => fn(),
     );
   }
+  /// Builds a bloc operation span name from an event type,
+  /// e.g. TecnicoSearchEvent -> bloc.tecnico.search.
+  static String spanNameFromEvent(Type type) {
+    final String name = type.toString();
+    final String withoutSuffix =
+        name.endsWith('Event') ? name.substring(0, name.length - 5) : name;
+    return 'bloc.${_camelToDots(withoutSuffix)}';
+  }
 
-  /// Injects the current trace context (`traceparent`, `tracestate`,
+  static String _camelToDots(String value) {
+    final StringBuffer buffer = StringBuffer();
+    for (int i = 0; i < value.length; i++) {
+      final String char = value[i];
+      if (char == '_') {
+        buffer.write('.');
+      } else if (RegExp('[A-Z]').hasMatch(char)) {
+        if (i > 0) buffer.write('.');
+        buffer.write(char.toLowerCase());
+      } else {
+        buffer.write(char);
+      }
+    }
+    return buffer.toString();
+  }
+
+  /// Injects the trace context carried by [context] (`traceparent`, `tracestate`,
   /// `baggage`) into [headers] so the backend can join the trace.
-  static void injectPropagation(Map<String, dynamic> headers) {
+  static void injectPropagationFrom(
+    Context context,
+    Map<String, dynamic> headers,
+  ) {
     final Map<String, String> carrier = <String, String>{};
     OTelAPI.textMapPropagator.inject(
-      Context.current,
+      context,
       carrier,
       _MapSetter(carrier),
     );

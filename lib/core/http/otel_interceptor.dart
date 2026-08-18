@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 
 import 'package:dartastic_opentelemetry/dartastic_opentelemetry.dart';
 import 'package:dio/dio.dart';
@@ -13,7 +13,6 @@ class OtelInterceptor extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    Tracing.injectPropagation(options.headers);
     OtelMetrics.httpClientInFlightRequests.add(1);
 
     final String? userId = Tracing.currentUserId;
@@ -29,6 +28,8 @@ class OtelInterceptor extends Interceptor {
         'enduser.id': ?userId,
       }),
     );
+    final Context spanContext = Context.current.withSpan(span);
+    Tracing.injectPropagationFrom(spanContext, options.headers);
     options.extra[_spanKey] = span;
     options.extra[_durationKey] = Stopwatch()..start();
     handler.next(options);

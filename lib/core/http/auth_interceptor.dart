@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:serv_oeste/core/http/server_endpoints.dart';
 import 'package:serv_oeste/shared/services/secure_storage_service.dart';
 
 class AuthInterceptor extends Interceptor {
@@ -8,6 +9,13 @@ class AuthInterceptor extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+    final isAuthRoute = options.path.contains('/${ServerEndpoints.loginEndpoint}') ||
+        options.path.contains('/${ServerEndpoints.refreshEndpoint}');
+
+    if (isAuthRoute) {
+      return handler.next(options);
+    }
+
     final String? token = await _secureStorageService.getAccessToken();
 
     if (_secureStorageService.hasToken(token)) {
