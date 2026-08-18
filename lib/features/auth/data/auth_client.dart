@@ -53,7 +53,6 @@ class AuthClient {
 
   Future<Either<ErrorEntity, void>> logout({
     required String accessToken,
-    required String refreshToken,
   }) async {
     try {
       await dio.post(

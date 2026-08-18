@@ -20,10 +20,10 @@ class AuthRepositoryImplementation implements AuthRepository {
   }
 
   @override
-  Future<Either<ErrorEntity, void>> logout({required String accessToken, required String refreshToken}) {
+  Future<Either<ErrorEntity, void>> logout({required String accessToken}) {
     return Tracing.trace(
       'auth.logout',
-      fn: () => _client.logout(accessToken: accessToken, refreshToken: refreshToken),
+      fn: () => _client.logout(accessToken: accessToken),
     );
   }
 

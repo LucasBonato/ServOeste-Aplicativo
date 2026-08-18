@@ -1,12 +1,12 @@
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
+import 'package:serv_oeste/features/auth/domain/auth_repository.dart';
+import 'package:serv_oeste/features/auth/domain/entities/auth.dart';
+import 'package:serv_oeste/shared/bloc/base_entity_bloc.dart';
+import 'package:serv_oeste/shared/models/error/error_entity.dart';
 import 'package:serv_oeste/shared/services/secure_storage_service.dart';
 import 'package:serv_oeste/shared/services/specialty_cache.dart';
-import 'package:serv_oeste/features/auth/domain/auth_repository.dart';
-import 'package:serv_oeste/shared/bloc/base_entity_bloc.dart';
-import 'package:serv_oeste/features/auth/domain/entities/auth.dart';
-import 'package:serv_oeste/shared/models/error/error_entity.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -50,16 +50,13 @@ class AuthBloc extends BaseEntityBloc<AuthEvent, AuthState> {
       emit: emit,
       request: () async {
         final String? accessToken = await _storage.getAccessToken();
-        final String? refreshToken = await _storage.getRefreshToken();
 
-        if (accessToken != null && refreshToken != null) {
+        if (accessToken != null) {
           return _authRepository.logout(
-            accessToken: accessToken,
-            refreshToken: refreshToken,
+            accessToken: accessToken
           );
         }
-
-        return const Right(null);
+        return Right(null);
       },
       onSuccess: (_) async {
         await _storage.deleteTokens();

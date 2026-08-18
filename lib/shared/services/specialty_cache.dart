@@ -1,4 +1,5 @@
 import 'package:serv_oeste/features/specialty/domain/specialty_repository.dart';
+import 'package:serv_oeste/core/observability/tracing.dart';
 import 'package:serv_oeste/features/tecnico/domain/entities/tecnico.dart';
 
 class SpecialtyCache {
@@ -45,7 +46,9 @@ class SpecialtyCache {
     await refresh();
   }
 
-  Future<void> refresh() async {
+  Future<void> refresh() => Tracing.trace('specialty.cache.refresh', fn: _refresh);
+
+  Future<void> _refresh() async {
     final result = await _repository.findAll();
     result.fold((error) => throw error, (specialties) => _specialties = specialties);
   }
