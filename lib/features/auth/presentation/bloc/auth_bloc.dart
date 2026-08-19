@@ -52,7 +52,7 @@ class AuthBloc extends BaseEntityBloc<AuthEvent, AuthState> {
         final String? accessToken = await _storage.getAccessToken();
 
         if (accessToken != null) {
-          return _authRepository.logout(
+          return await _authRepository.logout(
             accessToken: accessToken
           );
         }
@@ -66,7 +66,7 @@ class AuthBloc extends BaseEntityBloc<AuthEvent, AuthState> {
       onError: (error) async {
         await _storage.deleteTokens();
         _specialtyCache.clear();
-        emit(errorState(error));
+        emit(AuthLogoutSuccessState());
       },
     );
   }
