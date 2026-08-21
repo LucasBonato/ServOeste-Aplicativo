@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/core/constants/constants.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_form.dart';
+import 'package:serv_oeste/features/servico/domain/rules/service_field_rules.dart';
 import 'package:serv_oeste/shared/widgets/formFields/search_input_field.dart';
 import 'package:serv_oeste/features/tecnico/presentation/widgets/tecnico_search_field.dart';
 import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
@@ -49,7 +50,6 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
   late GlobalKey<FormState> formKey;
   late ServicoValidator validator;
   late TextEditingController nameTecnicoController;
-  late Map<String, List<String>> disabledSituationsByField;
 
   final ValueNotifier<String> _situationNotifier = ValueNotifier('');
   late bool enabled;
@@ -69,83 +69,78 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
         );
 
     nameTecnicoController = widget.nameTecnicoController;
-    disabledSituationsByField = {
-      "nomeTecnico": ['Aguardando agendamento'],
-      "horario": ['Aguardando agendamento'],
-      "dataAtendimentoPrevisto": ['Aguardando agendamento'],
-      "dataAtendimentoEfetivo": [
-        'Aguardando agendamento',
-        'Aguardando atendimento',
-        'Cancelado',
-      ],
-      "valorServico": [
-        'Aguardando agendamento',
-        'Aguardando atendimento',
-        'Cancelado',
-        'Sem defeito',
-      ],
-      "valorPecas": [
-        'Aguardando agendamento',
-        'Aguardando atendimento',
-        'Cancelado',
-        'Sem defeito',
-      ],
-      "formaPagamento": [
-        'Aguardando agendamento',
-        'Aguardando atendimento',
-        'Cancelado',
-        'Sem defeito',
-        'Não aprovado pelo cliente',
-        'Compra',
-      ],
-      "dataFechamento": [
-        'Aguardando agendamento',
-        'Aguardando atendimento',
-        'Aguardando aprovação do cliente',
-        'Orçamento aprovado',
-        'Aguardando cliente retirar',
-        'Cortesia',
-        'Garantia',
-      ],
-      "dataPagamentoComissao": [
-        'Aguardando agendamento',
-        'Aguardando atendimento',
-        'Sem defeito',
-        'Aguardando aprovação do cliente',
-        'Não aprovado pelo cliente',
-        'Compra',
-      ],
-      "dataInicioGarantia": [
-        'Aguardando agendamento',
-        'Aguardando atendimento',
-        'Cancelado',
-        'Sem defeito',
-        'Aguardando aprovação do cliente',
-        'Não aprovado pelo cliente',
-        'Compra',
-        'Orçamento aprovado',
-        'Aguardando cliente retirar',
-        'Não retira há 3 meses',
-      ],
-      "dataFinalGarantia": [
-        'Aguardando agendamento',
-        'Aguardando atendimento',
-        'Cancelado',
-        'Sem defeito',
-        'Aguardando aprovação do cliente',
-        'Não aprovado pelo cliente',
-        'Compra',
-        'Orçamento aprovado',
-        'Aguardando cliente retirar',
-        'Não retira há 3 meses',
-      ],
-    };
 
     enabled = isInputEnabled();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _situationNotifier.value = widget.form.situacao.value;
     });
+  }
+
+  void _clearField(String fieldName) {
+    switch (fieldName) {
+      case "nomeTecnico":
+        nameTecnicoController.clear();
+        widget.form.setNomeTecnico('');
+        widget.form.setIdTecnico(null);
+        break;
+
+      case "horario":
+        widget.form.setHorario('');
+        break;
+
+      case "dataAtendimentoPrevisto":
+        widget.form.setDataAtendimentoPrevisto(null);
+        break;
+
+      case "dataAtendimentoEfetivo":
+        widget.form.setDataAtendimentoEfetivo(null);
+        break;
+
+      case "valorServico":
+        widget.form.setValorServico('');
+        break;
+
+      case "valorPecas":
+        widget.form.setValorPecas('');
+        break;
+
+      case "formaPagamento":
+        widget.form.setFormaPagamento('');
+        break;
+
+      case "dataFechamento":
+        widget.form.setDataFechamento(null);
+        break;
+
+      case "dataPagamentoComissao":
+        widget.form.setDataPagamentoComissao(null);
+        break;
+
+      case "dataInicioGarantia":
+        widget.form.setDataInicioGarantia(null);
+        break;
+
+      case "dataFinalGarantia":
+        widget.form.setDataFinalGarantia(null);
+        break;
+    }
+  }
+
+  void _clearDisabledFields(String newSituation) {
+    final previousSituation = _situationNotifier.value;
+
+    for (final fieldName in ServiceFieldRules.disabledSituationsByField.keys) {
+      final disabledSituations =
+          ServiceFieldRules.disabledSituationsByField[fieldName] ?? [];
+
+      final wasEnabled = !disabledSituations.contains(previousSituation);
+      final isNowDisabled = disabledSituations.contains(newSituation);
+
+      if (wasEnabled && isNowDisabled) {
+        _clearField(fieldName);
+      }
+    }
   }
 
   bool isInputEnabled() {
@@ -157,13 +152,15 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
     if (!widget.isUpdate) return enabled;
 
     final currentSituation = _situationNotifier.value;
-    final disabledSituations = disabledSituationsByField[fieldName];
 
-    if (disabledSituations == null) return true;
+    final disabledSituations =
+        ServiceFieldRules.disabledSituationsByField[fieldName];
 
-    final isEnabled = !disabledSituations.contains(currentSituation);
+    if (disabledSituations == null) {
+      return true;
+    }
 
-    return isEnabled;
+    return !disabledSituations.contains(currentSituation);
   }
 
   int getServiceLevel(String situacao) {
@@ -180,6 +177,8 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
   }
 
   void updateServiceSituation(String value) {
+    _clearDisabledFields(value);
+
     widget.form.situacao.value = value;
     widget.form.setSituacao(value);
     _situationNotifier.value = value;

@@ -7,6 +7,7 @@ import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart'
 import 'package:serv_oeste/features/cliente/presentation/widgets/cliente_form_widget.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_form.dart';
+import 'package:serv_oeste/features/servico/domain/rules/service_field_rules.dart';
 import 'package:serv_oeste/features/servico/domain/validators/servico_validator.dart';
 import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
 import 'package:serv_oeste/features/servico/presentation/widgets/servico_form_widget.dart';
@@ -236,57 +237,12 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
   bool _isServicoFieldEnabled(String fieldName) {
     final currentSituation = _servicoUpdateForm.situacao.value;
 
-    final disabledSituations = {
-      "dataInicioGarantia": [
-        'Aguardando agendamento',
-        'Aguardando atendimento',
-        'Cancelado',
-        'Sem defeito',
-        'Aguardando aprovação do cliente',
-        'Não aprovado pelo cliente',
-        'Compra',
-        'Orçamento aprovado',
-        'Aguardando cliente retirar',
-        'Não retira há 3 meses',
-      ],
-      "dataFinalGarantia": [
-        'Aguardando agendamento',
-        'Aguardando atendimento',
-        'Cancelado',
-        'Sem defeito',
-        'Aguardando aprovação do cliente',
-        'Não aprovado pelo cliente',
-        'Compra',
-        'Orçamento aprovado',
-        'Aguardando cliente retirar',
-        'Não retira há 3 meses',
-      ],
-      "valor": [
-        'Aguardando agendamento',
-        'Aguardando atendimento',
-        'Cancelado',
-        'Sem defeito',
-      ],
-      "valorPecas": [
-        'Aguardando agendamento',
-        'Aguardando atendimento',
-        'Cancelado',
-        'Sem defeito',
-      ],
-      "formaPagamento": [
-        'Aguardando agendamento',
-        'Aguardando atendimento',
-        'Cancelado',
-        'Sem defeito',
-        'Não aprovado pelo cliente',
-        'Compra',
-      ],
-    };
+    final disabledSituations =
+        ServiceFieldRules.disabledSituationsByField[fieldName];
 
-    final situations = disabledSituations[fieldName];
-    if (situations == null) return true;
+    if (disabledSituations == null) return true;
 
-    return !situations.contains(currentSituation);
+    return !disabledSituations.contains(currentSituation);
   }
 
   @override

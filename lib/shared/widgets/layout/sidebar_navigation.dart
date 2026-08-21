@@ -21,71 +21,63 @@ class SidebarNavigation extends StatelessWidget {
     return Container(
       width: 175,
       margin: const EdgeInsets.only(right: 25),
-      decoration: const BoxDecoration(
-        color: Color(0xFCFDFDFF),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black26,
-            offset: Offset(2, 0),
-            blurRadius: 5,
-          ),
-        ],
-        borderRadius: BorderRadius.only(
+      child: Material(
+        color: const Color(0xFCFDFDFF),
+        elevation: 5,
+        shadowColor: Colors.black26,
+        borderRadius: const BorderRadius.only(
           topRight: Radius.circular(20),
           bottomRight: Radius.circular(20),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 75),
-          Expanded(
-            child: ListView(
-              children: [
-                _buildMenuItem(
-                  index: 0,
-                  icon: Icons.home_outlined,
-                  label: 'Home',
-                ),
-                const Divider(color: Colors.black),
-                _buildMenuItem(
-                  index: 1,
-                  icon: Icons.build_outlined,
-                  label: 'Técnicos',
-                ),
-                const Divider(color: Colors.black),
-                _buildMenuItem(
-                  index: 2,
-                  icon: Icons.people_outlined,
-                  label: 'Clientes',
-                ),
-                const Divider(color: Colors.black),
-                _buildMenuItem(
-                  index: 3,
-                  icon: Icons.paste_outlined,
-                  label: 'Serviços',
-                ),
-                if (_isAdmin) const Divider(color: Colors.black),
-                if (_isAdmin)
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 75),
+            Expanded(
+              child: ListView(
+                children: [
                   _buildMenuItem(
-                    index: 4,
-                    icon: Icons.admin_panel_settings_outlined,
-                    label: 'Usuários',
+                    index: 0,
+                    icon: Icons.home_outlined,
+                    label: 'Home',
                   ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Text(
-              '© 2025 Serv-Oeste',
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 12,
+                  const Divider(color: Colors.black),
+                  _buildMenuItem(
+                    index: 1,
+                    icon: Icons.build_outlined,
+                    label: 'Técnicos',
+                  ),
+                  const Divider(color: Colors.black),
+                  _buildMenuItem(
+                    index: 2,
+                    icon: Icons.people_outlined,
+                    label: 'Clientes',
+                  ),
+                  const Divider(color: Colors.black),
+                  _buildMenuItem(
+                    index: 3,
+                    icon: Icons.paste_outlined,
+                    label: 'Serviços',
+                  ),
+                  if (_isAdmin) const Divider(color: Colors.black),
+                  if (_isAdmin)
+                    _buildMenuItem(
+                      index: 4,
+                      icon: Icons.admin_panel_settings_outlined,
+                      label: 'Usuários',
+                    ),
+                ],
               ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Text(
+                '© 2025 Serv-Oeste',
+                style: TextStyle(color: Colors.grey[600], fontSize: 12),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

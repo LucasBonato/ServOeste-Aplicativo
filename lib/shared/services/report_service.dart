@@ -18,8 +18,14 @@ class ReportService {
 
   ReportService(this.servicoRepository);
 
-  Future<void> generate({required ReportType type, required Servico servico, required Cliente cliente}) async {
-    final pw.ImageProvider logo = await imageFromAssetBundle('assets/servOeste.png');
+  Future<void> generate({
+    required ReportType type,
+    required Servico servico,
+    required Cliente cliente,
+  }) async {
+    final pw.ImageProvider logo = await imageFromAssetBundle(
+      'assets/servOeste.png',
+    );
 
     final PdfReport report = switch (type) {
       ReportType.orcamento => OrcamentoReport(
@@ -48,10 +54,14 @@ class ReportService {
       final filter = ServicoFilter(
         equipamento: servicoAtual.equipamento,
         marca: servicoAtual.marca,
-        clienteId: servicoAtual.idCliente
+        clienteId: servicoAtual.idCliente,
       );
-      final result = await servicoRepository.getServicosByFilter(filter: filter, page: 0, size: 100);
-      return result.fold(
+      final result = await servicoRepository.getServicosByFilter(
+        filter: filter,
+        page: 0,
+        size: 100,
+      );
+      return await result.fold(
         (ErrorEntity error) {
           Logger().e("Erro ao buscar histórico: ${error.title}");
           return [];
@@ -66,12 +76,16 @@ class ReportService {
 
             final String marcaAtual = _normalize(servicoAtual.marca);
             final String marcaServico = _normalize(servico.marca);
-            final String equipamentoAtual = _normalize(servicoAtual.equipamento);
+            final String equipamentoAtual = _normalize(
+              servicoAtual.equipamento,
+            );
             final String equipamentoServico = _normalize(servico.equipamento);
 
             final bool marcaMatch = marcaAtual == marcaServico;
-            final bool equipamentoMatch = equipamentoAtual == equipamentoServico;
-            final bool clienteMatch = servico.idCliente == servicoAtual.idCliente;
+            final bool equipamentoMatch =
+                equipamentoAtual == equipamentoServico;
+            final bool clienteMatch =
+                servico.idCliente == servicoAtual.idCliente;
 
             return marcaMatch && equipamentoMatch && clienteMatch;
           }).toList();
@@ -86,7 +100,11 @@ class ReportService {
         },
       );
     } catch (e, stackTrace) {
-      Logger().e("Erro inesperado ao buscar histórico", error: e, stackTrace: stackTrace);
+      Logger().e(
+        "Erro inesperado ao buscar histórico",
+        error: e,
+        stackTrace: stackTrace,
+      );
       return [];
     }
   }
