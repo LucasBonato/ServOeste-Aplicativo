@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:serv_oeste/core/navigation/navigation_service.dart';
+import 'package:serv_oeste/core/observability/app_logger.dart';
 import 'package:serv_oeste/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:serv_oeste/features/auth/domain/entities/auth_form.dart';
 import 'package:serv_oeste/shared/models/enums/error_code_key.dart';
 import 'package:serv_oeste/features/auth/domain/validators/auth_validator.dart';
+import 'package:serv_oeste/shared/services/specialty_cache.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -66,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.error.detail),
+              content: Text(state.error.fullDetail),
               backgroundColor: Colors.red,
               duration: const Duration(seconds: 3),
             ),
@@ -81,7 +83,22 @@ class _LoginScreenState extends State<LoginScreen> {
           setState(() {
             _isLoading = false;
           });
-          navigationService.goToHome();
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            final SpecialtyCache specialtyCache = context.read<SpecialtyCache>();
+            try {
+              await specialtyCache.warmUp();
+            } catch (e, st) {
+              AppLogger.debug(
+                "Specialty warm-up failed",
+                attributes: {
+                  "error": e,
+                  "stacktrace": st
+                }
+              );
+            }
+            if (!context.mounted) return;
+            navigationService.goToHome();
+          });
         }
       },
       child: Scaffold(

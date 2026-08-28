@@ -1,10 +1,12 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:serv_oeste/core/errors/error_handler.dart';
 import 'package:serv_oeste/core/http/server_endpoints.dart';
+import 'package:serv_oeste/core/observability/otel_metrics.dart';
+import 'package:serv_oeste/core/observability/tracing.dart';
 import 'package:serv_oeste/features/auth/domain/entities/auth.dart';
 import 'package:serv_oeste/features/auth/domain/entities/auth_request.dart';
 import 'package:serv_oeste/shared/models/error/error_entity.dart';
-import 'package:serv_oeste/core/errors/error_handler.dart';
 
 class AuthClient {
   final Dio dio;
@@ -12,6 +14,7 @@ class AuthClient {
   AuthClient(this.dio);
 
   Future<Either<ErrorEntity, AuthResponse>> login({required String username, required String password}) async {
+    OtelMetrics.authLoginAttempts.add(1);
     try {
       final AuthRequest request = AuthRequest(
         username: username,
@@ -23,8 +26,11 @@ class AuthClient {
         data: request.toJson(),
       );
 
-      return Right(AuthResponse.fromJson(response.data!));
+      final AuthResponse auth = AuthResponse.fromJson(response.data!);
+      Tracing.currentUserId = Tracing.userIdFromJwt(auth.accessToken);
+      return Right(auth);
     } on DioException catch (e) {
+      OtelMetrics.authLoginFailures.add(1);
       if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
         return Left(ErrorEntity.global('Credenciais inválidas'));
       }
@@ -47,7 +53,6 @@ class AuthClient {
 
   Future<Either<ErrorEntity, void>> logout({
     required String accessToken,
-    required String refreshToken,
   }) async {
     try {
       await dio.post(
@@ -59,8 +64,10 @@ class AuthClient {
         ),
       );
 
+      Tracing.currentUserId = null;
       return Right(null);
     } on DioException catch (e) {
+      Tracing.currentUserId = null;
       return Left(ErrorHandler.onRequestError(e));
     }
   }

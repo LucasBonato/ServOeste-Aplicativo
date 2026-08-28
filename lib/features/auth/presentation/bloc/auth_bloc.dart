@@ -1,11 +1,12 @@
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
-import 'package:serv_oeste/shared/services/secure_storage_service.dart';
 import 'package:serv_oeste/features/auth/domain/auth_repository.dart';
-import 'package:serv_oeste/shared/bloc/base_entity_bloc.dart';
 import 'package:serv_oeste/features/auth/domain/entities/auth.dart';
+import 'package:serv_oeste/shared/bloc/base_entity_bloc.dart';
 import 'package:serv_oeste/shared/models/error/error_entity.dart';
+import 'package:serv_oeste/shared/services/secure_storage_service.dart';
+import 'package:serv_oeste/shared/services/specialty_cache.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -13,6 +14,7 @@ part 'auth_state.dart';
 class AuthBloc extends BaseEntityBloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
   final SecureStorageService _storage;
+  final SpecialtyCache _specialtyCache;
 
   @override
   AuthState loadingState() => AuthLoadingState();
@@ -20,7 +22,7 @@ class AuthBloc extends BaseEntityBloc<AuthEvent, AuthState> {
   @override
   AuthState errorState(ErrorEntity error) => AuthErrorState(error: error);
 
-  AuthBloc(this._authRepository, this._storage) : super(AuthInitialState()) {
+  AuthBloc(this._authRepository, this._storage, this._specialtyCache) : super(AuthInitialState()) {
     on<AuthLoginEvent>(_login);
     on<AuthLogoutEvent>(_logout);
     on<RestoreAuthStateEvent>(_restoreState);
@@ -48,24 +50,23 @@ class AuthBloc extends BaseEntityBloc<AuthEvent, AuthState> {
       emit: emit,
       request: () async {
         final String? accessToken = await _storage.getAccessToken();
-        final String? refreshToken = await _storage.getRefreshToken();
 
-        if (accessToken != null && refreshToken != null) {
-          return _authRepository.logout(
-            accessToken: accessToken,
-            refreshToken: refreshToken,
+        if (accessToken != null) {
+          return await _authRepository.logout(
+            accessToken: accessToken
           );
         }
-
-        return const Right(null);
+        return Right(null);
       },
       onSuccess: (_) async {
         await _storage.deleteTokens();
+        _specialtyCache.clear();
         emit(AuthLogoutSuccessState());
       },
       onError: (error) async {
         await _storage.deleteTokens();
-        emit(errorState(error));
+        _specialtyCache.clear();
+        emit(AuthLogoutSuccessState());
       },
     );
   }

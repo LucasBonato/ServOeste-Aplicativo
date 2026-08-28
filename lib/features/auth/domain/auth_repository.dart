@@ -7,5 +7,5 @@ abstract class AuthRepository {
 
   Future<Either<ErrorEntity, AuthResponse>> refreshToken();
 
-  Future<Either<ErrorEntity, void>> logout({required String accessToken, required String refreshToken});
+  Future<Either<ErrorEntity, void>> logout({required String accessToken});
 }

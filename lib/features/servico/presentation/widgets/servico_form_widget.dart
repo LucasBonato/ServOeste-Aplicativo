@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/core/constants/constants.dart';
+import 'package:provider/provider.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_form.dart';
 import 'package:serv_oeste/features/servico/domain/rules/service_field_rules.dart';
 import 'package:serv_oeste/shared/widgets/formFields/search_input_field.dart';
 import 'package:serv_oeste/features/tecnico/presentation/widgets/tecnico_search_field.dart';
 import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
+import 'package:serv_oeste/shared/services/specialty_cache.dart';
 import 'package:serv_oeste/shared/models/enums/error_code_key.dart';
 import 'package:serv_oeste/features/servico/domain/validators/servico_validator.dart';
 import 'package:serv_oeste/shared/widgets/screen/base_entity_form.dart';
@@ -315,6 +317,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
             widget.onSubmit();
           },
           buildFields: () {
+            final SpecialtyCache specialtyCache = context.read<SpecialtyCache>();
             return [
               DropdownSearchInputField(
                 hint: "Equipamento*",
@@ -323,7 +326,9 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                   ErrorCodeKey.equipamento.name,
                 ),
                 valueNotifier: widget.form.equipamento,
-                dropdownValues: Constants.equipamentos,
+                dropdownValues: specialtyCache.hasData
+                    ? specialtyCache.activeConhecimentosOrdered()
+                    : Constants.equipamentosFallback,
                 onChanged: widget.form.setEquipamento,
                 enabled: isFieldEnabled("equipamento"),
                 shouldExpand: widget.isUpdate,

@@ -7,6 +7,10 @@ class FlutterSecureStorageService implements SecureStorageService {
   static const _keyAccessToken = 'access_token';
   static const _keyRefreshToken = 'refresh_token';
 
+  static Future<String?> readPersistedAccessToken() async {
+    return const FlutterSecureStorage().read(key: _keyAccessToken);
+  }
+
   FlutterSecureStorageService(this._storage);
 
   @override

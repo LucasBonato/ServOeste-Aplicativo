@@ -1,5 +1,8 @@
 class ServerEndpoints {
-  static const String baseUrl = "http://localhost:8080/api/";
+  static const String baseUrl = String.fromEnvironment(
+    'API_URL',
+    defaultValue: "http://localhost:8080/api/",
+  );
 
   static const String authEndpoint = "auth";
   static const String loginEndpoint = "auth/login";
@@ -20,4 +23,6 @@ class ServerEndpoints {
   static const String servicoMaisClienteEndpoint = "servico/cliente";
 
   static const String enderecoEndpoint = "endereco";
+
+  static const String especialidadesEndpoint = "especialidades";
 }

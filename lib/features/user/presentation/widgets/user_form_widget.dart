@@ -61,7 +61,7 @@ class UserFormWidget extends StatelessWidget {
 
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(state.error.detail),
+                  content: Text(state.error.fullDetail),
                   backgroundColor: Colors.red,
                   duration: const Duration(seconds: 3),
                 ),

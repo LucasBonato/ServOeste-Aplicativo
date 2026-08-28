@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:serv_oeste/core/constants/constants.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_filter_form.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_filter.dart';
 import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
+import 'package:serv_oeste/shared/services/specialty_cache.dart';
 import 'package:serv_oeste/shared/utils/formatters/input_masks.dart';
 import 'package:serv_oeste/shared/widgets/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/shared/widgets/formFields/date_picker_form_field.dart';
@@ -36,6 +38,7 @@ class ServicoFilterFormWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final GlobalKey<FormState> formKey = this.formKey ?? GlobalKey<FormState>();
+    final SpecialtyCache specialtyCache = context.read<SpecialtyCache>();
 
     return BaseFormScreen(
       title: title,
@@ -80,7 +83,9 @@ class ServicoFilterFormWidget extends StatelessWidget {
             hint: "Equipamento...",
             onChanged: form.setEquipamento,
             valueNotifier: form.equipamento,
-            dropdownValues: Constants.equipamentos,
+            dropdownValues: specialtyCache.hasData
+                ? specialtyCache.activeConhecimentosOrdered()
+                : Constants.equipamentosFallback,
           ),
           DropdownInputField(
             hint: "Situação...",

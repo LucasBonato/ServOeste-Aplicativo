@@ -154,7 +154,7 @@ class _UserScreenTestState extends BaseListScreenState<UserResponse, UserState> 
                 } else if (state is UserErrorState) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(state.error.detail),
+                      content: Text(state.error.fullDetail),
                       backgroundColor: Colors.red,
                     ),
                   );

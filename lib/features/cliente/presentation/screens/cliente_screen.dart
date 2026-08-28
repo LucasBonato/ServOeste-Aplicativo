@@ -164,11 +164,12 @@ class _ClienteScreenState extends BaseListScreenState<Cliente, ClienteState> {
           _buildSearchInputs(),
           Expanded(
             child: BlocConsumer<ClienteBloc, ClienteState>(
-              listenWhen: (previous, current) =>
-                  current is ClienteErrorState ||
-                  (current is ClienteSearchSuccessState &&
+              listenWhen: (previous, current) => current is ClienteErrorState ||
+                  (
+                      current is ClienteSearchSuccessState &&
                       previous is ClienteSearchSuccessState &&
-                      current.filter != previous.filter),
+                      current.filter != previous.filter
+                  ),
               listener: (context, state) {
                 if (state is ClienteErrorState) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {

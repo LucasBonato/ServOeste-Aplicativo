@@ -1,11 +1,10 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:logger/logger.dart';
+import 'package:serv_oeste/core/observability/app_logger.dart';
 import 'package:serv_oeste/shared/services/secure_storage_service.dart';
 
 class DioInterceptor extends Interceptor {
-  final Logger _logger = Logger(printer: PrettyPrinter(printEmojis: false));
   final JsonEncoder jsonEncoder = const JsonEncoder.withIndent("  ");
 
   final SecureStorageService _secureStorageService;
@@ -27,18 +26,14 @@ class DioInterceptor extends Interceptor {
 
     _limparCookiesDuplicados(options);
 
-    String logMessage = "";
-    logMessage += "TimeStamp: ${DateTime.now()}\n";
-    logMessage += "FullUri: ${options.uri}\n";
-    logMessage += "BaseUri: ${options.baseUrl}\n";
-    logMessage += "Endpoint: ${options.path}\n";
-    logMessage += "Method: ${options.method}\n";
-    logMessage += "Headers: ${options.headers}\n";
-    if (options.data != null) {
-      logMessage += "Body: ${jsonEncoder.convert(options.data)}\n";
-    }
-
-    _logger.i(logMessage);
+    AppLogger.debug('Requisição HTTP', attributes: {
+      'http.request.method': options.method,
+      'url.full': options.uri.toString(),
+      'http.request.base_url': options.baseUrl,
+      'http.request.path': options.path,
+      'http.request.header': options.headers.toString(),
+      if (options.data != null) 'http.request.body': jsonEncoder.convert(options.data),
+    });
     handler.next(options);
   }
 
@@ -52,15 +47,13 @@ class DioInterceptor extends Interceptor {
       }
     }
 
-    String logMessage = "";
-    logMessage += "TimeStamp: ${DateTime.now()}\n";
-    logMessage += "StatusCode: ${response.statusCode}\n";
-    if (response.data != null) {
-      logMessage += "ResponseBody: ${jsonEncoder.convert(response.data)}\n";
-      logMessage += "RuntimeTypeBody: ${response.data.runtimeType}\n";
-    }
-
-    _logger.i(logMessage);
+    AppLogger.debug('Resposta HTTP', attributes: {
+      'http.response.status_code': response.statusCode ?? 0,
+      if (response.data != null)
+        'http.response.body': jsonEncoder.convert(response.data),
+      if (response.data != null)
+        'http.response.body_type': response.data.runtimeType.toString(),
+    });
     handler.next(response);
   }
 
@@ -77,20 +70,17 @@ class DioInterceptor extends Interceptor {
       final cookies = err.requestOptions.headers['cookie'];
       if (cookies is String &&
           _contarOcorrencias(cookies, 'refreshToken') > 1) {
-        _logger.e('Cookie header corrompido: $cookies');
+        AppLogger.error('Cookie header corrompido: $cookies');
       }
     }
 
-    String logMessage = "";
-    logMessage += "TimeStamp: ${DateTime.now()}\n";
-    logMessage += "ErrorType: ${err.type}\n";
-    logMessage += "ErrorMessage: ${err.message}\n";
-    logMessage += "Error: ${err.error}\n";
-    if (err.response != null && err.response!.data != null) {
-      logMessage += "ErrorBody: ${jsonEncoder.convert(err.response!.data)}\n";
-    }
-
-    _logger.e(logMessage);
+    AppLogger.error('Falha na requisição HTTP', attributes: {
+      'error.type': err.type.name,
+      'error.message': err.message ?? '',
+      'error.error': err.error?.toString() ?? '',
+      if (err.response?.data != null)
+        'http.response.body': jsonEncoder.convert(err.response!.data),
+    });
     handler.next(err);
   }
 
@@ -127,25 +117,18 @@ class DioInterceptor extends Interceptor {
       final exp = json['exp'] as int?;
       final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
-      _logger.d('''
-🎯 $contexto:
-   👤 Sub: ${json['sub']}
-   🎭 Role: ${json['role']}
-   📅 IAT: $iat (${_timestampParaData(iat)})
-   📅 EXP: $exp (${_timestampParaData(exp)})
-   ⏰ Agora: $now
-   ⏳ Expira em: ${exp != null ? exp - now : 'N/A'} segundos
-   ❌ Expirado? ${exp != null && exp < now}
-''');
+      AppLogger.debug('Token analisado', attributes: {
+        'auth.token_context': contexto,
+        'auth.user_id': json['sub']?.toString() ?? 'N/A',
+        'auth.role': json['role']?.toString() ?? 'N/A',
+        'auth.token_iat': ?iat,
+        'auth.token_exp': ?exp,
+        if (exp != null) 'auth.token_expires_in_seconds': exp - now,
+        if (exp != null) 'auth.token_expired': exp < now,
+      });
     } catch (e) {
-      _logger.w('Erro ao analisar token: $e');
+      AppLogger.warn('Erro ao analisar token: $e');
     }
-  }
-
-  String _timestampParaData(int? timestamp) {
-    if (timestamp == null) return 'N/A';
-    final date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
-    return '${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute}:${date.second}';
   }
 
   int _contarOcorrencias(String texto, String substring) {

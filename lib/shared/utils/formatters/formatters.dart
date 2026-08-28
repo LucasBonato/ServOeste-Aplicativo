@@ -1,5 +1,5 @@
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
+import 'package:serv_oeste/core/observability/app_logger.dart';
 import 'package:serv_oeste/shared/models/enums/service_status.dart';
 
 class Formatters {
@@ -166,7 +166,7 @@ class Formatters {
       dates.sort();
       return dates.first;
     } catch (e) {
-      Logger().e('Erro ao extrair data da descrição: $e');
+      AppLogger.error('Erro ao extrair data da descrição: $e');
       return null;
     }
   }
@@ -253,7 +253,7 @@ class Formatters {
 
       return buffer.toString().trim();
     } catch (e) {
-      Logger().e('Erro ao formatar descrição para PDF: $e');
+      AppLogger.error('Erro ao formatar descrição para PDF: $e');
       return history;
     }
   }

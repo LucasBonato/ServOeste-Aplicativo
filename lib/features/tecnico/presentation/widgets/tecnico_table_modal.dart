@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
+import 'package:serv_oeste/core/observability/app_logger.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:serv_oeste/shared/widgets/screen/loading.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
@@ -149,7 +149,7 @@ class TecnicoTableModalState extends State<TecnicoTableModal> {
 
           state.tecnicosDisponiveis?.sort((tecnico1, tecnico2) => (tecnico1.quantidadeTotalServicos! > tecnico2.quantidadeTotalServicos!) ? 0 : 1);
 
-          Logger().e(state.tecnicosDisponiveis);
+          AppLogger.error(state.tecnicosDisponiveis);
 
           _rows = state.tecnicosDisponiveis!.map((tecnico) {
             final DateFormat formatter = DateFormat('dd-MM-yyyy');
@@ -242,13 +242,13 @@ class TecnicoTableModalState extends State<TecnicoTableModal> {
     final String cellField = event.cell.column.field;
 
     if (cellField == 'tecnico') {
-      Logger().w('Aviso: A coluna "Técnicos" foi selecionada. Nenhuma ação necessária.');
+      AppLogger.warn('Aviso: A coluna "Técnicos" foi selecionada. Nenhuma ação necessária.');
       return;
     }
 
     final match = RegExp(r'^(\d{2}-\d{2}-\d{4})-([MT])$').firstMatch(cellField);
     if (match == null) {
-      Logger().e('Erro: Formato inválido no campo selecionado ($cellField)!');
+      AppLogger.error('Erro: Formato inválido no campo selecionado ($cellField)!');
       return;
     }
 

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:logger/logger.dart';
+import 'package:serv_oeste/core/observability/app_logger.dart';
 import 'package:serv_oeste/core/http/server_endpoints.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente_request.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_filter.dart';
@@ -27,7 +27,7 @@ class ServicoClient {
     } on DioException catch (e) {
       return Left(ErrorHandler.onRequestError(e));
     } catch (e) {
-      Logger().e('Erro inesperado: $e');
+      AppLogger.error('Erro inesperado: $e');
     }
     return Right(null);
   }
@@ -82,7 +82,7 @@ class ServicoClient {
     } on DioException catch (e) {
       return Left(ErrorHandler.onRequestError(e));
     } catch (e) {
-      Logger().e('Erro inesperado: $e');
+      AppLogger.error('Erro inesperado: $e');
     }
     return Right(PageContent.empty());
   }

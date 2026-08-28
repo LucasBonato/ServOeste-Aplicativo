@@ -43,8 +43,9 @@ The status values used by the UI are defined in `lib/core/constants/constants.da
 ```mermaid
 flowchart TD
     1[Aguardando agendamento] --> 2[Aguardando atendimento]
-    2 -->|Sem defeito| 3["Sem defeito (fim)"]
-    2 -->|Cancelado| 3.1["Cancelado (fim)"]
+    2 -->|Problema identificado| 3[Aguardando orçamento]
+    2 -->|Sem defeito| 3.1["Sem defeito (fim)"]
+    2 -->|Cancelado| 3.2["Cancelado (fim)"]
 
     3 --> 4[Aguardando aprovação do cliente]
 
@@ -52,13 +53,14 @@ flowchart TD
     4 -->|Compra| 5.2["Compra (fim)"]
     4 -->|Aprovado| 5.3[Orçamento aprovado]
 
-    5 --> 6[Aguardando cliente retirar]
+    5.3 --> 6[Aguardando cliente retirar]
+    6 -->|Não retira há 3 meses| 7.1[Não retira há 3 meses]
+    6 -->|Garantia| 7.2[Garantia]
 
-    6 -->|Resolvido| 7["Resolvido (fim)"]
-    6 -->|Não retira há 3 meses| 7.1["Não retira há 3 meses (fim)"]
-
-    7 -->|Cortesia| 8.1[Cortesia]
-    7 -->|Garantia| 8.2[Garantia]
+    7.2 -->|Cortesia| 8[Cortesia]
+    7.2 -->|Resolvido| 9["Resolvido (fim)"]
+    8 --> 9["Resolvido (fim)"]
+    7.1 --> 9["Resolvido (fim)"]
 ```
 
 ## Tech stack
@@ -77,7 +79,7 @@ flowchart TD
 | Cookies                   | `dio_cookie_manager` + `cookie_jar`         | `lib/core/http/dio_service.dart`                                       |
 | PDF                       | `pdf` + `printing`                          | `lib/shared/pdfs/*`                                                    |
 | Validation                | `lucid_validation` (and feature validators) | e.g. `features/servico/domain/validators/servico_validator.dart` usage |
-| Logging                   | `logger`                                    | `lib/core/http/dio_interceptor.dart`, screens                          |
+| Logging                   | `dartastic_opentelemetry` (OTLP/HTTP)           | `lib/core/observability/` (AppLogger, OTel SDK)             |
 
 ### App entrypoint and wiring
 
@@ -201,7 +203,7 @@ There are two form patterns:
 The backend base URL and endpoint paths are defined in `lib/core/http/server_endpoints.dart`.
 
 | Item             | Value                                                                       |
-| ---------------- | --------------------------------------------------------------------------- |
+|------------------|-----------------------------------------------------------------------------|
 | Base URL         | `http://localhost:8080/api/`                                                |
 | Auth endpoints   | `auth/login`, `auth/refresh`, `auth/logout`                                 |
 | Domain endpoints | `user`, `tecnico`, `cliente`, `servico`, `endereco` (plus `find` endpoints) |
@@ -218,8 +220,8 @@ The backend base URL and endpoint paths are defined in `lib/core/http/server_end
 ### Interceptors
 
 | Interceptor                 | Added by                                        | Purpose                                                                                   |
-| --------------------------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `CookieManager`             | `DioService` constructor                        | attaches cookie jar to all requests                                                       |
+|-----------------------------|-------------------------------------------------|-------------------------------------------------------------------------------------------|
+| `OtelInterceptor`         | `DioService` constructor                        | OTel client span per request, `traceparent`/`baggage` injection, HTTP metrics |
 | `DioInterceptor` (dev only) | `DioService` constructor when `Constants.isDev` | request/response logging and cookie header cleanup                                        |
 | `AuthInterceptor`           | `DioService.addAuthInterceptors`                | injects `Authorization: Bearer <accessToken>` if available                                |
 | `TokenRefreshInterceptor`   | `DioService.addAuthInterceptors`                | refreshes tokens on `401/403`, retries failed requests, and redirects to login on failure |
@@ -304,7 +306,7 @@ The app uses named routes with a single router entrypoint:
 ### Routes map
 
 | Route constant         | Path             | Screen/widget             | Arguments                                                 |
-| ---------------------- | ---------------- | ------------------------- | --------------------------------------------------------- |
+|------------------------|------------------|---------------------------|-----------------------------------------------------------|
 | `Routes.home`          | `/home`          | `BaseLayout`              | none                                                      |
 | `Routes.login`         | `/login`         | `LoginScreen`             | none                                                      |
 | `Routes.tecnico`       | `/tecnico`       | `TecnicoScreen`           | none                                                      |
@@ -352,7 +354,7 @@ flowchart TD
 
 ### Prerequisites
 
-This client expects a backend API reachable at `ServerEndpoints.baseUrl` (default: `http://localhost:8080/api/`). The value is hardcoded in `lib/core/http/server_endpoints.dart`.
+This client expects a backend API reachable at `ServerEndpoints.baseUrl` (default: `http://localhost:8080/api/`, configurable via the `API_URL` variable in `.env`).
 
 ### Install dependencies
 
@@ -363,16 +365,48 @@ flutter pub get
 ### Run
 
 ```bash
-flutter run
+flutter run --dart-define-from-file=.env
 ```
 
 ### Configuration
 
-No environment-variable based configuration is implemented in this repository (no dotenv usage). Configuration points present in code:
+Build-time configuration lives in a .env file at the project root (copy .env.example to .env and adjust the values). The file is read by Flutter's native --dart-define-from-file flag â€” values are compiled into the binary, so it works on all platforms (mobile, desktop) and needs no runtime file handling.
 
-| Key                | Location                              | Notes                                       |
-| ------------------ | ------------------------------------- | ------------------------------------------- |
-| API base URL       | `lib/core/http/server_endpoints.dart` | `ServerEndpoints.baseUrl`                   |
-| Dev logging toggle | `lib/core/constants/constants.dart`   | `Constants.isDev` controls `DioInterceptor` |
+| Key                       | Default                          | Notes |
+|---------------------------|----------------------------------|-------|
+| API_URL                 | http://localhost:8080/api/     | Backend base URL (ServerEndpoints.baseUrl) |
+| OTEL_EXPORTER_OTLP_ENDPOINT | http://localhost:4318       | OTLP/HTTP endpoint of the traces/logs/metrics collector |
+| OTEL_LOG_LEVEL          | '' (all)                       | Minimum severity for exported log records (	race/debug/info/warn/error/atal/
+one) |
+| OTEL_TRACES_SAMPLER     | lways_on                      | lways_on/lways_off/	raceidratio/parentbased/parentbased_traceidratio |
+| OTEL_TRACES_SAMPLER_RATIO | 1.0                          | Sampling ratio for the ratio samplers (0.0-1.0) |
+| OTEL_LOG_PRINT          | 	rue                           | Capture print() calls as OTel logs |
+| Dev logging toggle        | lib/core/constants/constants.dart | Constants.isDev controls DioInterceptor (not env-driven) |
+
+Run:
+
+`ash
+flutter run --dart-define-from-file=.env
+`
+
+Build (values are compiled into the executable):
+
+`ash
+flutter build windows --dart-define-from-file=.env   # desktop
+flutter build apk --dart-define-from-file=.env        # android
+`
+
+Individual --dart-define=KEY=value flags still win over the file for that key. Telemetry (traces, logs, metrics) is exported via OTLP/HTTP and visible in the Aspire dashboard (http://localhost:18888).
+
+### Trace correlation with the backend
+
+The app propagates trace context to the backend (`servOeste` API) on every HTTP request via `lib/core/http/otel_interceptor.dart`:
+
+- W3C `traceparent`/`tracestate` are injected by `Tracing.injectPropagation` (`lib/core/observability/tracing.dart`), so backend spans join the same trace as the client span.
+- `baggage` carries `user.id=<username>` (JWT `sub` claim), which the backend maps to its `enduser.id` span attribute and MDC `userId` log field.
+- Every client HTTP span carries `enduser.id`; all manual spans created through `Tracing.trace` (auth, report generation, etc.) also get `enduser.id` automatically.
+- The user id is derived from the access token at login, restored at app startup when a token is persisted, and re-derived after token refresh.
+- On errors, the backend returns a `traceId` in the ProblemDetail body and a `trace-id` response header; the app surfaces it in error messages (`ErrorEntity.fullDetail`, e.g. "Trace ID: ...") for support correlation.
 
 ---
+

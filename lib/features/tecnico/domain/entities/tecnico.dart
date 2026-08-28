@@ -47,14 +47,17 @@ class Tecnico {
 class Especialidade {
   int id;
   String conhecimento;
+  bool ativo;
 
   Especialidade({
     required this.id,
     required this.conhecimento,
+    this.ativo = true,
   });
 
   factory Especialidade.fromJson(Map<String, dynamic> json) => Especialidade(
         id: json["id"],
         conhecimento: json["conhecimento"],
+        ativo: json["ativo"] ?? true,
       );
 }

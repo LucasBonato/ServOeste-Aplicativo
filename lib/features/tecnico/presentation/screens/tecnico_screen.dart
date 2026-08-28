@@ -1,7 +1,7 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
+import 'package:serv_oeste/core/observability/app_logger.dart';
 import 'package:serv_oeste/core/constants/constants.dart';
 import 'package:serv_oeste/core/routing/args/tecnico_update_args.dart';
 import 'package:serv_oeste/core/routing/routes.dart';
@@ -186,7 +186,7 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse, TecnicoSt
               listener: (context, state) {
                 if (state is TecnicoErrorState) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    Logger().e(state.error.detail);
+                    AppLogger.error(state.error.detail);
                   });
                 }
                 if (state is TecnicoSearchSuccessState) {
