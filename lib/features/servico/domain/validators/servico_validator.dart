@@ -8,11 +8,6 @@ class ServicoValidator extends LucidValidator<ServicoForm>
     with BackendErrorsValidator {
   final ServicoForm servicoForm;
   final bool isUpdate;
-  final List<String> situacoesOpcionais = [
-    "Orçamento aprovado",
-    "Aguardando cliente retirar",
-    "Não retira há 3 meses",
-  ];
 
   bool Function(String fieldName)? isFieldEnabled;
 
@@ -32,7 +27,7 @@ class ServicoValidator extends LucidValidator<ServicoForm>
         .when((servico) => _shouldValidateField(ErrorCodeKey.equipamento.name))
         .must(
           (equipamento) => equipamento != "",
-          "Selecione um equipamento!",
+          "Selecione um equipamento",
           ErrorCodeKey.equipamento.name,
         )
         .customValidExternalErrors(
@@ -53,7 +48,7 @@ class ServicoValidator extends LucidValidator<ServicoForm>
         .when((servico) => _shouldValidateField(ErrorCodeKey.filial.name))
         .must(
           (filial) => filial != "" && filial != "Selecione uma filial*",
-          "Selecione uma filial!",
+          "Selecione uma filial",
           ErrorCodeKey.filial.name,
         )
         .customValidExternalErrors(externalErrors, ErrorCodeKey.filial.name);
@@ -70,7 +65,7 @@ class ServicoValidator extends LucidValidator<ServicoForm>
         .customValidNotSunday(code: ErrorCodeKey.dataAtendimentoPrevisto.name)
         .must(
           (dataAtendimentoPrevisto) => dataAtendimentoPrevisto != "",
-          "Data de atendimento previsto é obrigatória",
+          "A Data de atendimento previsto é obrigatória",
           ErrorCodeKey.dataAtendimentoPrevisto.name,
         )
         .customValidExternalErrors(
@@ -85,19 +80,19 @@ class ServicoValidator extends LucidValidator<ServicoForm>
         .when(
           (servico) =>
               _shouldValidateField(ErrorCodeKey.descricao.name) &&
-              isUpdate &&
-              ![
-                'Aguardando aprovação do cliente',
-                'Compra',
-                'Orçamento aprovado',
-                'Aguardando cliente retirar',
-                'Não retira há 3 meses',
-                'Garantia',
-              ].contains(servico.situacao.value),
+              (!isUpdate ||
+                  ![
+                    'Compra',
+                    'Orçamento aprovado',
+                    'Aguardando cliente retirar',
+                    'Resolvido',
+                    'Não retira há 3 meses',
+                    'Garantia',
+                  ].contains(servico.situacao.value)),
         )
         .must(
           (descricao) => descricao != "",
-          "O campo 'descrição' é obrigatório!",
+          "A Descrição é obrigatória",
           ErrorCodeKey.descricao.name,
         )
         .minLength(
@@ -126,7 +121,7 @@ class ServicoValidator extends LucidValidator<ServicoForm>
         )
         .must(
           (valor) => valor != "",
-          "Valor do serviço é obrigatório",
+          "O Valor do serviço é obrigatório",
           ErrorCodeKey.valor.name,
         )
         .customValidExternalErrors(externalErrors, ErrorCodeKey.valor.name);
@@ -148,7 +143,7 @@ class ServicoValidator extends LucidValidator<ServicoForm>
         )
         .must(
           (valorPecas) => valorPecas != "",
-          "Valor das peças é obrigatório",
+          "O Valor das peças é obrigatório",
           ErrorCodeKey.valorPecas.name,
         )
         .customValidExternalErrors(
@@ -172,7 +167,7 @@ class ServicoValidator extends LucidValidator<ServicoForm>
         )
         .must(
           (dataAtendimentoEfetivo) => dataAtendimentoEfetivo != "",
-          "Data efetiva é obrigatória",
+          "A Data efetiva é obrigatória",
           ErrorCodeKey.dataAtendimentoEfetivo.name,
         )
         .must(
@@ -189,7 +184,7 @@ class ServicoValidator extends LucidValidator<ServicoForm>
 
             return !dataEfetiva.isAfter(hoje);
           },
-          "Data efetiva não pode ser posterior à data atual",
+          "A Data efetiva não pode ser posterior à data atual",
           ErrorCodeKey.dataAtendimentoEfetivo.name,
         )
         .must(
@@ -206,7 +201,7 @@ class ServicoValidator extends LucidValidator<ServicoForm>
 
             return !dataEfetiva.isBefore(dataAbertura);
           },
-          "Data efetiva não pode ser anterior à data de abertura",
+          "A Data efetiva não pode ser anterior à data de abertura",
           ErrorCodeKey.dataAtendimentoEfetivo.name,
         )
         .customValidExternalErrors(
@@ -237,7 +232,7 @@ class ServicoValidator extends LucidValidator<ServicoForm>
         )
         .must(
           (dataInicioGarantia) => dataInicioGarantia != "",
-          "Data início da garantia é obrigatória",
+          "A Data início da garantia é obrigatória",
           ErrorCodeKey.dataInicioGarantia.name,
         )
         .customValidExternalErrors(
@@ -268,7 +263,7 @@ class ServicoValidator extends LucidValidator<ServicoForm>
         )
         .must(
           (dataFinalGarantia) => dataFinalGarantia != "",
-          "Data final da garantia é obrigatória",
+          "A Data final da garantia é obrigatória",
           ErrorCodeKey.dataFinalGarantia.name,
         )
         .customValidExternalErrors(
@@ -283,7 +278,6 @@ class ServicoValidator extends LucidValidator<ServicoForm>
         .when(
           (servico) =>
               _shouldValidateField(ErrorCodeKey.formaPagamento.name) &&
-              !situacoesOpcionais.contains(servico.situacao.value) &&
               isUpdate &&
               ![
                 'Aguardando agendamento',
@@ -297,7 +291,7 @@ class ServicoValidator extends LucidValidator<ServicoForm>
         )
         .must(
           (formaPagamento) => formaPagamento != "",
-          "Forma de pagamento é obrigatória",
+          "A Forma de pagamento é obrigatória",
           ErrorCodeKey.formaPagamento.name,
         )
         .customValidExternalErrors(
@@ -313,7 +307,7 @@ class ServicoValidator extends LucidValidator<ServicoForm>
         )
         .must(
           (horario) => horario != "",
-          "Selecione um horário!",
+          "Selecione um horário",
           ErrorCodeKey.horario.name,
         )
         .customValidExternalErrors(externalErrors, ErrorCodeKey.horario.name);
@@ -352,7 +346,7 @@ class ServicoValidator extends LucidValidator<ServicoForm>
         )
         .must(
           (dataFechamento) => dataFechamento != "",
-          "Data de encerramento é obrigatória",
+          "A Data de encerramento é obrigatória",
           ErrorCodeKey.dataFechamento.name,
         )
         .customValidExternalErrors(

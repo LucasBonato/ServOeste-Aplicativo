@@ -8,7 +8,8 @@ import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart'
 
 class TecnicoTableModal extends StatefulWidget {
   final int especialidadeId;
-  final void Function(String nome, String data, String periodo, int id) setValuesAvailabilityTechnicianTable;
+  final void Function(String nome, String data, String periodo, int id)
+  setValuesAvailabilityTechnicianTable;
 
   const TecnicoTableModal({
     super.key,
@@ -32,7 +33,9 @@ class TecnicoTableModalState extends State<TecnicoTableModal> {
     super.initState();
     _tecnicoBloc = context.read<TecnicoBloc>();
 
-    _tecnicoBloc.add(TecnicoAvailabilitySearchEvent(idEspecialidade: widget.especialidadeId));
+    _tecnicoBloc.add(
+      TecnicoAvailabilitySearchEvent(idEspecialidade: widget.especialidadeId),
+    );
 
     dateFields = _getNextValidDates().map((date) {
       final day = date.day.toString().padLeft(2, '0');
@@ -96,7 +99,7 @@ class TecnicoTableModalState extends State<TecnicoTableModal> {
       final DateTime potentialDate = currentDate.add(Duration(days: i));
       if (potentialDate.weekday != DateTime.sunday) {
         dates.add(potentialDate);
-        if (dates.length == 3) break;
+        if (dates.length == 5) break;
       }
     }
 
@@ -127,7 +130,8 @@ class TecnicoTableModalState extends State<TecnicoTableModal> {
       bloc: _tecnicoBloc,
       builder: (context, state) {
         if (state is TecnicoSearchAvailabilitySuccessState) {
-          if (state.tecnicosDisponiveis == null || state.tecnicosDisponiveis!.isEmpty) {
+          if (state.tecnicosDisponiveis == null ||
+              state.tecnicosDisponiveis!.isEmpty) {
             return Dialog(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -147,7 +151,13 @@ class TecnicoTableModalState extends State<TecnicoTableModal> {
             );
           }
 
-          state.tecnicosDisponiveis?.sort((tecnico1, tecnico2) => (tecnico1.quantidadeTotalServicos! > tecnico2.quantidadeTotalServicos!) ? 0 : 1);
+          state.tecnicosDisponiveis?.sort(
+            (tecnico1, tecnico2) =>
+                (tecnico1.quantidadeTotalServicos! >
+                    tecnico2.quantidadeTotalServicos!)
+                ? 0
+                : 1,
+          );
 
           AppLogger.error(state.tecnicosDisponiveis);
 
@@ -158,15 +168,20 @@ class TecnicoTableModalState extends State<TecnicoTableModal> {
               for (String date in dateFields) ...{
                 '$date-M': PlutoCell(value: '0'),
                 '$date-T': PlutoCell(value: '0'),
-              }
+              },
             };
 
             if (tecnico.disponibilidades != null) {
               for (var disponibilidade in tecnico.disponibilidades!) {
-                final String formattedDate = formatter.format(disponibilidade.data!);
-                final String key = '$formattedDate-${disponibilidade.periodo == "MANHA" ? "M" : "T"}';
+                final String formattedDate = formatter.format(
+                  disponibilidade.data!,
+                );
+                final String key =
+                    '$formattedDate-${disponibilidade.periodo == "MANHA" ? "M" : "T"}';
                 if (dateFieldsMap.containsKey(key)) {
-                  dateFieldsMap[key] = PlutoCell(value: disponibilidade.quantidadeServicos.toString());
+                  dateFieldsMap[key] = PlutoCell(
+                    value: disponibilidade.quantidadeServicos.toString(),
+                  );
                 }
               }
             }
@@ -193,7 +208,10 @@ class TecnicoTableModalState extends State<TecnicoTableModal> {
                   Expanded(
                     child: Text(
                       'Disponibilidade dos Técnicos',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -242,13 +260,17 @@ class TecnicoTableModalState extends State<TecnicoTableModal> {
     final String cellField = event.cell.column.field;
 
     if (cellField == 'tecnico') {
-      AppLogger.warn('Aviso: A coluna "Técnicos" foi selecionada. Nenhuma ação necessária.');
+      AppLogger.warn(
+        'Aviso: A coluna "Técnicos" foi selecionada. Nenhuma ação necessária.',
+      );
       return;
     }
 
     final match = RegExp(r'^(\d{2}-\d{2}-\d{4})-([MT])$').firstMatch(cellField);
     if (match == null) {
-      AppLogger.error('Erro: Formato inválido no campo selecionado ($cellField)!');
+      AppLogger.error(
+        'Erro: Formato inválido no campo selecionado ($cellField)!',
+      );
       return;
     }
 
@@ -256,7 +278,12 @@ class TecnicoTableModalState extends State<TecnicoTableModal> {
     final horarioSelecionado = match.group(2);
     final periodo = horarioSelecionado == 'M' ? 'Manhã' : 'Tarde';
 
-    widget.setValuesAvailabilityTechnicianTable(tecnicoNome!, dataSelecionada!, periodo, tecnicoId!);
+    widget.setValuesAvailabilityTechnicianTable(
+      tecnicoNome!,
+      dataSelecionada!,
+      periodo,
+      tecnicoId!,
+    );
 
     Navigator.pop(context);
   }

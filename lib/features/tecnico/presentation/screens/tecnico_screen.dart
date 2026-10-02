@@ -9,6 +9,7 @@ import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_filter.dart'
 import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_response.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
 import 'package:serv_oeste/features/tecnico/presentation/widgets/tecnico_card.dart';
+import 'package:serv_oeste/shared/utils/extensions/string_extensions.dart';
 import 'package:serv_oeste/shared/widgets/formFields/search_input_field.dart';
 import 'package:serv_oeste/shared/widgets/layout/fab_add.dart';
 import 'package:serv_oeste/shared/widgets/layout/fab_remove.dart';
@@ -20,10 +21,12 @@ class TecnicoScreen extends BaseListScreen<TecnicoResponse> {
   const TecnicoScreen({super.key});
 
   @override
-  BaseListScreenState<TecnicoResponse, TecnicoState> createState() => _TecnicoScreenState();
+  BaseListScreenState<TecnicoResponse, TecnicoState> createState() =>
+      _TecnicoScreenState();
 }
 
-class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse, TecnicoState> {
+class _TecnicoScreenState
+    extends BaseListScreenState<TecnicoResponse, TecnicoState> {
   late final TecnicoBloc _tecnicoBloc;
   late TextEditingController _idController, _nomeController;
   late SingleSelectController<String> _situacaoController;
@@ -33,7 +36,11 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse, TecnicoSt
     return ResponsiveSearchInputs(
       onChanged: onSearchFieldChanged,
       fields: [
-        TextInputField(hint: "Procure por Técnicos...", controller: _nomeController, keyboardType: TextInputType.text),
+        TextInputField(
+          hint: "Procure por Técnicos...",
+          controller: _nomeController,
+          keyboardType: TextInputType.text,
+        ),
         TextInputField(
           hint: "ID...",
           controller: _idController,
@@ -64,19 +71,18 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse, TecnicoSt
       totalPages: stateTecnico.totalPages,
       currentPage: stateTecnico.currentPage,
       onPageChanged: (page) {
-        _tecnicoBloc.add(TecnicoSearchEvent(
-          filter: stateTecnico.filter,
-          page: page - 1,
-        ));
+        _tecnicoBloc.add(
+          TecnicoSearchEvent(filter: stateTecnico.filter, page: page - 1),
+        );
       },
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: MediaQuery.of(context).size.width > 1300
             ? 4
             : MediaQuery.of(context).size.width > 900
-              ? 3
-              : MediaQuery.of(context).size.width > 450
-                ? 2
-                : 1,
+            ? 3
+            : MediaQuery.of(context).size.width > 450
+            ? 2
+            : 1,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
         childAspectRatio: 2.1,
@@ -95,7 +101,8 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse, TecnicoSt
   Widget buildDefaultFloatingActionButton() {
     return FloatingActionButtonAdd(
       route: Routes.tecnicoCreate,
-      event: () => _tecnicoBloc.add(TecnicoSearchEvent(filter: const TecnicoFilter())),
+      event: () =>
+          _tecnicoBloc.add(TecnicoSearchEvent(filter: const TecnicoFilter())),
       tooltip: "Adicionar um Técnico",
     );
   }
@@ -110,9 +117,18 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse, TecnicoSt
   }
 
   @override
-  Widget buildItemCard(TecnicoResponse tecnico, bool isSelected, bool isSelectMode, bool isSkeleton) {
+  Widget buildItemCard(
+    TecnicoResponse tecnico,
+    bool isSelected,
+    bool isSelectMode,
+    bool isSkeleton,
+  ) {
     return TecnicoCard(
-      onDoubleTap: () => onNavigateToUpdateScreen(TecnicoUpdateArgs(id: tecnico.id!), () => _tecnicoBloc.add(TecnicoSearchEvent(filter: const TecnicoFilter()))),
+      onDoubleTap: () => onNavigateToUpdateScreen(
+        TecnicoUpdateArgs(id: tecnico.id!),
+        () =>
+            _tecnicoBloc.add(TecnicoSearchEvent(filter: const TecnicoFilter())),
+      ),
       onLongPress: () => onSelectItemList(tecnico.id!),
       onTap: () {
         if (isSelectMode) {
@@ -124,7 +140,7 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse, TecnicoSt
       sobrenome: tecnico.sobrenome!,
       telefone: tecnico.telefoneFixo,
       celular: tecnico.telefoneCelular,
-      status: tecnico.situacao!,
+      status: tecnico.situacao!.convertSituation(),
       isSelected: isSelected,
       isSkeleton: isSkeleton,
     );
@@ -151,7 +167,9 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse, TecnicoSt
     _tecnicoBloc.add(TecnicoDisableListEvent(selectedList: selectedIds));
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Técnico desativado com sucesso! (Caso ele não esteja desativado, recarregue a página)'),
+        content: Text(
+          'Técnico desativado com sucesso! (Caso ele não esteja desativado, recarregue a página)',
+        ),
         backgroundColor: Colors.green,
       ),
     );
@@ -163,8 +181,12 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse, TecnicoSt
     _tecnicoBloc = context.read<TecnicoBloc>();
     _idController = TextEditingController();
     _nomeController = TextEditingController();
-    _situacaoController = SingleSelectController<String>(Constants.situationTecnicoList.first);
-    _situacaoNotifier = ValueNotifier<String>(Constants.situationTecnicoList.first);
+    _situacaoController = SingleSelectController<String>(
+      Constants.situationTecnicoList.first,
+    );
+    _situacaoNotifier = ValueNotifier<String>(
+      Constants.situationTecnicoList.first,
+    );
   }
 
   @override
@@ -177,12 +199,11 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse, TecnicoSt
           _buildSearchInputs(),
           Expanded(
             child: BlocConsumer<TecnicoBloc, TecnicoState>(
-              listenWhen: (previous, current) => current is TecnicoErrorState ||
-                  (
-                      current is TecnicoSearchSuccessState &&
+              listenWhen: (previous, current) =>
+                  current is TecnicoErrorState ||
+                  (current is TecnicoSearchSuccessState &&
                       previous is TecnicoSearchSuccessState &&
-                      current.filter != previous.filter
-                  ),
+                      current.filter != previous.filter),
               listener: (context, state) {
                 if (state is TecnicoErrorState) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -192,13 +213,19 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse, TecnicoSt
                 if (state is TecnicoSearchSuccessState) {
                   final TecnicoFilter filter = state.filter;
 
-                  _idController.text = filter.id?.toString()?? "";
-                  _nomeController.text = filter.nome?? "";
-                  String situacao = (filter.situacao != null) ? filter.situacao![0].toUpperCase() + filter.situacao!.substring(1) : "";
-                  if (situacao != "" && Constants.situationTecnicoList.contains(situacao)) {
+                  _idController.text = filter.id?.toString() ?? "";
+                  _nomeController.text = filter.nome ?? "";
+                  String situacao = (filter.situacao != null)
+                      ? filter.situacao![0].toUpperCase() +
+                            filter.situacao!.substring(1)
+                      : "";
+                  if (situacao != "" &&
+                      Constants.situationTecnicoList.contains(situacao)) {
                     setState(() {
                       _situacaoNotifier.value = situacao;
-                      _situacaoController = SingleSelectController<String>(situacao);
+                      _situacaoController = SingleSelectController<String>(
+                        situacao,
+                      );
                     });
                   }
                 }
@@ -206,12 +233,17 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse, TecnicoSt
               builder: (context, stateTecnico) {
                 return buildWithStateCache(
                   state: stateTecnico,
-                  isLoading: (state) => state is TecnicoInitialState || state is TecnicoLoadingState,
+                  isLoading: (state) =>
+                      state is TecnicoInitialState ||
+                      state is TecnicoLoadingState,
                   isSuccess: (state) => state is TecnicoSearchSuccessState,
                   buildSkeleton: () => Skeletonizer(
                     enableSwitchAnimation: true,
                     child: buildGridOfCards(
-                      items: List.generate(16, (_) => TecnicoResponse()..applySkeletonData()),
+                      items: List.generate(
+                        16,
+                        (_) => TecnicoResponse()..applySkeletonData(),
+                      ),
                       aspectRatio: 2.1,
                       totalPages: 1,
                       currentPage: 0,
@@ -223,7 +255,9 @@ class _TecnicoScreenState extends BaseListScreenState<TecnicoResponse, TecnicoSt
                       verticalPadding: 10,
                     ),
                   ),
-                  buildSuccess: () => _buildSuccessGrid(stateTecnico as TecnicoSearchSuccessState),
+                  buildSuccess: () => _buildSuccessGrid(
+                    stateTecnico as TecnicoSearchSuccessState,
+                  ),
                 );
               },
             ),

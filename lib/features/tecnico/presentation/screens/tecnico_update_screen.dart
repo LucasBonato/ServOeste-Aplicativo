@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/core/constants/constants.dart';
 
 import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_filter.dart';
 import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_form.dart';
@@ -12,10 +13,7 @@ import 'package:serv_oeste/shared/utils/formatters/formatters.dart';
 class TecnicoUpdateScreen extends StatefulWidget {
   final int id;
 
-  const TecnicoUpdateScreen({
-    super.key,
-    required this.id,
-  });
+  const TecnicoUpdateScreen({super.key, required this.id});
 
   @override
   State<TecnicoUpdateScreen> createState() => _TecnicoUpdateScreenState();
@@ -23,6 +21,7 @@ class TecnicoUpdateScreen extends StatefulWidget {
 
 class _TecnicoUpdateScreenState extends State<TecnicoUpdateScreen> {
   late final TecnicoBloc bloc;
+  late final ValueNotifier<String> situacaoNotifier;
   final TecnicoForm form = TecnicoForm();
   final TextEditingController nomeController = TextEditingController();
   final Map<String, String> situationMap = {
@@ -36,9 +35,12 @@ class _TecnicoUpdateScreenState extends State<TecnicoUpdateScreen> {
 
   void _applyTecnico(Tecnico tecnico) {
     final SpecialtyCache cache = context.read<SpecialtyCache>();
-    final Map<String, int> ids = Map<String, int>.from(cache.activeIdByConhecimento);
+    final Map<String, int> ids = Map<String, int>.from(
+      cache.activeIdByConhecimento,
+    );
     final Map<String, bool> linked = <String, bool>{
-      for (final String label in cache.activeConhecimentosOrderedWithOutros()) label: false,
+      for (final String label in cache.activeConhecimentosOrderedWithOutros())
+        label: false,
     };
 
     form.setConhecimentos([]);
@@ -51,8 +53,11 @@ class _TecnicoUpdateScreenState extends State<TecnicoUpdateScreen> {
       form.setTelefoneFixo("");
     }
 
-    if (tecnico.telefoneCelular != null && tecnico.telefoneCelular!.isNotEmpty) {
-      form.setTelefoneCelular(Formatters.applyCellPhoneMask(tecnico.telefoneCelular!));
+    if (tecnico.telefoneCelular != null &&
+        tecnico.telefoneCelular!.isNotEmpty) {
+      form.setTelefoneCelular(
+        Formatters.applyCellPhoneMask(tecnico.telefoneCelular!),
+      );
     } else {
       form.setTelefoneCelular("");
     }
@@ -60,9 +65,11 @@ class _TecnicoUpdateScreenState extends State<TecnicoUpdateScreen> {
     nomeController.text = form.nome.value;
 
     final String tecnicoSituacao = tecnico.situacao ?? '';
-    final String mappedSituacao = situationMap[tecnicoSituacao] ?? 'Situação...';
+    final String mappedSituacao =
+        situationMap[tecnicoSituacao] ?? 'Situação...';
 
     form.setSituacao(mappedSituacao);
+    situacaoNotifier.value = mappedSituacao;
 
     if (tecnico.especialidades != null) {
       for (Especialidade especialidade in tecnico.especialidades!) {
@@ -91,6 +98,9 @@ class _TecnicoUpdateScreenState extends State<TecnicoUpdateScreen> {
   @override
   void initState() {
     super.initState();
+    situacaoNotifier = ValueNotifier<String>(
+      Constants.situationTecnicoList.first,
+    );
     bloc = context.read<TecnicoBloc>();
     bloc.add(TecnicoSearchOneEvent(id: widget.id));
     WidgetsBinding.instance.addPostFrameCallback((_) => _ensureCatalog());
@@ -99,7 +109,9 @@ class _TecnicoUpdateScreenState extends State<TecnicoUpdateScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<TecnicoBloc, TecnicoState>(
-      listenWhen: (previous, current) => current is TecnicoUpdateSuccessState || current is TecnicoSearchOneSuccessState,
+      listenWhen: (previous, current) =>
+          current is TecnicoUpdateSuccessState ||
+          current is TecnicoSearchOneSuccessState,
       listener: (context, state) {
         if (state is TecnicoUpdateSuccessState) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -114,7 +126,9 @@ class _TecnicoUpdateScreenState extends State<TecnicoUpdateScreen> {
       },
       child: BlocBuilder<TecnicoBloc, TecnicoState>(
         bloc: bloc,
-        buildWhen: (previous, current) => current is TecnicoSearchOneSuccessState || current is TecnicoSearchOneLoadingState,
+        buildWhen: (previous, current) =>
+            current is TecnicoSearchOneSuccessState ||
+            current is TecnicoSearchOneLoadingState,
         builder: (context, state) {
           return TecnicoFormWidget(
             isSkeleton: state is TecnicoSearchOneLoadingState,
@@ -123,6 +137,7 @@ class _TecnicoUpdateScreenState extends State<TecnicoUpdateScreen> {
             bloc: bloc,
             tecnicoForm: form,
             nomeController: nomeController,
+            situacaoNotifier: situacaoNotifier,
             isUpdate: true,
             successMessage: "Técnico atualizado com sucesso! (Caso ele não esteja atualizado, recarregue a página)",
             checkersMap: checkersMap,
@@ -136,7 +151,12 @@ class _TecnicoUpdateScreenState extends State<TecnicoUpdateScreen> {
 
               form.setNome(nome);
 
-              bloc.add(TecnicoUpdateEvent(tecnico: Tecnico.fromForm(form), sobrenome: sobrenome));
+              bloc.add(
+                TecnicoUpdateEvent(
+                  tecnico: Tecnico.fromForm(form),
+                  sobrenome: sobrenome,
+                ),
+              );
 
               form.setNome("$nome $sobrenome");
 
@@ -148,5 +168,12 @@ class _TecnicoUpdateScreenState extends State<TecnicoUpdateScreen> {
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    situacaoNotifier.dispose();
+    nomeController.dispose();
+    super.dispose();
   }
 }

@@ -24,7 +24,8 @@ class CustomDropdownFormField extends StatefulWidget {
   });
 
   @override
-  State<CustomDropdownFormField> createState() => _CustomDropdownFormFieldState();
+  State<CustomDropdownFormField> createState() =>
+      _CustomDropdownFormFieldState();
 }
 
 class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
@@ -47,7 +48,8 @@ class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
 
   void _synchronizeControllerWithValueNotifier() {
     final String notifierValue = widget.valueNotifier.value;
-    String? targetControllerValue = widget.dropdownValues.contains(notifierValue) ? notifierValue : null;
+    String? targetControllerValue =
+        widget.dropdownValues.contains(notifierValue) ? notifierValue : null;
 
     if (_internalController.value != targetControllerValue) {
       _internalController.value = targetControllerValue;
@@ -76,7 +78,12 @@ class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(widget.leftPadding ?? 16, 4, widget.rightPadding ?? 16, 0),
+      padding: EdgeInsets.fromLTRB(
+        widget.leftPadding ?? 16,
+        4,
+        widget.rightPadding ?? 16,
+        0,
+      ),
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         onEnter: (_) {
@@ -133,24 +140,35 @@ class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
                 disabledDecoration: CustomDropdownDisabledDecoration(
                   fillColor: const Color(0xFFFFF8F7),
                   border: Border.all(color: Colors.black38),
-                  suffixIcon: Icon(Icons.arrow_drop_down, color: Colors.black38, size: 20),
+                  suffixIcon: Icon(
+                    Icons.arrow_drop_down,
+                    color: Colors.black38,
+                    size: 20,
+                  ),
                 ),
                 decoration: CustomDropdownDecoration(
-                  errorStyle: TextStyle(fontSize: 12, decoration: TextDecoration.none),
-                  closedSuffixIcon: Icon(Icons.arrow_drop_down, color: Colors.black38, size: 20),
+                  errorStyle: TextStyle(
+                    fontSize: 12,
+                    decoration: TextDecoration.none,
+                  ),
+                  closedSuffixIcon: Icon(
+                    Icons.arrow_drop_down,
+                    color: Colors.black38,
+                    size: 20,
+                  ),
                   closedFillColor: _isHovered
                       ? const Color(0xFFF5EEED)
                       : (widget.enabled ?? true)
-                          ? const Color(0xFFFFF8F7)
-                          : const Color(0xFFE2E1E0),
+                      ? const Color(0xFFFFF8F7)
+                      : const Color(0xFFE2E1E0),
                   closedBorderRadius: BorderRadius.circular(12),
                   expandedBorderRadius: BorderRadius.circular(12),
                   closedBorder: Border.all(
                     color: _hasFocus
                         ? Colors.black
                         : (widget.enabled ?? true)
-                            ? const Color(0xFFEAE6E5)
-                            : const Color(0xFFCCCBCB),
+                        ? const Color(0xFFEAE6E5)
+                        : const Color(0xFFCCCBCB),
                     width: 1,
                   ),
                   expandedBorder: Border.all(

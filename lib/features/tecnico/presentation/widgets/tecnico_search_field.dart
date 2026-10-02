@@ -2,6 +2,8 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:serv_oeste/features/servico/domain/entities/tecnico_disponivel.dart';
 import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_filter.dart';
 import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_response.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
@@ -15,6 +17,8 @@ class TecnicoSearchField extends StatefulWidget {
   final void Function(TecnicoResponse)? onSelected;
   final VoidCallback? onSearchStart;
   final List<ValueListenable>? listenTo;
+  final ValueListenable<String>? especialidadeNotifier;
+  final int? Function(String equipamento)? getEspecialidadeId;
   final String label;
   final bool enabled;
   final int maxLength;
@@ -36,6 +40,8 @@ class TecnicoSearchField extends StatefulWidget {
     this.tooltipMessage,
     this.onSearchStart,
     this.listenTo,
+    this.especialidadeNotifier,
+    this.getEspecialidadeId,
     this.enabledCalculator,
     this.isForListScreen = false,
   });
@@ -46,27 +52,88 @@ class TecnicoSearchField extends StatefulWidget {
 
 class _TecnicoSearchFieldState extends State<TecnicoSearchField> {
   final Debouncer _debouncer = Debouncer();
+
   final ValueNotifier<List<String>> _names = ValueNotifier([]);
+
   List<TecnicoResponse> _tecnicos = [];
+
+  List<TecnicoDisponivel> _tecnicosDisponiveis = [];
+
   bool _hasInitialFetch = false;
 
   @override
   void initState() {
     super.initState();
 
+    widget.especialidadeNotifier?.addListener(_handleEspecialidadeChange);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchInitialTecnicos();
     });
   }
 
-  void _fetchInitialTecnicos() {
-    if (!_hasInitialFetch) {
-      _hasInitialFetch = true;
+  @override
+  void didUpdateWidget(covariant TecnicoSearchField oldWidget) {
+    super.didUpdateWidget(oldWidget);
 
-      if (widget.isForListScreen) {
-        widget.tecnicoBloc.add(TecnicoSearchEvent(filter: const TecnicoFilter()));
-      }
+    if (oldWidget.especialidadeNotifier != widget.especialidadeNotifier) {
+      oldWidget.especialidadeNotifier?.removeListener(
+        _handleEspecialidadeChange,
+      );
+
+      widget.especialidadeNotifier?.addListener(_handleEspecialidadeChange);
     }
+  }
+
+  void _fetchInitialTecnicos() {
+    if (_hasInitialFetch) return;
+
+    _hasInitialFetch = true;
+
+    if (widget.especialidadeNotifier != null &&
+        widget.getEspecialidadeId != null) {
+      _fetchTecnicosByEspecialidade();
+      return;
+    }
+
+    if (widget.isForListScreen) {
+      widget.tecnicoBloc.add(TecnicoSearchEvent(filter: const TecnicoFilter()));
+    }
+  }
+
+  void _handleEspecialidadeChange() {
+    if (!mounted) return;
+
+    _fetchTecnicosByEspecialidade();
+  }
+
+  void _fetchTecnicosByEspecialidade() {
+    if (widget.especialidadeNotifier == null ||
+        widget.getEspecialidadeId == null) {
+      return;
+    }
+
+    final equipamento = widget.especialidadeNotifier!.value;
+
+    if (equipamento.isEmpty) {
+      _tecnicosDisponiveis = [];
+      _tecnicos = [];
+      _names.value = [];
+      return;
+    }
+
+    final int? especialidadeId = widget.getEspecialidadeId!(equipamento);
+
+    if (especialidadeId == null) {
+      _tecnicosDisponiveis = [];
+      _tecnicos = [];
+      _names.value = [];
+      return;
+    }
+
+    widget.tecnicoBloc.add(
+      TecnicoAvailabilitySearchEvent(idEspecialidade: especialidadeId),
+    );
   }
 
   void _handleChange(String name) {
@@ -75,40 +142,102 @@ class _TecnicoSearchFieldState extends State<TecnicoSearchField> {
     _debouncer.execute(() {
       widget.onSearchStart?.call();
 
+      if (widget.especialidadeNotifier != null) {
+        _filterAvailabilityTechnicians(name);
+        return;
+      }
+
       widget.tecnicoBloc.add(
-        TecnicoSearchEvent(
-          filter: TecnicoFilter(nome: name),
-        ),
+        TecnicoSearchEvent(filter: TecnicoFilter(nome: name)),
       );
     });
   }
 
   void _handleSelected(String name) {
-    final TecnicoResponse? match = _tecnicos.firstWhereOrNull((tecnico) => "${tecnico.nome} ${tecnico.sobrenome}" == name);
+    if (widget.especialidadeNotifier != null) {
+      final TecnicoDisponivel? match = _tecnicosDisponiveis.firstWhereOrNull(
+        (tecnico) => tecnico.nome == name,
+      );
+
+      if (match != null) {
+        widget.onSelected?.call(
+          TecnicoResponse(id: match.id, nome: match.nome, sobrenome: ''),
+        );
+      }
+
+      return;
+    }
+
+    final TecnicoResponse? match = _tecnicos.firstWhereOrNull(
+      (tecnico) => "${tecnico.nome} ${tecnico.sobrenome}" == name,
+    );
+
     if (match != null) {
       widget.onSelected?.call(match);
+    }
+  }
+
+  void _filterAvailabilityTechnicians(String searchText) {
+    if (_tecnicosDisponiveis.isEmpty) {
+      _names.value = [];
+      return;
+    }
+
+    final String searchLower = searchText.toLowerCase().trim();
+
+    final List<TecnicoDisponivel> filteredTecnicos;
+
+    if (searchLower.isEmpty) {
+      filteredTecnicos = _tecnicosDisponiveis.take(5).toList();
+    } else {
+      filteredTecnicos = _tecnicosDisponiveis
+          .where((tecnico) {
+            final String nome = tecnico.nome?.toLowerCase() ?? '';
+
+            return nome.contains(searchLower);
+          })
+          .take(5)
+          .toList();
+    }
+
+    final List<String> names = filteredTecnicos
+        .map((tecnico) => tecnico.nome ?? '')
+        .where((nome) => nome.isNotEmpty)
+        .toList();
+
+    if (!listEquals(names, _names.value)) {
+      _names.value = names;
     }
   }
 
   void _filterAndUpdateNames(String searchText) {
     if (_tecnicos.isEmpty) return;
 
-    List<TecnicoResponse> filteredTecnicos;
+    final List<TecnicoResponse> filteredTecnicos;
 
     if (searchText.isEmpty) {
       filteredTecnicos = _tecnicos.take(5).toList();
     } else {
-      final searchLower = searchText.toLowerCase();
+      final String searchLower = searchText.toLowerCase();
+
       filteredTecnicos = _tecnicos
           .where((tecnico) {
-            final fullName = "${tecnico.nome} ${tecnico.sobrenome}".toLowerCase();
-            return fullName.contains(searchLower) || tecnico.nome!.toLowerCase().contains(searchLower) || tecnico.sobrenome!.toLowerCase().contains(searchLower);
+            final String fullName = "${tecnico.nome} ${tecnico.sobrenome}"
+                .toLowerCase();
+
+            return fullName.contains(searchLower) ||
+                (tecnico.nome?.toLowerCase().contains(searchLower) ?? false) ||
+                (tecnico.sobrenome?.toLowerCase().contains(searchLower) ??
+                    false);
           })
           .take(5)
           .toList();
     }
 
-    final names = filteredTecnicos.map((t) => "${t.nome} ${t.sobrenome}").toList();
+    final List<String> names = filteredTecnicos
+        .map((tecnico) => "${tecnico.nome} ${tecnico.sobrenome}")
+        .toList();
+
     if (!listEquals(names, _names.value)) {
       _names.value = names;
     }
@@ -118,9 +247,19 @@ class _TecnicoSearchFieldState extends State<TecnicoSearchField> {
     return BlocListener<TecnicoBloc, TecnicoState>(
       bloc: widget.tecnicoBloc,
       listener: (context, state) {
+        if (state is TecnicoSearchAvailabilitySuccessState) {
+          _tecnicosDisponiveis = state.tecnicosDisponiveis ?? [];
+
+          _filterAvailabilityTechnicians(widget.controller?.text ?? '');
+
+          return;
+        }
+
         if (state is TecnicoSearchSuccessState) {
           _tecnicos = state.tecnicos;
-          final currentText = widget.controller?.text ?? '';
+
+          final String currentText = widget.controller?.text ?? '';
+
           _filterAndUpdateNames(currentText);
         }
       },
@@ -140,6 +279,11 @@ class _TecnicoSearchFieldState extends State<TecnicoSearchField> {
             onSelected: _handleSelected,
             validator: widget.validator,
             onTap: () {
+              if (widget.especialidadeNotifier != null) {
+                _fetchTecnicosByEspecialidade();
+                return;
+              }
+
               if (_tecnicos.isEmpty) {
                 widget.tecnicoBloc.add(
                   TecnicoSearchEvent(filter: const TecnicoFilter()),
@@ -147,14 +291,18 @@ class _TecnicoSearchFieldState extends State<TecnicoSearchField> {
               }
             },
             suggestionsCallback: (query) async {
+              if (widget.especialidadeNotifier != null) {
+                _filterAvailabilityTechnicians(query);
+
+                return _names.value;
+              }
+
               widget.tecnicoBloc.add(
-                TecnicoSearchEvent(
-                  filter: TecnicoFilter(nome: query),
-                ),
+                TecnicoSearchEvent(filter: TecnicoFilter(nome: query)),
               );
 
               final state = await widget.tecnicoBloc.stream.firstWhere(
-                    (state) => state is TecnicoSearchSuccessState,
+                (state) => state is TecnicoSearchSuccessState,
               );
 
               final tecnicos = (state as TecnicoSearchSuccessState).tecnicos;
@@ -171,11 +319,11 @@ class _TecnicoSearchFieldState extends State<TecnicoSearchField> {
   }
 
   Widget _buildFieldWithTooltip(bool enabled) {
-    final field = _buildField(enabled);
+    final Widget field = _buildField(enabled);
 
     return (widget.tooltipMessage?.isNotEmpty ?? false)
         ? Tooltip(
-            message: (enabled) ? "" : widget.tooltipMessage!,
+            message: enabled ? "" : widget.tooltipMessage!,
             textAlign: TextAlign.center,
             child: field,
           )
@@ -184,6 +332,10 @@ class _TecnicoSearchFieldState extends State<TecnicoSearchField> {
 
   @override
   void dispose() {
+    widget.especialidadeNotifier?.removeListener(_handleEspecialidadeChange);
+
+    _names.dispose();
+
     super.dispose();
   }
 
@@ -197,6 +349,7 @@ class _TecnicoSearchFieldState extends State<TecnicoSearchField> {
         },
       );
     }
+
     return _buildFieldWithTooltip(widget.enabled);
   }
 }

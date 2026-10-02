@@ -7,6 +7,14 @@ extension StringConversions on String? {
     };
   }
 
+  String convertSituation() {
+    return switch (this) {
+      "DESATIVADO" => "DESATIVADO",
+      "LICENCA" => "LICENÇA",
+      _ => "ATIVO",
+    };
+  }
+
   String convertToHorarioString() {
     if (this == "MANHA") {
       return "Manhã";

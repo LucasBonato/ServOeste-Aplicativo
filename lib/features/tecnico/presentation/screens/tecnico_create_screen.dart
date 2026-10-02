@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:serv_oeste/core/constants/constants.dart';
 import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_filter.dart';
 import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_form.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
@@ -17,6 +18,9 @@ class TecnicoCreateScreen extends StatefulWidget {
 
 class _TecnicoCreateScreenState extends State<TecnicoCreateScreen> {
   final TecnicoForm _tecnicoForm = TecnicoForm();
+  final ValueNotifier<String> _situacaoNotifier = ValueNotifier<String>(
+    "Ativo",
+  );
   Map<String, bool> _checkersMap = {};
   Map<String, int> _conhecimentoIdsByLabel = {};
   bool _catalogReady = false;
@@ -24,6 +28,7 @@ class _TecnicoCreateScreenState extends State<TecnicoCreateScreen> {
   @override
   void initState() {
     super.initState();
+    _tecnicoForm.setSituacao(Constants.situationTecnicoList.first);
     WidgetsBinding.instance.addPostFrameCallback((_) => _ensureSpecialties());
   }
 
@@ -34,9 +39,12 @@ class _TecnicoCreateScreenState extends State<TecnicoCreateScreen> {
     }
     if (!mounted) return;
     setState(() {
-      _conhecimentoIdsByLabel = Map<String, int>.from(cache.activeIdByConhecimento);
+      _conhecimentoIdsByLabel = Map<String, int>.from(
+        cache.activeIdByConhecimento,
+      );
       _checkersMap = {
-        for (final String label in cache.activeConhecimentosOrderedWithOutros()) label: false,
+        for (final String label in cache.activeConhecimentosOrderedWithOutros())
+          label: false,
       };
       _catalogReady = true;
     });
@@ -90,6 +98,7 @@ class _TecnicoCreateScreenState extends State<TecnicoCreateScreen> {
       successMessage: "Técnico registrado com sucesso! (Caso ele não esteja aparecendo, recarregue a página)",
       checkersMap: _checkersMap,
       conhecimentoIdsByLabel: _conhecimentoIdsByLabel,
+      situacaoNotifier: _situacaoNotifier,
       isForListScreen: false,
       situationMap: {},
       onSubmit: () {

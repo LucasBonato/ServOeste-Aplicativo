@@ -23,6 +23,7 @@ class TecnicoFormWidget extends StatelessWidget {
   final Map<String, bool> checkersMap;
   final Map<String, int> conhecimentoIdsByLabel;
   final TextEditingController? nomeController;
+  final ValueNotifier<String> situacaoNotifier;
   final Map<String, String> situationMap;
   final bool isUpdate;
   final bool isSkeleton;
@@ -40,6 +41,7 @@ class TecnicoFormWidget extends StatelessWidget {
     required this.checkersMap,
     required this.conhecimentoIdsByLabel,
     required this.situationMap,
+    required this.situacaoNotifier,
     this.nomeController,
     this.isUpdate = false,
     this.isSkeleton = false,
@@ -51,7 +53,6 @@ class TecnicoFormWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     final TecnicoValidator validator = TecnicoValidator();
-    final ValueNotifier<String> situacoes = ValueNotifier<String>(Constants.situationTecnicoList.first);
 
     return BaseFormScreen(
       title: title,
@@ -63,12 +64,16 @@ class TecnicoFormWidget extends StatelessWidget {
           formKey: formKey,
           submitText: submitText,
           isLoading: (state) => state is TecnicoLoadingState,
-          isSuccess: (state) => isUpdate ? state is TecnicoUpdateSuccessState : state is TecnicoRegisterSuccessState,
+          isSuccess: (state) => isUpdate
+              ? state is TecnicoUpdateSuccessState
+              : state is TecnicoRegisterSuccessState,
           getSuccessMessage: (state) {
             return successMessage;
           },
           isError: (state) => state is TecnicoErrorState,
-          getErrorMessage: (state) => state is TecnicoErrorState ? state.error.fullDetail : "Erro desconhecido",
+          getErrorMessage: (state) => state is TecnicoErrorState
+              ? state.error.fullDetail
+              : "Erro desconhecido",
           onError: (state) {
             if (state is TecnicoErrorState) {
               validator.applyBackendError(state.error);
@@ -103,7 +108,10 @@ class TecnicoFormWidget extends StatelessWidget {
                   label: "Nome*",
                   tecnicoBloc: bloc,
                   controller: nomeController,
-                  validator: validator.byField(tecnicoForm, ErrorCodeKey.nomeESobrenome.name),
+                  validator: validator.byField(
+                    tecnicoForm,
+                    ErrorCodeKey.nomeESobrenome.name,
+                  ),
                   onChanged: tecnicoForm.setNome,
                   isForListScreen: isForListScreen,
                 ),
@@ -113,8 +121,11 @@ class TecnicoFormWidget extends StatelessWidget {
                     dropdownValues: Constants.situationTecnicoList,
                     leftPadding: 4,
                     rightPadding: 4,
-                    valueNotifier: situacoes,
-                    validator: validator.byField(tecnicoForm, ErrorCodeKey.situacao.name),
+                    valueNotifier: situacaoNotifier,
+                    validator: validator.byField(
+                      tecnicoForm,
+                      ErrorCodeKey.situacao.name,
+                    ),
                     onChanged: tecnicoForm.setSituacao,
                   ),
               ],
@@ -127,7 +138,10 @@ class TecnicoFormWidget extends StatelessWidget {
               maxLength: 14,
               mask: InputMasks.telefoneFixo,
               valueNotifier: tecnicoForm.telefoneFixo,
-              validator: validator.byField(tecnicoForm, ErrorCodeKey.telefones.name),
+              validator: validator.byField(
+                tecnicoForm,
+                ErrorCodeKey.telefones.name,
+              ),
               onChanged: tecnicoForm.setTelefoneFixo,
             ),
             TextFormInputField(
@@ -138,12 +152,18 @@ class TecnicoFormWidget extends StatelessWidget {
               maxLength: 15,
               mask: InputMasks.telefoneCelular,
               valueNotifier: tecnicoForm.telefoneCelular,
-              validator: validator.byField(tecnicoForm, ErrorCodeKey.telefones.name),
+              validator: validator.byField(
+                tecnicoForm,
+                ErrorCodeKey.telefones.name,
+              ),
               onChanged: tecnicoForm.setTelefoneCelular,
             ),
             CustomGridCheckersFormField(
               title: "Conhecimentos*",
-              validator: validator.byField(tecnicoForm, ErrorCodeKey.conhecimento.name),
+              validator: validator.byField(
+                tecnicoForm,
+                ErrorCodeKey.conhecimento.name,
+              ),
               checkersMap: checkersMap,
             ),
           ],
