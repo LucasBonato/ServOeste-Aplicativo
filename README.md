@@ -42,28 +42,29 @@ The status values used by the UI are defined in `lib/core/constants/constants.da
 
 ```mermaid
 flowchart TD
-    1[Aguardando agendamento] --> 2[Aguardando atendimento]
-    2 -->|Problema identificado| 3[Aguardando orçamento]
-    2 -->|Sem defeito| 3.1["Sem defeito (fim)"]
-    2 -->|Cancelado| 3.2["Cancelado (fim)"]
+    1 [Aguardando atendimento]
 
-    3 -->|Aguardando aprovação| 4[Aguardando aprovação do cliente]
+    1 -->|Problema identificado| 2[Aguardando orçamento]
+    1 -->|Sem defeito| 2.1["Sem defeito (fim)"]
+    1 -->|Cancelado| 2.2["Cancelado (fim)"]
 
-    4 -->|Aprovado| 5[Orçamento aprovado]
-    4 -->|Não aprovado| 5.1["Não aprovado pelo cliente (fim)"]
-    4 -->|Compra| 5.2["Compra (fim)"]
+    2 -->|Aguardando aprovação| 3[Aguardando aprovação do cliente]
 
-    5 -->|Aguardando retirada| 6[Aguardando cliente retirar]
+    3 -->|Aprovado| 4[Orçamento aprovado]
+    3 -->|Não aprovado| 4.1["Não aprovado pelo cliente (fim)"]
+    3 -->|Compra| 4.2["Compra (fim)"]
 
-    6 -->|Garantia| 7[Garantia]
-    6 -->|Não retira há 3 meses| 7.1[Não retira há 3 meses]
-    6 -->|Resolvido| 9["Resolvido (fim)"]
+    4 -->|Aguardando retirada| 5[Aguardando cliente retirar]
 
-    7 -->|Cortesia| 8[Cortesia]
-    7 -->|Resolvido| 9["Resolvido (fim)"]
-    7.1 -->|Resolvido| 9["Resolvido (fim)"]
+    5 -->|Garantia| 6[Garantia]
+    5 -->|Não retira há 3 meses| 6.1[Não retira há 3 meses]
+    5 -->|Resolvido| 8["Resolvido (fim)"]
 
-    8 -->|Resolvido| 9["Resolvido (fim)"]
+    6 -->|Cortesia| 7[Cortesia]
+    6 -->|Resolvido| 8["Resolvido (fim)"]
+    6.1 -->|Resolvido| 8["Resolvido (fim)"]
+
+    7 -->|Resolvido| 8["Resolvido (fim)"]
 ```
 
 ## Tech stack

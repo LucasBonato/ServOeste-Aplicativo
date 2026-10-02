@@ -16,7 +16,6 @@ class Constants {
   ];
 
   static const List<String> situationServiceList = [
-    'Aguardando agendamento',
     'Aguardando atendimento',
     'Cancelado',
     'Sem defeito',

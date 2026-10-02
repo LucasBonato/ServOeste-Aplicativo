@@ -113,7 +113,6 @@ class ServicoValidator extends LucidValidator<ServicoForm>
               _shouldValidateField(ErrorCodeKey.valor.name) &&
               isUpdate &&
               ![
-                'Aguardando agendamento',
                 'Aguardando atendimento',
                 'Cancelado',
                 'Sem defeito',
@@ -135,7 +134,6 @@ class ServicoValidator extends LucidValidator<ServicoForm>
               _shouldValidateField(ErrorCodeKey.valorPecas.name) &&
               isUpdate &&
               ![
-                'Aguardando agendamento',
                 'Aguardando atendimento',
                 'Cancelado',
                 'Sem defeito',
@@ -160,7 +158,6 @@ class ServicoValidator extends LucidValidator<ServicoForm>
               _shouldValidateField(ErrorCodeKey.dataAtendimentoEfetivo.name) &&
               isUpdate &&
               ![
-                'Aguardando agendamento',
                 'Aguardando atendimento',
                 'Cancelado',
               ].contains(servico.situacao.value),
@@ -218,7 +215,6 @@ class ServicoValidator extends LucidValidator<ServicoForm>
               _shouldValidateField(ErrorCodeKey.dataInicioGarantia.name) &&
               isUpdate &&
               ![
-                'Aguardando agendamento',
                 'Aguardando atendimento',
                 'Cancelado',
                 'Sem defeito',
@@ -249,7 +245,6 @@ class ServicoValidator extends LucidValidator<ServicoForm>
               _shouldValidateField(ErrorCodeKey.dataFinalGarantia.name) &&
               isUpdate &&
               ![
-                'Aguardando agendamento',
                 'Aguardando atendimento',
                 'Cancelado',
                 'Sem defeito',
@@ -280,7 +275,6 @@ class ServicoValidator extends LucidValidator<ServicoForm>
               _shouldValidateField(ErrorCodeKey.formaPagamento.name) &&
               isUpdate &&
               ![
-                'Aguardando agendamento',
                 'Aguardando atendimento',
                 'Sem defeito',
                 'Cancelado',
@@ -335,7 +329,6 @@ class ServicoValidator extends LucidValidator<ServicoForm>
               _shouldValidateField(ErrorCodeKey.dataFechamento.name) &&
               isUpdate &&
               ![
-                'Aguardando agendamento',
                 'Aguardando atendimento',
                 'Aguardando aprovação do cliente',
                 'Orçamento aprovado',

@@ -283,8 +283,6 @@ class Formatters {
 
   static ServiceStatus mapStringStatusToEnumStatus(String status) {
     return switch (status) {
-      "AGUARDANDO_AGENDAMENTO" ||
-      "Aguardando agendamento" => ServiceStatus.aguardandoAgendamento,
       "AGUARDANDO_ATENDIMENTO" ||
       "Aguardando atendimento" => ServiceStatus.aguardandoAtendimento,
       "AGUARDANDO_APROVACAO" || "Aguardando aprovação do cliente" =>
@@ -303,13 +301,12 @@ class Formatters {
       "Orçamento aprovado" => ServiceStatus.orcamentoAprovado,
       "RESOLVIDO" || "Resolvido" => ServiceStatus.resolvido,
       "SEM_DEFEITO" || "Sem defeito" => ServiceStatus.semDefeito,
-      _ => ServiceStatus.aguardandoAgendamento,
+      _ => ServiceStatus.aguardandoAtendimento,
     };
   }
 
   static String mapSituationToEnumSituation(String situation) {
     return switch (situation) {
-      "Aguardando agendamento" => "AGUARDANDO_AGENDAMENTO",
       "Aguardando atendimento" => "AGUARDANDO_ATENDIMENTO",
       "Aguardando aprovação do cliente" => "AGUARDANDO_APROVACAO",
       "Aguardando cliente retirar" => "AGUARDANDO_CLIENTE_RETIRAR",
@@ -322,7 +319,7 @@ class Formatters {
       "Orçamento aprovado" => "ORCAMENTO_APROVADO",
       "Resolvido" => "RESOLVIDO",
       "Sem defeito" => "SEM_DEFEITO",
-      _ => "AGUARDANDO_AGENDAMENTO",
+      _ => "AGUARDANDO_ATENDIMENTO",
     };
   }
 }

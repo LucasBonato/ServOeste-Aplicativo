@@ -169,13 +169,12 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
 
   int getServiceLevel(String situacao) {
     return switch (situacao) {
-      'Aguardando agendamento' => 0,
-      'Aguardando atendimento' => 1,
-      'Cancelado' || 'Sem defeito || Aguardando aprovação do cliente' => 2,
-      'Compra' || 'Não aprovado pelo cliente' || 'Orçamento aprovado' => 3,
-      'Aguardando cliente retirar' => 4,
-      'Resolvido || Não retira há 3 meses' => 5,
-      'Cortesia' || 'Garantia' => 6,
+      'Aguardando atendimento' => 0,
+      'Cancelado' || 'Sem defeito || Aguardando aprovação do cliente' => 1,
+      'Compra' || 'Não aprovado pelo cliente' || 'Orçamento aprovado' => 2,
+      'Aguardando cliente retirar' => 3,
+      'Resolvido || Não retira há 3 meses' => 4,
+      'Cortesia' || 'Garantia' => 5,
       _ => -1,
     };
   }

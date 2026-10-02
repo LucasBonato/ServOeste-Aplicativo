@@ -45,12 +45,10 @@ class ServicoCard extends StatelessWidget {
 
   Color _getStatusColor(ServiceStatus status) {
     switch (status) {
-      case ServiceStatus.aguardandoAgendamento:
-        return Colors.blue;
-      case ServiceStatus.aguardandoAprovacaoCliente:
-        return const Color(0xFFB3A20E);
       case ServiceStatus.aguardandoAtendimento:
         return Colors.orange;
+      case ServiceStatus.aguardandoAprovacaoCliente:
+        return const Color(0xFFB3A20E);
       case ServiceStatus.aguardandoClienteRetirar:
         return const Color(0xFFF6CF4F);
       case ServiceStatus.cancelado:
@@ -60,7 +58,7 @@ class ServicoCard extends StatelessWidget {
       case ServiceStatus.cortesia:
         return Colors.tealAccent;
       case ServiceStatus.garantia:
-        return const Color(0xFF1201FF);
+        return Colors.blue;
       case ServiceStatus.naoAprovadoPeloCliente:
         return Colors.redAccent;
       case ServiceStatus.naoRetira3Meses:
@@ -70,7 +68,7 @@ class ServicoCard extends StatelessWidget {
       case ServiceStatus.resolvido:
         return const Color(0xFF2F5702);
       case ServiceStatus.semDefeito:
-        return Colors.blueAccent;
+        return Colors.indigo;
     }
   }
 

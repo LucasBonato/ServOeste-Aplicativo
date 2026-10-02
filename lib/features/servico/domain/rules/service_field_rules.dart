@@ -1,27 +1,9 @@
 class ServiceFieldRules {
   static const Map<String, List<String>> disabledSituationsByField = {
-    "nomeTecnico": ['Aguardando agendamento'],
-    "horario": ['Aguardando agendamento'],
-    "dataAtendimentoPrevisto": ['Aguardando agendamento'],
-    "dataAtendimentoEfetivo": [
-      'Aguardando agendamento',
-      'Aguardando atendimento',
-      'Cancelado',
-    ],
-    "valorServico": [
-      'Aguardando agendamento',
-      'Aguardando atendimento',
-      'Cancelado',
-      'Sem defeito',
-    ],
-    "valorPecas": [
-      'Aguardando agendamento',
-      'Aguardando atendimento',
-      'Cancelado',
-      'Sem defeito',
-    ],
+    "dataAtendimentoEfetivo": ['Aguardando atendimento', 'Cancelado'],
+    "valorServico": ['Aguardando atendimento', 'Cancelado', 'Sem defeito'],
+    "valorPecas": ['Aguardando atendimento', 'Cancelado', 'Sem defeito'],
     "formaPagamento": [
-      'Aguardando agendamento',
       'Aguardando atendimento',
       'Cancelado',
       'Sem defeito',
@@ -29,7 +11,6 @@ class ServiceFieldRules {
       'Compra',
     ],
     "dataFechamento": [
-      'Aguardando agendamento',
       'Aguardando atendimento',
       'Aguardando aprovação do cliente',
       'Orçamento aprovado',
@@ -38,7 +19,6 @@ class ServiceFieldRules {
       'Garantia',
     ],
     "dataPagamentoComissao": [
-      'Aguardando agendamento',
       'Aguardando atendimento',
       'Sem defeito',
       'Aguardando aprovação do cliente',
@@ -46,7 +26,6 @@ class ServiceFieldRules {
       'Compra',
     ],
     "dataInicioGarantia": [
-      'Aguardando agendamento',
       'Aguardando atendimento',
       'Cancelado',
       'Sem defeito',
@@ -58,7 +37,6 @@ class ServiceFieldRules {
       'Não retira há 3 meses',
     ],
     "dataFinalGarantia": [
-      'Aguardando agendamento',
       'Aguardando atendimento',
       'Cancelado',
       'Sem defeito',

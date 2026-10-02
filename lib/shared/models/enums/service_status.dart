@@ -1,5 +1,4 @@
 enum ServiceStatus {
-  aguardandoAgendamento("Aguardando agendamento"),
   aguardandoAtendimento("Aguardando atendimento"),
   aguardandoAprovacaoCliente("Aguardando aprovação do cliente"),
   aguardandoClienteRetirar("Aguardando cliente retirar"),
