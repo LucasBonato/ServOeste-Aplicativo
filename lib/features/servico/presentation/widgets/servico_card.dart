@@ -310,7 +310,7 @@ class ServicoCard extends StatelessWidget {
                                 fontSize: statusSize,
                                 fontWeight: FontWeight.bold,
                                 color: _getStatusColor(
-                                  Formatters.mapStringStatusToEnumStatus(
+                                  ServiceStatus.fromString(
                                     status,
                                   ),
                                 ),

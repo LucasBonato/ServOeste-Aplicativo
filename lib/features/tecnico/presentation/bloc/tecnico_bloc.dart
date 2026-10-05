@@ -47,6 +47,9 @@ class TecnicoBloc extends BaseEntityBloc<TecnicoEvent, TecnicoState> {
         situacao: (isFirstRequest)
             ? Constants.situationTecnicoList.first.toLowerCase()
             : event.filter.situacao?.toLowerCase(),
+        equipamento: event.filter.equipamento,
+        telefoneCelular: event.filter.telefone,
+        telefoneFixo: event.filter.telefone,
         page: event.page,
         size: event.size,
       ),

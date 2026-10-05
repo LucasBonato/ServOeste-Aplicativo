@@ -2,16 +2,16 @@ import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:serv_oeste/core/observability/app_logger.dart';
+import 'package:serv_oeste/core/errors/error_handler.dart';
 import 'package:serv_oeste/core/http/server_endpoints.dart';
+import 'package:serv_oeste/core/observability/app_logger.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente_request.dart';
+import 'package:serv_oeste/features/servico/domain/entities/servico.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_filter.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_request.dart';
+import 'package:serv_oeste/shared/models/enums/service_status.dart';
 import 'package:serv_oeste/shared/models/error/error_entity.dart';
 import 'package:serv_oeste/shared/models/page_content.dart';
-import 'package:serv_oeste/features/servico/domain/entities/servico.dart';
-import 'package:serv_oeste/core/errors/error_handler.dart';
-import 'package:serv_oeste/shared/utils/formatters/formatters.dart';
 
 class ServicoClient {
   final Dio dio;
@@ -47,7 +47,7 @@ class ServicoClient {
         'equipamento': servicoFilter.equipamento,
         'marca': servicoFilter.marca,
         'situacao': servicoFilter.situacao != null
-            ? Formatters.mapSituationToEnumSituation(servicoFilter.situacao!)
+            ? ServiceStatus.fromString(servicoFilter.situacao!)
             : null,
         'garantia': servicoFilter.garantia,
         'filial': servicoFilter.filial,
@@ -158,7 +158,7 @@ class ServicoClient {
           "marca": servico.marca,
           "filial": servico.filial,
           "descricao": servico.descricao,
-          "situacao": Formatters.mapSituationToEnumSituation(servico.situacao),
+          "situacao": ServiceStatus.normalize(servico.situacao),
           "formaPagamento": servico.formaPagamento
               ?.replaceAll("é", "e")
               .toUpperCase(),

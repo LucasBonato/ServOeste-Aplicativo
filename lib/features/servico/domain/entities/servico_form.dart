@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/core/constants/constants.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico.dart';
+import 'package:serv_oeste/shared/models/enums/service_status.dart';
 import 'package:serv_oeste/shared/utils/extensions/string_extensions.dart';
 import 'package:serv_oeste/shared/utils/formatters/formatters.dart';
 
@@ -151,9 +152,9 @@ class ServicoForm extends ChangeNotifier {
 
   void setSituacao(String? situacao) {
     if (situacao != null && situacao != this.situacao.value) {
-      this.situacao.value = Formatters.mapStringStatusToEnumStatus(
+      this.situacao.value = ServiceStatus.fromString(
         situacao,
-      ).getSituacao();
+      ).getHumanizedSituacao();
 
       notifyListeners();
     }

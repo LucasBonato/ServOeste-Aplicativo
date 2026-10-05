@@ -15,6 +15,7 @@ class TecnicoSearchField extends StatefulWidget {
   final void Function(TecnicoResponse)? onSelected;
   final VoidCallback? onSearchStart;
   final List<ValueListenable>? listenTo;
+  final TecnicoFilter Function()? searchFilter;
   final String label;
   final bool enabled;
   final int maxLength;
@@ -36,6 +37,7 @@ class TecnicoSearchField extends StatefulWidget {
     this.tooltipMessage,
     this.onSearchStart,
     this.listenTo,
+    this.searchFilter,
     this.enabledCalculator,
     this.isForListScreen = false,
   });
@@ -77,7 +79,9 @@ class _TecnicoSearchFieldState extends State<TecnicoSearchField> {
 
       widget.tecnicoBloc.add(
         TecnicoSearchEvent(
-          filter: TecnicoFilter(nome: name),
+          filter: _buildFilter(
+            filter: TecnicoFilter(nome: name),
+          )
         ),
       );
     });
@@ -114,6 +118,10 @@ class _TecnicoSearchFieldState extends State<TecnicoSearchField> {
     }
   }
 
+  TecnicoFilter _buildFilter({TecnicoFilter filter = const TecnicoFilter()}) {
+    return filter.merge(widget.searchFilter?.call());
+  }
+
   Widget _buildField(bool enabled) {
     return BlocListener<TecnicoBloc, TecnicoState>(
       bloc: widget.tecnicoBloc,
@@ -140,16 +148,18 @@ class _TecnicoSearchFieldState extends State<TecnicoSearchField> {
             onSelected: _handleSelected,
             validator: widget.validator,
             onTap: () {
-              if (_tecnicos.isEmpty) {
+              if (_tecnicos.isEmpty && widget.searchFilter?.call() != null) {
                 widget.tecnicoBloc.add(
-                  TecnicoSearchEvent(filter: const TecnicoFilter()),
+                  TecnicoSearchEvent(filter: _buildFilter()),
                 );
               }
             },
             suggestionsCallback: (query) async {
               widget.tecnicoBloc.add(
                 TecnicoSearchEvent(
-                  filter: TecnicoFilter(nome: query),
+                  filter: _buildFilter(
+                    filter: TecnicoFilter(nome: query)
+                  )
                 ),
               );
 
@@ -180,11 +190,6 @@ class _TecnicoSearchFieldState extends State<TecnicoSearchField> {
             child: field,
           )
         : field;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override

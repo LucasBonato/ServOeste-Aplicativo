@@ -1,6 +1,7 @@
 import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_form.dart';
 import 'package:serv_oeste/shared/models/enums/error_code_key.dart';
+import 'package:serv_oeste/shared/models/enums/service_status.dart';
 import 'package:serv_oeste/shared/utils/formatters/formatters.dart';
 import 'package:serv_oeste/shared/validation/validator.dart';
 
@@ -87,13 +88,14 @@ class ServicoValidator extends LucidValidator<ServicoForm>
               _shouldValidateField(ErrorCodeKey.descricao.name) &&
               isUpdate &&
               ![
-                'Aguardando aprovação do cliente',
-                'Compra',
-                'Orçamento aprovado',
-                'Aguardando cliente retirar',
-                'Não retira há 3 meses',
-                'Garantia',
-              ].contains(servico.situacao.value),
+                ServiceStatus.aguardandoAprovacaoCliente,
+                ServiceStatus.compra,
+                ServiceStatus.orcamentoAprovado,
+                ServiceStatus.aguardandoClienteRetirar,
+                ServiceStatus.naoRetira3Meses,
+                ServiceStatus.garantia,
+                ServiceStatus.resolvido
+              ].contains(ServiceStatus.fromString(servico.situacao.value)),
         )
         .must(
           (descricao) => descricao != "",
@@ -118,11 +120,11 @@ class ServicoValidator extends LucidValidator<ServicoForm>
               _shouldValidateField(ErrorCodeKey.valor.name) &&
               isUpdate &&
               ![
-                'Aguardando agendamento',
-                'Aguardando atendimento',
-                'Cancelado',
-                'Sem defeito',
-              ].contains(servico.situacao.value),
+                ServiceStatus.aguardandoAgendamento,
+                ServiceStatus.aguardandoAtendimento,
+                ServiceStatus.cancelado,
+                ServiceStatus.semDefeito,
+              ].contains(ServiceStatus.fromString(servico.situacao.value)),
         )
         .must(
           (valor) => valor != "",
@@ -140,11 +142,11 @@ class ServicoValidator extends LucidValidator<ServicoForm>
               _shouldValidateField(ErrorCodeKey.valorPecas.name) &&
               isUpdate &&
               ![
-                'Aguardando agendamento',
-                'Aguardando atendimento',
-                'Cancelado',
-                'Sem defeito',
-              ].contains(servico.situacao.value),
+                ServiceStatus.aguardandoAgendamento,
+                ServiceStatus.aguardandoAtendimento,
+                ServiceStatus.cancelado,
+                ServiceStatus.semDefeito,
+              ].contains(ServiceStatus.fromString(servico.situacao.value)),
         )
         .must(
           (valorPecas) => valorPecas != "",
@@ -165,10 +167,10 @@ class ServicoValidator extends LucidValidator<ServicoForm>
               _shouldValidateField(ErrorCodeKey.dataAtendimentoEfetivo.name) &&
               isUpdate &&
               ![
-                'Aguardando agendamento',
-                'Aguardando atendimento',
-                'Cancelado',
-              ].contains(servico.situacao.value),
+                ServiceStatus.aguardandoAgendamento,
+                ServiceStatus.aguardandoAtendimento,
+                ServiceStatus.cancelado,
+              ].contains(ServiceStatus.fromString(servico.situacao.value)),
         )
         .must(
           (dataAtendimentoEfetivo) => dataAtendimentoEfetivo != "",
@@ -223,17 +225,17 @@ class ServicoValidator extends LucidValidator<ServicoForm>
               _shouldValidateField(ErrorCodeKey.dataInicioGarantia.name) &&
               isUpdate &&
               ![
-                'Aguardando agendamento',
-                'Aguardando atendimento',
-                'Cancelado',
-                'Sem defeito',
-                'Aguardando aprovação do cliente',
-                'Não aprovado pelo cliente',
-                'Compra',
-                'Orçamento aprovado',
-                'Aguardando cliente retirar',
-                'Não retira há 3 meses',
-              ].contains(servico.situacao.value),
+                ServiceStatus.aguardandoAgendamento,
+                ServiceStatus.aguardandoAtendimento,
+                ServiceStatus.cancelado,
+                ServiceStatus.semDefeito,
+                ServiceStatus.aguardandoAprovacaoCliente,
+                ServiceStatus.naoAprovadoPeloCliente,
+                ServiceStatus.compra,
+                ServiceStatus.orcamentoAprovado,
+                ServiceStatus.aguardandoClienteRetirar,
+                ServiceStatus.naoRetira3Meses,
+              ].contains(ServiceStatus.fromString(servico.situacao.value)),
         )
         .must(
           (dataInicioGarantia) => dataInicioGarantia != "",
@@ -254,17 +256,17 @@ class ServicoValidator extends LucidValidator<ServicoForm>
               _shouldValidateField(ErrorCodeKey.dataFinalGarantia.name) &&
               isUpdate &&
               ![
-                'Aguardando agendamento',
-                'Aguardando atendimento',
-                'Cancelado',
-                'Sem defeito',
-                'Aguardando aprovação do cliente',
-                'Não aprovado pelo cliente',
-                'Compra',
-                'Orçamento aprovado',
-                'Aguardando cliente retirar',
-                'Não retira há 3 meses',
-              ].contains(servico.situacao.value),
+                ServiceStatus.aguardandoAgendamento,
+                ServiceStatus.aguardandoAtendimento,
+                ServiceStatus.cancelado,
+                ServiceStatus.semDefeito,
+                ServiceStatus.aguardandoAprovacaoCliente,
+                ServiceStatus.naoAprovadoPeloCliente,
+                ServiceStatus.compra,
+                ServiceStatus.orcamentoAprovado,
+                ServiceStatus.aguardandoClienteRetirar,
+                ServiceStatus.naoRetira3Meses,
+              ].contains(ServiceStatus.fromString(servico.situacao.value)),
         )
         .must(
           (dataFinalGarantia) => dataFinalGarantia != "",
@@ -286,14 +288,14 @@ class ServicoValidator extends LucidValidator<ServicoForm>
               !situacoesOpcionais.contains(servico.situacao.value) &&
               isUpdate &&
               ![
-                'Aguardando agendamento',
-                'Aguardando atendimento',
-                'Sem defeito',
-                'Cancelado',
-                'Aguardando aprovação do cliente',
-                'Não aprovado pelo cliente',
-                'Compra',
-              ].contains(servico.situacao.value),
+                ServiceStatus.aguardandoAgendamento,
+                ServiceStatus.aguardandoAtendimento,
+                ServiceStatus.semDefeito,
+                ServiceStatus.cancelado,
+                ServiceStatus.aguardandoAprovacaoCliente,
+                ServiceStatus.naoAprovadoPeloCliente,
+                ServiceStatus.compra,
+              ].contains(ServiceStatus.fromString(servico.situacao.value)),
         )
         .must(
           (formaPagamento) => formaPagamento != "",
@@ -325,7 +327,18 @@ class ServicoValidator extends LucidValidator<ServicoForm>
         .when(
           (servico) =>
               _shouldValidateField(ErrorCodeKey.dataPagamentoComissao.name) &&
-              isUpdate,
+              isUpdate &&
+              [
+                ServiceStatus.cancelado,
+                ServiceStatus.naoAprovadoPeloCliente,
+                ServiceStatus.compra,
+                ServiceStatus.resolvido,
+              ].contains(ServiceStatus.fromString(servico.situacao.value)),
+        )
+        .must(
+          (dataPagamentoComissao) => dataPagamentoComissao != "",
+          "Data do pagamento comissao é obrigatória",
+          ErrorCodeKey.dataPagamentoComissao.name,
         )
         .customValidExternalErrors(
           externalErrors,
@@ -341,14 +354,14 @@ class ServicoValidator extends LucidValidator<ServicoForm>
               _shouldValidateField(ErrorCodeKey.dataFechamento.name) &&
               isUpdate &&
               ![
-                'Aguardando agendamento',
-                'Aguardando atendimento',
-                'Aguardando aprovação do cliente',
-                'Orçamento aprovado',
-                'Aguardando cliente retirar',
-                'Cortesia',
-                'Garantia',
-              ].contains(servico.situacao.value),
+                ServiceStatus.aguardandoAgendamento,
+                ServiceStatus.aguardandoAtendimento,
+                ServiceStatus.aguardandoAprovacaoCliente,
+                ServiceStatus.orcamentoAprovado,
+                ServiceStatus.aguardandoClienteRetirar,
+                ServiceStatus.cortesia,
+                ServiceStatus.garantia,
+              ].contains(ServiceStatus.fromString(servico.situacao.value)),
         )
         .must(
           (dataFechamento) => dataFechamento != "",

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/core/observability/app_logger.dart';
 import 'package:serv_oeste/core/routing/args/cliente_update_args.dart';
 import 'package:serv_oeste/core/routing/routes.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente.dart';
@@ -173,15 +174,7 @@ class _ClienteScreenState extends BaseListScreenState<Cliente, ClienteState> {
               listener: (context, state) {
                 if (state is ClienteErrorState) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          state.error.errors['cliente']?.first ??
-                              "Erro ao excluir clientes",
-                        ),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
+                    AppLogger.error(state.error.detail);
                   });
                 }
                 if (state is ClienteSearchSuccessState) {

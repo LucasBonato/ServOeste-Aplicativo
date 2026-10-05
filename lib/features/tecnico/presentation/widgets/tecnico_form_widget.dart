@@ -51,7 +51,11 @@ class TecnicoFormWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     final TecnicoValidator validator = TecnicoValidator();
-    final ValueNotifier<String> situacoes = ValueNotifier<String>(Constants.situationTecnicoList.first);
+    final ValueNotifier<String> situacoes = ValueNotifier<String>(
+        tecnicoForm.situacao.value.isEmpty
+            ? Constants.situationTecnicoList.first
+            : tecnicoForm.situacao.value
+    );
 
     return BaseFormScreen(
       title: title,
