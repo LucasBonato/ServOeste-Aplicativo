@@ -312,6 +312,8 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
     );
   }
 
+  bool _showAvailabilityButton() => widget.isClientAndService || widget.isUpdate;
+
   @override
   Widget build(BuildContext context) {
     enabled = isInputEnabled();
@@ -395,7 +397,8 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                 shouldExpand: widget.isUpdate,
               ),
               CustomWidgetField(
-                shouldExpand: true,
+                shouldExpand: _showAvailabilityButton(),
+                startNewRow: true,
                 flex: 1,
                 child: TecnicoSearchField(
                   label: "Nome do Técnico*",
@@ -420,7 +423,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                   isForListScreen: widget.isForListScreen,
                 ),
               ),
-              if (widget.isClientAndService || widget.isUpdate)
+              if (_showAvailabilityButton())
                 ButtonInputField(
                   shouldExpand: true,
                   flex: 1,
