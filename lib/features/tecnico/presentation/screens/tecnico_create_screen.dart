@@ -18,9 +18,6 @@ class TecnicoCreateScreen extends StatefulWidget {
 
 class _TecnicoCreateScreenState extends State<TecnicoCreateScreen> {
   final TecnicoForm _tecnicoForm = TecnicoForm();
-  final ValueNotifier<String> _situacaoNotifier = ValueNotifier<String>(
-    "Ativo",
-  );
   Map<String, bool> _checkersMap = {};
   Map<String, int> _conhecimentoIdsByLabel = {};
   bool _catalogReady = false;

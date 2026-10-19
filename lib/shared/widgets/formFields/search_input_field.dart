@@ -3,27 +3,54 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
-abstract class SearchInputField {
-  final String? Function([String?])? validator;
+abstract class InputField {
   final ValueNotifier<String>? valueNotifier;
-  final void Function(String)? onChanged;
   final List<ValueListenable>? listenTo;
+  final String? Function([String?])? validator;
   final bool shouldExpand;
   final bool startNewRow;
   final bool enabled;
-  final String hint;
   final int flex;
 
-  const SearchInputField({
+  const InputField({
     required this.valueNotifier,
-    required this.hint,
     this.shouldExpand = false,
     this.startNewRow = false,
     this.enabled = true,
     this.flex = 1,
     this.validator,
-    this.onChanged,
     this.listenTo,
+  });
+}
+
+class CustomWidgetField {
+  final Widget child;
+  final bool shouldExpand;
+  final bool startNewRow;
+  final int flex;
+
+  const CustomWidgetField({
+    required this.child,
+    this.shouldExpand = false,
+    this.startNewRow = false,
+    this.flex = 1,
+  });
+}
+
+abstract class SearchInputField extends InputField {
+  final void Function(String)? onChanged;
+  final String hint;
+
+  const SearchInputField({
+    required super.valueNotifier,
+    super.shouldExpand,
+    super.startNewRow,
+    super.validator,
+    super.listenTo,
+    super.enabled,
+    super.flex,
+    required this.hint,
+    this.onChanged,
   });
 }
 
@@ -150,5 +177,26 @@ class DatePickerInputField extends SearchInputField {
     this.allowPastDates = false,
     this.allowFutureDates = true,
     this.mask,
+  });
+}
+
+class ButtonInputField extends InputField {
+  final String text;
+  final VoidCallback onPressed;
+  final String? tooltipMessage;
+  final bool Function()? enabledCalculator;
+
+  ButtonInputField({
+    required super.valueNotifier,
+    super.shouldExpand,
+    super.startNewRow,
+    super.validator,
+    super.listenTo,
+    super.enabled,
+    super.flex,
+    required this.onPressed,
+    required this.text,
+    this.tooltipMessage,
+    this.enabledCalculator
   });
 }

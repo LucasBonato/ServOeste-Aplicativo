@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_form.dart';
 import 'package:serv_oeste/features/servico/domain/rules/service_field_rules.dart';
 import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_filter.dart';
+import 'package:serv_oeste/features/tecnico/presentation/widgets/tecnico_table_modal.dart';
 import 'package:serv_oeste/shared/widgets/formFields/search_input_field.dart';
 import 'package:serv_oeste/features/tecnico/presentation/widgets/tecnico_search_field.dart';
 import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
@@ -24,7 +25,6 @@ class ServicoFormWidget extends StatefulWidget {
   final TecnicoBloc tecnicoBloc;
   final ServicoValidator? validator;
   final GlobalKey<FormState>? formKey;
-  final Widget Function(BuildContext context)? buildAvailabilityButton;
   final void Function() onSubmit;
   final ServicoForm form;
   final TextEditingController nameTecnicoController;
@@ -43,7 +43,6 @@ class ServicoFormWidget extends StatefulWidget {
     required this.form,
     this.validator,
     this.formKey,
-    this.buildAvailabilityButton,
     this.isForListScreen = false,
   });
 
@@ -267,6 +266,52 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
     }
   }
 
+  bool _enableTecnico() {
+    bool isEquipamentoNotEmpty = widget.form.equipamento.value.isNotEmpty;
+    bool hasCliente = widget.form.idCliente.value != null;
+
+    if (widget.isUpdate) {
+      return isFieldEnabled("nomeTecnico") && (isEquipamentoNotEmpty || hasCliente);
+    }
+
+    return (widget.isClientAndService)
+        ? (isEquipamentoNotEmpty || (!widget.isClientAndService || hasCliente))
+        : (isEquipamentoNotEmpty && (widget.isClientAndService || hasCliente));
+  }
+
+  void _setTableValues(
+      String nomeTecnico,
+      String data,
+      String periodo,
+      int idTecnico,
+    ) {
+    widget.nameTecnicoController.text = nomeTecnico;
+    widget.form.setNomeTecnico(nomeTecnico);
+    widget.form.setDataAtendimentoPrevisto(data);
+    widget.form.setHorario(periodo);
+    widget.form.setIdTecnico(idTecnico);
+  }
+
+  void _onShowAvailabilityTechnicianTable() {
+    int idEspecialidade = 12;
+    final int? idFromCache = context
+        .read<SpecialtyCache>()
+        .idByConhecimento(widget.form.equipamento.value);
+    if (idFromCache != null) {
+      idEspecialidade = idFromCache;
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return TecnicoTableModal(
+          especialidadeId: idEspecialidade,
+          setValuesAvailabilityTechnicianTable: _setTableValues,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     enabled = isInputEnabled();
@@ -349,52 +394,44 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                 enabled: isFieldEnabled("marca"),
                 shouldExpand: widget.isUpdate,
               ),
-              TecnicoSearchField(
-                label: "Nome do Técnico*",
-                tooltipMessage: "Selecione um equipamento para continuar",
-                tecnicoBloc: widget.tecnicoBloc,
-                validator: validator.byField(
-                  widget.form,
-                  ErrorCodeKey.tecnico.name,
-                ),
-                controller: nameTecnicoController,
-                onChanged: widget.form.setNomeTecnico,
-                onSearchStart: () => widget.form.setIdTecnico,
-                listenTo: [widget.form.equipamento, widget.form.idCliente],
-                searchFilter: () => TecnicoFilter(
-                  equipamento: widget.form.equipamento.value
-                ),
-                enabledCalculator: () {
-                  bool isEquipamentoNotEmpty =
-                      widget.form.equipamento.value.isNotEmpty;
-                  bool hasCliente = widget.form.idCliente.value != null;
-
-                  if (widget.isUpdate) {
-                    return isFieldEnabled("nomeTecnico") &&
-                        (isEquipamentoNotEmpty || hasCliente);
-                  }
-
-                  return (widget.isClientAndService)
-                      ? (isEquipamentoNotEmpty ||
-                            (!widget.isClientAndService || hasCliente))
-                      : (isEquipamentoNotEmpty &&
-                            (widget.isClientAndService || hasCliente));
-                },
-                onSelected: (tecnico) {
-                  widget.form.setNomeTecnico(tecnico.nome);
-                  widget.form.setIdTecnico(tecnico.id);
-                },
-                isForListScreen: widget.isForListScreen,
-              ),
-              if (widget.buildAvailabilityButton != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: widget.buildAvailabilityButton!(context),
+              CustomWidgetField(
+                shouldExpand: true,
+                flex: 1,
+                child: TecnicoSearchField(
+                  label: "Nome do Técnico*",
+                  tooltipMessage: "Selecione um equipamento para continuar",
+                  tecnicoBloc: widget.tecnicoBloc,
+                  validator: validator.byField(
+                    widget.form,
+                    ErrorCodeKey.tecnico.name,
                   ),
+                  controller: nameTecnicoController,
+                  onChanged: widget.form.setNomeTecnico,
+                  onSearchStart: () => widget.form.setIdTecnico,
+                  listenTo: [widget.form.equipamento, widget.form.idCliente],
+                  searchFilter: () => TecnicoFilter(
+                    equipamento: widget.form.equipamento.value,
+                  ),
+                  enabledCalculator: _enableTecnico,
+                  onSelected: (tecnico) {
+                    widget.form.setNomeTecnico(tecnico.nome);
+                    widget.form.setIdTecnico(tecnico.id);
+                  },
+                  isForListScreen: widget.isForListScreen,
+                ),
+              ),
+              if (widget.isClientAndService || widget.isUpdate)
+                ButtonInputField(
+                  shouldExpand: true,
+                  flex: 1,
+                  valueNotifier: widget.form.equipamento,
+                  text: "Verificar disponibilidade dos técnicos",
+                  tooltipMessage: "Selecione um equipamento para continuar",
+                  onPressed: _onShowAvailabilityTechnicianTable,
+                  enabledCalculator: _enableTecnico
                 ),
               DropdownInputField(
+                startNewRow: true,
                 hint: "Horário*",
                 dropdownValues: Constants.horarioPrevisto,
                 valueNotifier: widget.form.horario,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/shared/widgets/formFields/custom_button_form_field.dart';
 import 'package:serv_oeste/shared/widgets/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/shared/widgets/formFields/custom_text_form_field.dart';
 import 'package:serv_oeste/shared/widgets/formFields/date_picker_form_field.dart';
@@ -85,7 +86,7 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
     );
   }
 
-  Widget _buildFormField(SearchInputField field) {
+  Widget _buildFormField(InputField field) {
     if (field is TextFormInputField) {
       return CustomTextFormField(
         hide: true,
@@ -105,7 +106,8 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
         onChanged: field.onChanged,
         enabled: field.enabled,
       );
-    } else if (field is TextSearchFormInputField) {
+    }
+    if (field is TextSearchFormInputField) {
       return CustomSearchTextFormField(
         hint: field.hint,
         leftPadding: 4,
@@ -115,7 +117,8 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
         onChangedAction: field.onChanged,
         onSuffixAction: field.onSuffix,
       );
-    } else if (field is DropdownInputField) {
+    }
+    if (field is DropdownInputField) {
       return CustomDropdownFormField(
         leftPadding: 4,
         rightPadding: 4,
@@ -129,7 +132,8 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
           field.onChanged?.call(value);
         },
       );
-    } else if (field is DropdownSearchInputField) {
+    }
+    if (field is DropdownSearchInputField) {
       return CustomSearchDropDownFormField(
         leftPadding: 4,
         rightPadding: 4,
@@ -140,7 +144,8 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
         onChanged: field.onChanged,
         enabled: field.enabled,
       );
-    } else if (field is DatePickerInputField) {
+    }
+    if (field is DatePickerInputField) {
       return CustomDatePickerFormField(
         label: field.hint,
         hint: "dd/mm/aaaa",
@@ -158,6 +163,15 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
         allowFutureDates: field.allowFutureDates,
       );
     }
+    if (field is ButtonInputField) {
+      return CustomButtonFormField(
+        valueNotifier: field.valueNotifier!,
+        onPressed: field.onPressed,
+        text: field.text,
+        tooltipMessage: field.tooltipMessage,
+        enabledCalculator: field.enabledCalculator
+      );
+    }
     return const SizedBox.shrink();
   }
 
@@ -166,6 +180,7 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
     List<Widget> currentRow = [];
 
     void flushRow() {
+      if (currentRow.isEmpty) return;
       rows.add(currentRow);
       currentRow = [];
       currentRow.add(SizedBox(height: widget.space));
@@ -176,7 +191,37 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
     for (int i = 0; i < fields.length; i++) {
       final field = fields[i];
 
-      if (field is! SearchInputField) {
+      if (field is CustomWidgetField) {
+        if (field.startNewRow && currentRow.isNotEmpty) {
+          flushRow();
+        }
+
+        if (field.shouldExpand) {
+          currentRow.add(
+            Expanded(
+              flex: field.flex,
+              child: field.child,
+            ),
+          );
+        } else {
+          if (currentRow.isNotEmpty) {
+            flushRow();
+          }
+
+          currentRow.add(field.child);
+          flushRow();
+        }
+
+        final bool isLastField = i == fields.length - 1;
+
+        if (isLastField && currentRow.isNotEmpty) {
+          flushRow();
+        }
+
+        continue;
+      }
+
+      if (field is! InputField) {
         if (currentRow.isNotEmpty) {
           flushRow();
         }
@@ -244,10 +289,13 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
   List<Widget> _buildSmallScreenFormFields(List<Object> fields) {
     return fields
         .map((field) {
+          if (field is CustomWidgetField) {
+            return field.child;
+          }
           if (field is Widget) {
             return field;
           }
-          if (field is SearchInputField) {
+          if (field is InputField) {
             return _buildFormField(field);
           }
           return const SizedBox.shrink();

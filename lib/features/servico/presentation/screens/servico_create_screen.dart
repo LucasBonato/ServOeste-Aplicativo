@@ -14,9 +14,7 @@ import 'package:serv_oeste/features/servico/domain/validators/servico_validator.
 import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
 import 'package:serv_oeste/features/servico/presentation/widgets/servico_form_widget.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
-import 'package:serv_oeste/features/tecnico/presentation/widgets/tecnico_table_modal.dart';
 import 'package:serv_oeste/shared/models/error/error_entity.dart';
-import 'package:serv_oeste/shared/services/specialty_cache.dart';
 import 'package:serv_oeste/shared/utils/debouncer.dart';
 import 'package:serv_oeste/shared/widgets/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/shared/widgets/formFields/field_labels.dart';
@@ -114,40 +112,6 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
     );
   }
 
-  void _onShowAvailabilityTechnicianTable() {
-    final String equipamentoSelected = _servicoForm.equipamento.value;
-    int idEspecialidade = 12;
-    final int? idFromCache = context.read<SpecialtyCache>().idByConhecimento(
-      equipamentoSelected,
-    );
-    if (idFromCache != null) {
-      idEspecialidade = idFromCache;
-    }
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return TecnicoTableModal(
-          especialidadeId: idEspecialidade,
-          setValuesAvailabilityTechnicianTable: _setTableValues,
-        );
-      },
-    );
-  }
-
-  void _setTableValues(
-    String nomeTecnico,
-    String data,
-    String periodo,
-    int idTecnico,
-  ) {
-    _nomeTecnicoController.text = nomeTecnico;
-    _servicoForm.setNomeTecnico(nomeTecnico);
-    _servicoForm.setDataAtendimentoPrevisto(data);
-    _servicoForm.setHorario(periodo);
-    _servicoForm.setIdTecnico(idTecnico);
-  }
-
   void _onAddService() {
     if (isClientAndService) {
       List<String> nomes = _clienteForm.nome.value.split(" ");
@@ -226,7 +190,7 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
                   return _buildMainFormLayout(isMobile);
                 },
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 16),
               _buildButton(
                 isClientAndService
                     ? 'Adicionar Cliente/Serviço'
@@ -408,25 +372,6 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
       onSubmit: () {},
       submitText: "",
       successMessage: 'Serviço registrado com sucesso! (Caso ele não esteja aparecendo, recarregue a página)',
-      buildAvailabilityButton: (context) {
-        return ValueListenableBuilder<String>(
-          valueListenable: _servicoForm.equipamento,
-          builder: (context, equipamentoSelecionado, child) {
-            final bool enabled = equipamentoSelecionado.isNotEmpty;
-
-            return _buildButton(
-              'Verificar disponibilidade',
-              enabled
-                  ? const Color(0xFF007BFF)
-                  : Colors.grey.withValues(alpha: 0.5),
-              enabled ? _onShowAvailabilityTechnicianTable : null,
-              disabledTooltip:
-                  'Selecione um equipamento para verificar a disponibilidade.',
-              fullWidth: true,
-            );
-          },
-        );
-      },
     );
   }
 
