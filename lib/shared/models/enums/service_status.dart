@@ -29,22 +29,30 @@ enum ServiceStatus {
     return switch (status) {
       "AGUARDANDO_AGENDAMENTO" ||
       "Aguardando agendamento" => ServiceStatus.aguardandoAgendamento,
+
       "AGUARDANDO_ATENDIMENTO" ||
       "Aguardando atendimento" => ServiceStatus.aguardandoAtendimento,
-      "AGUARDANDO_APROVACAO" || "Aguardando aprovação do cliente" =>
-      ServiceStatus.aguardandoAprovacaoCliente,
+
+      "AGUARDANDO_APROVACAO" ||
+      "Aguardando aprovação do cliente" => ServiceStatus.aguardandoAprovacaoCliente,
+
       "AGUARDANDO_CLIENTE_RETIRAR" ||
       "Aguardando cliente retirar" => ServiceStatus.aguardandoClienteRetirar,
+
       "CANCELADO" || "Cancelado" => ServiceStatus.cancelado,
       "COMPRA" || "Compra" => ServiceStatus.compra,
       "CORTESIA" || "Cortesia" => ServiceStatus.cortesia,
       "GARANTIA" || "Garantia" => ServiceStatus.garantia,
+
       "NAO_APROVADO" ||
       "Não aprovado pelo cliente" => ServiceStatus.naoAprovadoPeloCliente,
+
       "NAO_RETIRA_3_MESES" ||
       "Não retira há 3 meses" => ServiceStatus.naoRetira3Meses,
+
       "ORCAMENTO_APROVADO" ||
       "Orçamento aprovado" => ServiceStatus.orcamentoAprovado,
+
       "RESOLVIDO" || "Resolvido" => ServiceStatus.resolvido,
       "SEM_DEFEITO" || "Sem defeito" => ServiceStatus.semDefeito,
       _ => ServiceStatus.aguardandoAgendamento,

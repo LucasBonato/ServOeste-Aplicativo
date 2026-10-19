@@ -137,7 +137,6 @@ class _TecnicoUpdateScreenState extends State<TecnicoUpdateScreen> {
             bloc: bloc,
             tecnicoForm: form,
             nomeController: nomeController,
-            situacaoNotifier: situacaoNotifier,
             isUpdate: true,
             successMessage: "Técnico atualizado com sucesso! (Caso ele não esteja atualizado, recarregue a página)",
             checkersMap: checkersMap,

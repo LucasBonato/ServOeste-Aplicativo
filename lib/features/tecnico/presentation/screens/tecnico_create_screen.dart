@@ -98,7 +98,6 @@ class _TecnicoCreateScreenState extends State<TecnicoCreateScreen> {
       successMessage: "Técnico registrado com sucesso! (Caso ele não esteja aparecendo, recarregue a página)",
       checkersMap: _checkersMap,
       conhecimentoIdsByLabel: _conhecimentoIdsByLabel,
-      situacaoNotifier: _situacaoNotifier,
       isForListScreen: false,
       situationMap: {},
       onSubmit: () {
