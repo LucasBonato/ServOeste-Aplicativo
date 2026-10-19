@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 import 'package:serv_oeste/features/cliente/domain/entities/cliente.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente_filter.dart';
 import 'package:serv_oeste/features/cliente/domain/entities/cliente_form.dart';
@@ -118,9 +117,9 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
   void _onShowAvailabilityTechnicianTable() {
     final String equipamentoSelected = _servicoForm.equipamento.value;
     int idEspecialidade = 12;
-    final int? idFromCache = context
-        .read<SpecialtyCache>()
-        .idByConhecimento(equipamentoSelected);
+    final int? idFromCache = context.read<SpecialtyCache>().idByConhecimento(
+      equipamentoSelected,
+    );
     if (idFromCache != null) {
       idEspecialidade = idFromCache;
     }
@@ -228,21 +227,6 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
                 },
               ),
               const SizedBox(height: 48),
-              ValueListenableBuilder<String>(
-                valueListenable: _servicoForm.equipamento,
-                builder: (context, equipamentoSelecionado, child) {
-                  return _buildButton(
-                    'Verificar disponibilidade',
-                    equipamentoSelecionado.isNotEmpty
-                        ? Color(0xFF007BFF)
-                        : Colors.grey.withValues(alpha: 0.5),
-                    equipamentoSelecionado.isNotEmpty
-                        ? _onShowAvailabilityTechnicianTable
-                        : () {},
-                  );
-                },
-              ),
-              const SizedBox(height: 16),
               _buildButton(
                 isClientAndService
                     ? 'Adicionar Cliente/Serviço'
@@ -296,22 +280,56 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
     );
   }
 
-  Widget _buildButton(String text, Color color, VoidCallback onPressed) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 800),
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color,
-          minimumSize: const Size(600, 50),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-        child: Text(
-          text,
-          style: const TextStyle(fontSize: 18, color: Colors.white),
-        ),
-      ),
-    );
+  Widget _buildButton(
+    String text,
+    Color color,
+    VoidCallback? onPressed, {
+    String? disabledTooltip,
+    bool fullWidth = false,
+  }) {
+    final bool isDisabled = onPressed == null;
+
+    final Widget button = fullWidth
+        ? SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: onPressed,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: color,
+                minimumSize: const Size.fromHeight(50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text(
+                text,
+                style: const TextStyle(fontSize: 18, color: Colors.white),
+              ),
+            ),
+          )
+        : ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: ElevatedButton(
+              onPressed: onPressed,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: color,
+                minimumSize: const Size(600, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text(
+                text,
+                style: const TextStyle(fontSize: 18, color: Colors.white),
+              ),
+            ),
+          );
+
+    if (isDisabled && disabledTooltip != null) {
+      return Tooltip(message: disabledTooltip, child: button);
+    }
+
+    return button;
   }
 
   Widget _buildFilteredClientsTable() {
@@ -389,8 +407,26 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
       isClientAndService: isClientAndService,
       onSubmit: () {},
       submitText: "",
-      successMessage:
-          'Serviço registrado com sucesso! (Caso ele não esteja aparecendo, recarregue a página)',
+      successMessage: 'Serviço registrado com sucesso! (Caso ele não esteja aparecendo, recarregue a página)',
+      buildAvailabilityButton: (context) {
+        return ValueListenableBuilder<String>(
+          valueListenable: _servicoForm.equipamento,
+          builder: (context, equipamentoSelecionado, child) {
+            final bool enabled = equipamentoSelecionado.isNotEmpty;
+
+            return _buildButton(
+              'Verificar disponibilidade',
+              enabled
+                  ? const Color(0xFF007BFF)
+                  : Colors.grey.withValues(alpha: 0.5),
+              enabled ? _onShowAvailabilityTechnicianTable : null,
+              disabledTooltip:
+                  'Selecione um equipamento para verificar a disponibilidade.',
+              fullWidth: true,
+            );
+          },
+        );
+      },
     );
   }
 

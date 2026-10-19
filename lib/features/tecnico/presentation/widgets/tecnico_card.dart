@@ -96,8 +96,8 @@ class TecnicoCard extends StatelessWidget {
                       color: isSelected
                           ? Colors.black38
                           : (hovered
-                              ? Colors.black38
-                              : const Color(0xFFEAE6E5)),
+                                ? Colors.black38
+                                : const Color(0xFFEAE6E5)),
                       width: 1.5,
                     ),
                     boxShadow: [
@@ -196,9 +196,7 @@ class TecnicoCard extends StatelessWidget {
                                       padding: const EdgeInsets.only(left: 28),
                                       child: Text(
                                         "Telefone: ${Formatters.applyPhoneMask(telefone!)}",
-                                        style: TextStyle(
-                                          fontSize: phoneSize,
-                                        ),
+                                        style: TextStyle(fontSize: phoneSize),
                                       ),
                                     ),
                                   if (celular != null && celular!.isNotEmpty)
@@ -206,9 +204,7 @@ class TecnicoCard extends StatelessWidget {
                                       padding: const EdgeInsets.only(left: 28),
                                       child: Text(
                                         "Celular: ${Formatters.applyCellPhoneMask(celular!)}",
-                                        style: TextStyle(
-                                          fontSize: phoneSize,
-                                        ),
+                                        style: TextStyle(fontSize: phoneSize),
                                       ),
                                     ),
                                 ],
@@ -237,7 +233,7 @@ class TecnicoCard extends StatelessWidget {
     switch (status.toLowerCase()) {
       case "ativo":
         return const Color.fromARGB(255, 4, 80, 16);
-      case "licenca":
+      case "licença":
         return const Color.fromARGB(255, 16, 6, 102);
       default:
         return Colors.red;

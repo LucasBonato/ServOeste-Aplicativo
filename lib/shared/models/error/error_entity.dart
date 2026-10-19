@@ -27,7 +27,11 @@ class ErrorEntity {
   }
 
   factory ErrorEntity.fromJson(Map<String, dynamic> json) {
-    final errorMap = (json['error'] as Map<String, dynamic>?)?.map((key, value) => MapEntry(key, List<String>.from(value))) ?? {};
+    final errorMap =
+        (json['error'] as Map<String, dynamic>?)?.map(
+          (key, value) => MapEntry(key, List<String>.from(value)),
+        ) ??
+        {};
 
     return ErrorEntity(
       type: json['type'] ?? '',
@@ -49,7 +53,7 @@ class ErrorEntity {
       instance: "/",
       traceId: traceId,
       errors: {
-        ErrorCodeKey.global.name: ["Unexpected Error"]
+        ErrorCodeKey.global.name: ["Unexpected Error"],
       },
     );
   }
@@ -68,5 +72,6 @@ class ErrorEntity {
   }
 
   @override
-  String toString() => 'ErrorEntity(status: $status, detail: $detail, errors: $errors)';
+  String toString() =>
+      'ErrorEntity(status: $status, detail: $detail, errors: $errors)';
 }

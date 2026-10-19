@@ -23,6 +23,7 @@ class ServicoFormWidget extends StatefulWidget {
   final TecnicoBloc tecnicoBloc;
   final ServicoValidator? validator;
   final GlobalKey<FormState>? formKey;
+  final Widget Function(BuildContext context)? buildAvailabilityButton;
   final void Function() onSubmit;
   final ServicoForm form;
   final TextEditingController nameTecnicoController;
@@ -41,6 +42,7 @@ class ServicoFormWidget extends StatefulWidget {
     required this.form,
     this.validator,
     this.formKey,
+    this.buildAvailabilityButton,
     this.isForListScreen = false,
   });
 
@@ -317,7 +319,8 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
             widget.onSubmit();
           },
           buildFields: () {
-            final SpecialtyCache specialtyCache = context.read<SpecialtyCache>();
+            final SpecialtyCache specialtyCache = context
+                .read<SpecialtyCache>();
             return [
               DropdownSearchInputField(
                 hint: "Equipamento*",
@@ -357,6 +360,8 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                 onChanged: widget.form.setNomeTecnico,
                 onSearchStart: () => widget.form.setIdTecnico,
                 listenTo: [widget.form.equipamento, widget.form.idCliente],
+                especialidadeNotifier: widget.form.equipamento,
+                getEspecialidadeId: specialtyCache.idByConhecimento,
                 enabledCalculator: () {
                   bool isEquipamentoNotEmpty =
                       widget.form.equipamento.value.isNotEmpty;
@@ -379,6 +384,14 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                 },
                 isForListScreen: widget.isForListScreen,
               ),
+              if (widget.buildAvailabilityButton != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: widget.buildAvailabilityButton!(context),
+                  ),
+                ),
               DropdownInputField(
                 hint: "Horário*",
                 dropdownValues: Constants.horarioPrevisto,
@@ -417,7 +430,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
               DatePickerInputField(
                 startNewRow: true,
                 shouldExpand: widget.isUpdate,
-                hint: "Data Prevista",
+                hint: "Data Prevista*",
                 valueNotifier: widget.form.dataAtendimentoPrevisto,
                 validator: validator.byField(
                   widget.form,
@@ -489,7 +502,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                   enabled: false,
                 ),
                 DropdownInputField(
-                  hint: "Forma de Pagamento*",
+                  hint: "Forma de Pagamento***",
                   dropdownValues: Constants.formasPagamento,
                   valueNotifier: widget.form.formaPagamento,
                   validator: validator.byField(
@@ -553,7 +566,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
               ],
               TextFormInputField(
                 hint: "Descrição/Observação...",
-                label: "Descrição/Observação*",
+                label: "Descrição/Observação***",
                 maxLength: 255,
                 keyboardType: TextInputType.multiline,
                 valueNotifier: widget.form.descricao,
