@@ -9,6 +9,7 @@ class SpecialtyClient {
 
   Future<List<Especialidade>> findAll() async {
     final Response response = await _dio.get(ServerEndpoints.especialidadesEndpoint);
+    if (response.data == null || response.data is! List) return [];
     return List<Especialidade>.from(
       (response.data as List).map((json) => Especialidade.fromJson(json)),
     );

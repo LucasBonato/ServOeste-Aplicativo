@@ -160,7 +160,19 @@ class TokenRefreshInterceptor extends Interceptor {
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
+    // Resolve all pending requests with an empty response so their BLOCs
+    // transition to success (empty list) instead of hanging in loading state.
+    for (final pending in _pendingRequests) {
+      pending.handler.resolve(
+        Response(
+          requestOptions: pending.error.requestOptions,
+          statusCode: 498,
+          data: null
+        ),
+      );
+    }
     _pendingRequests.clear();
+
     AppLogger.warn(
       'Falha ao atualizar token de acesso, encerrando sessão',
       attributes: {'url.path': err.requestOptions.path},
@@ -168,6 +180,12 @@ class TokenRefreshInterceptor extends Interceptor {
     await secureStorageService.deleteTokens();
     onSessionCleared?.call();
     onTokenRefreshFailed?.call();
-    handler.next(err);
+    handler.resolve(
+      Response(
+        requestOptions: err.requestOptions,
+        statusCode: 498,
+        data: null
+      )
+    );
   }
 }
