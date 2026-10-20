@@ -73,7 +73,25 @@ class TokenRefreshInterceptor extends Interceptor {
 
         Tracing.currentUserId = Tracing.userIdFromJwt(newTokens.accessToken);
 
-        await _retry(err, handler);
+        // Retry the original request — if it fails, propagate the error
+        // normally so the client sees the actual response (e.g., 400 validation)
+        // instead of being silently swallowed by _fail().
+        try {
+          await _retry(err, handler);
+        } catch (retryError, retryStackTrace) {
+          // Retry failed with a non-auth error (e.g., 400 validation).
+          // Propagate the original error so the client handles it properly.
+          AppLogger.exception(
+            retryError,
+            stackTrace: retryStackTrace,
+            attributes: {
+              'exception.context': 'token_refresh_retry_failed',
+              'url.path': err.requestOptions.path,
+            },
+          );
+          _pendingRequests.clear();
+          return handler.next(err);
+        }
 
         if (_pendingRequests.isNotEmpty) {
           AppLogger.info(
@@ -81,16 +99,33 @@ class TokenRefreshInterceptor extends Interceptor {
             attributes: {'token.refresh.retry_count': _pendingRequests.length},
           );
           for (final pending in _pendingRequests) {
-            await _retry(pending.error, pending.handler);
+            try {
+              await _retry(pending.error, pending.handler);
+            } catch (retryError, retryStackTrace) {
+              AppLogger.exception(
+                retryError,
+                stackTrace: retryStackTrace,
+                attributes: {
+                  'exception.context': 'token_refresh_pending_retry_failed',
+                  'url.path': pending.error.requestOptions.path,
+                },
+              );
+              // Let pending retry failures propagate — their handlers will
+              // get the error normally.
+              handler.next(pending.error);
+            }
           }
         }
 
         _pendingRequests.clear();
       } else {
+        // Refresh token itself failed — this is a true auth failure.
         await _fail(err, handler);
       }
     }
     catch (error, stackTrace) {
+      // Only catch exceptions from refreshToken(), not from _retry().
+      // If refreshToken() throws (e.g., network error), treat as auth failure.
       AppLogger.exception(
         error,
         stackTrace: stackTrace,
@@ -162,12 +197,14 @@ class TokenRefreshInterceptor extends Interceptor {
   ) async {
     // Resolve all pending requests with an empty response so their BLOCs
     // transition to success (empty list) instead of hanging in loading state.
+    // These are auth errors (401/403) where refresh failed — safe to resolve
+    // with empty data since navigation to login is already triggered.
     for (final pending in _pendingRequests) {
       pending.handler.resolve(
         Response(
           requestOptions: pending.error.requestOptions,
           statusCode: 498,
-          data: null
+          data: null,
         ),
       );
     }
@@ -184,8 +221,8 @@ class TokenRefreshInterceptor extends Interceptor {
       Response(
         requestOptions: err.requestOptions,
         statusCode: 498,
-        data: null
-      )
+        data: null,
+      ),
     );
   }
 }
