@@ -418,8 +418,8 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
               'Verificar disponibilidade',
               enabled
                   ? const Color(0xFF007BFF)
-                  : Colors.grey.withValues(alpha: 0.5),
-              enabled ? _onShowAvailabilityTechnicianTable : null,
+                  : Colors.grey.withValues(alpha: 0.8),
+              enabled ? _onShowAvailabilityTechnicianTable : () {},
               disabledTooltip:
                   'Selecione um equipamento para verificar a disponibilidade.',
               fullWidth: true,

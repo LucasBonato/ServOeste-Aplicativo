@@ -57,8 +57,6 @@ class ServicoCard extends StatelessWidget {
         return Colors.red;
       case ServiceStatus.compra:
         return Colors.teal;
-      case ServiceStatus.cortesia:
-        return Colors.tealAccent;
       case ServiceStatus.garantia:
         return const Color(0xFF1201FF);
       case ServiceStatus.naoAprovadoPeloCliente:

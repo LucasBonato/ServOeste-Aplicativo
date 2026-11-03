@@ -5,7 +5,6 @@ enum ServiceStatus {
   aguardandoClienteRetirar("Aguardando cliente retirar"),
   cancelado("Cancelado"),
   compra("Compra"),
-  cortesia("Cortesia"),
   garantia("Garantia"),
   naoAprovadoPeloCliente("Não aprovado Pelo cliente"),
   naoRetira3Meses("Não retira há 3 meses"),

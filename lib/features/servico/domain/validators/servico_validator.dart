@@ -340,7 +340,6 @@ class ServicoValidator extends LucidValidator<ServicoForm>
                 'Aguardando aprovação do cliente',
                 'Orçamento aprovado',
                 'Aguardando cliente retirar',
-                'Cortesia',
                 'Garantia',
               ].contains(servico.situacao.value),
         )

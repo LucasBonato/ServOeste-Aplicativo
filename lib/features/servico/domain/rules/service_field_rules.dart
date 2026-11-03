@@ -34,7 +34,6 @@ class ServiceFieldRules {
       'Aguardando aprovação do cliente',
       'Orçamento aprovado',
       'Aguardando cliente retirar',
-      'Cortesia',
       'Garantia',
     ],
     "dataPagamentoComissao": [

@@ -175,7 +175,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
       'Compra' || 'Não aprovado pelo cliente' || 'Orçamento aprovado' => 3,
       'Aguardando cliente retirar' => 4,
       'Resolvido || Não retira há 3 meses' => 5,
-      'Cortesia' || 'Garantia' => 6,
+      'Garantia' => 6,
       _ => -1,
     };
   }

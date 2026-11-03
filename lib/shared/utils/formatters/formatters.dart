@@ -293,7 +293,6 @@ class Formatters {
       "Aguardando cliente retirar" => ServiceStatus.aguardandoClienteRetirar,
       "CANCELADO" || "Cancelado" => ServiceStatus.cancelado,
       "COMPRA" || "Compra" => ServiceStatus.compra,
-      "CORTESIA" || "Cortesia" => ServiceStatus.cortesia,
       "GARANTIA" || "Garantia" => ServiceStatus.garantia,
       "NAO_APROVADO" ||
       "Não aprovado pelo cliente" => ServiceStatus.naoAprovadoPeloCliente,
@@ -315,7 +314,6 @@ class Formatters {
       "Aguardando cliente retirar" => "AGUARDANDO_CLIENTE_RETIRAR",
       "Cancelado" => "CANCELADO",
       "Compra" => "COMPRA",
-      "Cortesia" => "CORTESIA",
       "Garantia" => "GARANTIA",
       "Não aprovado pelo cliente" => "NAO_APROVADO",
       "Não retira há 3 meses" => "NAO_RETIRA_3_MESES",
