@@ -111,7 +111,16 @@ class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
           child: ValueListenableBuilder<String>(
             valueListenable: widget.valueNotifier,
             builder: (BuildContext context, String value, Widget? child) {
-              return CustomDropdown<String>(
+              final Color fillColor = _isHovered
+                  ? const Color(0xFFF5EEED)
+                  : (widget.enabled ?? true)
+                    ? const Color(0xFFFFF8F7)
+                    : const Color(0xFFE2E1E0);
+              final bool isFilled = value.isNotEmpty;
+              return Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  CustomDropdown<String>(
                 controller: _internalController,
                 enabled: widget.enabled ?? true,
                 items: widget.dropdownValues,
@@ -156,11 +165,7 @@ class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
                     color: Colors.black38,
                     size: 20,
                   ),
-                  closedFillColor: _isHovered
-                      ? const Color(0xFFF5EEED)
-                      : (widget.enabled ?? true)
-                      ? const Color(0xFFFFF8F7)
-                      : const Color(0xFFE2E1E0),
+                  closedFillColor: fillColor,
                   closedBorderRadius: BorderRadius.circular(12),
                   expandedBorderRadius: BorderRadius.circular(12),
                   closedBorder: Border.all(
@@ -177,6 +182,34 @@ class _CustomDropdownFormFieldState extends State<CustomDropdownFormField> {
                   ),
                   expandedFillColor: const Color(0xFFFFF8F7),
                 ),
+                ),
+                if (isFilled)
+                  Positioned(
+                    top: -7,
+                    left: 12,
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Positioned.fill(
+                          top: 6,
+                          child: ColoredBox(color: fillColor),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Text(
+                            widget.label,
+                            style: TextStyle(
+                              color: (widget.enabled ?? true)
+                                  ? Colors.black
+                                  : const Color(0xFF948F8F),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               );
             },
           ),
