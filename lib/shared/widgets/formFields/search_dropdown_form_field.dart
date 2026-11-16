@@ -22,7 +22,6 @@ class CustomSearchDropDownFormField extends StatefulWidget {
   final VoidCallback? onTap;
   final FutureOr<List<String>> Function(String)? suggestionsCallback;
 
-
   const CustomSearchDropDownFormField({
     super.key,
     this.hide = false,
@@ -41,7 +40,7 @@ class CustomSearchDropDownFormField extends StatefulWidget {
     required this.dropdownValues,
     this.valueNotifier,
     this.onTap,
-    this.suggestionsCallback
+    this.suggestionsCallback,
   });
 
   @override
@@ -49,7 +48,8 @@ class CustomSearchDropDownFormField extends StatefulWidget {
 }
 
 class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
-  late final TextEditingController _effectiveController;
+  late TextEditingController _effectiveController;
+  late bool _ownsController;
   late Color labelColor;
   bool _isDisposed = false;
 
@@ -57,6 +57,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
   void initState() {
     super.initState();
     _effectiveController = widget.controller ?? TextEditingController();
+    _ownsController = widget.controller == null;
     labelColor = const Color(0xFF948F8F);
 
     _synchronizeControllerWithValueNotifier();
@@ -97,14 +98,11 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
 
     if (widget.controller != oldWidget.controller) {
       _effectiveController.removeListener(_onInternalControllerTextChanged);
-
-      if (widget.controller != null) {
-        final newText = widget.controller!.text;
-        if (_effectiveController.text != newText) {
-          _effectiveController.text = newText;
-        }
+      if (_ownsController) {
+        _effectiveController.dispose();
       }
-
+      _effectiveController = widget.controller ?? TextEditingController();
+      _ownsController = widget.controller == null;
       _effectiveController.addListener(_onInternalControllerTextChanged);
       _synchronizeControllerWithValueNotifier();
     }
@@ -123,7 +121,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
     _isDisposed = true;
     _effectiveController.removeListener(_onInternalControllerTextChanged);
     widget.valueNotifier?.removeListener(_onExternalNotifierChanged);
-    if (widget.controller == null) {
+    if (_ownsController) {
       _effectiveController.dispose();
     }
     super.dispose();
@@ -154,10 +152,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
           decoration: InputDecoration(
             counterText: widget.hide ? null : "",
             labelText: widget.label,
-            labelStyle: TextStyle(
-              color: labelColor,
-              fontSize: 16,
-            ),
+            labelStyle: TextStyle(color: labelColor, fontSize: 16),
             suffixIcon: const Icon(
               Icons.arrow_drop_down_outlined,
               color: Color(0xFF948F8F),
@@ -167,24 +162,15 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
             fillColor: const Color(0xFFFFF8F7),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: Color(0xFFEAE6E5),
-                width: 1,
-              ),
+              borderSide: const BorderSide(color: Color(0xFFEAE6E5), width: 1),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: Color(0xFFEAE6E5),
-                width: 1,
-              ),
+              borderSide: const BorderSide(color: Color(0xFFEAE6E5), width: 1),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: Colors.blueAccent,
-                width: 1,
-              ),
+              borderSide: const BorderSide(color: Colors.blueAccent, width: 1),
             ),
             contentPadding: const EdgeInsets.symmetric(
               vertical: 16,
@@ -201,7 +187,10 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
             return widget.dropdownValues;
           }
           return widget.dropdownValues
-              .where((element) => element.toLowerCase().contains(query.toLowerCase()))
+              .where(
+                (element) =>
+                    element.toLowerCase().contains(query.toLowerCase()),
+              )
               .toList();
         },
         onSuggestionSelected: (String? suggestion) {
@@ -218,9 +207,7 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
         itemBuilder: (context, suggestion) {
           return widget.itemWidgetBuilder != null
               ? widget.itemWidgetBuilder!(context, suggestion)
-              : ListTile(
-                  title: Text(suggestion),
-                );
+              : ListTile(title: Text(suggestion));
         },
         hideOnEmpty: false,
         debounceDuration: const Duration(milliseconds: 150),
@@ -229,16 +216,11 @@ class _CustomSearchDropDown extends State<CustomSearchDropDownFormField> {
             parent: animationController!,
             curve: Curves.easeInOut,
           );
-          return FadeTransition(
-            opacity: animation,
-            child: suggestionBox,
-          );
+          return FadeTransition(opacity: animation, child: suggestionBox);
         },
         suggestionsBoxVerticalOffset: widget.hide ? -20 : 0,
         suggestionsBoxDecoration: SuggestionsBoxDecoration(
-          constraints: BoxConstraints(
-            maxHeight: 200,
-          ),
+          constraints: BoxConstraints(maxHeight: 200),
           elevation: 4,
           color: Colors.white,
         ),
