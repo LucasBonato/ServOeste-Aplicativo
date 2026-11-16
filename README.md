@@ -59,7 +59,6 @@ flowchart TD
     6 -->|Não retira há 3 meses| 7.1[Não retira há 3 meses]
     6 -->|Resolvido| 9["Resolvido (fim)"]
 
-    7 -->|Cortesia| 8[Cortesia]
     7 -->|Resolvido| 9["Resolvido (fim)"]
     7.1 -->|Resolvido| 9["Resolvido (fim)"]
 
