@@ -15,22 +15,6 @@ class Constants {
     "Desativado",
   ];
 
-  static const List<String> situationServiceList = [
-    'Aguardando agendamento',
-    'Aguardando atendimento',
-    'Cancelado',
-    'Sem defeito',
-    'Aguardando aprovação do cliente',
-    'Compra',
-    'Não aprovado pelo cliente',
-    'Orçamento aprovado',
-    'Aguardando cliente retirar',
-    'Resolvido',
-    'Não retira há 3 meses',
-    'Garantia',
-    'Cortesia',
-  ];
-
   static const List<String> municipios = [
     'Osasco',
     'Carapicuíba',
@@ -77,7 +61,10 @@ class Constants {
 
   static const List<String> filiais = ["Osasco", "Carapicuíba"];
 
-  static const List<String> horarioPrevisto = ["Manhã", "Tarde"];
+  static String filialFromStored(String stored) => filiais.firstWhere(
+    (filial) => filial.replaceAll('í', 'i') == stored,
+    orElse: () => stored,
+  );
 
   static const List<String> formasPagamento = [
     "Pix",
