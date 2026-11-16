@@ -28,21 +28,29 @@ class FilteredClientsTable extends StatelessWidget {
                 ],
                 rows: clientesFiltrados.isEmpty
                     ? [
-                        DataRow(cells: [
-                          DataCell(Text('Nenhum cliente encontrado')),
-                          DataCell(Text('')),
-                        ]),
+                        DataRow(
+                          cells: [
+                            DataCell(Text('Nenhum cliente encontrado')),
+                            DataCell(Text('')),
+                          ],
+                        ),
                       ]
                     : clientesFiltrados.map((cliente) {
                         return DataRow(
                           cells: [
                             DataCell(
-                              Text(cliente['nome']!, overflow: TextOverflow.ellipsis,),
-                              onDoubleTap: () => onClientSelected(cliente['id']!),
+                              Text(
+                                cliente['nome']!,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              onTap: () => onClientSelected(cliente['id']!),
                             ),
                             DataCell(
-                              Text(cliente['endereco']!, overflow: TextOverflow.fade,),
-                              onDoubleTap: () => onClientSelected(cliente['id']!),
+                              Text(
+                                cliente['endereco']!,
+                                overflow: TextOverflow.fade,
+                              ),
+                              onTap: () => onClientSelected(cliente['id']!),
                             ),
                           ],
                         );

@@ -47,15 +47,18 @@ class _HomeState extends State<Home> {
   }
 
   void _onNavigateToUpdateScreen(int id, int clientId) {
-    Navigator.of(context, rootNavigator: true).pushNamed(
-        Routes.servicoUpdate,
-        arguments: ServicoUpdateArgs(id: id, clientId: clientId),
-      ).then((_) {
-        _reloadHomeData();
-      });
+    Navigator.of(context, rootNavigator: true)
+        .pushNamed(
+          Routes.servicoUpdate,
+          arguments: ServicoUpdateArgs(id: id, clientId: clientId),
+        )
+        .then((_) {
+          _reloadHomeData();
+        });
   }
 
-  void _reloadHomeData({int page = 0}) => _homeBloc.add(HomeSearchEvent(page: page));
+  void _reloadHomeData({int page = 0}) =>
+      _homeBloc.add(HomeSearchEvent(page: page));
 
   @override
   Widget build(BuildContext context) {
@@ -66,9 +69,7 @@ class _HomeState extends State<Home> {
           Align(
             alignment: Alignment.topCenter,
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -129,12 +130,15 @@ class _HomeState extends State<Home> {
           const SizedBox(height: 10),
           BlocBuilder<HomeBloc, HomeState>(
             builder: (context, stateHome) {
-              if (stateHome is HomeInitialState || stateHome is HomeLoadingState) {
+              if (stateHome is HomeInitialState ||
+                  stateHome is HomeLoadingState) {
                 return const Loading();
-              }
-              else if (stateHome is HomeSearchSuccessState) {
+              } else if (stateHome is HomeSearchSuccessState) {
                 if (stateHome.servicos.isEmpty) {
-                  return const EntityNotFound(message: "Nenhum serviço agendado para essa semana", icon: Icons.calendar_today);
+                  return const EntityNotFound(
+                    message: "Nenhum serviço agendado para essa semana",
+                    icon: Icons.calendar_today,
+                  );
                 }
                 return Column(
                   children: [
@@ -142,14 +146,17 @@ class _HomeState extends State<Home> {
                       aspectRatio: .9,
                       dataList: stateHome.servicos,
                       buildCard: (servico) => ServicoCard(
-                        onDoubleTap: () => _onNavigateToUpdateScreen(servico.id, servico.idCliente),
+                        onTap: () => _onNavigateToUpdateScreen(
+                          servico.id,
+                          servico.idCliente,
+                        ),
                         cliente: (servico as Servico).nomeCliente,
                         codigo: servico.id,
                         tecnico: servico.nomeTecnico,
                         equipamento: servico.equipamento,
                         marca: servico.marca,
                         filial: servico.filial,
-                        horario: servico.horarioPrevisto,
+                        horario: servico.periodo?.label,
                         dataPrevista: servico.dataAtendimentoPrevisto,
                         dataEfetiva: servico.dataAtendimentoEfetivo,
                         dataFechamento: servico.dataFechamento,
@@ -163,7 +170,8 @@ class _HomeState extends State<Home> {
                         child: PaginationWidget(
                           currentPage: stateHome.currentPage + 1,
                           totalPages: stateHome.totalPages,
-                          onPageChanged: (page) => _reloadHomeData(page: page - 1),
+                          onPageChanged: (page) =>
+                              _reloadHomeData(page: page - 1),
                         ),
                       ),
                   ],

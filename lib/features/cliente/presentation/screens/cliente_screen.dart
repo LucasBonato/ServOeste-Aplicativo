@@ -107,15 +107,17 @@ class _ClienteScreenState extends BaseListScreenState<Cliente, ClienteState> {
     bool isSkeleton,
   ) {
     return ClienteCard(
-      onDoubleTap: () => onNavigateToUpdateScreen(
-        ClienteUpdateArgs(id: cliente.id!),
-        () =>
-            _clienteBloc.add(ClienteSearchEvent(filter: const ClienteFilter())),
-      ),
       onLongPress: () => onSelectItemList(cliente.id!),
       onTap: () {
         if (isSelectMode) {
           onSelectItemList(cliente.id!);
+        } else {
+          onNavigateToUpdateScreen(
+            ClienteUpdateArgs(id: cliente.id!),
+            () => _clienteBloc.add(
+              ClienteSearchEvent(filter: const ClienteFilter()),
+            ),
+          );
         }
       },
       name: cliente.nome!,
@@ -165,12 +167,11 @@ class _ClienteScreenState extends BaseListScreenState<Cliente, ClienteState> {
           _buildSearchInputs(),
           Expanded(
             child: BlocConsumer<ClienteBloc, ClienteState>(
-              listenWhen: (previous, current) => current is ClienteErrorState ||
-                  (
-                      current is ClienteSearchSuccessState &&
+              listenWhen: (previous, current) =>
+                  current is ClienteErrorState ||
+                  (current is ClienteSearchSuccessState &&
                       previous is ClienteSearchSuccessState &&
-                      current.filter != previous.filter
-                  ),
+                      current.filter != previous.filter),
               listener: (context, state) {
                 if (state is ClienteErrorState) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {

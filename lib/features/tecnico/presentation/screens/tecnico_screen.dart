@@ -124,15 +124,17 @@ class _TecnicoScreenState
     bool isSkeleton,
   ) {
     return TecnicoCard(
-      onDoubleTap: () => onNavigateToUpdateScreen(
-        TecnicoUpdateArgs(id: tecnico.id!),
-        () =>
-            _tecnicoBloc.add(TecnicoSearchEvent(filter: const TecnicoFilter())),
-      ),
       onLongPress: () => onSelectItemList(tecnico.id!),
       onTap: () {
         if (isSelectMode) {
           onSelectItemList(tecnico.id!);
+        } else {
+          onNavigateToUpdateScreen(
+            TecnicoUpdateArgs(id: tecnico.id!),
+            () => _tecnicoBloc.add(
+              TecnicoSearchEvent(filter: const TecnicoFilter()),
+            ),
+          );
         }
       },
       id: tecnico.id!,

@@ -5,6 +5,7 @@ import 'package:serv_oeste/core/observability/app_logger.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:serv_oeste/shared/widgets/screen/loading.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
+import 'package:serv_oeste/features/servico/domain/entities/enums/service_periodo.dart';
 
 class TecnicoTableModal extends StatefulWidget {
   final int especialidadeId;
@@ -177,7 +178,7 @@ class TecnicoTableModalState extends State<TecnicoTableModal> {
                   disponibilidade.data!,
                 );
                 final String key =
-                    '$formattedDate-${disponibilidade.periodo == "MANHA" ? "M" : "T"}';
+                    '$formattedDate-${disponibilidade.periodo == ServicePeriodo.manha ? "M" : "T"}';
                 if (dateFieldsMap.containsKey(key)) {
                   dateFieldsMap[key] = PlutoCell(
                     value: disponibilidade.quantidadeServicos.toString(),
