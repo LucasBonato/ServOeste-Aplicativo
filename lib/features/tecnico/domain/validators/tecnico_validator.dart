@@ -31,7 +31,8 @@ class TecnicoValidator extends LucidValidator<TecnicoForm> with BackendErrorsVal
         .customValidExternalErrors(externalErrors, ErrorCodeKey.telefones.name);
 
     ruleFor((tecnico) => tecnico.conhecimentos.value, key: ErrorCodeKey.conhecimento.name)
-        .customValidIsEmpty(conhecimentos, "Selecione ao menos um conhecimento!", ErrorCodeKey.conhecimento.name);
+        .customValidIsEmpty(conhecimentos, "Selecione ao menos um conhecimento!", ErrorCodeKey.conhecimento.name)
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.conhecimento.name);
   }
 
   void setConhecimentos(List<int> conhecimentos) {

@@ -55,9 +55,8 @@ class UserFormWidget extends StatelessWidget {
           onError: (state) {
             if (state is UserErrorState) {
               validator.applyBackendError(state.error);
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                formKey.currentState?.validate();
-              });
+              formKey.currentState?.validate();
+              validator.cleanExternalErrors();
 
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(

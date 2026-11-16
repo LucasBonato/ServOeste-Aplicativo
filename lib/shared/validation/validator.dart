@@ -5,18 +5,24 @@ import 'package:serv_oeste/shared/models/error/error_entity.dart';
 mixin BackendErrorsValidator {
   final Map<String, String> externalErrors = {};
 
+  static const Map<String, String> backendKeyAliases = {
+    'idCliente': 'cliente',
+    'nomeSobrenome': 'nomeESobrenome',
+    'nome': 'nomeESobrenome',
+    'sobrenome': 'nomeESobrenome',
+    'endereco': 'rua',
+  };
+
   void applyBackendError(ErrorEntity errorEntity) {
     externalErrors.clear();
 
     for (final entry in errorEntity.errors.entries) {
-      final key = entry.key;
-      final messages = entry.value;
+      if (entry.value.isEmpty) continue;
 
-      if (messages.isEmpty) continue;
-
-      final message = messages.join("\n");
-
-      addError(key, message);
+      final key = backendKeyAliases[entry.key] ?? entry.key;
+      final message = entry.value.join("\n");
+      final existing = externalErrors[key];
+      externalErrors[key] = existing == null ? message : "$existing\n$message";
     }
   }
 

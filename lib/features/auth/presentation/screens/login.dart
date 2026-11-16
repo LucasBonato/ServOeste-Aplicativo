@@ -62,9 +62,8 @@ class _LoginScreenState extends State<LoginScreen> {
           });
 
           _validator.applyBackendError(state.error);
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            _formKey.currentState?.validate();
-          });
+          _formKey.currentState?.validate();
+          _validator.cleanExternalErrors();
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

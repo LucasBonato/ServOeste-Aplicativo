@@ -14,6 +14,7 @@ import 'package:serv_oeste/features/servico/domain/validators/servico_validator.
 import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
 import 'package:serv_oeste/features/servico/presentation/widgets/servico_form_widget.dart';
 import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart';
+import 'package:serv_oeste/shared/models/enums/error_code_key.dart';
 import 'package:serv_oeste/shared/models/error/error_entity.dart';
 import 'package:serv_oeste/shared/utils/debouncer.dart';
 import 'package:serv_oeste/shared/widgets/formFields/custom_search_form_field.dart';
@@ -55,6 +56,7 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
 
   final GlobalKey<FormState> _clienteFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _servicoFormKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _clienteSearchFormKey = GlobalKey<FormState>();
 
   List<Map<String, String>> filteredClients = [];
 
@@ -73,7 +75,10 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
     _clienteBloc = context.read<ClienteBloc>();
     _tecnicoBloc = context.read<TecnicoBloc>();
 
-    _servicoValidator = ServicoValidator(servicoForm: _servicoForm);
+    _servicoValidator = ServicoValidator(
+      servicoForm: _servicoForm,
+      requiresCliente: !isClientAndService,
+    );
   }
 
   void _getClienteById(String id) {
@@ -89,6 +94,7 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
 
       setState(() {
         isClientAndService = false;
+        _servicoValidator.requiresCliente = true;
       });
     } else {
       ScaffoldMessenger.of(
@@ -113,6 +119,17 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
   }
 
   void _onAddService() {
+    _servicoValidator.cleanExternalErrors();
+    _clienteValidator.cleanExternalErrors();
+    _servicoFormKey.currentState?.validate();
+    final bool servicoValid = _servicoValidator.validate(_servicoForm).isValid;
+    final bool clienteValid = isClientAndService
+        ? (_clienteFormKey.currentState?.validate() ?? false) &&
+              _clienteValidator.validate(_clienteForm).isValid
+        : _clienteSearchFormKey.currentState?.validate() ?? false;
+
+    if (!servicoValid || !clienteValid) return;
+
     if (isClientAndService) {
       List<String> nomes = _clienteForm.nome.value.split(" ");
       _clienteForm.setNome(nomes.first);
@@ -326,6 +343,7 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
     required String hint,
     TextEditingController? controller,
     TextInputType? keyboardType,
+    String? Function(String?)? validator,
   }) => CustomSearchTextFormField(
     hint: hint,
     leftPadding: 4,
@@ -333,6 +351,7 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
     controller: controller,
     keyboardType: keyboardType,
     onChangedAction: (value) => _onSearchFieldChanged(),
+    validator: validator,
   );
 
   Widget _buildClientForm() {
@@ -350,9 +369,16 @@ class _ServicoCreateScreenState extends State<ServicoCreateScreen> {
     }
     return Column(
       children: [
-        buildSearchField(
-          hint: "Nome do Cliente",
-          controller: _nomeClienteController,
+        Form(
+          key: _clienteSearchFormKey,
+          child: buildSearchField(
+            hint: "Nome do Cliente",
+            controller: _nomeClienteController,
+            validator: _servicoValidator.byField(
+              _servicoForm,
+              ErrorCodeKey.cliente.name,
+            ),
+          ),
         ),
         const SizedBox(height: 12),
         buildSearchField(hint: "Endereço", controller: _enderecoController),

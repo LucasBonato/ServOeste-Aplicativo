@@ -14,6 +14,7 @@ import 'package:serv_oeste/features/tecnico/presentation/bloc/tecnico_bloc.dart'
 import 'package:serv_oeste/shared/services/specialty_cache.dart';
 import 'package:serv_oeste/shared/models/enums/error_code_key.dart';
 import 'package:serv_oeste/features/servico/domain/validators/servico_validator.dart';
+import 'package:serv_oeste/shared/validation/validator.dart';
 import 'package:serv_oeste/shared/widgets/screen/base_entity_form.dart';
 import 'package:serv_oeste/shared/utils/formatters/input_masks.dart';
 
@@ -77,7 +78,6 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
     enabled = isInputEnabled();
   }
 
-  // Keeps field enablement in sync when setForm repopulates the form after load.
   void _onFormSituationChanged() {
     _situationNotifier.value = widget.form.situacao.value;
   }
@@ -112,6 +112,27 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
   void updateServiceSituation(ServiceStatus? value) {
     widget.form.setSituacao(value);
     _situationNotifier.value = widget.form.situacao.value;
+    if (value != null) _clearDisabledFields(value);
+  }
+
+  void _clearDisabledFields(ServiceStatus status) {
+    final clearers = <ErrorCodeKey, void Function()>{
+      ErrorCodeKey.dataAtendimentoEfetivo: () =>
+          widget.form.setDataAtendimentoEfetivo(""),
+      ErrorCodeKey.valor: () => widget.form.setValorServico(""),
+      ErrorCodeKey.valorPecas: () => widget.form.setValorPecas(""),
+      ErrorCodeKey.valorComissao: () => widget.form.setValorComissao(""),
+      ErrorCodeKey.formaPagamento: () => widget.form.setFormaPagamento(""),
+      ErrorCodeKey.dataPagamentoComissao: () =>
+          widget.form.setDataPagamentoComissao(""),
+      ErrorCodeKey.dataFechamento: () => widget.form.setDataFechamento(""),
+      ErrorCodeKey.dataInicioGarantia: () =>
+          widget.form.setDataInicioGarantia(""),
+      ErrorCodeKey.dataFinalGarantia: () => widget.form.setDataFinalGarantia(""),
+    };
+    for (final entry in clearers.entries) {
+      if (ServiceFieldRules.isDisabled(entry.key, status)) entry.value();
+    }
   }
 
   void handleSituationChange(String value) {
@@ -240,9 +261,6 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
     );
   }
 
-  bool _showAvailabilityButton() =>
-      widget.isClientAndService || widget.isUpdate;
-
   @override
   Widget build(BuildContext context) {
     enabled = isInputEnabled();
@@ -270,12 +288,25 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                   .map((key) => key.name)
                   .toSet();
               final generalErrors = error.errors.entries
-                  .where((entry) => !knownKeys.contains(entry.key))
+                  .map(
+                    (entry) => MapEntry(
+                      BackendErrorsValidator.backendKeyAliases[entry.key] ??
+                          entry.key,
+                      entry.value,
+                    ),
+                  )
+                  .where(
+                    (entry) =>
+                        !knownKeys.contains(entry.key) ||
+                        (entry.key == ErrorCodeKey.cliente.name &&
+                            !validator.requiresCliente),
+                  )
                   .expand((entry) => entry.value)
                   .toList();
               if (generalErrors.isNotEmpty) {
                 return generalErrors.join('\n');
               }
+              if (error.errors.isNotEmpty) return "";
               return error.detail.isNotEmpty
                   ? error.detail
                   : error.title.isNotEmpty
@@ -287,9 +318,8 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
           onError: (state) {
             if (state is ServicoErrorState) {
               validator.applyBackendError(state.error);
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                formKey.currentState?.validate();
-              });
+              formKey.currentState?.validate();
+              validator.cleanExternalErrors();
             }
           },
           shouldBuildButton: false,
@@ -332,7 +362,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                 shouldExpand: widget.isUpdate,
               ),
               CustomWidgetField(
-                shouldExpand: _showAvailabilityButton(),
+                shouldExpand: true,
                 startNewRow: true,
                 flex: 1,
                 child: TecnicoSearchField(
@@ -357,16 +387,15 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                   isForListScreen: widget.isForListScreen,
                 ),
               ),
-              if (_showAvailabilityButton())
-                ButtonInputField(
-                  shouldExpand: true,
-                  flex: 1,
-                  valueNotifier: widget.form.equipamento,
-                  text: "Verificar disponibilidade dos técnicos",
-                  tooltipMessage: "Selecione um equipamento para continuar",
-                  onPressed: _onShowAvailabilityTechnicianTable,
-                  enabledCalculator: _enableTecnico,
-                ),
+              ButtonInputField(
+                shouldExpand: true,
+                flex: 1,
+                valueNotifier: widget.form.equipamento,
+                text: "Verificar disponibilidade dos técnicos",
+                tooltipMessage: "Selecione um equipamento para continuar",
+                onPressed: _onShowAvailabilityTechnicianTable,
+                enabledCalculator: _enableTecnico,
+              ),
               DropdownInputField(
                 startNewRow: true,
                 hint: "Horário*",

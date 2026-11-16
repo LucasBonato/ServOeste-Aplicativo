@@ -5,16 +5,67 @@ import 'package:serv_oeste/features/servico/domain/rules/service_field_rules.dar
 import 'package:serv_oeste/shared/utils/formatters/formatters.dart';
 import 'package:serv_oeste/shared/validation/validator.dart';
 
-class ServicoValidator extends LucidValidator<ServicoForm>
-    with BackendErrorsValidator {
+class ServicoValidator extends LucidValidator<ServicoForm> with BackendErrorsValidator {
   final ServicoForm servicoForm;
   final bool isUpdate;
 
-  ServicoValidator({required this.servicoForm, this.isUpdate = false}) {
+  bool requiresCliente;
+
+  ServicoValidator({
+    required this.servicoForm,
+    this.isUpdate = false,
+    this.requiresCliente = false,
+  }) {
     _initializeRules();
   }
 
   void _initializeRules() {
+    ruleFor(
+      (servico) => servico.idCliente.value?.toString() ?? "",
+      key: ErrorCodeKey.cliente.name,
+    )
+        .when(
+          (servico) =>
+              requiresCliente ||
+              externalErrors.containsKey(ErrorCodeKey.cliente.name),
+        )
+        .must(
+          (idCliente) => idCliente != "",
+          "Selecione um cliente!",
+          ErrorCodeKey.cliente.name,
+        )
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.cliente.name);
+
+    ruleFor((servico) => servico.idTecnico.value?.toString() ?? "",
+            key: ErrorCodeKey.tecnico.name)
+        .when(
+          (servico) =>
+              externalErrors.containsKey(ErrorCodeKey.tecnico.name) ||
+              (isUpdate &&
+                  servico.situacao.value != null &&
+                  ServiceFieldRules.isRequired(
+                    ErrorCodeKey.tecnico,
+                    servico.situacao.value!,
+                  )),
+        )
+        .must(
+          (idTecnico) => idTecnico != "",
+          "Selecione um técnico!",
+          ErrorCodeKey.tecnico.name,
+        )
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.tecnico.name);
+
+    ruleFor((servico) => servico.situacao.value?.toString() ?? "",
+            key: ErrorCodeKey.situacao.name)
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.situacao.name);
+
+    ruleFor((servico) => servico.valorComissao.value,
+            key: ErrorCodeKey.valorComissao.name)
+        .customValidExternalErrors(
+          externalErrors,
+          ErrorCodeKey.valorComissao.name,
+        );
+
     ruleFor(
           (servico) => servico.equipamento.value,
           key: ErrorCodeKey.equipamento.name,

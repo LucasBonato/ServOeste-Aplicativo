@@ -76,9 +76,8 @@ class TecnicoFormWidget extends StatelessWidget {
           onError: (state) {
             if (state is TecnicoErrorState) {
               validator.applyBackendError(state.error);
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                formKey.currentState?.validate();
-              });
+              formKey.currentState?.validate();
+              validator.cleanExternalErrors();
             }
           },
           onSubmit: () async {

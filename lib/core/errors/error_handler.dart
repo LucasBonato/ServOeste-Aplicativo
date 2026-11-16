@@ -28,13 +28,22 @@ class ErrorHandler {
 
     if (e.response?.statusCode == 403) {
       return ErrorEntity.global(
-        "Sessão expirada. Faça login novamente.",
+        "Você não tem permissão para realizar esta operação.",
         status: 403,
         traceId: e.response?.headers.value('trace-id'),
       );
     }
 
     if (e.response?.statusCode == 401) {
+      if (e.requestOptions.path.contains('login')) {
+        final data = e.response?.data;
+        if (data is Map<String, dynamic> &&
+            (data['error'] as Map?)?.isNotEmpty == true) {
+          return ErrorEntity.fromJson(
+            data,
+          ).withTraceId(e.response?.headers.value('trace-id'));
+        }
+      }
       return ErrorEntity.global(
         sessionExpiredMessage,
         status: 401,

@@ -8,6 +8,7 @@ class CustomSearchTextFormField extends StatefulWidget {
   final Function(String)? onSuffixAction;
   final double? leftPadding;
   final double? rightPadding;
+  final String? Function(String?)? validator;
 
   const CustomSearchTextFormField({
     super.key,
@@ -18,6 +19,7 @@ class CustomSearchTextFormField extends StatefulWidget {
     this.keyboardType,
     this.leftPadding,
     this.rightPadding,
+    this.validator,
   });
 
   @override
@@ -57,6 +59,7 @@ class _CustomSearchTextFormFieldState extends State<CustomSearchTextFormField> {
             obscureText: false,
             controller: _internalController,
             keyboardType: widget.keyboardType ?? TextInputType.text,
+            validator: widget.validator,
             decoration: InputDecoration(
               prefixIcon: const Icon(
                 Icons.search_outlined,

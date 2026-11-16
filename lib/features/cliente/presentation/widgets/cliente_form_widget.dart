@@ -73,9 +73,8 @@ class ClienteFormWidget extends StatelessWidget {
       onError: (state) {
         if (state is ClienteErrorState) {
           validator.applyBackendError(state.error);
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            formKey.currentState?.validate();
-          });
+          formKey.currentState?.validate();
+          validator.cleanExternalErrors();
         }
       },
       shouldBuildButton: shouldBuildButton,

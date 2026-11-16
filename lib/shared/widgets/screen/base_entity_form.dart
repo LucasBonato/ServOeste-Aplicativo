@@ -347,9 +347,14 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
             final errorMessage =
                 widget.getErrorMessage?.call(state) ??
                 "Erro ao realizar operação";
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
-            );
+            if (errorMessage.isNotEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(errorMessage),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
           }
         }
       },
