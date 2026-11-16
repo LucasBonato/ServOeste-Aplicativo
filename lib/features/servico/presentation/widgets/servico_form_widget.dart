@@ -228,6 +228,11 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
         : (isEquipamentoNotEmpty && (widget.isClientAndService || hasCliente));
   }
 
+  void _onNomeTecnicoChanged(String nome) {
+    widget.form.setIdTecnico(null);
+    widget.form.setNomeTecnico(nome);
+  }
+
   void _setTableValues(
     String nomeTecnico,
     String data,
@@ -374,8 +379,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                     ErrorCodeKey.tecnico.name,
                   ),
                   controller: nameTecnicoController,
-                  onChanged: widget.form.setNomeTecnico,
-                  onSearchStart: () => widget.form.setIdTecnico,
+                  onChanged: _onNomeTecnicoChanged,
                   listenTo: [widget.form.equipamento, widget.form.idCliente],
                   searchFilter: () =>
                       TecnicoFilter(equipamento: widget.form.equipamento.value),
