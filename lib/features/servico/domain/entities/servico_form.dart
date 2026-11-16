@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:serv_oeste/core/constants/constants.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico.dart';
-import 'package:serv_oeste/shared/models/enums/service_status.dart';
-import 'package:serv_oeste/shared/utils/extensions/string_extensions.dart';
+import 'package:serv_oeste/features/servico/domain/entities/enums/service_periodo.dart';
+import 'package:serv_oeste/features/servico/domain/entities/enums/service_status.dart';
 import 'package:serv_oeste/shared/utils/formatters/formatters.dart';
 
 class ServicoForm extends ChangeNotifier {
+  bool _dataFinalGarantiaManuallySet = false;
   ValueNotifier<int?> id = ValueNotifier(null);
 
   ValueNotifier<int?> idCliente = ValueNotifier(null);
@@ -15,10 +16,12 @@ class ServicoForm extends ChangeNotifier {
   ValueNotifier<String> filial = ValueNotifier<String>("");
   ValueNotifier<String> nomeCliente = ValueNotifier<String>("");
   ValueNotifier<String> nomeTecnico = ValueNotifier<String>("");
-  ValueNotifier<String> horario = ValueNotifier<String>("");
+  ValueNotifier<ServicePeriodo?> periodo = ValueNotifier(null);
+  ValueNotifier<String> periodoLabel = ValueNotifier("");
   ValueNotifier<String> descricao = ValueNotifier<String>("");
   ValueNotifier<String> historico = ValueNotifier<String>("");
-  ValueNotifier<String> situacao = ValueNotifier<String>("");
+  ValueNotifier<ServiceStatus?> situacao = ValueNotifier(null);
+  ValueNotifier<String> situacaoLabel = ValueNotifier("");
   ValueNotifier<String> garantia = ValueNotifier<String>("");
   ValueNotifier<String> dataInicioGarantia = ValueNotifier<String>("");
   ValueNotifier<String> dataFinalGarantia = ValueNotifier<String>("");
@@ -43,9 +46,11 @@ class ServicoForm extends ChangeNotifier {
     marca.value = servico.marca;
     nomeTecnico.value = servico.nomeTecnico ?? "";
     idTecnico.value ??= servico.idTecnico;
-    filial.value = servico.filial;
-    situacao.value = servico.situacao.convertEnumStatusToString();
-    horario.value = servico.horarioPrevisto.convertToHorarioString();
+    filial.value = Constants.filialFromStored(servico.filial);
+    situacao.value = servico.situacao;
+    situacaoLabel.value = servico.situacao.label;
+    periodo.value = servico.periodo;
+    periodoLabel.value = servico.periodo?.label ?? "";
     if (servico.dataAtendimentoPrevisto != null) {
       dataAtendimentoPrevisto.value = Formatters.applyDateMask(
         servico.dataAtendimentoPrevisto!,
@@ -81,6 +86,7 @@ class ServicoForm extends ChangeNotifier {
       );
     }
     if (servico.dataFimGarantia != null) {
+      _dataFinalGarantiaManuallySet = true;
       dataFinalGarantia.value = Formatters.applyDateMask(
         servico.dataFimGarantia!,
       );
@@ -136,7 +142,11 @@ class ServicoForm extends ChangeNotifier {
   }
 
   void setHorario(String? horario) {
-    this.horario.value = horario ?? "";
+    final value = horario == null || horario.isEmpty
+        ? null
+        : ServicePeriodo.fromJson(horario);
+    periodo.value = value;
+    periodoLabel.value = value?.label ?? "";
     notifyListeners();
   }
 
@@ -150,11 +160,11 @@ class ServicoForm extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setSituacao(String? situacao) {
+  void setSituacao(ServiceStatus? situacao) {
     if (situacao != null && situacao != this.situacao.value) {
-      this.situacao.value = ServiceStatus.fromString(
-        situacao,
-      ).getHumanizedSituacao();
+      final value = situacao;
+      this.situacao.value = value;
+      situacaoLabel.value = value.label;
 
       notifyListeners();
     }
@@ -176,10 +186,22 @@ class ServicoForm extends ChangeNotifier {
 
   void setDataInicioGarantia(String? dataInicioGarantia) {
     this.dataInicioGarantia.value = dataInicioGarantia ?? "";
+    if (this.dataInicioGarantia.value.isNotEmpty &&
+        !_dataFinalGarantiaManuallySet) {
+      final start = Formatters.parseDate(this.dataInicioGarantia.value);
+      if (start != null) {
+        final month = start.month + 3;
+        final lastDay = DateTime(start.year, month + 1, 0).day;
+        dataFinalGarantia.value = Formatters.applyDateMask(
+          DateTime(start.year, month, start.day.clamp(1, lastDay)),
+        );
+      }
+    }
     notifyListeners();
   }
 
   void setDataFinalGarantia(String? dataFinalGarantia) {
+    _dataFinalGarantiaManuallySet = dataFinalGarantia?.isNotEmpty ?? false;
     this.dataFinalGarantia.value = dataFinalGarantia ?? "";
     notifyListeners();
   }

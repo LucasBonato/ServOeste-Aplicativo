@@ -1,7 +1,7 @@
 import 'package:lucid_validation/lucid_validation.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_form.dart';
 import 'package:serv_oeste/shared/models/enums/error_code_key.dart';
-import 'package:serv_oeste/shared/models/enums/service_status.dart';
+import 'package:serv_oeste/features/servico/domain/rules/service_field_rules.dart';
 import 'package:serv_oeste/shared/utils/formatters/formatters.dart';
 import 'package:serv_oeste/shared/validation/validator.dart';
 
@@ -10,13 +10,7 @@ class ServicoValidator extends LucidValidator<ServicoForm>
   final ServicoForm servicoForm;
   final bool isUpdate;
 
-  bool Function(String fieldName)? isFieldEnabled;
-
-  ServicoValidator({
-    required this.servicoForm,
-    this.isUpdate = false,
-    this.isFieldEnabled,
-  }) {
+  ServicoValidator({required this.servicoForm, this.isUpdate = false}) {
     _initializeRules();
   }
 
@@ -25,7 +19,6 @@ class ServicoValidator extends LucidValidator<ServicoForm>
           (servico) => servico.equipamento.value,
           key: ErrorCodeKey.equipamento.name,
         )
-        .when((servico) => _shouldValidateField(ErrorCodeKey.equipamento.name))
         .must(
           (equipamento) => equipamento != "",
           "Selecione um equipamento!",
@@ -37,7 +30,6 @@ class ServicoValidator extends LucidValidator<ServicoForm>
         );
 
     ruleFor((servico) => servico.marca.value, key: ErrorCodeKey.marca.name)
-        .when((servico) => _shouldValidateField(ErrorCodeKey.marca.name))
         .must(
           (marca) => marca != "",
           "Selecione a marca do equipamento!",
@@ -46,7 +38,6 @@ class ServicoValidator extends LucidValidator<ServicoForm>
         .customValidExternalErrors(externalErrors, ErrorCodeKey.marca.name);
 
     ruleFor((servico) => servico.filial.value, key: ErrorCodeKey.filial.name)
-        .when((servico) => _shouldValidateField(ErrorCodeKey.filial.name))
         .must(
           (filial) => filial != "" && filial != "Selecione uma filial*",
           "Selecione uma filial!",
@@ -60,8 +51,8 @@ class ServicoValidator extends LucidValidator<ServicoForm>
         )
         .when(
           (servico) =>
-              _shouldValidateField(ErrorCodeKey.dataAtendimentoPrevisto.name) &&
-              servico.situacao.value != "Cancelado",
+              servico.dataAtendimentoPrevisto.value.isNotEmpty ||
+              _shouldValidate(servico, ErrorCodeKey.dataAtendimentoPrevisto),
         )
         .customValidNotSunday(code: ErrorCodeKey.dataAtendimentoPrevisto.name)
         .must(
@@ -78,20 +69,7 @@ class ServicoValidator extends LucidValidator<ServicoForm>
           (servico) => servico.descricao.value,
           key: ErrorCodeKey.descricao.name,
         )
-        .when(
-          (servico) =>
-              _shouldValidateField(ErrorCodeKey.descricao.name) &&
-              isUpdate &&
-              ![
-                ServiceStatus.aguardandoAprovacaoCliente,
-                ServiceStatus.compra,
-                ServiceStatus.orcamentoAprovado,
-                ServiceStatus.aguardandoClienteRetirar,
-                ServiceStatus.naoRetira3Meses,
-                ServiceStatus.garantia,
-                ServiceStatus.resolvido
-              ].contains(ServiceStatus.fromString(servico.situacao.value)),
-        )
+        .when((servico) => _shouldValidate(servico, ErrorCodeKey.descricao))
         .must(
           (descricao) => descricao != "",
           "A Descrição é obrigatória",
@@ -110,17 +88,7 @@ class ServicoValidator extends LucidValidator<ServicoForm>
         .customValidExternalErrors(externalErrors, ErrorCodeKey.descricao.name);
 
     ruleFor((servico) => servico.valor.value, key: ErrorCodeKey.valor.name)
-        .when(
-          (servico) =>
-              _shouldValidateField(ErrorCodeKey.valor.name) &&
-              isUpdate &&
-              ![
-                ServiceStatus.aguardandoAgendamento,
-                ServiceStatus.aguardandoAtendimento,
-                ServiceStatus.cancelado,
-                ServiceStatus.semDefeito,
-              ].contains(ServiceStatus.fromString(servico.situacao.value)),
-        )
+        .when((servico) => _shouldValidate(servico, ErrorCodeKey.valor))
         .must(
           (valor) => valor != "",
           "O Valor do serviço é obrigatório",
@@ -132,17 +100,7 @@ class ServicoValidator extends LucidValidator<ServicoForm>
           (servico) => servico.valorPecas.value,
           key: ErrorCodeKey.valorPecas.name,
         )
-        .when(
-          (servico) =>
-              _shouldValidateField(ErrorCodeKey.valorPecas.name) &&
-              isUpdate &&
-              ![
-                ServiceStatus.aguardandoAgendamento,
-                ServiceStatus.aguardandoAtendimento,
-                ServiceStatus.cancelado,
-                ServiceStatus.semDefeito,
-              ].contains(ServiceStatus.fromString(servico.situacao.value)),
-        )
+        .when((servico) => _shouldValidate(servico, ErrorCodeKey.valorPecas))
         .must(
           (valorPecas) => valorPecas != "",
           "O Valor das peças é obrigatório",
@@ -159,13 +117,7 @@ class ServicoValidator extends LucidValidator<ServicoForm>
         )
         .when(
           (servico) =>
-              _shouldValidateField(ErrorCodeKey.dataAtendimentoEfetivo.name) &&
-              isUpdate &&
-              ![
-                ServiceStatus.aguardandoAgendamento,
-                ServiceStatus.aguardandoAtendimento,
-                ServiceStatus.cancelado,
-              ].contains(ServiceStatus.fromString(servico.situacao.value)),
+              _shouldValidate(servico, ErrorCodeKey.dataAtendimentoEfetivo),
         )
         .must(
           (dataAtendimentoEfetivo) => dataAtendimentoEfetivo != "",
@@ -217,20 +169,7 @@ class ServicoValidator extends LucidValidator<ServicoForm>
         )
         .when(
           (servico) =>
-              _shouldValidateField(ErrorCodeKey.dataInicioGarantia.name) &&
-              isUpdate &&
-              ![
-                ServiceStatus.aguardandoAgendamento,
-                ServiceStatus.aguardandoAtendimento,
-                ServiceStatus.cancelado,
-                ServiceStatus.semDefeito,
-                ServiceStatus.aguardandoAprovacaoCliente,
-                ServiceStatus.naoAprovadoPeloCliente,
-                ServiceStatus.compra,
-                ServiceStatus.orcamentoAprovado,
-                ServiceStatus.aguardandoClienteRetirar,
-                ServiceStatus.naoRetira3Meses,
-              ].contains(ServiceStatus.fromString(servico.situacao.value)),
+              _shouldValidate(servico, ErrorCodeKey.dataInicioGarantia),
         )
         .must(
           (dataInicioGarantia) => dataInicioGarantia != "",
@@ -247,21 +186,7 @@ class ServicoValidator extends LucidValidator<ServicoForm>
           key: ErrorCodeKey.dataFinalGarantia.name,
         )
         .when(
-          (servico) =>
-              _shouldValidateField(ErrorCodeKey.dataFinalGarantia.name) &&
-              isUpdate &&
-              ![
-                ServiceStatus.aguardandoAgendamento,
-                ServiceStatus.aguardandoAtendimento,
-                ServiceStatus.cancelado,
-                ServiceStatus.semDefeito,
-                ServiceStatus.aguardandoAprovacaoCliente,
-                ServiceStatus.naoAprovadoPeloCliente,
-                ServiceStatus.compra,
-                ServiceStatus.orcamentoAprovado,
-                ServiceStatus.aguardandoClienteRetirar,
-                ServiceStatus.naoRetira3Meses,
-              ].contains(ServiceStatus.fromString(servico.situacao.value)),
+          (servico) => _shouldValidate(servico, ErrorCodeKey.dataFinalGarantia),
         )
         .must(
           (dataFinalGarantia) => dataFinalGarantia != "",
@@ -278,18 +203,7 @@ class ServicoValidator extends LucidValidator<ServicoForm>
           key: ErrorCodeKey.formaPagamento.name,
         )
         .when(
-          (servico) =>
-              _shouldValidateField(ErrorCodeKey.formaPagamento.name) &&
-              isUpdate &&
-              ![
-                ServiceStatus.aguardandoAgendamento,
-                ServiceStatus.aguardandoAtendimento,
-                ServiceStatus.semDefeito,
-                ServiceStatus.cancelado,
-                ServiceStatus.aguardandoAprovacaoCliente,
-                ServiceStatus.naoAprovadoPeloCliente,
-                ServiceStatus.compra,
-              ].contains(ServiceStatus.fromString(servico.situacao.value)),
+          (servico) => _shouldValidate(servico, ErrorCodeKey.formaPagamento),
         )
         .must(
           (formaPagamento) => formaPagamento != "",
@@ -301,18 +215,14 @@ class ServicoValidator extends LucidValidator<ServicoForm>
           ErrorCodeKey.formaPagamento.name,
         );
 
-    ruleFor((servico) => servico.horario.value, key: ErrorCodeKey.horario.name)
-        .when(
-          (servico) =>
-              _shouldValidateField(ErrorCodeKey.horario.name) &&
-              servico.situacao.value != "Cancelado",
-        )
+    ruleFor((servico) => servico.periodo.value, key: ErrorCodeKey.periodo.name)
+        .when((servico) => _shouldValidate(servico, ErrorCodeKey.periodo))
         .must(
-          (horario) => horario != "",
+          (periodo) => periodo != null,
           "Selecione um horário!",
-          ErrorCodeKey.horario.name,
+          ErrorCodeKey.periodo.name,
         )
-        .customValidExternalErrors(externalErrors, ErrorCodeKey.horario.name);
+        .customValidExternalErrors(externalErrors, ErrorCodeKey.periodo.name);
 
     ruleFor(
           (servico) => servico.dataPagamentoComissao.value,
@@ -320,14 +230,7 @@ class ServicoValidator extends LucidValidator<ServicoForm>
         )
         .when(
           (servico) =>
-              _shouldValidateField(ErrorCodeKey.dataPagamentoComissao.name) &&
-              isUpdate &&
-              [
-                ServiceStatus.cancelado,
-                ServiceStatus.naoAprovadoPeloCliente,
-                ServiceStatus.compra,
-                ServiceStatus.resolvido,
-              ].contains(ServiceStatus.fromString(servico.situacao.value)),
+              _shouldValidate(servico, ErrorCodeKey.dataPagamentoComissao),
         )
         .must(
           (dataPagamentoComissao) => dataPagamentoComissao != "",
@@ -344,18 +247,7 @@ class ServicoValidator extends LucidValidator<ServicoForm>
           key: ErrorCodeKey.dataFechamento.name,
         )
         .when(
-          (servico) =>
-              _shouldValidateField(ErrorCodeKey.dataFechamento.name) &&
-              isUpdate &&
-              ![
-                ServiceStatus.aguardandoAgendamento,
-                ServiceStatus.aguardandoAtendimento,
-                ServiceStatus.aguardandoAprovacaoCliente,
-                ServiceStatus.orcamentoAprovado,
-                ServiceStatus.aguardandoClienteRetirar,
-                ServiceStatus.cortesia,
-                ServiceStatus.garantia,
-              ].contains(ServiceStatus.fromString(servico.situacao.value)),
+          (servico) => _shouldValidate(servico, ErrorCodeKey.dataFechamento),
         )
         .must(
           (dataFechamento) => dataFechamento != "",
@@ -368,10 +260,11 @@ class ServicoValidator extends LucidValidator<ServicoForm>
         );
   }
 
-  bool _shouldValidateField(String fieldName) {
-    if (isFieldEnabled == null) return true;
-    return isFieldEnabled!(fieldName);
-  }
+  bool _shouldValidate(ServicoForm form, ErrorCodeKey field) =>
+      externalErrors.containsKey(field.name) ||
+      (isUpdate &&
+          form.situacao.value != null &&
+          ServiceFieldRules.isRequired(field, form.situacao.value!));
 
   @override
   ValidationResult validate(ServicoForm entity, {List<String>? ruleSets}) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:serv_oeste/core/constants/constants.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_filter.dart';
 
 class ServicoFilterForm extends ChangeNotifier {
@@ -28,10 +29,15 @@ class ServicoFilterForm extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Backend expects a boolean for the garantia filter; the UI shows labels.
+  String? get garantiaApiValue {
+    if (garantia.value == Constants.garantias.first) return 'true';
+    if (garantia.value == Constants.garantias.last) return 'false';
+    return null;
+  }
+
   void setCodigo(String codigo) {
-    this.codigo.value = codigo.isNotEmpty
-      ? int.tryParse(codigo) ?? 0
-      : null;
+    this.codigo.value = codigo.isNotEmpty ? int.tryParse(codigo) ?? 0 : null;
     notifyListeners();
   }
 
@@ -42,7 +48,8 @@ class ServicoFilterForm extends ChangeNotifier {
 
   void setDataAtendimentoPrevistoAntes(String dataAtendimentoPrevistoAntes) {
     if (dataAtendimentoPrevistoAntes.isNotEmpty) {
-      final DateTime parsedDate = DateFormat("dd/MM/yyyy").parse(dataAtendimentoPrevistoAntes);
+      final DateTime parsedDate = DateFormat("dd/MM/yyyy")
+          .parse(dataAtendimentoPrevistoAntes);
       this.dataAtendimentoPrevistoAntes.value = parsedDate.toString();
       notifyListeners();
     }
@@ -50,7 +57,8 @@ class ServicoFilterForm extends ChangeNotifier {
 
   void setDataAtendimentoEfetivoAntes(String dataAtendimentoEfetivoAntes) {
     if (dataAtendimentoEfetivoAntes.isNotEmpty) {
-      final DateTime parsedDate = DateFormat("dd/MM/yyyy").parse(dataAtendimentoEfetivoAntes);
+      final DateTime parsedDate = DateFormat("dd/MM/yyyy")
+          .parse(dataAtendimentoEfetivoAntes);
       this.dataAtendimentoEfetivoAntes.value = parsedDate.toString();
       notifyListeners();
     }
@@ -58,7 +66,8 @@ class ServicoFilterForm extends ChangeNotifier {
 
   void setDataAberturaAntes(String dataAberturaAntes) {
     if (dataAberturaAntes.isNotEmpty) {
-      final DateTime parsedDate = DateFormat("dd/MM/yyyy").parse(dataAberturaAntes);
+      final DateTime parsedDate = DateFormat("dd/MM/yyyy")
+          .parse(dataAberturaAntes);
       this.dataAberturaAntes.value = parsedDate.toString();
       notifyListeners();
     }
@@ -74,14 +83,21 @@ class ServicoFilterForm extends ChangeNotifier {
 
     final ServicoFilterForm form = ServicoFilterForm();
     form.equipamento.value = filterRequest.equipamento ?? "";
-    form.situacao.value = filterRequest.situacao ?? "";
-    form.garantia.value = filterRequest.garantia ?? "";
+    form.situacao.value = filterRequest.situacao?.label ?? "";
+    form.garantia.value = filterRequest.garantia == 'true'
+        ? Constants.garantias.first
+        : filterRequest.garantia == 'false'
+        ? Constants.garantias.last
+        : "";
     form.codigo.value = filterRequest.id;
     form.filial.value = filterRequest.filial ?? "";
-    form.dataAtendimentoPrevistoAntes.value = filterRequest.dataAtendimentoPrevistoAntes?.toString() ?? "";
-    form.dataAtendimentoEfetivoAntes.value = filterRequest.dataAtendimentoEfetivoAntes?.toString() ?? "";
-    form.dataAberturaAntes.value = filterRequest.dataAberturaAntes?.toString() ?? "";
-    form.periodo.value = filterRequest.periodo ?? "";
+    form.dataAtendimentoPrevistoAntes.value =
+        filterRequest.dataAtendimentoPrevistoAntes?.toString() ?? "";
+    form.dataAtendimentoEfetivoAntes.value =
+        filterRequest.dataAtendimentoEfetivoAntes?.toString() ?? "";
+    form.dataAberturaAntes.value =
+        filterRequest.dataAberturaAntes?.toString() ?? "";
+    form.periodo.value = filterRequest.periodo?.label ?? "";
     return form;
   }
 

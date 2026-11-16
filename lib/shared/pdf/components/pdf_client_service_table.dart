@@ -26,7 +26,7 @@ class PdfClientServiceTable extends pw.StatelessWidget {
       children: [
         _row(
           'Data Atendimento: ${_formatDate(effectiveDate)}',
-          'Período: ${_formatHorario(servico.horarioPrevisto)}',
+          'Período: ${_formatHorario(servico.periodo?.label)}',
         ),
         _row(
           'Cliente: ${cliente.nome ?? ''}',

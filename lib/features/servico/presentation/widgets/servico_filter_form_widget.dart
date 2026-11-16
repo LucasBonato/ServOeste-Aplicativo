@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:serv_oeste/core/constants/constants.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_filter_form.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_filter.dart';
+import 'package:serv_oeste/features/servico/domain/entities/enums/service_periodo.dart';
+import 'package:serv_oeste/features/servico/domain/entities/enums/service_status.dart';
 import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
 import 'package:serv_oeste/shared/services/specialty_cache.dart';
 import 'package:serv_oeste/shared/utils/formatters/input_masks.dart';
@@ -53,15 +55,27 @@ class ServicoFilterFormWidget extends StatelessWidget {
         isError: (state) => state is ServicoErrorState,
         onSubmit: () async {
           final ServicoFilter newFilter = ServicoFilter(
-            id: form.codigo.value != null && form.codigo.value! > 0 ? form.codigo.value! : null,
+            id: form.codigo.value != null && form.codigo.value! > 0
+                ? form.codigo.value!
+                : null,
             filial: form.filial.value.isNotEmpty ? form.filial.value : null,
-            equipamento: form.equipamento.value.isNotEmpty ? form.equipamento.value : null,
-            situacao: form.situacao.value.isNotEmpty ? form.situacao.value : null,
-            garantia: form.garantia.value.isNotEmpty ? form.garantia.value : null,
-            dataAtendimentoPrevistoAntes: _parseDate(form.dataAtendimentoPrevistoAntes.value),
-            dataAtendimentoEfetivoAntes: _parseDate(form.dataAtendimentoEfetivoAntes.value),
+            equipamento: form.equipamento.value.isNotEmpty
+                ? form.equipamento.value
+                : null,
+            situacao: form.situacao.value.isNotEmpty
+                ? ServiceStatus.fromJson(form.situacao.value)
+                : null,
+            garantia: form.garantiaApiValue,
+            dataAtendimentoPrevistoAntes: _parseDate(
+              form.dataAtendimentoPrevistoAntes.value,
+            ),
+            dataAtendimentoEfetivoAntes: _parseDate(
+              form.dataAtendimentoEfetivoAntes.value,
+            ),
             dataAberturaAntes: _parseDate(form.dataAberturaAntes.value),
-            periodo: form.periodo.value.isNotEmpty ? form.periodo.value : null,
+            periodo: form.periodo.value.isNotEmpty
+                ? ServicePeriodo.fromJson(form.periodo.value)
+                : null,
           );
 
           bloc.add(ServicoSearchEvent(filter: newFilter));
@@ -91,7 +105,7 @@ class ServicoFilterFormWidget extends StatelessWidget {
             hint: "Situação...",
             valueNotifier: form.situacao,
             onChanged: form.setSituacao,
-            dropdownValues: Constants.situationServiceList,
+            dropdownValues: ServiceStatus.labels,
           ),
           DropdownInputField(
             hint: "Garantia...",
@@ -107,7 +121,11 @@ class ServicoFilterFormWidget extends StatelessWidget {
                 leftPadding: 4,
                 rightPadding: 4,
                 keyboardType: TextInputType.number,
-                controller: TextEditingController(text: form.codigo.value != null && form.codigo.value! > 0 ? form.codigo.value.toString() : ""),
+                controller: TextEditingController(
+                  text: form.codigo.value != null && form.codigo.value! > 0
+                      ? form.codigo.value.toString()
+                      : "",
+                ),
                 onChangedAction: form.setCodigo,
               ),
               CustomDropdownFormField(
@@ -149,7 +167,7 @@ class ServicoFilterFormWidget extends StatelessWidget {
                 onChanged: form.setDataAtendimentoEfetivoAntes,
                 allowPastDates: true,
               ),
-            ]
+            ],
           ),
           Wrap(
             runSpacing: 8,
@@ -169,14 +187,16 @@ class ServicoFilterFormWidget extends StatelessWidget {
               ),
               CustomDropdownFormField(
                 label: "Horário...",
-                dropdownValues: Constants.horarioPrevisto,
+                dropdownValues: ServicePeriodo.values
+                    .map((periodo) => periodo.label)
+                    .toList(),
                 rightPadding: 4,
                 leftPadding: 4,
                 onChanged: form.setPeriodo,
                 valueNotifier: form.periodo,
               ),
-            ]
-          )
+            ],
+          ),
         ],
       ),
     );

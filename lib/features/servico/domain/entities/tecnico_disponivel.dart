@@ -1,6 +1,11 @@
 import 'dart:convert';
 
-List<TecnicoDisponivel> tecnicoFromJson(String str) => List<TecnicoDisponivel>.from(json.decode(str).map((x) => TecnicoDisponivel.fromJson(x)));
+import 'package:serv_oeste/features/servico/domain/entities/enums/service_periodo.dart';
+
+List<TecnicoDisponivel> tecnicoFromJson(String str) =>
+    List<TecnicoDisponivel>.from(
+      json.decode(str).map((x) => TecnicoDisponivel.fromJson(x)),
+    );
 
 class TecnicoDisponivel {
   int? id;
@@ -15,11 +20,18 @@ class TecnicoDisponivel {
     this.disponibilidades,
   });
 
-  factory TecnicoDisponivel.fromJson(Map<String, dynamic> json) => TecnicoDisponivel(
+  factory TecnicoDisponivel.fromJson(Map<String, dynamic> json) =>
+      TecnicoDisponivel(
         id: json["id"],
         nome: json["nome"],
         quantidadeTotalServicos: json["quantidadeTotalServicos"],
-        disponibilidades: json["disponibilidades"] == null ? [] : List<Disponibilidade>.from(json["disponibilidades"].map((x) => Disponibilidade.fromJson(x))),
+        disponibilidades: json["disponibilidades"] == null
+            ? []
+            : List<Disponibilidade>.from(
+                json["disponibilidades"].map(
+                  (x) => Disponibilidade.fromJson(x),
+                ),
+              ),
       );
 
   @override
@@ -32,7 +44,7 @@ class Disponibilidade {
   DateTime? data;
   int? numeroDiaSemana;
   String? nomeDiaSemana;
-  String? periodo;
+  ServicePeriodo? periodo;
   int? quantidadeServicos;
 
   Disponibilidade({
@@ -43,16 +55,19 @@ class Disponibilidade {
     this.quantidadeServicos,
   });
 
-  factory Disponibilidade.fromJson(Map<String, dynamic> json) => Disponibilidade(
+  factory Disponibilidade.fromJson(Map<String, dynamic> json) =>
+      Disponibilidade(
         data: DateTime.tryParse(json["data"]),
         numeroDiaSemana: json["numeroDiaSemana"],
         nomeDiaSemana: json["nomeDiaSemana"],
-        periodo: json["periodo"],
+        periodo: json["periodo"] == null
+            ? null
+            : ServicePeriodo.fromJson(json["periodo"]),
         quantidadeServicos: json["quantidadeServicos"],
       );
 
   @override
   String toString() {
-    return 'Disponibilidade(data: $data, numeroDiaSemana: $numeroDiaSemana, nomeDiaSemana: $nomeDiaSemana, periodo: $periodo, quantidadeServicos: $quantidadeServicos)';
+    return 'Disponibilidade(data: $data, numeroDiaSemana: $numeroDiaSemana, nomeDiaSemana: $nomeDiaSemana, periodo: ${periodo?.label}, quantidadeServicos: $quantidadeServicos)';
   }
 }

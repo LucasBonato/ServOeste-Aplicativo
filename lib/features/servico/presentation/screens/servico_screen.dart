@@ -129,14 +129,15 @@ class _ServicoScreenState extends BaseListScreenState<Servico, ServicoState> {
     bool isSkeleton,
   ) {
     return ServicoCard(
-      onDoubleTap: () => onNavigateToUpdateScreen(
-        ServicoUpdateArgs(id: servico.id, clientId: servico.idCliente),
-        onSearchFieldChanged,
-      ),
       onLongPress: () => onSelectItemList(servico.id),
       onTap: () {
         if (isSelectMode) {
           onSelectItemList(servico.id);
+        } else {
+          onNavigateToUpdateScreen(
+            ServicoUpdateArgs(id: servico.id, clientId: servico.idCliente),
+            onSearchFieldChanged,
+          );
         }
       },
       codigo: servico.id,
@@ -145,7 +146,7 @@ class _ServicoScreenState extends BaseListScreenState<Servico, ServicoState> {
       equipamento: servico.equipamento,
       marca: servico.marca,
       filial: servico.filial,
-      horario: servico.horarioPrevisto,
+      horario: servico.periodo?.label,
       dataPrevista: servico.dataAtendimentoPrevisto,
       dataEfetiva: servico.dataAtendimentoEfetivo,
       dataFechamento: servico.dataFechamento,

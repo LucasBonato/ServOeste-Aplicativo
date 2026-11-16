@@ -1,4 +1,5 @@
 import 'package:serv_oeste/features/servico/domain/entities/servico_form.dart';
+import 'package:serv_oeste/features/servico/domain/entities/enums/service_periodo.dart';
 
 class ServicoRequest {
   int? idCliente;
@@ -7,7 +8,7 @@ class ServicoRequest {
   String marca;
   String filial;
   String? dataAtendimento;
-  String? horarioPrevisto;
+  ServicePeriodo? periodo;
   String descricao;
 
   ServicoRequest({
@@ -17,18 +18,19 @@ class ServicoRequest {
     required this.marca,
     required this.filial,
     this.dataAtendimento,
-    this.horarioPrevisto,
+    this.periodo,
     required this.descricao,
   });
 
-  factory ServicoRequest.fromServicoForm({required ServicoForm servico}) => ServicoRequest(
+  factory ServicoRequest.fromServicoForm({required ServicoForm servico}) =>
+      ServicoRequest(
         idCliente: servico.idCliente.value,
         idTecnico: servico.idTecnico.value,
         equipamento: servico.equipamento.value,
         marca: servico.marca.value,
         filial: servico.filial.value,
         dataAtendimento: servico.dataAtendimentoPrevisto.value,
-        horarioPrevisto: servico.horario.value.toUpperCase().replaceAll("Ã", "A"),
+        periodo: servico.periodo.value,
         descricao: servico.descricao.value,
       );
 
@@ -40,7 +42,7 @@ class ServicoRequest {
       'marca': marca,
       'filial': filial,
       'dataAtendimento': dataAtendimento,
-      'horarioPrevisto': horarioPrevisto,
+      'periodo': periodo?.toJson(),
       'descricao': descricao,
     };
   }

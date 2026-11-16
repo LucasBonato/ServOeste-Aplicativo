@@ -1,4 +1,6 @@
 import 'package:serv_oeste/core/constants/constants.dart';
+import 'package:serv_oeste/features/servico/domain/entities/enums/service_periodo.dart';
+import 'package:serv_oeste/features/servico/domain/entities/enums/service_status.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_form.dart';
 import 'package:serv_oeste/shared/utils/formatters/formatters.dart';
 import 'package:serv_oeste/shared/widgets/skeleton/skeleton_generator.dart';
@@ -11,10 +13,10 @@ class Servico implements Skeletonizable {
   String equipamento;
   String filial;
   String marca;
-  String situacao;
+  ServiceStatus situacao;
   int? idTecnico;
   String? nomeTecnico;
-  String? horarioPrevisto;
+  ServicePeriodo? periodo;
   String? descricao;
   String? historico;
   String? formaPagamento;
@@ -47,7 +49,7 @@ class Servico implements Skeletonizable {
     required this.situacao,
     this.idTecnico,
     this.nomeTecnico,
-    this.horarioPrevisto,
+    this.periodo,
     this.dataAtendimentoPrevisto,
     this.descricao,
     this.historico,
@@ -67,15 +69,12 @@ class Servico implements Skeletonizable {
   Servico.fromForm(ServicoForm servicoForm)
     : id = servicoForm.getId()!,
       idCliente = servicoForm.getIdCliente()!,
-      idTecnico = servicoForm.getIdTecnico()!,
+      idTecnico = servicoForm.getIdTecnico(),
       equipamento = servicoForm.equipamento.value,
       filial = servicoForm.filial.value,
-      horarioPrevisto = servicoForm.horario.value.toUpperCase().replaceAll(
-        "Ã",
-        "A",
-      ),
+      periodo = servicoForm.periodo.value,
       marca = servicoForm.marca.value,
-      situacao = servicoForm.situacao.value,
+      situacao = servicoForm.situacao.value!,
       descricao = servicoForm.descricao.value,
       historico = servicoForm.historico.value,
       garantia =
@@ -122,11 +121,15 @@ class Servico implements Skeletonizable {
     nomeTecnico: json["nomeTecnico"],
     equipamento: json["equipamento"],
     filial: json["filial"],
-    horarioPrevisto: json["horarioPrevisto"],
+    periodo: json["periodo"] != null
+        ? ServicePeriodo.fromJson(json["periodo"])
+        : json["horarioPrevisto"] != null
+        ? ServicePeriodo.fromJson(json["horarioPrevisto"])
+        : null,
     marca: json["marca"],
     descricao: json["descricao"],
     historico: json["historico"],
-    situacao: json["situacao"],
+    situacao: ServiceStatus.fromJson(json["situacao"]),
     garantia: json["garantia"],
     formaPagamento: json["formaPagamento"],
     valor: json["valor"],
@@ -164,10 +167,12 @@ class Servico implements Skeletonizable {
       nomeTecnico: SkeletonDataGenerator.name(),
       equipamento: SkeletonDataGenerator.string(length: 8),
       filial: SkeletonDataGenerator.string(length: 8),
-      horarioPrevisto: SkeletonDataGenerator.string(length: 5),
+      periodo: SkeletonDataGenerator.pick<ServicePeriodo>(
+        ServicePeriodo.values,
+      ),
       marca: SkeletonDataGenerator.string(length: 8),
       descricao: SkeletonDataGenerator.string(length: 50),
-      situacao: SkeletonDataGenerator.string(length: 10),
+      situacao: SkeletonDataGenerator.pick<ServiceStatus>(ServiceStatus.values),
       garantia: SkeletonDataGenerator.boolean(),
       formaPagamento: SkeletonDataGenerator.string(length: 5),
       valor: SkeletonDataGenerator.decimal(),
@@ -192,9 +197,9 @@ class Servico implements Skeletonizable {
       'nomeTecnico': nomeTecnico,
       'equipamento': equipamento,
       'filial': filial,
-      'horarioPrevisto': horarioPrevisto,
+      'periodo': periodo?.toJson(),
       'marca': marca,
-      'situacao': situacao,
+      'situacao': situacao.toJson(),
       'descricao': descricao,
       'formaPagamento': formaPagamento,
       'garantia': garantia,
@@ -220,10 +225,10 @@ class Servico implements Skeletonizable {
     nomeTecnico = SkeletonDataGenerator.name();
     equipamento = SkeletonDataGenerator.string(length: 8);
     filial = SkeletonDataGenerator.string(length: 8);
-    horarioPrevisto = SkeletonDataGenerator.string(length: 5);
+    periodo = SkeletonDataGenerator.pick<ServicePeriodo>(ServicePeriodo.values);
     marca = SkeletonDataGenerator.string(length: 8);
     descricao = SkeletonDataGenerator.string(length: 50);
-    situacao = SkeletonDataGenerator.string(length: 10);
+    situacao = SkeletonDataGenerator.pick<ServiceStatus>(ServiceStatus.values);
     garantia = SkeletonDataGenerator.boolean();
     formaPagamento = SkeletonDataGenerator.string(length: 5);
     valor = SkeletonDataGenerator.decimal();

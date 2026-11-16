@@ -1,3 +1,6 @@
+import 'package:serv_oeste/features/servico/domain/entities/enums/service_periodo.dart';
+import 'package:serv_oeste/features/servico/domain/entities/enums/service_status.dart';
+
 class ServicoFilter {
   final int? id;
   final int? clienteId;
@@ -6,10 +9,10 @@ class ServicoFilter {
   final String? tecnicoNome;
   final String? equipamento;
   final String? marca;
-  final String? situacao;
+  final ServiceStatus? situacao;
   final String? garantia;
   final String? filial;
-  final String? periodo;
+  final ServicePeriodo? periodo;
   final DateTime? dataAtendimentoPrevistoAntes;
   final DateTime? dataAtendimentoPrevistoDepois;
   final DateTime? dataAtendimentoEfetivoAntes;
@@ -45,10 +48,10 @@ class ServicoFilter {
     String? tecnicoNome,
     String? equipamento,
     String? marca,
-    String? situacao,
+    ServiceStatus? situacao,
     String? garantia,
     String? filial,
-    String? periodo,
+    ServicePeriodo? periodo,
     DateTime? dataAtendimentoPrevistoAntes,
     DateTime? dataAtendimentoPrevistoDepois,
     DateTime? dataAtendimentoEfetivoAntes,
@@ -68,10 +71,14 @@ class ServicoFilter {
       garantia: garantia ?? this.garantia,
       filial: filial ?? this.filial,
       periodo: periodo ?? this.periodo,
-      dataAtendimentoPrevistoAntes: dataAtendimentoPrevistoAntes ?? this.dataAtendimentoPrevistoAntes,
-      dataAtendimentoPrevistoDepois: dataAtendimentoPrevistoDepois ?? this.dataAtendimentoPrevistoDepois,
-      dataAtendimentoEfetivoAntes: dataAtendimentoEfetivoAntes ?? this.dataAtendimentoEfetivoAntes,
-      dataAtendimentoEfetivoDepois: dataAtendimentoEfetivoDepois ?? this.dataAtendimentoEfetivoDepois,
+      dataAtendimentoPrevistoAntes:
+          dataAtendimentoPrevistoAntes ?? this.dataAtendimentoPrevistoAntes,
+      dataAtendimentoPrevistoDepois:
+          dataAtendimentoPrevistoDepois ?? this.dataAtendimentoPrevistoDepois,
+      dataAtendimentoEfetivoAntes:
+          dataAtendimentoEfetivoAntes ?? this.dataAtendimentoEfetivoAntes,
+      dataAtendimentoEfetivoDepois:
+          dataAtendimentoEfetivoDepois ?? this.dataAtendimentoEfetivoDepois,
       dataAberturaAntes: dataAberturaAntes ?? this.dataAberturaAntes,
       dataAberturaDepois: dataAberturaDepois ?? this.dataAberturaDepois,
     );
@@ -86,14 +93,18 @@ class ServicoFilter {
       'tecnicoNome': tecnicoNome,
       'equipamento': equipamento,
       'marca': marca,
-      'situacao': situacao,
+      'situacao': situacao?.toJson(),
       'garantia': garantia,
       'filial': filial,
-      'periodo': periodo,
-      'dataAtendimentoPrevistoAntes': dataAtendimentoPrevistoAntes?.toIso8601String(),
-      'dataAtendimentoPrevistoDepois': dataAtendimentoPrevistoDepois?.toIso8601String(),
-      'dataAtendimentoEfetivoAntes': dataAtendimentoEfetivoAntes?.toIso8601String(),
-      'dataAtendimentoEfetivoDepois': dataAtendimentoEfetivoDepois?.toIso8601String(),
+      'periodo': periodo?.toJson(),
+      'dataAtendimentoPrevistoAntes': dataAtendimentoPrevistoAntes
+          ?.toIso8601String(),
+      'dataAtendimentoPrevistoDepois': dataAtendimentoPrevistoDepois
+          ?.toIso8601String(),
+      'dataAtendimentoEfetivoAntes': dataAtendimentoEfetivoAntes
+          ?.toIso8601String(),
+      'dataAtendimentoEfetivoDepois': dataAtendimentoEfetivoDepois
+          ?.toIso8601String(),
       'dataAberturaAntes': dataAberturaAntes?.toIso8601String(),
       'dataAberturaDepois': dataAberturaDepois?.toIso8601String(),
     };
@@ -105,22 +116,22 @@ class ServicoFilter {
     if (other is! ServicoFilter) return false;
 
     return other.id == id &&
-      other.clienteId == clienteId &&
-      other.tecnicoId == tecnicoId &&
-      other.clienteNome == clienteNome &&
-      other.tecnicoNome == tecnicoNome &&
-      other.equipamento == equipamento &&
-      other.marca == marca &&
-      other.situacao == situacao &&
-      other.garantia == garantia &&
-      other.filial == filial &&
-      other.periodo == periodo &&
-      other.dataAtendimentoPrevistoAntes == dataAtendimentoPrevistoAntes &&
-      other.dataAtendimentoPrevistoDepois == dataAtendimentoPrevistoDepois &&
-      other.dataAtendimentoEfetivoAntes == dataAtendimentoEfetivoAntes &&
-      other.dataAtendimentoEfetivoDepois == dataAtendimentoEfetivoDepois &&
-      other.dataAberturaAntes == dataAberturaAntes &&
-      other.dataAberturaDepois == dataAberturaDepois;
+        other.clienteId == clienteId &&
+        other.tecnicoId == tecnicoId &&
+        other.clienteNome == clienteNome &&
+        other.tecnicoNome == tecnicoNome &&
+        other.equipamento == equipamento &&
+        other.marca == marca &&
+        other.situacao == situacao &&
+        other.garantia == garantia &&
+        other.filial == filial &&
+        other.periodo == periodo &&
+        other.dataAtendimentoPrevistoAntes == dataAtendimentoPrevistoAntes &&
+        other.dataAtendimentoPrevistoDepois == dataAtendimentoPrevistoDepois &&
+        other.dataAtendimentoEfetivoAntes == dataAtendimentoEfetivoAntes &&
+        other.dataAtendimentoEfetivoDepois == dataAtendimentoEfetivoDepois &&
+        other.dataAberturaAntes == dataAberturaAntes &&
+        other.dataAberturaDepois == dataAberturaDepois;
   }
 
   @override

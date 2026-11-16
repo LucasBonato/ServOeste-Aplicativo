@@ -7,7 +7,6 @@ import 'package:serv_oeste/features/cliente/presentation/bloc/cliente_bloc.dart'
 import 'package:serv_oeste/features/cliente/presentation/widgets/cliente_form_widget.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_form.dart';
-import 'package:serv_oeste/features/servico/domain/rules/service_field_rules.dart';
 import 'package:serv_oeste/features/servico/domain/validators/servico_validator.dart';
 import 'package:serv_oeste/features/servico/presentation/bloc/servico_bloc.dart';
 import 'package:serv_oeste/features/servico/presentation/widgets/servico_form_widget.dart';
@@ -168,8 +167,7 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
       nameTecnicoController: _nomeTecnicoController,
       submitText: "",
       onSubmit: () {},
-      successMessage:
-          'Serviço atualizado com sucesso! (Caso ele não esteja atualizado, recarregue a página)',
+      successMessage: 'Serviço atualizado com sucesso! (Caso ele não esteja atualizado, recarregue a página)',
       isUpdate: true,
     );
   }
@@ -227,22 +225,10 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
     _servicoUpdateValidator = ServicoValidator(
       servicoForm: _servicoUpdateForm,
       isUpdate: true,
-      isFieldEnabled: _isServicoFieldEnabled,
     );
 
     _servicoBloc.add(ServicoSearchOneEvent(id: widget.id));
     _clienteBloc.add(ClienteSearchOneEvent(id: widget.clientId));
-  }
-
-  bool _isServicoFieldEnabled(String fieldName) {
-    final currentSituation = _servicoUpdateForm.situacao.value;
-
-    final disabledSituations =
-        ServiceFieldRules.disabledSituationsByField[fieldName];
-
-    if (disabledSituations == null) return true;
-
-    return !disabledSituations.contains(currentSituation);
   }
 
   @override

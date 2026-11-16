@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:serv_oeste/shared/models/enums/service_status.dart';
-import 'package:serv_oeste/shared/utils/extensions/string_extensions.dart';
+import 'package:serv_oeste/features/servico/domain/entities/enums/service_status.dart';
 import 'package:serv_oeste/shared/utils/formatters/formatters.dart';
 
 class ServicoCard extends StatelessWidget {
@@ -9,7 +8,7 @@ class ServicoCard extends StatelessWidget {
   final String equipamento;
   final String marca;
   final String filial;
-  final String status;
+  final ServiceStatus status;
   final String? tecnico;
   final String? horario;
   final DateTime? dataPrevista;
@@ -51,20 +50,16 @@ class ServicoCard extends StatelessWidget {
         return const Color(0xFFB3A20E);
       case ServiceStatus.aguardandoAtendimento:
         return Colors.orange;
-      case ServiceStatus.aguardandoClienteRetirar:
-        return const Color(0xFFF6CF4F);
+      case ServiceStatus.aguardandoOrcamento:
+        return Colors.orangeAccent;
       case ServiceStatus.cancelado:
         return Colors.red;
       case ServiceStatus.compra:
         return Colors.teal;
-      case ServiceStatus.cortesia:
-        return Colors.tealAccent;
       case ServiceStatus.garantia:
         return const Color(0xFF1201FF);
       case ServiceStatus.naoAprovadoPeloCliente:
         return Colors.redAccent;
-      case ServiceStatus.naoRetira3Meses:
-        return Colors.deepOrange;
       case ServiceStatus.orcamentoAprovado:
         return Colors.green;
       case ServiceStatus.resolvido:
@@ -151,8 +146,7 @@ class ServicoCard extends StatelessWidget {
             builder: (context, hovered, child) {
               return GestureDetector(
                 onLongPress: isSkeleton ? () {} : onLongPress,
-                onDoubleTap: isSkeleton ? () {} : onDoubleTap,
-                onTap: isSkeleton ? () {} : onTap,
+                onTap: isSkeleton ? () {} : (onTap ?? onDoubleTap),
                 child: Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
@@ -305,15 +299,11 @@ class ServicoCard extends StatelessWidget {
                           child: SizedBox(
                             width: constraints.maxWidth * 0.45,
                             child: Text(
-                              status.convertEnumStatusToString(),
+                              status.label,
                               style: TextStyle(
                                 fontSize: statusSize,
                                 fontWeight: FontWeight.bold,
-                                color: _getStatusColor(
-                                  ServiceStatus.fromString(
-                                    status,
-                                  ),
-                                ),
+                                color: _getStatusColor(status),
                               ),
                               maxLines: 3,
                               textAlign: TextAlign.center,

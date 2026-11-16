@@ -17,7 +17,7 @@ enum ErrorCodeKey {
   marca,
   descricao,
   filial,
-  horario,
+  periodo,
   data,
   dataAtendimentoPrevisto,
   dataAtendimentoEfetivo,

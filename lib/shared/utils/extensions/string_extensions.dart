@@ -24,22 +24,3 @@ extension StringConversions on String? {
     return "";
   }
 }
-
-extension StringEnumConversion on String {
-  String convertEnumStatusToString() {
-    final specialCases = {
-      'NAO_RETIRA_3_MESES': 'Não retira há 3 meses',
-      'AGUARDANDO_APROVACAO': 'Aguardando aprovação do cliente',
-      'ORCAMENTO_APROVADO': 'Orçamento aprovado',
-      'NAO_APROVADO': 'Não aprovado pelo cliente',
-    };
-
-    if (specialCases.containsKey(this)) {
-      return specialCases[this]!;
-    }
-
-    String convertedStatus =
-        "${this[0]}${substring(1).replaceAll("_", " ").toLowerCase()}";
-    return convertedStatus;
-  }
-}

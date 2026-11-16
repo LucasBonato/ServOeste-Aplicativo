@@ -20,7 +20,7 @@ class PDFBase {
       children: [
         _buildTableRow(
           'Data Atendimento: ${_formatDate(effectiveDate)}',
-          'Período: ${_formatHorario(servico.horarioPrevisto)}',
+          'Período: ${_formatHorario(servico.periodo?.label)}',
         ),
         _buildTableRow(
           'Cliente: ${cliente.nome ?? ''}',

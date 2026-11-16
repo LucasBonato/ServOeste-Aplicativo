@@ -9,7 +9,6 @@ import 'package:serv_oeste/features/cliente/domain/entities/cliente_request.dart
 import 'package:serv_oeste/features/servico/domain/entities/servico.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_filter.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_request.dart';
-import 'package:serv_oeste/shared/models/enums/service_status.dart';
 import 'package:serv_oeste/shared/models/error/error_entity.dart';
 import 'package:serv_oeste/shared/models/page_content.dart';
 
@@ -46,12 +45,10 @@ class ServicoClient {
         'tecnicoNome': servicoFilter.tecnicoNome,
         'equipamento': servicoFilter.equipamento,
         'marca': servicoFilter.marca,
-        'situacao': servicoFilter.situacao != null
-            ? ServiceStatus.fromString(servicoFilter.situacao!)
-            : null,
+        'situacao': servicoFilter.situacao?.toJson(),
         'garantia': servicoFilter.garantia,
         'filial': servicoFilter.filial,
-        'periodo': servicoFilter.periodo,
+        'periodo': servicoFilter.periodo?.toJson(),
         'dataAtendimentoPrevistoAntes': servicoFilter
             .dataAtendimentoPrevistoAntes
             ?.toIso8601String(),
@@ -110,9 +107,9 @@ class ServicoClient {
             "idTecnico": servico.idTecnico,
             "equipamento": servico.equipamento,
             "marca": servico.marca,
-            "filial": servico.filial.replaceAll("í", "i"),
+            "filial": servico.filial,
             "dataAtendimento": servico.dataAtendimento,
-            "horarioPrevisto": servico.horarioPrevisto,
+            "periodo": servico.periodo?.toJson(),
             "descricao": servico.descricao,
           },
         },
@@ -136,7 +133,7 @@ class ServicoClient {
           "marca": servico.marca,
           "filial": servico.filial.replaceAll("í", "i"),
           "dataAtendimento": servico.dataAtendimento,
-          "horarioPrevisto": servico.horarioPrevisto,
+          "periodo": servico.periodo?.toJson(),
           "descricao": servico.descricao,
         },
       );
@@ -158,11 +155,11 @@ class ServicoClient {
           "marca": servico.marca,
           "filial": servico.filial,
           "descricao": servico.descricao,
-          "situacao": ServiceStatus.normalize(servico.situacao),
+          "situacao": servico.situacao.toJson(),
           "formaPagamento": servico.formaPagamento
               ?.replaceAll("é", "e")
               .toUpperCase(),
-          "horarioPrevisto": servico.horarioPrevisto,
+          "periodo": servico.periodo?.toJson(),
           "valor": servico.valor,
           "valorComissao": servico.valorComissao,
           "valorPecas": servico.valorPecas,

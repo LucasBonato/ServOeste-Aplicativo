@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:serv_oeste/core/constants/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:serv_oeste/features/servico/domain/entities/servico_form.dart';
+import 'package:serv_oeste/features/servico/domain/entities/enums/service_status.dart';
+import 'package:serv_oeste/features/servico/domain/entities/enums/service_periodo.dart';
 import 'package:serv_oeste/features/servico/domain/rules/service_field_rules.dart';
 import 'package:serv_oeste/features/tecnico/domain/entities/tecnico_filter.dart';
 import 'package:serv_oeste/features/tecnico/presentation/widgets/tecnico_table_modal.dart';
@@ -13,7 +15,6 @@ import 'package:serv_oeste/shared/services/specialty_cache.dart';
 import 'package:serv_oeste/shared/models/enums/error_code_key.dart';
 import 'package:serv_oeste/features/servico/domain/validators/servico_validator.dart';
 import 'package:serv_oeste/shared/widgets/screen/base_entity_form.dart';
-import 'package:serv_oeste/shared/utils/extensions/string_extensions.dart';
 import 'package:serv_oeste/shared/utils/formatters/input_masks.dart';
 
 class ServicoFormWidget extends StatefulWidget {
@@ -55,7 +56,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
   late ServicoValidator validator;
   late TextEditingController nameTecnicoController;
 
-  final ValueNotifier<String> _situationNotifier = ValueNotifier('');
+  final ValueNotifier<ServiceStatus?> _situationNotifier = ValueNotifier(null);
   late bool enabled;
 
   @override
@@ -66,85 +67,19 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
 
     validator =
         widget.validator ??
-        ServicoValidator(
-          servicoForm: widget.form,
-          isUpdate: widget.isUpdate,
-          isFieldEnabled: isFieldEnabled,
-        );
+        ServicoValidator(servicoForm: widget.form, isUpdate: widget.isUpdate);
 
     nameTecnicoController = widget.nameTecnicoController;
 
+    widget.form.situacao.addListener(_onFormSituationChanged);
+    _situationNotifier.value = widget.form.situacao.value;
+
     enabled = isInputEnabled();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _situationNotifier.value = widget.form.situacao.value;
-    });
   }
 
-  void _clearField(String fieldName) {
-    switch (fieldName) {
-      case "nomeTecnico":
-        nameTecnicoController.clear();
-        widget.form.setNomeTecnico('');
-        widget.form.setIdTecnico(null);
-        break;
-
-      case "horario":
-        widget.form.setHorario('');
-        break;
-
-      case "dataAtendimentoPrevisto":
-        widget.form.setDataAtendimentoPrevisto(null);
-        break;
-
-      case "dataAtendimentoEfetivo":
-        widget.form.setDataAtendimentoEfetivo(null);
-        break;
-
-      case "valorServico":
-        widget.form.setValorServico('');
-        break;
-
-      case "valorPecas":
-        widget.form.setValorPecas('');
-        break;
-
-      case "formaPagamento":
-        widget.form.setFormaPagamento('');
-        break;
-
-      case "dataFechamento":
-        widget.form.setDataFechamento(null);
-        break;
-
-      case "dataPagamentoComissao":
-        widget.form.setDataPagamentoComissao(null);
-        break;
-
-      case "dataInicioGarantia":
-        widget.form.setDataInicioGarantia(null);
-        break;
-
-      case "dataFinalGarantia":
-        widget.form.setDataFinalGarantia(null);
-        break;
-    }
-  }
-
-  void _clearDisabledFields(String newSituation) {
-    final previousSituation = _situationNotifier.value;
-
-    for (final fieldName in ServiceFieldRules.disabledSituationsByField.keys) {
-      final disabledSituations =
-          ServiceFieldRules.disabledSituationsByField[fieldName] ?? [];
-
-      final wasEnabled = !disabledSituations.contains(previousSituation);
-      final isNowDisabled = disabledSituations.contains(newSituation);
-
-      if (wasEnabled && isNowDisabled) {
-        _clearField(fieldName);
-      }
-    }
+  // Keeps field enablement in sync when setForm repopulates the form after load.
+  void _onFormSituationChanged() {
+    _situationNotifier.value = widget.form.situacao.value;
   }
 
   bool isInputEnabled() {
@@ -152,47 +87,39 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
     return (widget.isClientAndService || widget.form.idCliente.value != null);
   }
 
-  bool isFieldEnabled(String fieldName) {
+  bool isFieldEnabled(ErrorCodeKey? field) {
     if (!widget.isUpdate) return enabled;
-
-    final currentSituation = _situationNotifier.value;
-
-    final disabledSituations =
-        ServiceFieldRules.disabledSituationsByField[fieldName];
-
-    if (disabledSituations == null) {
-      return true;
-    }
-
-    return !disabledSituations.contains(currentSituation);
+    final status = _situationNotifier.value;
+    if (status == null) return true;
+    return field == null || !ServiceFieldRules.isDisabled(field, status);
   }
 
-  int getServiceLevel(String situacao) {
-    return switch (situacao) {
-      'Aguardando agendamento' => 0,
-      'Aguardando atendimento' => 1,
-      'Cancelado' || 'Sem defeito || Aguardando aprovação do cliente' => 2,
-      'Compra' || 'Não aprovado pelo cliente' || 'Orçamento aprovado' => 3,
-      'Aguardando cliente retirar' => 4,
-      'Resolvido || Não retira há 3 meses' => 5,
-      'Cortesia' || 'Garantia' => 6,
-      _ => -1,
+  int getServiceLevel(ServiceStatus status) {
+    return switch (status) {
+      ServiceStatus.aguardandoAgendamento => 0,
+      ServiceStatus.aguardandoAtendimento => 1,
+      ServiceStatus.cancelado ||
+      ServiceStatus.semDefeito ||
+      ServiceStatus.aguardandoOrcamento ||
+      ServiceStatus.aguardandoAprovacaoCliente => 2,
+      ServiceStatus.compra ||
+      ServiceStatus.naoAprovadoPeloCliente ||
+      ServiceStatus.orcamentoAprovado => 3,
+      ServiceStatus.resolvido || ServiceStatus.garantia => 4,
     };
   }
 
-  void updateServiceSituation(String value) {
-    _clearDisabledFields(value);
-
-    widget.form.situacao.value = value;
+  void updateServiceSituation(ServiceStatus? value) {
     widget.form.setSituacao(value);
-    _situationNotifier.value = value;
+    _situationNotifier.value = widget.form.situacao.value;
   }
 
   void handleSituationChange(String value) {
-    final String previousValue = widget.form.situacao.value
-        .convertEnumStatusToString();
-    final int currentLevel = getServiceLevel(previousValue);
-    final int newLevel = getServiceLevel(value);
+    final ServiceStatus? previousStatus = widget.form.situacao.value;
+    final int currentLevel = previousStatus == null
+        ? -1
+        : getServiceLevel(previousStatus);
+    final int newLevel = getServiceLevel(ServiceStatus.fromJson(value));
 
     if (currentLevel > newLevel) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -229,8 +156,9 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                   ),
                   onPressed: () {
                     Navigator.pop(context);
-                    widget.form.situacao.value = previousValue;
-                    widget.form.setSituacao(previousValue);
+                    if (previousStatus != null) {
+                      widget.form.setSituacao(previousStatus);
+                    }
                   },
                   child: Text(
                     "Cancelar",
@@ -246,7 +174,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                   ),
                   onPressed: () {
                     Navigator.pop(context);
-                    updateServiceSituation(value);
+                    updateServiceSituation(ServiceStatus.fromJson(value));
                   },
                   child: Text(
                     "Confirmar",
@@ -258,11 +186,11 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
           },
         );
         if (confirm == true) {
-          updateServiceSituation(value);
+          updateServiceSituation(ServiceStatus.fromJson(value));
         }
       });
     } else {
-      updateServiceSituation(value);
+      updateServiceSituation(ServiceStatus.fromJson(value));
     }
   }
 
@@ -271,7 +199,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
     bool hasCliente = widget.form.idCliente.value != null;
 
     if (widget.isUpdate) {
-      return isFieldEnabled("nomeTecnico") && (isEquipamentoNotEmpty || hasCliente);
+      return isFieldEnabled(ErrorCodeKey.tecnico) && (isEquipamentoNotEmpty || hasCliente);
     }
 
     return (widget.isClientAndService)
@@ -280,11 +208,11 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
   }
 
   void _setTableValues(
-      String nomeTecnico,
-      String data,
-      String periodo,
-      int idTecnico,
-    ) {
+    String nomeTecnico,
+    String data,
+    String periodo,
+    int idTecnico,
+  ) {
     widget.nameTecnicoController.text = nomeTecnico;
     widget.form.setNomeTecnico(nomeTecnico);
     widget.form.setDataAtendimentoPrevisto(data);
@@ -294,9 +222,9 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
 
   void _onShowAvailabilityTechnicianTable() {
     int idEspecialidade = 12;
-    final int? idFromCache = context
-        .read<SpecialtyCache>()
-        .idByConhecimento(widget.form.equipamento.value);
+    final int? idFromCache = context.read<SpecialtyCache>().idByConhecimento(
+      widget.form.equipamento.value,
+    );
     if (idFromCache != null) {
       idEspecialidade = idFromCache;
     }
@@ -312,13 +240,14 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
     );
   }
 
-  bool _showAvailabilityButton() => widget.isClientAndService || widget.isUpdate;
+  bool _showAvailabilityButton() =>
+      widget.isClientAndService || widget.isUpdate;
 
   @override
   Widget build(BuildContext context) {
     enabled = isInputEnabled();
 
-    return ValueListenableBuilder<String>(
+    return ValueListenableBuilder<ServiceStatus?>(
       valueListenable: _situationNotifier,
       builder: (context, situation, child) {
         return BaseEntityForm<ServicoBloc, ServicoState>(
@@ -336,16 +265,22 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
           getErrorMessage: (state) {
             if (state is ServicoErrorState) {
               final error = state.error;
-              if (error.errors.isNotEmpty) {
-                final firstFieldError = error.errors.entries.first;
-                final messages = firstFieldError.value;
-                if (messages.isNotEmpty) {
-                  return messages.first;
-                }
+              final knownKeys = ErrorCodeKey.values
+                  .where((key) => key != ErrorCodeKey.global)
+                  .map((key) => key.name)
+                  .toSet();
+              final generalErrors = error.errors.entries
+                  .where((entry) => !knownKeys.contains(entry.key))
+                  .expand((entry) => entry.value)
+                  .toList();
+              if (generalErrors.isNotEmpty) {
+                return generalErrors.join('\n');
               }
-              return error.title.isNotEmpty
-                  ? error.title
-                  : "Erro ao realizar operação";
+              return error.detail.isNotEmpty
+                  ? error.detail
+                  : error.title.isNotEmpty
+                    ? error.title
+                    : "Erro ao realizar operação";
             }
             return "Erro ao realizar operação";
           },
@@ -381,7 +316,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                     ? specialtyCache.activeConhecimentosOrdered()
                     : Constants.equipamentosFallback,
                 onChanged: widget.form.setEquipamento,
-                enabled: isFieldEnabled("equipamento"),
+                enabled: isFieldEnabled(ErrorCodeKey.equipamento),
                 shouldExpand: widget.isUpdate,
               ),
               DropdownSearchInputField(
@@ -393,7 +328,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                 valueNotifier: widget.form.marca,
                 dropdownValues: Constants.marcas,
                 onChanged: widget.form.setMarca,
-                enabled: isFieldEnabled("marca"),
+                enabled: isFieldEnabled(ErrorCodeKey.marca),
                 shouldExpand: widget.isUpdate,
               ),
               CustomWidgetField(
@@ -412,9 +347,8 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                   onChanged: widget.form.setNomeTecnico,
                   onSearchStart: () => widget.form.setIdTecnico,
                   listenTo: [widget.form.equipamento, widget.form.idCliente],
-                  searchFilter: () => TecnicoFilter(
-                    equipamento: widget.form.equipamento.value,
-                  ),
+                  searchFilter: () =>
+                      TecnicoFilter(equipamento: widget.form.equipamento.value),
                   enabledCalculator: _enableTecnico,
                   onSelected: (tecnico) {
                     widget.form.setNomeTecnico(tecnico.nome);
@@ -431,20 +365,22 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                   text: "Verificar disponibilidade dos técnicos",
                   tooltipMessage: "Selecione um equipamento para continuar",
                   onPressed: _onShowAvailabilityTechnicianTable,
-                  enabledCalculator: _enableTecnico
+                  enabledCalculator: _enableTecnico,
                 ),
               DropdownInputField(
                 startNewRow: true,
                 hint: "Horário*",
-                dropdownValues: Constants.horarioPrevisto,
-                valueNotifier: widget.form.horario,
+                dropdownValues: ServicePeriodo.values
+                    .map((periodo) => periodo.label)
+                    .toList(),
+                valueNotifier: widget.form.periodoLabel,
                 validator: validator.byField(
                   widget.form,
-                  ErrorCodeKey.horario.name,
+                  ErrorCodeKey.periodo.name,
                 ),
                 onChanged: widget.form.setHorario,
                 shouldExpand: true,
-                enabled: isFieldEnabled("horario"),
+                enabled: isFieldEnabled(ErrorCodeKey.periodo),
               ),
               DropdownInputField(
                 hint: "Filial*",
@@ -456,19 +392,20 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                 ),
                 onChanged: widget.form.setFilial,
                 shouldExpand: true,
-                enabled: isFieldEnabled("filial"),
+                enabled: isFieldEnabled(ErrorCodeKey.filial),
               ),
-              DropdownInputField(
-                hint: "Situação*",
-                dropdownValues: Constants.situationServiceList,
-                valueNotifier: widget.form.situacao,
-                validator: validator.byField(
-                  widget.form,
-                  ErrorCodeKey.situacao.name,
+              if (widget.isUpdate)
+                DropdownInputField(
+                  hint: "Situação*",
+                  dropdownValues: ServiceStatus.labels,
+                  valueNotifier: widget.form.situacaoLabel,
+                  validator: validator.byField(
+                    widget.form,
+                    ErrorCodeKey.situacao.name,
+                  ),
+                  onChanged: handleSituationChange,
+                  enabled: isFieldEnabled(ErrorCodeKey.situacao),
                 ),
-                onChanged: handleSituationChange,
-                enabled: isFieldEnabled("situacao"),
-              ),
               DatePickerInputField(
                 startNewRow: true,
                 shouldExpand: widget.isUpdate,
@@ -479,7 +416,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                   ErrorCodeKey.dataAtendimentoPrevisto.name,
                 ),
                 onChanged: widget.form.setDataAtendimentoPrevisto,
-                enabled: isFieldEnabled("dataAtendimentoPrevisto"),
+                enabled: isFieldEnabled(ErrorCodeKey.dataAtendimentoPrevisto),
                 allowPastDates: true,
               ),
               if (widget.isUpdate) ...[
@@ -492,7 +429,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                     ErrorCodeKey.dataAtendimentoEfetivo.name,
                   ),
                   onChanged: widget.form.setDataAtendimentoEfetivo,
-                  enabled: isFieldEnabled("dataAtendimentoEfetivo"),
+                  enabled: isFieldEnabled(ErrorCodeKey.dataAtendimentoEfetivo),
                   allowPastDates: true,
                   allowFutureDates: false,
                 ),
@@ -510,7 +447,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                   shouldExpand: true,
                   startNewRow: true,
                   formatter: InputMasks.currency,
-                  enabled: isFieldEnabled("valorServico"),
+                  enabled: isFieldEnabled(ErrorCodeKey.valor),
                 ),
                 TextFormInputField(
                   hint: "9.999,99",
@@ -525,7 +462,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                   ),
                   formatter: InputMasks.currency,
                   shouldExpand: true,
-                  enabled: isFieldEnabled("valorPecas"),
+                  enabled: isFieldEnabled(ErrorCodeKey.valorPecas),
                 ),
                 TextFormInputField(
                   hint: "9.999,99",
@@ -553,7 +490,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                   ),
                   onChanged: widget.form.setFormaPagamento,
                   shouldExpand: true,
-                  enabled: isFieldEnabled("formaPagamento"),
+                  enabled: isFieldEnabled(ErrorCodeKey.formaPagamento),
                 ),
                 DatePickerInputField(
                   startNewRow: true,
@@ -565,7 +502,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                     ErrorCodeKey.dataPagamentoComissao.name,
                   ),
                   hint: "Data Pgto. comissão",
-                  enabled: isFieldEnabled("dataPagamentoComissao"),
+                  enabled: isFieldEnabled(ErrorCodeKey.dataPagamentoComissao),
                   allowPastDates: true,
                 ),
                 DatePickerInputField(
@@ -577,7 +514,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                     ErrorCodeKey.dataFechamento.name,
                   ),
                   hint: "Data Fechamento*",
-                  enabled: isFieldEnabled("dataFechamento"),
+                  enabled: isFieldEnabled(ErrorCodeKey.dataFechamento),
                   allowPastDates: true,
                 ),
                 DatePickerInputField(
@@ -590,7 +527,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                     ErrorCodeKey.dataInicioGarantia.name,
                   ),
                   onChanged: widget.form.setDataInicioGarantia,
-                  enabled: isFieldEnabled("dataInicioGarantia"),
+                  enabled: isFieldEnabled(ErrorCodeKey.dataInicioGarantia),
                   allowPastDates: true,
                 ),
                 DatePickerInputField(
@@ -602,7 +539,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                     ErrorCodeKey.dataFinalGarantia.name,
                   ),
                   onChanged: widget.form.setDataFinalGarantia,
-                  enabled: isFieldEnabled("dataFinalGarantia"),
+                  enabled: isFieldEnabled(ErrorCodeKey.dataFinalGarantia),
                   allowPastDates: true,
                 ),
               ],
@@ -617,7 +554,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                   ErrorCodeKey.descricao.name,
                 ),
                 onChanged: widget.form.setDescricao,
-                enabled: isFieldEnabled("descricao"),
+                enabled: isFieldEnabled(ErrorCodeKey.descricao),
               ),
             ];
           },
@@ -628,6 +565,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
 
   @override
   void dispose() {
+    widget.form.situacao.removeListener(_onFormSituationChanged);
     _situationNotifier.dispose();
     super.dispose();
   }
