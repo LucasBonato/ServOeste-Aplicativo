@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 
 import 'package:dartastic_opentelemetry/dartastic_opentelemetry.dart';
 import 'package:flutter/foundation.dart';
@@ -51,18 +51,26 @@ Future<void> main() async {
           endpoint: OtelConfig.endpoint,
           logPrint: OtelConfig.logPrint,
           sampler: OtelConfig.samplerInstance,
+          detectPlatformResources: !kIsWeb,
           resourceAttributes: OTel.attributesFromMap({
-            'deployment.environment': kReleaseMode ? 'production' : 'development',
+            'deployment.environment': kReleaseMode
+                ? 'production'
+                : 'development',
           }),
         );
         _applySdkLogLevel();
 
-        final String? storedToken = await FlutterSecureStorageService.readPersistedAccessToken();
+        String? storedToken;
+        try {
+          storedToken = await FlutterSecureStorageService.readPersistedAccessToken();
+        } catch (_) {}
         if (storedToken != null && storedToken.isNotEmpty) {
           Tracing.currentUserId = Tracing.userIdFromJwt(storedToken);
         }
 
-        final NavigationService navigationService = AppNavigationService(navigatorKey);
+        final NavigationService navigationService = AppNavigationService(
+          navigatorKey,
+        );
         final AppDependencies dependencies = AppDependencies(navigationService);
 
         runApp(
@@ -71,7 +79,10 @@ Future<void> main() async {
             child: MultiProvider(
               providers: dependencies.buildProviders(),
               child: OtelLifecycle(
-                child: MyApp(navigatorKey: navigatorKey),
+                child: MyApp(
+                  navigatorKey: navigatorKey,
+                  scaffoldMessengerKey: dependencies.scaffoldMessengerKey,
+                ),
               ),
             ),
           ),
@@ -109,8 +120,13 @@ void _applySdkLogLevel() {
 
 class MyApp extends StatelessWidget {
   final GlobalKey<NavigatorState> navigatorKey;
+  final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey;
 
-  const MyApp({super.key, required this.navigatorKey});
+  const MyApp({
+    super.key,
+    required this.navigatorKey,
+    required this.scaffoldMessengerKey,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -122,6 +138,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       navigatorKey: navigatorKey,
+      scaffoldMessengerKey: scaffoldMessengerKey,
       initialRoute: Routes.login,
       onGenerateRoute: (settings) => CustomRouter.onGenerateRoute(settings),
     );

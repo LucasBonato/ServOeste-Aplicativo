@@ -3,6 +3,9 @@ import 'package:serv_oeste/core/observability/app_logger.dart';
 import 'package:serv_oeste/shared/models/error/error_entity.dart';
 
 class ErrorHandler {
+  static const String sessionExpiredMessage =
+      'Sua sessão expirou. Faça login novamente.';
+
   static ErrorEntity onRequestError(DioException? e) {
     final ErrorEntity entity = _build(e);
 
@@ -33,7 +36,7 @@ class ErrorHandler {
 
     if (e.response?.statusCode == 401) {
       return ErrorEntity.global(
-        "Não autorizado. Token inválido ou expirado.",
+        sessionExpiredMessage,
         status: 401,
         traceId: e.response?.headers.value('trace-id'),
       );

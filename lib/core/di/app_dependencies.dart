@@ -1,7 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
+import 'package:serv_oeste/core/errors/error_handler.dart';
 import 'package:serv_oeste/core/http/dio_service.dart';
 import 'package:serv_oeste/core/navigation/navigation_service.dart';
 import 'package:serv_oeste/core/services/flutter_secure_storage_service.dart';
@@ -40,6 +42,8 @@ import 'package:serv_oeste/features/user/presentation/bloc/user_bloc.dart';
 class AppDependencies {
   final NavigationService navigationService;
 
+  final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+
   late final DioService dioService;
   late final AuthRepository authRepository;
   late final ClienteRepository clienteRepository;
@@ -70,6 +74,12 @@ class AppDependencies {
     dioService.addAuthInterceptors(
       authRepository,
       () {
+        scaffoldMessengerKey.currentState?.showSnackBar(
+          const SnackBar(
+            content: Text(ErrorHandler.sessionExpiredMessage),
+            backgroundColor: Colors.red,
+          ),
+        );
         navigationService.goToLogin();
       },
       onSessionCleared: () {

@@ -53,7 +53,7 @@ class ErrorEntity {
       instance: "/",
       traceId: traceId,
       errors: {
-        ErrorCodeKey.global.name: ["Unexpected Error"],
+        ErrorCodeKey.global.name: [message],
       },
     );
   }

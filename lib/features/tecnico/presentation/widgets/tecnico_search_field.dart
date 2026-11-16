@@ -164,8 +164,12 @@ class _TecnicoSearchFieldState extends State<TecnicoSearchField> {
               );
 
               final state = await widget.tecnicoBloc.stream.firstWhere(
-                    (state) => state is TecnicoSearchSuccessState,
+                (state) =>
+                  state is TecnicoSearchSuccessState ||
+                  state is TecnicoErrorState,
               );
+
+              if (state is TecnicoErrorState) return const [];
 
               final tecnicos = (state as TecnicoSearchSuccessState).tecnicos;
 

@@ -1,8 +1,7 @@
-import 'dart:ui';
-
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+import 'package:flutter/foundation.dart';
 import 'package:serv_oeste/core/constants/constants.dart';
 import 'package:serv_oeste/core/http/otel_interceptor.dart';
 import 'package:serv_oeste/core/http/refresh_token_interceptor.dart';
@@ -20,6 +19,7 @@ class DioService {
       responseType: ResponseType.json,
       receiveTimeout: const Duration(seconds: 10),
       connectTimeout: const Duration(seconds: 10),
+      extra: const {'withCredentials': true},
     ),
   );
   final CookieJar _cookieJar = CookieJar();
@@ -29,7 +29,9 @@ class DioService {
 
   DioService(this._secureStorageService) {
     _dio.interceptors.add(OtelInterceptor());
-    _dio.interceptors.add(CookieManager(_cookieJar));
+    if (!kIsWeb) {
+      _dio.interceptors.add(CookieManager(_cookieJar));
+    }
     if (Constants.isDev) {
       _dio.interceptors.add(DioInterceptor(_secureStorageService));
     }

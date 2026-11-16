@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:serv_oeste/shared/models/error/error_entity.dart';
 import 'package:serv_oeste/shared/widgets/formFields/custom_button_form_field.dart';
 import 'package:serv_oeste/shared/widgets/formFields/custom_search_form_field.dart';
 import 'package:serv_oeste/shared/widgets/formFields/custom_text_form_field.dart';
@@ -51,6 +52,15 @@ class BaseEntityForm<B extends StateStreamable<S>, S> extends StatefulWidget {
 
 class _BaseEntityFormState<B extends StateStreamable<S>, S>
     extends State<BaseEntityForm<B, S>> {
+  bool _isSessionExpired(S state) {
+    try {
+      final error = (state as dynamic).error;
+      return error is ErrorEntity && error.status == 401;
+    } on NoSuchMethodError {
+      return false;
+    }
+  }
+
   Widget _buildFormContent(
     BuildContext context,
     bool isLargeScreen,
@@ -333,12 +343,14 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
         } else if (widget.isError(state)) {
           widget.onError?.call(state);
 
-          final errorMessage =
-              widget.getErrorMessage?.call(state) ??
-              "Erro ao realizar operação";
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
-          );
+          if (!_isSessionExpired(state)) {
+            final errorMessage =
+                widget.getErrorMessage?.call(state) ??
+                "Erro ao realizar operação";
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
+            );
+          }
         }
       },
       builder: (context, state) {

@@ -1,15 +1,13 @@
-import 'dart:async';
-
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:serv_oeste/core/http/server_endpoints.dart';
 import 'package:serv_oeste/core/observability/app_logger.dart';
 import 'package:serv_oeste/core/observability/tracing.dart';
-import 'package:serv_oeste/shared/services/secure_storage_service.dart';
 import 'package:serv_oeste/features/auth/domain/auth_repository.dart';
 import 'package:serv_oeste/features/auth/domain/entities/auth.dart';
 import 'package:serv_oeste/shared/models/error/error_entity.dart';
+import 'package:serv_oeste/shared/services/secure_storage_service.dart';
 
 class TokenRefreshInterceptor extends Interceptor {
   final Dio dio;
@@ -18,8 +16,7 @@ class TokenRefreshInterceptor extends Interceptor {
   final VoidCallback? onSessionCleared;
   final SecureStorageService secureStorageService;
 
-  bool _isRefreshing = false;
-  final List<({DioException error, ErrorInterceptorHandler handler})> _pendingRequests = [];
+  Future<bool>? _refreshing;
 
   TokenRefreshInterceptor({
     required this.secureStorageService,
@@ -29,200 +26,107 @@ class TokenRefreshInterceptor extends Interceptor {
     this.onSessionCleared,
   });
 
+  bool _isAuthRoute(String path) => [
+    ServerEndpoints.loginEndpoint,
+    ServerEndpoints.refreshEndpoint,
+    ServerEndpoints.logoutEndpoint,
+  ].any((endpoint) => path == endpoint || path.endsWith('/$endpoint'));
+
   @override
-  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
-    if (err.requestOptions.path == ServerEndpoints.refreshEndpoint) {
-      return handler.next(err);
-    }
-
-    final int? status = err.response?.statusCode;
-    if (status != 401 && status != 403) {
-      return handler.next(err);
-    }
-
-    if (_isRefreshing) {
-      _pendingRequests.add((error: err, handler: handler));
-      AppLogger.debug(
-        'Requisição enfileirada aguardando refresh de token',
-        attributes: {
-          'http.request.method': err.requestOptions.method,
-          'url.path': err.requestOptions.path,
-          'http.response.status_code': status ?? -1,
-        },
-      );
+  Future<void> onError(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
+    final options = err.requestOptions;
+    final status = err.response?.statusCode;
+    if (_isAuthRoute(options.path) ||
+        options.extra['tokenRefreshRetried'] == true ||
+        (status != 401 && status != 403)) {
+      handler.next(err);
       return;
     }
 
-    _isRefreshing = true;
+    final failedAuthorization = options.headers['Authorization']?.toString();
+    final currentToken = await secureStorageService.getAccessToken();
+
+    if (!secureStorageService.hasToken(currentToken)) {
+      handler.next(err);
+      return;
+    }
+
+    final tokenChangedSinceRequest =
+        failedAuthorization != null &&
+        failedAuthorization != 'Bearer $currentToken';
+    var refreshed = tokenChangedSinceRequest;
+    if (!tokenChangedSinceRequest) {
+      final refresh = _refreshing ??= _refreshAccessToken();
+      refreshed = await refresh;
+      if (identical(_refreshing, refresh)) _refreshing = null;
+    }
+
+    if (!refreshed) {
+      handler.next(err);
+      return;
+    }
+
+    final token = await secureStorageService.getAccessToken();
+    if (!secureStorageService.hasToken(token)) {
+      handler.next(err);
+      return;
+    }
+
+    final headers = Map<String, dynamic>.from(options.headers)
+      ..remove('Authorization')
+      ..remove('authorization')
+      ..['Authorization'] = 'Bearer $token';
+    final retryOptions = options.copyWith(
+      headers: headers,
+      extra: {...options.extra, 'tokenRefreshRetried': true},
+    );
 
     try {
-      AppLogger.info(
-        'Token expirado, atualizando token de acesso',
+      handler.resolve(await dio.fetch<dynamic>(retryOptions));
+    } on DioException catch (retryError) {
+      handler.next(retryError);
+    } catch (error, stackTrace) {
+      AppLogger.exception(
+        error,
+        stackTrace: stackTrace,
         attributes: {
-          'http.request.method': err.requestOptions.method,
-          'url.path': err.requestOptions.path,
-          'http.response.status_code': status ?? -1,
+          'exception.context': 'token_refresh_retry',
+          'url.path': options.path,
         },
       );
-
-      final Either<ErrorEntity, AuthResponse> refreshResult = await authRepository.refreshToken();
-
-      if (refreshResult.isRight()) {
-        final AuthResponse newTokens = refreshResult.getOrElse(() => throw Exception('Missing token'));
-        await secureStorageService.updateAccessToken(newTokens.accessToken);
-
-        Tracing.currentUserId = Tracing.userIdFromJwt(newTokens.accessToken);
-
-        // Retry the original request — if it fails, propagate the error
-        // normally so the client sees the actual response (e.g., 400 validation)
-        // instead of being silently swallowed by _fail().
-        try {
-          await _retry(err, handler);
-        } catch (retryError, retryStackTrace) {
-          // Retry failed with a non-auth error (e.g., 400 validation).
-          // Propagate the original error so the client handles it properly.
-          AppLogger.exception(
-            retryError,
-            stackTrace: retryStackTrace,
-            attributes: {
-              'exception.context': 'token_refresh_retry_failed',
-              'url.path': err.requestOptions.path,
-            },
-          );
-          _pendingRequests.clear();
-          return handler.next(err);
-        }
-
-        if (_pendingRequests.isNotEmpty) {
-          AppLogger.info(
-            'Reenviando ${_pendingRequests.length} requisições pendentes com novo token',
-            attributes: {'token.refresh.retry_count': _pendingRequests.length},
-          );
-          for (final pending in _pendingRequests) {
-            try {
-              await _retry(pending.error, pending.handler);
-            } catch (retryError, retryStackTrace) {
-              AppLogger.exception(
-                retryError,
-                stackTrace: retryStackTrace,
-                attributes: {
-                  'exception.context': 'token_refresh_pending_retry_failed',
-                  'url.path': pending.error.requestOptions.path,
-                },
-              );
-              // Let pending retry failures propagate — their handlers will
-              // get the error normally.
-              handler.next(pending.error);
-            }
-          }
-        }
-
-        _pendingRequests.clear();
-      } else {
-        // Refresh token itself failed — this is a true auth failure.
-        await _fail(err, handler);
-      }
+      handler.next(err);
     }
-    catch (error, stackTrace) {
-      // Only catch exceptions from refreshToken(), not from _retry().
-      // If refreshToken() throws (e.g., network error), treat as auth failure.
+  }
+
+  Future<bool> _refreshAccessToken() async {
+    try {
+      final Either<ErrorEntity, AuthResponse> result = await authRepository
+          .refreshToken();
+      if (result.isRight()) {
+        final tokens = result.getOrElse(
+          () => throw StateError('Refresh returned no tokens'),
+        );
+        if (!secureStorageService.hasToken(tokens.accessToken)) {
+          throw StateError('Refresh returned an empty access token');
+        }
+        await secureStorageService.updateAccessToken(tokens.accessToken);
+        Tracing.currentUserId = Tracing.userIdFromJwt(tokens.accessToken);
+        return true;
+      }
+    } catch (error, stackTrace) {
       AppLogger.exception(
         error,
         stackTrace: stackTrace,
         attributes: {'exception.context': 'token_refresh'},
       );
-      await _fail(err, handler);
-    }
-    finally {
-      _isRefreshing = false;
-    }
-  }
-
-  Future<void> _retry(
-    DioException err,
-    ErrorInterceptorHandler handler,
-  ) async {
-    final String? newAccessToken = await secureStorageService.getAccessToken();
-    if (!secureStorageService.hasToken(newAccessToken)) {
-      AppLogger.warn(
-        'Token inválido após refresh, não foi possível reenviar requisição',
-        attributes: {'url.path': err.requestOptions.path},
-      );
-      throw Exception('Token inválido após refresh');
     }
 
-    final options = err.requestOptions;
-
-    AppLogger.info(
-      'Reenviando requisição com novo token',
-      attributes: {
-        'http.request.method': options.method,
-        'url.path': options.path,
-      },
-    );
-
-    final headers = Map<String, dynamic>.from(options.headers)
-      ..remove('Authorization')
-      ..remove('authorization');
-
-    headers["Authorization"] = "Bearer $newAccessToken";
-
-    final Response response = await dio.request(
-      options.path,
-      data: options.data,
-      queryParameters: options.queryParameters,
-      options: Options(
-        method: options.method,
-        headers: headers,
-        contentType: options.contentType,
-        responseType: options.responseType,
-      ),
-    );
-
-    AppLogger.info(
-      'Requisição reenviada com sucesso após refresh de token',
-      attributes: {
-        'http.request.method': options.method,
-        'url.path': options.path,
-        'http.response.status_code': response.statusCode ?? -1,
-      },
-    );
-
-    handler.resolve(response);
-  }
-
-  Future<void> _fail(
-    DioException err,
-    ErrorInterceptorHandler handler,
-  ) async {
-    // Resolve all pending requests with an empty response so their BLOCs
-    // transition to success (empty list) instead of hanging in loading state.
-    // These are auth errors (401/403) where refresh failed — safe to resolve
-    // with empty data since navigation to login is already triggered.
-    for (final pending in _pendingRequests) {
-      pending.handler.resolve(
-        Response(
-          requestOptions: pending.error.requestOptions,
-          statusCode: 498,
-          data: null,
-        ),
-      );
-    }
-    _pendingRequests.clear();
-
-    AppLogger.warn(
-      'Falha ao atualizar token de acesso, encerrando sessão',
-      attributes: {'url.path': err.requestOptions.path},
-    );
     await secureStorageService.deleteTokens();
     onSessionCleared?.call();
     onTokenRefreshFailed?.call();
-    handler.resolve(
-      Response(
-        requestOptions: err.requestOptions,
-        statusCode: 498,
-        data: null,
-      ),
-    );
+    return false;
   }
 }
