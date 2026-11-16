@@ -101,7 +101,11 @@ class _CustomDatePickerFormFieldState extends State<CustomDatePickerFormField>
 
     final DateTime lastDate = allowFutureDates
         ? DateTime(DateTime.now().year + 10, 12, 31)
-        : today;
+        : (isSunday ? tomorrow : today);
+
+    if (isSunday) {
+      initialDate = tomorrow;
+    }
 
     if (initialDate.isBefore(firstDate)) {
       initialDate = firstDate;
@@ -121,7 +125,7 @@ class _CustomDatePickerFormFieldState extends State<CustomDatePickerFormField>
               return false;
             }
 
-            if (!allowFutureDates && day.isAfter(today)) {
+            if (!allowFutureDates && day.isAfter(today) && today.weekday != DateTime.sunday) {
               return false;
             }
 
