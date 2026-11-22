@@ -283,7 +283,8 @@ class _ServicoUpdateScreenState extends State<ServicoUpdateScreen> {
                 ),
             ],
             child: Skeletonizer(
-              enabled: state is ServicoSearchOneLoadingState,
+              enabled: false,
+              // enabled: state is ServicoSearchOneLoadingState,
               child: Column(
                 children: [
                   LayoutBuilder(

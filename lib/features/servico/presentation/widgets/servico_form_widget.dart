@@ -128,7 +128,8 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
       ErrorCodeKey.dataFechamento: () => widget.form.setDataFechamento(""),
       ErrorCodeKey.dataInicioGarantia: () =>
           widget.form.setDataInicioGarantia(""),
-      ErrorCodeKey.dataFinalGarantia: () => widget.form.setDataFinalGarantia(""),
+      ErrorCodeKey.dataFinalGarantia: () =>
+          widget.form.setDataFinalGarantia(""),
     };
     for (final entry in clearers.entries) {
       if (ServiceFieldRules.isDisabled(entry.key, status)) entry.value();
@@ -220,7 +221,8 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
     bool hasCliente = widget.form.idCliente.value != null;
 
     if (widget.isUpdate) {
-      return isFieldEnabled(ErrorCodeKey.tecnico) && (isEquipamentoNotEmpty || hasCliente);
+      return isFieldEnabled(ErrorCodeKey.tecnico) &&
+          (isEquipamentoNotEmpty || hasCliente);
     }
 
     return (widget.isClientAndService)
@@ -315,8 +317,8 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
               return error.detail.isNotEmpty
                   ? error.detail
                   : error.title.isNotEmpty
-                    ? error.title
-                    : "Erro ao realizar operação";
+                  ? error.title
+                  : "Erro ao realizar operação";
             }
             return "Erro ao realizar operação";
           },
@@ -392,8 +394,7 @@ class _ServicoFormWidgetState extends State<ServicoFormWidget> {
                 ),
               ),
               ButtonInputField(
-                shouldExpand: true,
-                flex: 1,
+                startNewRow: true,
                 valueNotifier: widget.form.equipamento,
                 text: "Verificar disponibilidade dos técnicos",
                 tooltipMessage: "Selecione um equipamento para continuar",

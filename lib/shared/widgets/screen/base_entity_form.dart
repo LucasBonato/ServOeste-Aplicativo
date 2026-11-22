@@ -90,6 +90,7 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
         : [];
 
     return Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [...fields, ...button],
@@ -179,7 +180,7 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
         onPressed: field.onPressed,
         text: field.text,
         tooltipMessage: field.tooltipMessage,
-        enabledCalculator: field.enabledCalculator
+        enabledCalculator: field.enabledCalculator,
       );
     }
     return const SizedBox.shrink();
@@ -207,12 +208,7 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
         }
 
         if (field.shouldExpand) {
-          currentRow.add(
-            Expanded(
-              flex: field.flex,
-              child: field.child,
-            ),
-          );
+          currentRow.add(Expanded(flex: field.flex, child: field.child));
         } else {
           if (currentRow.isNotEmpty) {
             flushRow();
@@ -289,7 +285,7 @@ class _BaseEntityFormState<B extends StateStreamable<S>, S>
 
     return [
       for (final List<Widget> row in rows)
-        if (row.length > 1)
+        if (row.length > 1 || row.any((widget) => widget is Expanded))
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: row)
         else
           ...row,
